@@ -1,0 +1,85 @@
+.mt-block-editor {
+  .btn-add {
+    background: none;
+    border: none;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.5;
+    }
+
+    &:before {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      content: '';
+      background: url(./img/add.svg);
+      background-size: cover;
+    }
+  }
+
+  .block-wrapper {
+    margin: 20px 0;
+    position: relative;
+
+    .btn-add {
+      visibility: hidden;
+    }
+
+    .btn-add-wrapper {
+      position: absolute;
+      z-index: 9999;
+      width: 100%;
+      top: -20px;
+      text-align: center;
+    }
+
+    .btn-add-wrapper:hover .btn-add {
+      visibility: visible;
+    }
+  }
+
+  .block-wrapper .btn-add-bottom .btn-add {
+    visibility: visible;
+  }
+
+  .btn-add-bottom {
+    text-align: center;
+  }
+
+  .block-list-wrapper {
+    display: flex;
+    justify-content: center;
+
+    .block-list {
+      display: flex;
+      margin: 0;
+      padding: 0;
+      background: white;
+      border: 1px solid #ccc;
+
+      li {
+        padding-right: 20px;
+        list-style: none;
+      }
+    }
+  }
+
+  .focus {
+    outline: 1px solid #ccc;
+  }
+
+
+  /* columns */
+
+  .columns {
+    padding: 30px;
+  }
+
+  .column {
+    outline: 1px solid #ccc;
+    padding: 10px;
+    position: relative;
+    flex-basis: 50%;
+  }
+}

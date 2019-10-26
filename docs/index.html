@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <script
+      src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+  </head>
+  <body>
+    <div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <form>
+      <textarea id="body"></textarea>
+      <input type="submit" id="submit"/>
+      </form>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <script>
+        document.getElementById("body").value = `
+
+<!-- mtEditorBlock data-mt-block-type="textblock" -->
+        <h2>eeeeeeeeeeeeeeeeeeeeeeeeeeee</h2>
+        <!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="horizontalrule" --><hr /><!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="textblock" --><p>ssssss&lt;xxx&gt;sssssssssssssssssssssss</p>
+<p>bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</p><!-- /mtEditorBlock -->
+
+<!-- mtEditorBlock data-mt-block-type="columns" --><div><!-- mtEditorBlock data-mt-block-type="column" --><div><!-- mtEditorBlock data-mt-block-type="horizontalrule" --><hr /><!-- /mtEditorBlock --></div><!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="column" --><div><!-- mtEditorBlock data-mt-block-type="textblock" --><h3>aaaaaaaaaa</h3><!-- /mtEditorBlock --></div><!-- /mtEditorBlock --></div><!-- /mtEditorBlock -->
+
+        `;
+      </script>
+    </div>
+    <script src="./dist/mt-block-editor.js"></script>
+    <script>
+      MTBlockEditor.apply({
+        id: "body",
+        stylesheets: [
+          //'https://taaas.jp/mt-static/support/theme_static/rainier/css/base.css',
+        ],
+      });
+
+      document.getElementById("submit").form.addEventListener("submit", function(ev) {
+        ev.preventDefault();
+        document.getElementById("submit").form.dispatchEvent(new Event("MTBlockEditorSerialize"));
+      });
+    </script>
+  </body>
+</html>
