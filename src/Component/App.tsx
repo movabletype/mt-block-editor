@@ -5,6 +5,7 @@ import Editor from "../Editor";
 import Block from "../Block";
 import { EditorContext, BlocksContext } from "../Context";
 import AddButton from "./AddButton";
+import RemoveButton from "./RemoveButton";
 
 interface AppProps {
   editor: Editor;
@@ -70,6 +71,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
               >
                 <div className="btn-add-wrapper">
                   <AddButton index={i} />
+                </div>
+                <div className="btn-remove-wrapper">
+                  <RemoveButton block={b} />
                 </div>
                 {focus ? (
                   b.editor({ focus: true })

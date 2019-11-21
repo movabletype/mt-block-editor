@@ -18,6 +18,20 @@
     }
   }
 
+  .btn-remove {
+    background: none;
+    border: none;
+
+    cursor: pointer;
+
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    content: '';
+    background: url(./img/remove.svg);
+    background-size: cover;
+  }
+
   .block-wrapper {
     margin: 20px 0;
     position: relative;
@@ -36,6 +50,15 @@
 
     .btn-add-wrapper:hover .btn-add {
       visibility: visible;
+    }
+
+
+    .btn-remove-wrapper {
+      position: absolute;
+      z-index: 9999;
+      top: -20px;
+      right: 0;
+      text-align: right;
     }
   }
 
