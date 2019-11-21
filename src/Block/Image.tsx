@@ -1,4 +1,3 @@
-import { escapeHtml } from "../util";
 import React, { useState } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 
@@ -37,15 +36,11 @@ class Image extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? (
-      <Editor key={this.id} block={this} />
-    ) : (
-      <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>
-    );
+    return focus ? <Editor key={this.id} block={this} /> : this.html();
   }
 
-  public html(): string {
-    return `<img src="${escapeHtml(this.url)}" style="max-width: 100%"/>`;
+  public html(): JSX.Element {
+    return <img src={this.url} style={{ maxWidth: "100%" }} />;
   }
 
   public static newFromHtml({ html }: NewFromHtmlOptions): Block {

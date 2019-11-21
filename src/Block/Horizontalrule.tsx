@@ -14,8 +14,8 @@ class Horizontalrule extends Block {
     return <Editor key={this.id} />;
   }
 
-  public html(): string {
-    return "<hr />";
+  public html(): JSX.Element {
+    return <hr />;
   }
 
   public static newFromHtml(): Block {

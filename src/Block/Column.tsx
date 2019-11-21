@@ -88,7 +88,7 @@ class Column extends Block {
   }
 
   public html(): string {
-    return `<div>${this.blocks.map(c => c.html()).join("")}</div>`;
+    return `<div>${this.blocks.map(c => c.htmlString()).join("")}</div>`;
   }
 
   public serialize(): string {

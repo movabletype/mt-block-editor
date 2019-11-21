@@ -33,7 +33,7 @@ class Columns extends Block {
   }
 
   public html(): string {
-    return `<div>${this.columns.map(c => c.html()).join("")}</div>`;
+    return `<div>${this.columns.map(c => c.htmlString()).join("")}</div>`;
   }
 
   public serialize(): string {

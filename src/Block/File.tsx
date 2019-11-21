@@ -1,36 +1,26 @@
-import { escapeHtml } from "../util";
-import React, { useState } from "react";
-import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import React from "react";
+import Block, {
+  NewFromHtmlOptions,
+  EditorOptions,
+  BuildEditor,
+  BuildHtml,
+} from "../Block";
 
 interface EditorProps {
   block: File;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
-  const [url, setUrl] = useState(block.url);
-  const [text, setText] = useState(block.text);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Editor: React.FC<EditorProps> = BuildEditor(({ block }: EditorProps) => (
+  <div>
+    <input type="text" name="text" />
+    <input type="url" name="url" />
+  </div>
+));
 
-  return (
-    <div>
-      <input
-        type="text"
-        onChange={ev => {
-          block.text = ev.target.value;
-          setText(ev.target.value);
-        }}
-        value={text}
-      />
-      <input
-        type="url"
-        onChange={ev => {
-          block.url = ev.target.value;
-          setUrl(ev.target.value);
-        }}
-        value={url}
-      />
-    </div>
-  );
-};
+const Html: React.FC<EditorProps> = BuildHtml(({ block }: EditorProps) => (
+  <a href={block.url}>{block.text}</a>
+));
 
 class File extends Block {
   public static typeId = "file";
@@ -47,15 +37,11 @@ class File extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? (
-      <Editor key={this.id} block={this} />
-    ) : (
-      <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>
-    );
+    return focus ? <Editor key={this.id} block={this} /> : this.html();
   }
 
-  public html(): string {
-    return `<a href="${escapeHtml(this.url)}">${escapeHtml(this.text)}</a>`;
+  public html(): JSX.Element {
+    return <Html key={this.id} block={this} />;
   }
 
   public static newFromHtml({ html }: NewFromHtmlOptions): Block {
