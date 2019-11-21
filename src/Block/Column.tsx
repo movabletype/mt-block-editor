@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React, { useState } from "react";
 import root from "react-shadow";
 import { useEditorContext, BlocksContext } from "../Context";
@@ -73,8 +74,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
 class Column extends Block {
   public static typeId = "column";
-  public static label = "Column";
   public static selectable = false;
+  public static get label() {
+    return t("Column");
+  }
 
   public blocks: Block[];
 

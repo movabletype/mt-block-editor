@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React from "react";
 import Block, {
   NewFromHtmlOptions,
@@ -24,8 +25,10 @@ const Html: React.FC<EditorProps> = BuildHtml(({ block }: EditorProps) => (
 
 class File extends Block {
   public static typeId = "file";
-  public static label = "File";
   public static selectable = true;
+  public static get label() {
+    return t("File");
+  }
 
   public text: string;
   public url: string;

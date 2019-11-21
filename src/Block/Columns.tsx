@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import Column from "./Column";
@@ -18,8 +19,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
 class Columns extends Block {
   public static typeId = "columns";
-  public static label = "Columns";
   public static selectable = true;
+  public static get label() {
+    return t("Columns");
+  }
 
   public columns: Column[];
 

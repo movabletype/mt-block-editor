@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
@@ -63,8 +64,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
 class TextBlock extends Block {
   public static typeId = "textblock";
-  public static label = "TextBlock";
   public static selectable = true;
+  public static get label() {
+    return t("TextBlock");
+  }
 
   public value: string;
 

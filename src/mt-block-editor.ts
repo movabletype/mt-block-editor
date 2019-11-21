@@ -1,3 +1,4 @@
+import "./i18n";
 import "./mt-block-editor.scss";
 import Editor, { EditorOptions } from "./Editor";
 

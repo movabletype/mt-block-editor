@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
@@ -43,8 +44,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
 class Table extends Block {
   public static typeId = "table";
-  public static label = "Table";
   public static selectable = true;
+  public static get label() {
+    return t("Table");
+  }
 
   public value: string;
 

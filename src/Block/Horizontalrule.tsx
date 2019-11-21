@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React from "react";
 import Block from "../Block";
 
@@ -7,8 +8,10 @@ const Editor: React.FC = () => {
 
 class Horizontalrule extends Block {
   public static typeId = "horizontalrule";
-  public static label = "Horizontalrule";
   public static selectable = true;
+  public static get label() {
+    return t("Horizontalrule");
+  }
 
   public editor(): JSX.Element {
     return <Editor key={this.id} />;

@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React, { useState } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 
@@ -25,8 +26,10 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 
 class Image extends Block {
   public static typeId = "image";
-  public static label = "Image";
   public static selectable = true;
+  public static get label() {
+    return t("Image");
+  }
 
   public url: string;
 
