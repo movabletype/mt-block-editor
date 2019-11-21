@@ -22,13 +22,27 @@
     background: none;
     border: none;
 
-    cursor: pointer;
+    cursor: move;
 
     display: inline-block;
     width: 20px;
     height: 20px;
     content: '';
     background: url(./img/remove.svg);
+    background-size: cover;
+  }
+
+  .btn-move {
+    background: none;
+    border: none;
+
+    cursor: pointer;
+
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    content: '';
+    background: url(./img/move.svg);
     background-size: cover;
   }
 
@@ -59,6 +73,15 @@
       top: -20px;
       right: 0;
       text-align: right;
+    }
+
+
+    .btn-move-wrapper {
+      position: absolute;
+      z-index: 9999;
+      top: -20px;
+      left: 0;
+      text-align: left;
     }
   }
 

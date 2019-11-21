@@ -4,8 +4,7 @@ import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import Column from "./Column";
 import { parseContent } from "../util";
 
-interface EditorProps {
-  focus: boolean;
+interface EditorProps extends EditorOptions {
   block: Columns;
 }
 
@@ -20,7 +19,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 class Columns extends Block {
   public static typeId = "columns";
   public static selectable = true;
-  public static get label() {
+  public static get label(): string {
     return t("Columns");
   }
 
@@ -28,7 +27,10 @@ class Columns extends Block {
 
   public constructor(init?: Partial<Columns>) {
     super();
-    this.columns = (init && init.columns) || [new Column(), new Column()];
+    this.columns = [new Column(), new Column()];
+    if (init) {
+      Object.assign(this, init);
+    }
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {

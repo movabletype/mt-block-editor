@@ -30,7 +30,7 @@ class EditorUtil {
 
 declare global {
   interface Window {
-    MTBlockEditor: EditorUtil;
+    MTBlockEditor: typeof EditorUtil;
   }
 }
 window.MTBlockEditor = EditorUtil;

@@ -1,13 +1,14 @@
-import React, { useState } from "react";
-import { useEditorContext, useBlocksContext } from "../Context";
+import React from "react";
+import { useBlocksContext } from "../Context";
 import Block from "../Block";
-import TextBlock from "../Block/TextBlock";
 
 interface RemoveButtonProps {
   block: Block;
 }
 
-const RemoveButton: React.FC<RemoveButtonProps> = ({ block }: RemoveButtonProps) => {
+const RemoveButton: React.FC<RemoveButtonProps> = ({
+  block,
+}: RemoveButtonProps) => {
   const { removeBlock } = useBlocksContext();
 
   return (

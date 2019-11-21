@@ -1,11 +1,12 @@
 import React, { useState, useRef } from "react";
-import root from "react-shadow";
+import { DndProvider } from "react-dnd";
+import HTML5Backend from "react-dnd-html5-backend";
 
 import Editor from "../Editor";
 import Block from "../Block";
+import BlockItem from "./BlockItem";
 import { EditorContext, BlocksContext } from "../Context";
 import AddButton from "./AddButton";
-import RemoveButton from "./RemoveButton";
 
 interface AppProps {
   editor: Editor;
@@ -35,6 +36,16 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       }
       updateBlocks(([] as Block[]).concat(editor.blocks));
     },
+    swapBlocks: (dragIndex: number, hoverIndex: number) => {
+      if (dragIndex === undefined || hoverIndex === undefined) {
+        return;
+      }
+      [editor.blocks[dragIndex], editor.blocks[hoverIndex]] = [
+        editor.blocks[hoverIndex],
+        editor.blocks[dragIndex],
+      ];
+      updateBlocks(([] as Block[]).concat(editor.blocks));
+    },
   };
 
   window.addEventListener(
@@ -59,41 +70,29 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   return (
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
-        <div ref={editorEl}>
-          {blocks.map((b, i) => {
-            const focus = b.id === focusedId;
-
-            return (
-              <div
-                key={b.id}
-                onClick={() => setFocus(b.id)}
-                className={`block-wrapper ${focus ? "focus" : ""}`}
-              >
-                <div className="btn-add-wrapper">
-                  <AddButton index={i} />
-                </div>
-                <div className="btn-remove-wrapper">
-                  <RemoveButton block={b} />
-                </div>
-                {focus ? (
-                  b.editor({ focus: true })
-                ) : (
-                  <root.div>
-                    <div className="entry">
-                      {editor.opts.stylesheets.map(s => (
-                        <link rel="stylesheet" key={s} href={s} />
-                      ))}
-                      {b.editor({ focus: false })}
-                    </div>
-                  </root.div>
-                )}
-              </div>
-            );
-          })}
-          <div className="btn-add-bottom">
-            <AddButton index={blocks.length} />
+        <DndProvider backend={HTML5Backend}>
+          <div ref={editorEl}>
+            {blocks.map((b, i) => {
+              const focus = b.id === focusedId;
+              return (
+                <BlockItem
+                  key={b.id}
+                  id={b.id}
+                  block={b}
+                  setFocus={() => {
+                    setFocus(b.id);
+                  }}
+                  focus={focus}
+                  index={i}
+                  showButton={true}
+                />
+              );
+            })}
+            <div className="btn-add-bottom">
+              <AddButton index={blocks.length} />
+            </div>
           </div>
-        </div>
+        </DndProvider>
       </BlocksContext.Provider>
     </EditorContext.Provider>
   );

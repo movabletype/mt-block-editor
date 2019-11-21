@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import BlockFactory from "./BlockFactory";
 
@@ -44,58 +43,4 @@ export default abstract class Block {
 
   abstract editor(opts: EditorOptions): JSX.Element;
   abstract html(): JSX.Element | string;
-}
-
-interface EditorProps {
-  block: Block;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function recursiveMap(children: any, fn: (child: JSX.Element) => void): any {
-  return React.Children.map(children, (child: JSX.Element) => {
-    //    if (!React.isValidElement(child)) {
-    //      return child;
-    //    }
-
-    if (child.props.children) {
-      child = React.cloneElement(child, {
-        children: recursiveMap(child.props.children, fn),
-      });
-    }
-
-    return fn(child);
-  });
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function BuildEditor(fc: React.FC<any>): React.FC {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (props: any) => {
-    const block = props.block;
-    const [_block, setBlock] = useState(block);
-
-    return recursiveMap(fc(props), (child: JSX.Element) => {
-      if (child.type === "input" && !child.props.onChange) {
-        const n = child.props.name;
-
-        return React.cloneElement(child, {
-          defaultValue: _block[n],
-          onChange: (ev: InputEvent) => {
-            if (!ev.target) {
-              return;
-            }
-            block[n] = (ev.target as HTMLInputElement).value;
-            setBlock(block);
-          },
-        });
-      } else {
-        return child;
-      }
-    });
-  };
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function BuildHtml(fc: React.FC<any>): React.FC {
-  return fc;
 }

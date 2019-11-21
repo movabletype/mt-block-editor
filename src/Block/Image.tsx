@@ -27,15 +27,17 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 class Image extends Block {
   public static typeId = "image";
   public static selectable = true;
-  public static get label() {
+  public static get label(): string {
     return t("Image");
   }
 
-  public url: string;
+  public url = "";
 
   public constructor(init?: Partial<Image>) {
     super();
-    this.url = (init && init.url) || "";
+    if (init) {
+      Object.assign(this, init);
+    }
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
@@ -47,8 +49,12 @@ class Image extends Block {
   }
 
   public static newFromHtml({ html }: NewFromHtmlOptions): Block {
-    const m = html.match(/src="([^"]+)/);
-    return new Image({ url: m && m[1] ? m[1] : "" });
+    const domparser = new DOMParser();
+    const doc = domparser.parseFromString(html, "text/html");
+
+    return new Image({
+      url: (doc.querySelector("IMG") as HTMLImageElement).src || "",
+    });
   }
 }
 

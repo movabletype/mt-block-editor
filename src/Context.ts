@@ -9,7 +9,7 @@ export const EditorContext = createContext<EditorContextProps | null>(null);
 export function useEditorContext(): EditorContextProps {
   const c = useContext(EditorContext);
   if (!c) {
-    throw Error("EditorContext is null");
+    throw Error("EditorContext is not initialized");
   }
   return c;
 }
@@ -17,12 +17,13 @@ export function useEditorContext(): EditorContextProps {
 interface BlocksContextProps {
   addBlock: (b: Block, index: number | Block) => void;
   removeBlock: (b: Block) => void;
+  swapBlocks: (a: number, b: number) => void;
 }
 export const BlocksContext = createContext<BlocksContextProps | null>(null);
 export function useBlocksContext(): BlocksContextProps {
   const c = useContext(BlocksContext);
   if (!c) {
-    throw Error("EditorContext is null");
+    throw Error("BlocksContext is not initialized");
   }
   return c;
 }

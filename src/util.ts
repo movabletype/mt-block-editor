@@ -2,7 +2,7 @@ import Block from "./Block";
 import BlockFactory from "./BlockFactory";
 import TextBlock from "./Block/TextBlock";
 
-function getElementById(id: string): HTMLElement {
+export function getElementById(id: string): HTMLElement {
   const e = document.getElementById(id);
   if (!e) {
     throw Error(`${id} is not found`);
@@ -10,39 +10,15 @@ function getElementById(id: string): HTMLElement {
   return e;
 }
 
-function readFile(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      resolve((reader.result || "").toString());
-    };
-
-    reader.onerror = e => {
-      reject(e.toString());
-    };
-
-    reader.readAsText(file);
-  });
-}
-
-function getNodeValue(e: Element): string {
+export function getNodeValue(e: Element): string {
   return (e && e.childNodes[0] ? e.childNodes[0].nodeValue : "") || "";
 }
 
-function getNodeValueByTagName(e: Element, name: string): string {
+export function getNodeValueByTagName(e: Element, name: string): string {
   return [...e.getElementsByTagName(name)].map(e => getNodeValue(e)).join("");
 }
 
-const MSG_MAP: { [key: string]: string } = {
-  post: "記事",
-  page: "ウェブページ",
-};
-function loc(msgid: string): string {
-  return MSG_MAP[msgid] || msgid;
-}
-
-function escapeHtml(string: string): string {
+export function escapeHtml(string: string): string {
   if (typeof string !== "string") {
     return string;
   }
@@ -58,7 +34,7 @@ function escapeHtml(string: string): string {
   });
 }
 
-function preParseContent(value: string): string {
+export function preParseContent(value: string): string {
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -66,7 +42,7 @@ function preParseContent(value: string): string {
     .replace(/&lt;!--\s+(\/?mtEditorBlock.*?)--&gt;/g, "<$1>");
 }
 
-function parseContent(value: string, factory: BlockFactory): Block[] {
+export function parseContent(value: string, factory: BlockFactory): Block[] {
   if (!value) {
     return [];
   }
@@ -95,14 +71,3 @@ function parseContent(value: string, factory: BlockFactory): Block[] {
     });
   });
 }
-
-export {
-  getElementById,
-  readFile,
-  loc,
-  getNodeValue,
-  getNodeValueByTagName,
-  escapeHtml,
-  preParseContent,
-  parseContent,
-};

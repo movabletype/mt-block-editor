@@ -1,13 +1,12 @@
 import { t } from "../i18n";
 import React, { useState } from "react";
-import root from "react-shadow";
 import { useEditorContext, BlocksContext } from "../Context";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import AddButton from "../Component/AddButton";
+import BlockItem from "../Component/BlockItem";
 import { parseContent } from "../util";
 
-interface EditorProps {
-  focus: boolean;
+interface EditorProps extends EditorOptions {
   block: Column;
 }
 
@@ -28,40 +27,33 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       editor.removeBlock(block.blocks, b);
       updateBlocks(([] as Block[]).concat(block.blocks));
     },
+    swapBlocks: (dragIndex: number, hoverIndex: number) => {
+      if (dragIndex === undefined || hoverIndex === undefined) {
+        return;
+      }
+      [block.blocks[dragIndex], block.blocks[hoverIndex]] = [
+        block.blocks[hoverIndex],
+        block.blocks[dragIndex],
+      ];
+      updateBlocks(([] as Block[]).concat(block.blocks));
+    },
   };
 
   return (
     <BlocksContext.Provider value={blocksContext}>
       <div className="column" style={{ width: "100%" }}>
-        {blocks.map((b, i) => {
-          return (
-            <div
-              key={b.id}
-              onClick={() => {
-                //setFocus(b.id)
-              }}
-              className={`block-wrapper ${focus ? "focus" : ""}`}
-            >
-              {focus && (
-                <div className="btn-add-wrapper">
-                  <AddButton index={i} />
-                </div>
-              )}
-              {focus ? (
-                b.editor({ focus: true })
-              ) : (
-                <root.div>
-                  <div className="entry">
-                    {editor.opts.stylesheets.map(s => (
-                      <link rel="stylesheet" key={s} href={s} />
-                    ))}
-                    {b.editor({ focus: false })}
-                  </div>
-                </root.div>
-              )}
-            </div>
-          );
-        })}
+        {blocks.map((b, i) => (
+          <BlockItem
+            key={b.id}
+            id={b.id}
+            block={b}
+            setFocus={() => {}}
+            focus={focus}
+            index={i}
+            parentId={block.id}
+            showButton={focus}
+          />
+        ))}
         {focus && (
           <div className="btn-add-bottom">
             <AddButton index={blocks.length} />
@@ -75,15 +67,17 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 class Column extends Block {
   public static typeId = "column";
   public static selectable = false;
-  public static get label() {
+  public static get label(): string {
     return t("Column");
   }
 
-  public blocks: Block[];
+  public blocks: Block[] = [];
 
   public constructor(init?: Partial<Column>) {
     super();
-    this.blocks = (init && init.blocks) || [];
+    if (init) {
+      Object.assign(this, init);
+    }
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {

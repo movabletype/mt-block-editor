@@ -6,8 +6,7 @@ import { useBlocksContext } from "../Context";
 
 declare const tinymce: EditorManager;
 
-interface EditorProps {
-  focus: boolean;
+interface EditorProps extends EditorOptions {
   block: TextBlock;
 }
 
@@ -17,13 +16,12 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   useEffect(() => {
     tinymce.init({
       selector: `#${block.tinymceId()}`,
-      //toolbar: false,
       menubar: false,
       toolbar: "formatselect | undo redo | bold italic underline",
       inline: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
-        // ed.setContent(block.value);
+        // ed.setContent(block.text);
         if (focus) {
           ed.focus(false);
           ed.selection.select(ed.getBody(), true);
@@ -49,7 +47,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     });
 
     return () => {
-      block.value = tinymce.get(block.tinymceId()).getContent();
+      block.text = tinymce.get(block.tinymceId()).getContent();
       tinymce.get(block.tinymceId()).remove();
     };
   });
@@ -65,15 +63,17 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 class TextBlock extends Block {
   public static typeId = "textblock";
   public static selectable = true;
-  public static get label() {
+  public static get label(): string {
     return t("TextBlock");
   }
 
-  public value: string;
+  public text = "";
 
-  public constructor(value?: string) {
+  public constructor(init?: Partial<TextBlock>) {
     super();
-    this.value = value || "";
+    if (init) {
+      Object.assign(this, init);
+    }
   }
 
   public tinymceId(): string {
@@ -93,12 +93,12 @@ class TextBlock extends Block {
     if (ed) {
       return ed.getContent();
     } else {
-      return this.value;
+      return this.text;
     }
   }
 
   public static newFromHtml({ html }: NewFromHtmlOptions): Block {
-    return new TextBlock(html);
+    return new TextBlock({ text: html });
   }
 }
 
