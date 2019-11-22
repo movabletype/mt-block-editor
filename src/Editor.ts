@@ -68,6 +68,11 @@ class Editor {
   public serialize(): void {
     this.inputElement.value = this.blocks.map(b => b.serialize()).join("");
   }
+
+  public unload(): void {
+    this.editorElement.remove();
+    this.inputElement.style.display = "";
+  }
 }
 
 export default Editor;

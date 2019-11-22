@@ -23,6 +23,7 @@
       <form>
       <textarea id="body"></textarea>
       <input type="submit" id="submit"/>
+      <input type="submit" id="unload" value="Unload"/>
       </form>
       <br />
       <br />
@@ -57,6 +58,11 @@
       document.getElementById("submit").form.addEventListener("submit", function(ev) {
         ev.preventDefault();
         document.getElementById("submit").form.dispatchEvent(new Event("MTBlockEditorSerialize"));
+      });
+
+      document.getElementById("unload").addEventListener("click", function(ev) {
+        ev.preventDefault();
+        MTBlockEditor.unload({id: "body"});
       });
     </script>
   </body>
