@@ -37,6 +37,7 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
                   href="#"
                   onClick={ev => {
                     ev.preventDefault();
+                    ev.stopPropagation();
                     addBlock(new (t as typeof TextBlock)() as Block, index);
                     setShowList(false);
                   }}
