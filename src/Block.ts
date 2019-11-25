@@ -1,5 +1,7 @@
 import ReactDOMServer from "react-dom/server";
 import BlockFactory from "./BlockFactory";
+import { escapeHtml } from "./util";
+import icon from "./img/icon/default-block.svg";
 
 export interface EditorOptions {
   focus: boolean;
@@ -11,14 +13,29 @@ export interface NewFromHtmlOptions {
   factory: BlockFactory;
 }
 
+export interface Metadata {
+  [key: string]: any;
+}
+
 export default abstract class Block {
   public static typeId: string;
   public static label: string;
+  public static icon : string = icon;
   public static selectable: boolean;
   public id: string;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static newFromHtml(opts: NewFromHtmlOptions): Block {
+    throw "Should be implemented for each concrete class";
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static canNewFromFile(file: File) : boolean {
+    return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static newFromFile(file: File) : Block {
     throw "Should be implemented for each concrete class";
   }
 
@@ -35,10 +52,18 @@ export default abstract class Block {
     }
   }
 
+  public metadata(): Metadata | null {
+    return null;
+  }
+
   public serialize(): string {
+    const m = this.metadata();
+
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
-    }" -->${this.htmlString()}<!-- /mtEditorBlock -->`;
+    }" ${
+      m ? `data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""
+    } -->${this.htmlString()}<!-- /mtEditorBlock -->`;
   }
 
   abstract editor(opts: EditorOptions): JSX.Element;

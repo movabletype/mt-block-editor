@@ -16,16 +16,16 @@ class BlockFactory {
 }
 
 import TextBlock from "./Block/TextBlock";
-import Image from "./Block/Image";
-import File from "./Block/File";
+//import Image from "./Block/Image";
+//import File from "./Block/File";
 import Table from "./Block/Table";
 import Horizontalrule from "./Block/Horizontalrule";
 import Columns from "./Block/Columns";
 import Column from "./Block/Column";
 
 BlockFactory.registerType(TextBlock);
-BlockFactory.registerType(Image);
-BlockFactory.registerType(File);
+//BlockFactory.registerType(Image);
+//BlockFactory.registerType(File);
 BlockFactory.registerType(Table);
 BlockFactory.registerType(Horizontalrule);
 BlockFactory.registerType(Columns);

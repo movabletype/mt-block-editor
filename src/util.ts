@@ -39,7 +39,12 @@ export function preParseContent(value: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/&lt;!--\s+(\/?mtEditorBlock.*?)--&gt;/g, "<$1>");
+    .replace(/&lt;!--\s+(\/?mtEditorBlock.*?)--&gt;/g, (all, tag) => {
+      return `<${tag
+        .replace(/&gt;/g, ">")
+        .replace(/&lt;/g, "<")
+        .replace(/&amp;/g, "&")}>`;
+    });
 }
 
 export function parseContent(value: string, factory: BlockFactory): Block[] {

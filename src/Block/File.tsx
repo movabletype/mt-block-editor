@@ -2,6 +2,7 @@ import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { useEditorUtil } from "../hooks/useEditorUtil";
+import icon from "../img/icon/file.svg";
 
 interface HtmlProps {
   block: File;
@@ -30,6 +31,7 @@ const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
 class File extends Block {
   public static typeId = "file";
   public static selectable = true;
+  public static icon = icon;
   public static get label(): string {
     return t("File");
   }

@@ -1,6 +1,7 @@
 import { t } from "../i18n";
 import React from "react";
 import Block from "../Block";
+import icon from "../img/icon/horizontalrule.svg";
 
 const Editor: React.FC = () => {
   return <hr />;
@@ -9,6 +10,7 @@ const Editor: React.FC = () => {
 class Horizontalrule extends Block {
   public static typeId = "horizontalrule";
   public static selectable = true;
+  public static icon = icon;
   public static get label(): string {
     return t("Horizontalrule");
   }

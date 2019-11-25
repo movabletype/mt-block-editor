@@ -3,6 +3,7 @@ import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import Column from "./Column";
 import { parseContent } from "../util";
+import icon from "../img/icon/columns.svg";
 
 interface EditorProps extends EditorOptions {
   block: Columns;
@@ -19,6 +20,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 class Columns extends Block {
   public static typeId = "columns";
   public static selectable = true;
+  public static icon = icon;
   public static get label(): string {
     return t("Columns");
   }

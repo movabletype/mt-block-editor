@@ -2,6 +2,7 @@ import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
+import icon from "../img/icon/table.svg";
 
 declare const tinymce: EditorManager;
 
@@ -44,6 +45,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 class Table extends Block {
   public static typeId = "table";
   public static selectable = true;
+  public static icon = icon;
   public static get label(): string {
     return t("Table");
   }

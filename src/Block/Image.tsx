@@ -1,6 +1,7 @@
 import { t } from "../i18n";
 import React, { useState } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import icon from "../img/icon/image.svg";
 
 interface EditorProps {
   block: Image;
@@ -27,6 +28,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 class Image extends Block {
   public static typeId = "image";
   public static selectable = true;
+  public static icon = icon;
   public static get label(): string {
     return t("Image");
   }
@@ -46,6 +48,16 @@ class Image extends Block {
 
   public html(): JSX.Element {
     return <img src={this.url} style={{ maxWidth: "100%" }} />;
+  }
+
+  public static canNewFromFile(file: File) : boolean {
+    return true;
+  }
+
+  public static newFromFile(file: File) : void {
+    return new Image({
+      url: URL.createObjectURL(file),
+    });
   }
 
   public static newFromHtml({ html }: NewFromHtmlOptions): Block {

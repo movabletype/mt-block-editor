@@ -1,4 +1,4 @@
-import "./i18n";
+import {t} from "./i18n";
 import "./mt-block-editor.scss";
 import Editor, { EditorOptions } from "./Editor";
 
@@ -47,6 +47,17 @@ class EditorUtil {
     m.remove(id);
   }
 }
+
+import React from "react";
+import Block from "./Block";
+import BlockFactory from "./BlockFactory";
+
+EditorUtil.i18n = {t};
+EditorUtil.React = React;
+EditorUtil.Block = Block;
+EditorUtil.registerBlock = (block) => {
+  BlockFactory.registerType(block);
+};
 
 declare global {
   interface Window {

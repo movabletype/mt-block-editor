@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
 import { useBlocksContext } from "../Context";
+import icon from "../img/icon/text-block.svg";
 
 declare const tinymce: EditorManager;
 
@@ -12,15 +13,30 @@ interface EditorProps extends EditorOptions {
 
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const { addBlock, removeBlock } = useBlocksContext();
+  let editor: TinyMCE;
 
   useEffect(() => {
     tinymce.init({
       selector: `#${block.tinymceId()}`,
       menubar: false,
       toolbar: "formatselect | undo redo | bold italic underline",
+      // selection_toolbar: "formatselect | bold italic underline | quicklink blockquote",
+      // insert_toolbar: "formatselect | bold italic underline | quicklink blockquote",
+      // theme: "inlite",
+      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
+      skin: "lightgray",
       inline: true,
+
+      // TinyMCE 5
+      // plugins: [ 'quickbars' ],
+      // toolbar: false,
+      // menubar: false,
+      // inline: true,
+
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
+        editor = ed;
+
         // ed.setContent(block.text);
         if (focus) {
           ed.focus(false);
@@ -35,6 +51,9 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
+          document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+            "hidden";
+
           if (
             (e.keyCode === 8 || e.keyCode === 46) &&
             ed.dom.isEmpty(ed.dom.getRoot())
@@ -46,23 +65,62 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       },
     });
 
+    const onMouseMove = () => {
+      if (tinymce.activeEditor !== editor) {
+        return;
+      }
+
+      document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+        "visible";
+    };
+    window.addEventListener("mousemove", onMouseMove, {
+      capture: true,
+      passive: true,
+    });
+
     return () => {
+      window.removeEventListener("mousemove", onMouseMove);
       block.text = tinymce.get(block.tinymceId()).getContent();
       tinymce.get(block.tinymceId()).remove();
     };
   });
 
+  const html = block.html();
+
   return (
     <div
-      id={block.tinymceId()}
-      dangerouslySetInnerHTML={{ __html: block.html() }}
-    ></div>
+      style={{ position: "relative" }}
+      onClick={() => {
+        document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+          "visible";
+      }}
+      onMouseMove={() => {
+        document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+          "visible";
+      }}
+    >
+      <div
+        id={block.tinymceId()}
+        dangerouslySetInnerHTML={{ __html: html }}
+      ></div>
+      <div
+        id={`${block.tinymceId()}toolbar`}
+        style={{
+          position: "absolute",
+          top: "-37px",
+          background: "white",
+          zIndex: 9999,
+          visibility: html === "" ? "hidden" : "visible",
+        }}
+      ></div>
+    </div>
   );
 };
 
 class TextBlock extends Block {
   public static typeId = "textblock";
   public static selectable = true;
+  public static icon = icon;
   public static get label(): string {
     return t("TextBlock");
   }
