@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useEditorContext, BlocksContext } from "../Context";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import AddButton from "../Component/AddButton";
@@ -39,6 +39,18 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     },
   };
 
+  useEffect(
+    block.html === null
+      ? () => {}
+      : () => {
+          parseContent(block.html, editor.factory).then(blocks => {
+            block.html = null;
+            block.blocks = blocks;
+            updateBlocks(([] as Block[]).concat(block.blocks));
+          });
+        }
+  );
+
   return (
     <BlocksContext.Provider value={blocksContext}>
       <div className="column" style={{ width: "100%" }}>
@@ -66,11 +78,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
 class Column extends Block {
   public static typeId = "column";
+  public static className = "";
   public static selectable = false;
   public static get label(): string {
     return t("Column");
   }
 
+  public html: string = null;
   public blocks: Block[] = [];
 
   public constructor(init?: Partial<Column>) {
@@ -89,14 +103,19 @@ class Column extends Block {
   }
 
   public serialize(): string {
-    return `<!-- mtEditorBlock data-mt-block-type="${
-      (this.constructor as typeof Block).typeId
-    }" --><div>${this.blocks
+    const typeId = (this.constructor as typeof Block).typeId;
+    const className = (this.constructor as typeof Block).className;
+    return `<!-- mtEditorBlock data-mt-block-type="${typeId}" --><div${
+      className ? ` class="${className}"` : ""
+    }>${this.blocks
       .map(c => c.serialize())
       .join("")}</div><!-- /mtEditorBlock -->`;
   }
 
-  public static async newFromHtml({ node, factory }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({
+    node,
+    factory,
+  }: NewFromHtmlOptions): Block {
     const blocks = await parseContent(
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")

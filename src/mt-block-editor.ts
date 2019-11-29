@@ -50,6 +50,7 @@ class EditorUtil {
 
 import React from "react";
 import Block from "./Block";
+import Column from "./Block/Column";
 import BlockFactory from "./BlockFactory";
 
 EditorUtil.i18n = {t};
@@ -57,6 +58,22 @@ EditorUtil.React = React;
 EditorUtil.Block = Block;
 EditorUtil.registerBlock = (block) => {
   BlockFactory.registerType(block);
+};
+EditorUtil.createBoilerplateBlock = ({id, label, html}) => {
+  const newClass = function(init) {
+    Column.call(this, Object.assign({html}, init || {}));
+  };
+
+  newClass.prototype = Object.create(Column.prototype);
+  newClass.prototype.constructor = newClass;
+  newClass.typeId = id;
+  newClass.className = id;
+  newClass.label = label;
+  newClass.selectable = true;
+
+  Object.setPrototypeOf(newClass, Column);
+
+  return newClass;
 };
 
 declare global {

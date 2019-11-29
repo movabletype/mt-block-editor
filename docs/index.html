@@ -52,6 +52,13 @@
     </div>
     <script src="./dist/mt-block-editor.js"></script>
     <script>
+      MTBlockEditor.registerBlock(
+        MTBlockEditor.createBoilerplateBlock({
+          id: 'test-block',
+          label: 'テスト',
+          html: '<!-- mtEditorBlock data-mt-block-type="textblock"  --><p>xxxxxxxxxxxxxxxxxxxxx</p><!-- /mtEditorBlock -->',
+        })
+      );
       MTBlockEditor.apply({
         id: "body",
         stylesheets: [
