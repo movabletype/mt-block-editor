@@ -96,8 +96,8 @@ class Column extends Block {
       .join("")}</div><!-- /mtEditorBlock -->`;
   }
 
-  public static newFromHtml({ node, factory }: NewFromHtmlOptions): Block {
-    const blocks = parseContent(
+  public static async newFromHtml({ node, factory }: NewFromHtmlOptions): Block {
+    const blocks = await parseContent(
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, ""),

@@ -28,29 +28,31 @@ class Editor {
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
 
-    this.blocks = parseContent(
-      preParseContent(this.inputElement.value),
-      this.factory
-    );
-
-    this.editorElement = document.createElement("DIV");
-    this.editorElement.classList.add("mt-block-editor");
-
     if (!this.inputElement.parentNode) {
       return;
     }
-
-    this.inputElement.parentNode.insertBefore(
-      this.editorElement,
-      this.inputElement
-    );
-    render(React.createElement(App, { editor: this }), this.editorElement);
 
     if (this.inputElement.form) {
       this.inputElement.form.addEventListener("MTBlockEditorSerialize", () => {
         this.serialize();
       });
     }
+
+    parseContent(
+      preParseContent(this.inputElement.value),
+      this.factory
+    ).then(blocks => {
+      this.blocks = blocks;
+
+      this.editorElement = document.createElement("DIV");
+      this.editorElement.classList.add("mt-block-editor");
+
+      this.inputElement.parentNode.insertBefore(
+        this.editorElement,
+        this.inputElement
+      );
+      render(React.createElement(App, { editor: this }), this.editorElement);
+    });
   }
 
   public addBlock(blocks: Block[], b: Block, index: number): void {

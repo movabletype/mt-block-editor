@@ -54,13 +54,13 @@ class Image extends Block {
     return true;
   }
 
-  public static newFromFile(file: File) : void {
+  public static async newFromFile(file: File) : void {
     return new Image({
       url: URL.createObjectURL(file),
     });
   }
 
-  public static newFromHtml({ html }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({ html }: NewFromHtmlOptions): Block {
     const domparser = new DOMParser();
     const doc = domparser.parseFromString(html, "text/html");
 

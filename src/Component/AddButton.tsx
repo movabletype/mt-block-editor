@@ -16,15 +16,18 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
   const onDrop = ev => {
     buttonEl.current.classList.remove("droppable");
   };
-  useEffect(
-    () => {
-      document.addEventListener("drop", onDrop);
+  useEffect(() => {
+    document.addEventListener("drop", onDrop, {
+      capture: true,
+      passive: true,
+    });
 
-      return () => {
-        document.removeEventListener("drop", onDrop);
-      }
-    },
-  );
+    return () => {
+      document.removeEventListener("drop", onDrop, {
+        capture: true,
+      });
+    };
+  });
 
   if (!editor) {
     return <></>;
@@ -33,8 +36,13 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
   return (
     <>
       <div
+        style={{ position: "relative" }}
         ref={buttonEl}
         onDragOver={ev => {
+          if (!ev.dataTransfer.types.find(t => t === "Files")) {
+            return;
+          }
+
           ev.preventDefault();
           ev.stopPropagation();
           ev.dataTransfer.dropEffect = "copy";
@@ -44,15 +52,23 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
           ev.preventDefault();
           ev.stopPropagation();
         }}
-        onDrop={ev => {
+        onDragLeave={ev => {
+          ev.currentTarget.classList.remove("droppable");
+        }}
+        onDrop={async ev => {
           ev.preventDefault();
           ev.stopPropagation();
-          ev.dataTransfer.files.forEach(f => {
-            const t = editor.factory.selectableTypes().find((t: typeof Block) => t.canNewFromFile(f));
+          const files = ev.dataTransfer.files;
+          for (let i = 0; i < files.length; i++) {
+            const f = files[i];
+            const t = editor.factory
+              .selectableTypes()
+              .find((t: typeof Block) => t.canNewFromFile(f));
             if (t) {
-              addBlock(t.newFromFile(f), index);
+              const b = await t.newFromFile(f);
+              addBlock(b, index);
             }
-          });
+          }
         }}
       >
         <button

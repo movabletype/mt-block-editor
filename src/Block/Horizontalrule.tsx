@@ -23,7 +23,7 @@ class Horizontalrule extends Block {
     return <hr />;
   }
 
-  public static newFromHtml(): Block {
+  public static async newFromHtml(): Block {
     return new Horizontalrule();
   }
 }

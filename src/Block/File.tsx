@@ -59,7 +59,7 @@ class File extends Block {
     return <Html key={this.id} block={this} />;
   }
 
-  public static newFromHtml({ html }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({ html }: NewFromHtmlOptions): Block {
     const domparser = new DOMParser();
     const doc = domparser.parseFromString(html, "text/html");
 

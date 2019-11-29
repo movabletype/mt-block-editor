@@ -25,7 +25,7 @@ export default abstract class Block {
   public id: string;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static newFromHtml(opts: NewFromHtmlOptions): Block {
+  static async newFromHtml(opts: NewFromHtmlOptions): Block {
     throw "Should be implemented for each concrete class";
   }
 
@@ -35,7 +35,7 @@ export default abstract class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static newFromFile(file: File) : Block {
+  static async newFromFile(file: File) : Block {
     throw "Should be implemented for each concrete class";
   }
 

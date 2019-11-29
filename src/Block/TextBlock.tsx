@@ -19,7 +19,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     tinymce.init({
       selector: `#${block.tinymceId()}`,
       menubar: false,
-      toolbar: "formatselect | undo redo | bold italic underline",
+      plugins: [
+        'lists paste media textcolor code hr link',
+      ].join(" "),
+      toolbar: [
+        'formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code',
+        'bullist numlist outdent indent | blockquote link unlink'
+      ],
       // selection_toolbar: "formatselect | bold italic underline | quicklink blockquote",
       // insert_toolbar: "formatselect | bold italic underline | quicklink blockquote",
       // theme: "inlite",
@@ -79,7 +85,9 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     });
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mousemove", onMouseMove, {
+        capture: true,
+      });
       block.text = tinymce.get(block.tinymceId()).getContent();
       tinymce.get(block.tinymceId()).remove();
     };
@@ -107,7 +115,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         id={`${block.tinymceId()}toolbar`}
         style={{
           position: "absolute",
-          top: "-37px",
+          top: "-71px",
           background: "white",
           zIndex: 9999,
           visibility: html === "" ? "hidden" : "visible",
@@ -155,7 +163,7 @@ class TextBlock extends Block {
     }
   }
 
-  public static newFromHtml({ html }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({ html }: NewFromHtmlOptions): Block {
     return new TextBlock({ text: html });
   }
 }

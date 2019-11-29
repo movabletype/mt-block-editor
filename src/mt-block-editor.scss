@@ -28,12 +28,16 @@
 
     cursor: pointer;
 
-    display: inline-block;
     width: 20px;
     height: 20px;
     content: '';
     background: url(./img/remove.svg);
     background-size: cover;
+
+    display: none;
+  }
+  .block-wrapper:hover .btn-remove {
+    display: inline-block;
   }
 
   .btn-move {
@@ -42,12 +46,16 @@
 
     cursor: move;
 
-    display: inline-block;
     width: 20px;
     height: 20px;
     content: '';
     background: url(./img/move.svg);
     background-size: cover;
+
+    display: none;
+  }
+  .block-wrapper:hover .btn-move {
+    display: inline-block;
   }
 
   .block-wrapper {
@@ -132,6 +140,19 @@
     outline: 1px solid #ccc;
   }
 
+  .droppable:before {
+    display: block;
+    position: absolute;
+    z-index: 200;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: " ";
+    text-align: center;
+    color: white;
+    background-color: rgba(21, 50, 76, .9);
+  }
 
   /* columns */
 

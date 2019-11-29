@@ -80,7 +80,7 @@ class Table extends Block {
     }
   }
 
-  public static newFromHtml({ html }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({ html }: NewFromHtmlOptions): Block {
     return new Table({ text: html });
   }
 }

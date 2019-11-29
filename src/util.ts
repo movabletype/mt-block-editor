@@ -47,14 +47,14 @@ export function preParseContent(value: string): string {
     });
 }
 
-export function parseContent(value: string, factory: BlockFactory): Block[] {
+export async function parseContent(value: string, factory: BlockFactory): Block[] {
   if (!value) {
     return [];
   }
 
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(
-    `<xml>${value}</xml>`,
+    `<xml>${value.replace(/[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD]/gm, "")}</xml>`,
     "application/xml"
   );
 
@@ -62,17 +62,21 @@ export function parseContent(value: string, factory: BlockFactory): Block[] {
     return [];
   }
 
-  const root = doc.children[0];
-
-  return [...root.children].map(node => {
+  const children = doc.children[0].children;
+  const blocks = [];
+  for (let i = 0; i < children.length; i++) {
+    const node = children[i];
     const typeId = node.getAttribute("data-mt-block-type");
     const t =
       factory.types().find((t: typeof Block) => t.typeId === typeId) ||
       TextBlock;
-    return t.newFromHtml({
+
+    blocks.push(await t.newFromHtml({
       html: node.textContent || "",
       node,
       factory,
-    });
-  });
+    }));
+  }
+
+  return blocks;
 }

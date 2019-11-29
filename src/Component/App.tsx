@@ -51,15 +51,22 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   window.addEventListener(
     "click",
     ev => {
-      let target = ev.currentTarget as HTMLElement;
-      while (target.parentNode && target.parentNode !== target.parentNode) {
+      if (editorEl.current.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+        return;
+      }
+
+      let target = ev.target as HTMLElement;
+      while (target.parentNode && target.parentNode !== target) {
+        if (target.classList.contains("mce-container")) {
+          return;
+        }
         if (target === editorEl.current) {
           return;
         }
         target = target.parentNode as HTMLElement;
       }
 
-      //setFocus(null);
+      setFocus(null);
     },
     {
       capture: true,

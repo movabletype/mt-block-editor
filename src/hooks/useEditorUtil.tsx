@@ -40,16 +40,28 @@ export function useEditorUtil(
   const children = editor(props);
 
   return recursiveMap(children, (child: JSX.Element) => {
-    if (child.type === "input" && !child.props.onChange) {
+    if (
+      (child.type === "input" || child.type === "textarea") &&
+      !child.props.onChange
+    ) {
       const n = child.props.name;
 
       return React.cloneElement(child, {
         value: block[n],
+        "data-default-rows": child.props.rows || 5,
+        rows: child.props.rows || 5,
         onChange: (ev: InputEvent) => {
           if (!ev.target) {
             return;
           }
-          block[n] = (ev.target as HTMLInputElement).value;
+          const value = (ev.target as HTMLInputElement).value;
+          block[n] = value;
+
+          (ev.target as HTMLTextareaElement).rows = Math.max(
+            parseInt(ev.target.dataset.defaultRows, 10),
+            value.split(/\r|\n/).length
+          );
+
           setBlock(Object.assign({}, block));
         },
       });
