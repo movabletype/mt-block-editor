@@ -4,7 +4,8 @@ import { useEditorContext, BlocksContext } from "../Context";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import AddButton from "../Component/AddButton";
 import BlockItem from "../Component/BlockItem";
-import { parseContent } from "../util";
+import BlockIframePreview from "../Component/BlockIframePreview";
+import { parseContent, preParseContent } from "../util";
 
 interface EditorProps extends EditorOptions {
   block: Column;
@@ -40,14 +41,16 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   };
 
   useEffect(
-    block.html === null
+    block._html === null
       ? () => {}
       : () => {
-          parseContent(block.html, editor.factory).then(blocks => {
-            block.html = null;
-            block.blocks = blocks;
-            updateBlocks(([] as Block[]).concat(block.blocks));
-          });
+          parseContent(preParseContent(block._html), editor.factory).then(
+            blocks => {
+              block._html = null;
+              block.blocks = blocks;
+              updateBlocks(([] as Block[]).concat(block.blocks));
+            }
+          );
         }
   );
 
@@ -63,10 +66,11 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             focus={focus}
             index={i}
             parentId={block.id}
-            showButton={focus}
+            canRemove={block.canRemoveBlock}
+            showButton={focus && block.canRemoveBlock}
           />
         ))}
-        {focus && (
+        {focus && !block.addableBlockTypes && (
           <div className="btn-add-bottom">
             <AddButton index={blocks.length} />
           </div>
@@ -84,8 +88,12 @@ class Column extends Block {
     return t("Column");
   }
 
-  public html: string = null;
+  public _html: string = null;
+  public previewHeader: string = null;
   public blocks: Block[] = [];
+
+  public canRemoveBlock = true;
+  public addableBlockTypes: string[] | null = null;
 
   public constructor(init?: Partial<Column>) {
     super();
@@ -95,34 +103,52 @@ class Column extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
+    if (!focus) {
+      return (
+        <BlockIframePreview
+          key={this.id}
+          block={this}
+          header={this.previewHeader}
+        />
+      );
+    }
     return <Editor key={this.id} block={this} focus={focus} />;
   }
 
   public html(): string {
-    return `<div>${this.blocks.map(c => c.htmlString()).join("")}</div>`;
+    const className = (this.constructor as typeof Block).className;
+    return `<div${className ? ` class="${className}"` : ""}>${this.blocks
+      .map(c => c.htmlString())
+      .join("")}</div>`;
+  }
+
+  public serializedString(): string {
+    return this.blocks.map(c => c.serialize()).join("");
   }
 
   public serialize(): string {
+    if (this.compiledHtml) {
+      return super.serialize();
+    }
+
     const typeId = (this.constructor as typeof Block).typeId;
     const className = (this.constructor as typeof Block).className;
     return `<!-- mtEditorBlock data-mt-block-type="${typeId}" --><div${
       className ? ` class="${className}"` : ""
-    }>${this.blocks
-      .map(c => c.serialize())
-      .join("")}</div><!-- /mtEditorBlock -->`;
+    }>${this.serializedString()}</div><!-- /mtEditorBlock -->`;
   }
 
   public static async newFromHtml({
     node,
     factory,
   }: NewFromHtmlOptions): Block {
-    const blocks = await parseContent(
+    const html =
+      preParseContent(node.getAttribute("data-mt-block-html") || "") ||
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")
-        .replace(/&lt;\/div&gt;$/, ""),
-      factory
-    );
-    return new Column({ blocks });
+        .replace(/&lt;\/div&gt;$/, "");
+    const blocks = await parseContent(html, factory);
+    return new this({ blocks, _html: null });
   }
 }
 

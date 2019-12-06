@@ -11,7 +11,11 @@ interface EditorProps extends EditorOptions {
   block: TextBlock;
 }
 
-const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({
+  block,
+  focus,
+  canRemove,
+}: EditorProps) => {
   const { addBlock, removeBlock } = useBlocksContext();
   let editor: TinyMCE;
 
@@ -19,12 +23,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     tinymce.init({
       selector: `#${block.tinymceId()}`,
       menubar: false,
-      plugins: [
-        'lists paste media textcolor code hr link',
-      ].join(" "),
+      plugins: ["lists paste media textcolor code hr link"].join(" "),
       toolbar: [
-        'formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code',
-        'bullist numlist outdent indent | blockquote link unlink'
+        "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
+        "bullist numlist outdent indent | blockquote link unlink",
       ],
       // selection_toolbar: "formatselect | bold italic underline | quicklink blockquote",
       // insert_toolbar: "formatselect | bold italic underline | quicklink blockquote",
@@ -52,19 +54,24 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
         ed.on("NewBlock", ({ newBlock }: { newBlock: Element }) => {
           ed.dom.remove(newBlock);
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          addBlock(new TextBlock(), block);
+          if (canRemove) {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            addBlock(new TextBlock(), block);
+          }
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
-          document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-            "hidden";
+          document.getElementById(
+            `${block.tinymceId()}toolbar`
+          ).style.visibility = "hidden";
 
           if (
             (e.keyCode === 8 || e.keyCode === 46) &&
             ed.dom.isEmpty(ed.dom.getRoot())
           ) {
-            removeBlock(block);
+            if (canRemove) {
+              removeBlock(block);
+            }
             e.preventDefault();
           }
         });
@@ -99,12 +106,14 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     <div
       style={{ position: "relative" }}
       onClick={() => {
-        document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-          "visible";
+        document.getElementById(
+          `${block.tinymceId()}toolbar`
+        ).style.visibility = "visible";
       }}
       onMouseMove={() => {
-        document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-          "visible";
+        document.getElementById(
+          `${block.tinymceId()}toolbar`
+        ).style.visibility = "visible";
       }}
     >
       <div
@@ -146,9 +155,9 @@ class TextBlock extends Block {
     return `textarea-${this.id}`;
   }
 
-  public editor({ focus }: EditorOptions): JSX.Element {
+  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
     return focus ? (
-      <Editor key={this.id} block={this} focus={focus} />
+      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
     ) : (
       <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>
     );

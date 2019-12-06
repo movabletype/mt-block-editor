@@ -21,13 +21,14 @@
       <br />
       <br />
       <form>
-      <textarea id="body">
+        <textarea id="body">
         &lt;!-- mtEditorBlock data-mt-block-type=&quot;textblock&quot;  --&gt;
 &lt;p&gt;axxwwww&lt;/p&gt;
 &lt;!-- /mtEditorBlock --&gt;&lt;!-- mtEditorBlock data-mt-block-type=&quot;mtnet-image&quot; data-mt-block-meta=&quot;{&amp;quot;assetId&amp;quot;:10387}&quot; --&gt;&lt;figure style=&quot;display:inline-block&quot;&gt;&lt;img src=&quot;https://tamano-20190823.movabletype.io.vagrant.local/.assets/thumbnail/IMG_5551-640wri.jpg&quot; alt=&quot;abc&quot; width=&quot;640&quot; height=&quot;853&quot;/&gt;&lt;figcaption&gt;def&lt;/figcaption&gt;&lt;/figure&gt;&lt;!-- /mtEditorBlock --&gt;
-      </textarea>
-      <input type="submit" id="submit"/>
-      <input type="submit" id="unload" value="Unload"/>
+      </textarea
+        >
+        <input type="submit" id="submit" />
+        <input type="submit" id="unload" value="Unload" />
       </form>
       <br />
       <br />
@@ -37,15 +38,12 @@
       <br />
       <br />
       <br />
-      <script type="xxx">
+      <script>
         document.getElementById("body").value = `
 
-<!-- mtEditorBlock data-mt-block-type="textblock" -->
-        <h2>eeeeeeeeeeeeeeeeeeeeeeeeeeee</h2>
-        <!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="horizontalrule" --><hr /><!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="textblock" --><p>ssssss&lt;xxx&gt;sssssssssssssssssssssss</p>
-<p>bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</p><!-- /mtEditorBlock -->
-
-<!-- mtEditorBlock data-mt-block-type="columns" --><div><!-- mtEditorBlock data-mt-block-type="column" --><div><!-- mtEditorBlock data-mt-block-type="horizontalrule" --><hr /><!-- /mtEditorBlock --></div><!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="column" --><div><!-- mtEditorBlock data-mt-block-type="textblock" --><h3>aaaaaaaaaa</h3><!-- /mtEditorBlock --></div><!-- /mtEditorBlock --></div><!-- /mtEditorBlock -->
+<!-- mtEditorBlock data-mt-block-type="textblock"--><p>axxwwww</p><!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="test-block" data-mt-block-html="&lt;!-- mtEditorBlock data-mt-block-type=&quot;textblock&quot;--&gt;&lt;p&gt;https://twitter.com/tonycassara2/status/1201381978806734848&lt;/p&gt;&lt;!-- /mtEditorBlock --&gt;"--><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Can you help configure HTTPS on my CloudFront? 😤</p>&mdash; Tony Cassara (@tonycassara2) <a href="https://twitter.com/tonycassara2/status/1201381978806734848?ref_src=twsrc%5Etfw">December 2, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></scr` + `ipt>
+<!-- /mtEditorBlock -->
 
         `;
       </script>
@@ -54,9 +52,25 @@
     <script>
       MTBlockEditor.registerBlock(
         MTBlockEditor.createBoilerplateBlock({
-          id: 'test-block',
-          label: 'テスト',
-          html: '<!-- mtEditorBlock data-mt-block-type="textblock"  --><p>xxxxxxxxxxxxxxxxxxxxx</p><!-- /mtEditorBlock -->',
+          id: "test-block",
+          label: "テスト",
+          html:
+            `<!-- mtEditorBlock data-mt-block-type="textblock"--><p>http://</p><!-- /mtEditorBlock -->`,
+          canRemoveBlock: false,
+          addableBlockTypes: [],
+          previewHeader:
+            `
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const url = document.querySelector("p").textContent;
+  const res = await fetch("https://noembed.com/embed?url=" + url);
+  const data = await res.json();
+
+  parent.postMessage( { method: "MTBlockEditorSetCompiledHtml", blockId: document.body.dataset.blockId, html: data.html, }, "*")
+});
+</sc` +
+            `ript>
+          `,
         })
       );
       MTBlockEditor.apply({
@@ -66,14 +80,18 @@
         ],
       });
 
-      document.getElementById("submit").form.addEventListener("submit", function(ev) {
-        ev.preventDefault();
-        document.getElementById("submit").form.dispatchEvent(new Event("MTBlockEditorSerialize"));
-      });
+      document
+        .getElementById("submit")
+        .form.addEventListener("submit", function(ev) {
+          ev.preventDefault();
+          document
+            .getElementById("submit")
+            .form.dispatchEvent(new Event("MTBlockEditorSerialize"));
+        });
 
       document.getElementById("unload").addEventListener("click", function(ev) {
         ev.preventDefault();
-        MTBlockEditor.unload({id: "body"});
+        MTBlockEditor.unload({ id: "body" });
       });
     </script>
   </body>

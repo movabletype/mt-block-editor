@@ -5,6 +5,7 @@ import icon from "./img/icon/default-block.svg";
 
 export interface EditorOptions {
   focus: boolean;
+  canRemove: boolean;
 }
 
 export interface NewFromHtmlOptions {
@@ -20,9 +21,10 @@ export interface Metadata {
 export default abstract class Block {
   public static typeId: string;
   public static label: string;
-  public static icon : string = icon;
+  public static icon: string = icon;
   public static selectable: boolean;
   public id: string;
+  public compiledHtml: string = null;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static async newFromHtml(opts: NewFromHtmlOptions): Block {
@@ -30,12 +32,12 @@ export default abstract class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static canNewFromFile(file: File) : boolean {
+  static canNewFromFile(file: File): boolean {
     return false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static async newFromFile(file: File) : Block {
+  static async newFromFile(file: File): Block {
     throw "Should be implemented for each concrete class";
   }
 
@@ -56,14 +58,19 @@ export default abstract class Block {
     return null;
   }
 
+  public serializedString(): string {
+    return this.htmlString();
+  }
+
   public serialize(): string {
     const m = this.metadata();
+    const html = this.serializedString();
 
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
-    }" ${
-      m ? `data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""
-    } -->${this.htmlString()}<!-- /mtEditorBlock -->`;
+    }"${m ? ` data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""}${
+      this.compiledHtml ? ` data-mt-block-html="${escapeHtml(html)}"` : ""
+    }-->${this.compiledHtml || html}<!-- /mtEditorBlock -->`;
   }
 
   abstract editor(opts: EditorOptions): JSX.Element;

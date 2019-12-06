@@ -50,11 +50,11 @@ class Image extends Block {
     return <img src={this.url} style={{ maxWidth: "100%" }} />;
   }
 
-  public static canNewFromFile(file: File) : boolean {
+  public static canNewFromFile(file: File): boolean {
     return true;
   }
 
-  public static async newFromFile(file: File) : void {
+  public static async newFromFile(file: File): void {
     return new Image({
       url: URL.createObjectURL(file),
     });

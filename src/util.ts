@@ -1,6 +1,7 @@
 import Block from "./Block";
 import BlockFactory from "./BlockFactory";
 import TextBlock from "./Block/TextBlock";
+import Column from "./Block/Column";
 
 export function getElementById(id: string): HTMLElement {
   const e = document.getElementById(id);
@@ -22,8 +23,11 @@ export function escapeHtml(string: string): string {
   if (typeof string !== "string") {
     return string;
   }
-  return string.replace(/[&'`"<>]/g, function(match) {
+  return string.replace(/[&'`"<>\t\n\r]/g, function(match) {
     return ({
+      "\t": "&#x08;",
+      "\n": "&#x0A;",
+      "\r": "&#x0D;",
       "&": "&amp;",
       "'": "&#x27;",
       "`": "&#x60;",
@@ -47,14 +51,20 @@ export function preParseContent(value: string): string {
     });
 }
 
-export async function parseContent(value: string, factory: BlockFactory): Block[] {
+export async function parseContent(
+  value: string,
+  factory: BlockFactory
+): Block[] {
   if (!value) {
     return [];
   }
 
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(
-    `<xml>${value.replace(/[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD]/gm, "")}</xml>`,
+    `<xml>${value.replace(
+      /[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD]/gm,
+      ""
+    )}</xml>`,
     "application/xml"
   );
 
@@ -63,19 +73,24 @@ export async function parseContent(value: string, factory: BlockFactory): Block[
   }
 
   const children = doc.children[0].children;
+
+  // TODO: verify
   const blocks = [];
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
     const typeId = node.getAttribute("data-mt-block-type");
     const t =
-      factory.types().find((t: typeof Block) => t.typeId === typeId) ||
-      TextBlock;
-
-    blocks.push(await t.newFromHtml({
-      html: node.textContent || "",
+      factory.types().find((t: typeof Block) => t.typeId === typeId) || Column;
+    const param = {
+      html: node.getAttribute("data-mt-block-html") || node.textContent || "",
       node,
       factory,
-    }));
+    };
+
+    const block = await t
+      .newFromHtml(param)
+      .catch(() => TextBlock.newFromHtml(param));
+    blocks.push(block);
   }
 
   return blocks;

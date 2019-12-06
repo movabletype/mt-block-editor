@@ -51,7 +51,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   window.addEventListener(
     "click",
     ev => {
-      if (editorEl.current.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      if (
+        editorEl.current.querySelector(`[data-mt-block-editor-keep-focus="1"]`)
+      ) {
         return;
       }
 

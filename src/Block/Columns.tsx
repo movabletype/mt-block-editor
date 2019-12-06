@@ -40,24 +40,27 @@ class Columns extends Block {
   }
 
   public html(): string {
-    return `<div>${this.columns.map(c => c.htmlString()).join("")}</div>`;
+    return `<div className="columns" style="display: flex">${this.columns.map(c => c.htmlString()).join("")}</div>`;
   }
 
   public serialize(): string {
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
-    }" --><div class="columns">${this.columns
+    }" --><div class="columns" style="display: flex">${this.columns
       .map(c => c.serialize())
       .join("")}</div><!-- /mtEditorBlock -->`;
   }
 
-  public static async newFromHtml({ node, factory }: NewFromHtmlOptions): Block {
-    const columns = await parseContent(
+  public static async newFromHtml({
+    node,
+    factory,
+  }: NewFromHtmlOptions): Block {
+    const columns = (await parseContent(
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, ""),
       factory
-    ) as Column[];
+    )) as Column[];
     return new Columns({ columns });
   }
 }

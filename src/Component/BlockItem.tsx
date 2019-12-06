@@ -24,6 +24,7 @@ interface Props {
   focus: boolean;
   id: string;
   index: number;
+  canRemove: boolean;
   showButton: boolean;
   parentId?: string;
 }
@@ -38,6 +39,7 @@ const BlockItem: React.FC<Props> = ({
   setFocus,
   focus,
   index,
+  canRemove,
   showButton,
   parentId,
 }: Props) => {
@@ -142,14 +144,14 @@ const BlockItem: React.FC<Props> = ({
         </div>
       )}
       {focus ? (
-        b.editor({ focus: true })
+        b.editor({ focus: true, canRemove: canRemove === true })
       ) : (
         <root.div>
           <div className="entry">
             {editor.opts.stylesheets.map(s => (
               <link rel="stylesheet" key={s} href={s} />
             ))}
-            {b.editor({ focus: false })}
+            {b.editor({ focus: false, canRemove: canRemove === true })}
           </div>
         </root.div>
       )}

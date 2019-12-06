@@ -1,4 +1,4 @@
-import {t} from "./i18n";
+import { t } from "./i18n";
 import "./mt-block-editor.scss";
 import Editor, { EditorOptions } from "./Editor";
 
@@ -19,8 +19,12 @@ class EditorManager {
     this.editors.push(e);
   }
 
+  public get(id: string): Editor {
+    return this.editors.find((e: Editor) => e.id === id);
+  }
+
   public remove(id: string): void {
-    const e = this.editors.find((e: Editor) => e.id === id);
+    const e = this.get(id);
     if (!e) {
       return;
     }
@@ -42,6 +46,11 @@ class EditorUtil {
     m.add(e);
   }
 
+  public static get({ id }: { id: string }): Editor {
+    const m = EditorManager.instance();
+    return m.get(id);
+  }
+
   public static unload({ id }: { id: string }): void {
     const m = EditorManager.instance();
     m.remove(id);
@@ -53,15 +62,35 @@ import Block from "./Block";
 import Column from "./Block/Column";
 import BlockFactory from "./BlockFactory";
 
-EditorUtil.i18n = {t};
+EditorUtil.i18n = { t };
 EditorUtil.React = React;
 EditorUtil.Block = Block;
-EditorUtil.registerBlock = (block) => {
+EditorUtil.registerBlock = block => {
   BlockFactory.registerType(block);
 };
-EditorUtil.createBoilerplateBlock = ({id, label, html}) => {
+EditorUtil.createBoilerplateBlock = ({
+  id,
+  label,
+  icon,
+  html,
+  canRemoveBlock,
+  addableBlockTypes,
+  previewHeader,
+}) => {
   const newClass = function(init) {
-    Column.call(this, Object.assign({html}, init || {}));
+    const overwrite = {
+      _html: html,
+    };
+    if (canRemoveBlock !== undefined) {
+      overwrite.canRemoveBlock = canRemoveBlock;
+    }
+    if (addableBlockTypes) {
+      overwrite.addableBlockTypes = addableBlockTypes;
+    }
+    if (previewHeader !== undefined) {
+      overwrite.previewHeader = previewHeader;
+    }
+    Column.call(this, Object.assign(overwrite, init || {}));
   };
 
   newClass.prototype = Object.create(Column.prototype);
@@ -69,6 +98,9 @@ EditorUtil.createBoilerplateBlock = ({id, label, html}) => {
   newClass.typeId = id;
   newClass.className = id;
   newClass.label = label;
+  if (icon) {
+    newClass.icon = icon;
+  }
   newClass.selectable = true;
 
   Object.setPrototypeOf(newClass, Column);

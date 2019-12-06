@@ -38,21 +38,20 @@ class Editor {
       });
     }
 
-    parseContent(
-      preParseContent(this.inputElement.value),
-      this.factory
-    ).then(blocks => {
-      this.blocks = blocks;
+    parseContent(preParseContent(this.inputElement.value), this.factory).then(
+      blocks => {
+        this.blocks = blocks;
 
-      this.editorElement = document.createElement("DIV");
-      this.editorElement.classList.add("mt-block-editor");
+        this.editorElement = document.createElement("DIV");
+        this.editorElement.classList.add("mt-block-editor");
 
-      this.inputElement.parentNode.insertBefore(
-        this.editorElement,
-        this.inputElement
-      );
-      render(React.createElement(App, { editor: this }), this.editorElement);
-    });
+        this.inputElement.parentNode.insertBefore(
+          this.editorElement,
+          this.inputElement
+        );
+        render(React.createElement(App, { editor: this }), this.editorElement);
+      }
+    );
   }
 
   public addBlock(blocks: Block[], b: Block, index: number): void {
