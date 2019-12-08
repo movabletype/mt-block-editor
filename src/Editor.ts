@@ -32,12 +32,6 @@ class Editor {
       return;
     }
 
-    if (this.inputElement.form) {
-      this.inputElement.form.addEventListener("MTBlockEditorSerialize", () => {
-        this.serialize();
-      });
-    }
-
     parseContent(preParseContent(this.inputElement.value), this.factory).then(
       blocks => {
         this.blocks = blocks;
@@ -66,8 +60,9 @@ class Editor {
     blocks.splice(index, 1);
   }
 
-  public serialize(): void {
-    this.inputElement.value = this.blocks.map(b => b.serialize()).join("");
+  public async serialize(): void {
+    const values = await Promise.all(this.blocks.map((b) => b.serialize()));
+    this.inputElement.value = values.join("");
   }
 
   public unload(): void {

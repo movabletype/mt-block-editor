@@ -40,15 +40,20 @@ class Columns extends Block {
   }
 
   public html(): string {
-    return `<div className="columns" style="display: flex">${this.columns.map(c => c.htmlString()).join("")}</div>`;
+    return `<div className="columns" style="display: flex">${this.columns
+      .map(c => c.htmlString())
+      .join("")}</div>`;
   }
 
-  public serialize(): string {
+  public async serialize(): string {
+    const serializedColumns = await Promise.all(
+      this.columns.map(c => c.serialize())
+    );
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
-    }" --><div class="columns" style="display: flex">${this.columns
-      .map(c => c.serialize())
-      .join("")}</div><!-- /mtEditorBlock -->`;
+    }" --><div class="columns" style="display: flex">${serializedColumns.join(
+      ""
+    )}</div><!-- /mtEditorBlock -->`;
   }
 
   public static async newFromHtml({

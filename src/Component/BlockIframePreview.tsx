@@ -5,6 +5,7 @@ import Block from "../Block";
 interface EditorProps {
   block: Block;
   header?: string;
+  onSetCompiledHtml?: () => void;
 }
 
 function postMessageFunc() {
@@ -37,16 +38,27 @@ function postMessageFunc() {
   );
 }
 
+function setCompiledHtmlFunc(html) {
+  parent.postMessage(
+    {
+      method: "MTBlockEditorSetCompiledHtml",
+      blockId: document.body.dataset.blockId,
+      html,
+    },
+    "*"
+  );
+}
+
 const BlockIframePreview: React.FC<EditorProps> = ({
   block,
   header,
+  onSetCompiledHtml,
 }: EditorProps) => {
-  let editor : Editor | undefined;
+  let editor: Editor | undefined;
   try {
     const ctx = useEditorContext();
     editor = ctx.editor;
-  }
-  catch (e) {
+  } catch (e) {
     // ignore;
   }
 
@@ -58,6 +70,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const setCompiledHtml = html => {
     block.compiledHtml = html;
+    if (onSetCompiledHtml) {
+      onSetCompiledHtml();
+    }
     _setCompiledHtml(html);
   };
 
@@ -68,13 +83,16 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       <html${html.match(/<amp-/) ? " amp" : ""}>
       <head>
         <meta charset="utf-8">
-        <script>setInterval(${postMessageFunc
-          .toString()
-          .replace(`"block.id"`, `"${block.id}"`)}, 1000)
+        <script>
+          setInterval(${postMessageFunc.toString()}, 1000)
+          var MTBlockEditorSetCompiledHtml = (function() {
+            return ${setCompiledHtmlFunc.toString()};
+          })();
         </script>
-        ${editor && editor.opts.stylesheets.map(
-          s => `<link rel="stylesheet" href=${s} />`
-        )}
+        ${editor &&
+          editor.opts.stylesheets.map(
+            s => `<link rel="stylesheet" href=${s} />`
+          )}
         ${block.compiledHtml ? "" : header || ""}
       </head>
       <body data-block-id="${block.id}">${html}</body>

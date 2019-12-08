@@ -23,6 +23,7 @@ export default abstract class Block {
   public static label: string;
   public static icon: string = icon;
   public static selectable: boolean;
+  public static shouldBeCompied: boolean = false;
   public id: string;
   public compiledHtml: string = null;
 
@@ -58,13 +59,24 @@ export default abstract class Block {
     return null;
   }
 
-  public serializedString(): string {
+  public async serializedString(): string {
     return this.htmlString();
   }
 
-  public serialize(): string {
+  public async compile(): void {
+    throw "Should be implemented for each concrete class";
+  }
+
+  public async serialize(): string {
+    if (
+      (this.constructor as typeof Block).shouldBeCompied &&
+      !this.compiledHtml
+    ) {
+      await this.compile();
+    }
+
     const m = this.metadata();
-    const html = this.serializedString();
+    const html = await this.serializedString();
 
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId

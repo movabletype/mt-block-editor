@@ -16,67 +16,28 @@
   </head>
   <body>
     <div>
-      <br />
-      <br />
-      <br />
-      <br />
       <form>
-        <textarea id="body">
-        &lt;!-- mtEditorBlock data-mt-block-type=&quot;textblock&quot;  --&gt;
-&lt;p&gt;axxwwww&lt;/p&gt;
-&lt;!-- /mtEditorBlock --&gt;&lt;!-- mtEditorBlock data-mt-block-type=&quot;mtnet-image&quot; data-mt-block-meta=&quot;{&amp;quot;assetId&amp;quot;:10387}&quot; --&gt;&lt;figure style=&quot;display:inline-block&quot;&gt;&lt;img src=&quot;https://tamano-20190823.movabletype.io.vagrant.local/.assets/thumbnail/IMG_5551-640wri.jpg&quot; alt=&quot;abc&quot; width=&quot;640&quot; height=&quot;853&quot;/&gt;&lt;figcaption&gt;def&lt;/figcaption&gt;&lt;/figure&gt;&lt;!-- /mtEditorBlock --&gt;
-      </textarea
-        >
+        <textarea id="body"></textarea>
         <input type="submit" id="submit" />
+        <input type="reset" id="reset" />
         <input type="submit" id="unload" value="Unload" />
       </form>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
       <script>
-        document.getElementById("body").value = `
-
-<!-- mtEditorBlock data-mt-block-type="textblock"--><p>axxwwww</p><!-- /mtEditorBlock --><!-- mtEditorBlock data-mt-block-type="test-block" data-mt-block-html="&lt;!-- mtEditorBlock data-mt-block-type=&quot;textblock&quot;--&gt;&lt;p&gt;https://twitter.com/tonycassara2/status/1201381978806734848&lt;/p&gt;&lt;!-- /mtEditorBlock --&gt;"--><blockquote class="twitter-tweet"><p lang="en" dir="ltr">Can you help configure HTTPS on my CloudFront? 😤</p>&mdash; Tony Cassara (@tonycassara2) <a href="https://twitter.com/tonycassara2/status/1201381978806734848?ref_src=twsrc%5Etfw">December 2, 2019</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></scr` + `ipt>
-<!-- /mtEditorBlock -->
-
-        `;
+        document.getElementById("body").value =
+          sessionStorage.getItem("MTBlockEditorBody") || "";
       </script>
     </div>
     <script src="./dist/mt-block-editor.js"></script>
+    <script src="./register-block.js"></script>
     <script>
-      MTBlockEditor.registerBlock(
-        MTBlockEditor.createBoilerplateBlock({
-          id: "test-block",
-          label: "テスト",
-          html:
-            `<!-- mtEditorBlock data-mt-block-type="textblock"--><p>http://</p><!-- /mtEditorBlock -->`,
-          canRemoveBlock: false,
-          addableBlockTypes: [],
-          previewHeader:
-            `
-<script>
-document.addEventListener('DOMContentLoaded', async function() {
-  const url = document.querySelector("p").textContent;
-  const res = await fetch("https://noembed.com/embed?url=" + url);
-  const data = await res.json();
-
-  parent.postMessage( { method: "MTBlockEditorSetCompiledHtml", blockId: document.body.dataset.blockId, html: data.html, }, "*")
-});
-</sc` +
-            `ript>
-          `,
-        })
-      );
       MTBlockEditor.apply({
         id: "body",
         stylesheets: [
-          //'https://taaas.jp/mt-static/support/theme_static/rainier/css/base.css',
+          (() => {
+            const a = document.createElement("A");
+            a.href = "./editor-content.css";
+            return a.href;
+          })(),
         ],
       });
 
@@ -84,10 +45,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         .getElementById("submit")
         .form.addEventListener("submit", function(ev) {
           ev.preventDefault();
-          document
-            .getElementById("submit")
-            .form.dispatchEvent(new Event("MTBlockEditorSerialize"));
+          MTBlockEditor.serialize().then(function() {
+            console.log("serialized");
+            sessionStorage.setItem(
+              "MTBlockEditorBody",
+              document.querySelector("#body").value
+            );
+          });
         });
+
+      document.getElementById("reset").addEventListener("click", function(ev) {
+        ev.preventDefault();
+        sessionStorage.setItem("MTBlockEditorBody", "");
+        location.reload();
+      });
 
       document.getElementById("unload").addEventListener("click", function(ev) {
         ev.preventDefault();

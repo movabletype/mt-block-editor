@@ -4,7 +4,7 @@ import Editor, { EditorOptions } from "./Editor";
 
 class EditorManager {
   private static _instance: EditorManager;
-  private editors: Editor[];
+  public editors: Editor[];
 
   public static instance(): EditorManager {
     this._instance = this._instance || new EditorManager();
@@ -23,12 +23,12 @@ class EditorManager {
     return this.editors.find((e: Editor) => e.id === id);
   }
 
-  public remove(id: string): void {
+  public async remove(id: string): void {
     const e = this.get(id);
     if (!e) {
       return;
     }
-    e.serialize();
+    await e.serialize();
     e.unload();
 
     const index = this.editors.indexOf(e);
@@ -51,9 +51,14 @@ class EditorUtil {
     return m.get(id);
   }
 
-  public static unload({ id }: { id: string }): void {
+  public static async unload({ id }: { id: string }): void {
     const m = EditorManager.instance();
     m.remove(id);
+  }
+
+  public static async serialize(): void {
+    const m = EditorManager.instance();
+    await Promise.all(m.editors.map(e => e.serialize()));
   }
 }
 
@@ -75,6 +80,7 @@ EditorUtil.createBoilerplateBlock = ({
   html,
   canRemoveBlock,
   addableBlockTypes,
+  shouldBeCompied,
   previewHeader,
 }) => {
   const newClass = function(init) {
@@ -102,6 +108,9 @@ EditorUtil.createBoilerplateBlock = ({
     newClass.icon = icon;
   }
   newClass.selectable = true;
+  if (shouldBeCompied !== undefined) {
+    newClass.shouldBeCompied = shouldBeCompied;
+  }
 
   Object.setPrototypeOf(newClass, Column);
 

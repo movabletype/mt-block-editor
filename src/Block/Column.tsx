@@ -1,5 +1,6 @@
 import { t } from "../i18n";
 import React, { useState, useEffect } from "react";
+import { render } from "react-dom";
 import { useEditorContext, BlocksContext } from "../Context";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import AddButton from "../Component/AddButton";
@@ -122,12 +123,43 @@ class Column extends Block {
       .join("")}</div>`;
   }
 
-  public serializedString(): string {
-    return this.blocks.map(c => c.serialize()).join("");
+  public async serializedString(): string {
+    const serializedBlocks = await Promise.all(this.blocks.map(c => c.serialize()));
+    return serializedBlocks.join("");
   }
 
-  public serialize(): string {
-    if (this.compiledHtml) {
+  public async compile() {
+    return new Promise((resolve, reject) => {
+      const div = document.createElement("DIV");
+      Object.assign(div.style, {
+        position: "absolute",
+        overflow: "hidden",
+        height: "0px",
+        border: "none",
+      });
+      document.body.appendChild(div);
+
+      const onSetCompiledHtml = () => {
+        div.remove();
+        resolve();
+      }
+
+      render(
+          <BlockIframePreview
+            key={this.id}
+            block={this}
+            header={this.previewHeader}
+            onSetCompiledHtml={onSetCompiledHtml}
+          />
+      , div)
+    });
+  }
+
+  public async serialize(): string {
+    if (
+      (this.constructor as typeof Block).shouldBeCompied ||
+      this.compiledHtml
+    ) {
       return super.serialize();
     }
 
@@ -135,7 +167,7 @@ class Column extends Block {
     const className = (this.constructor as typeof Block).className;
     return `<!-- mtEditorBlock data-mt-block-type="${typeId}" --><div${
       className ? ` class="${className}"` : ""
-    }>${this.serializedString()}</div><!-- /mtEditorBlock -->`;
+    }>${await this.serializedString()}</div><!-- /mtEditorBlock -->`;
   }
 
   public static async newFromHtml({
