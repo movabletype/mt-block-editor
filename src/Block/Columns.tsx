@@ -45,7 +45,7 @@ class Columns extends Block {
       .join("")}</div>`;
   }
 
-  public async serialize(): string {
+  public async serialize(): Promise<string> {
     const serializedColumns = await Promise.all(
       this.columns.map(c => c.serialize())
     );
@@ -59,7 +59,7 @@ class Columns extends Block {
   public static async newFromHtml({
     node,
     factory,
-  }: NewFromHtmlOptions): Block {
+  }: NewFromHtmlOptions): Promise<Block> {
     const columns = (await parseContent(
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")

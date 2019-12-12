@@ -5,7 +5,7 @@ import icon from "./img/icon/default-block.svg";
 
 export interface EditorOptions {
   focus: boolean;
-  canRemove: boolean;
+  canRemove?: boolean;
 }
 
 export interface NewFromHtmlOptions {
@@ -15,6 +15,7 @@ export interface NewFromHtmlOptions {
 }
 
 export interface Metadata {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -23,12 +24,12 @@ export default abstract class Block {
   public static label: string;
   public static icon: string = icon;
   public static selectable: boolean;
-  public static shouldBeCompied: boolean = false;
+  public static shouldBeCompied = false;
   public id: string;
-  public compiledHtml: string = null;
+  public compiledHtml = "";
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static async newFromHtml(opts: NewFromHtmlOptions): Block {
+  static async newFromHtml(opts: NewFromHtmlOptions): Promise<Block> {
     throw "Should be implemented for each concrete class";
   }
 
@@ -38,7 +39,7 @@ export default abstract class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static async newFromFile(file: File): Block {
+  static async newFromFile(file: File): Promise<Block> {
     throw "Should be implemented for each concrete class";
   }
 
@@ -59,15 +60,15 @@ export default abstract class Block {
     return null;
   }
 
-  public async serializedString(): string {
+  public async serializedString(): Promise<string> {
     return this.htmlString();
   }
 
-  public async compile(): void {
+  public async compile(): Promise<void> {
     throw "Should be implemented for each concrete class";
   }
 
-  public async serialize(): string {
+  public async serialize(): Promise<string> {
     if (
       (this.constructor as typeof Block).shouldBeCompied &&
       !this.compiledHtml

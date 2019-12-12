@@ -1,6 +1,5 @@
 import { t } from "../i18n";
-import React, { useState, useEffect } from "react";
-import { useEditorContext } from "../Context";
+import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { useEditorUtil } from "../hooks/useEditorUtil";
 import BlockIframePreview from "../Component/BlockIframePreview";
@@ -10,7 +9,7 @@ interface EditorProps {
   block: Html;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
+const Editor: React.FC<EditorProps> = () => {
   return (
     <div>
       <textarea name="text" style={{ width: "100%" }} />
@@ -31,7 +30,7 @@ class Html extends Block {
 
   public text = "";
 
-  public constructor(init?: Partial<Image>) {
+  public constructor(init?: Partial<Html>) {
     super();
     if (init) {
       Object.assign(this, init);
@@ -46,11 +45,13 @@ class Html extends Block {
     );
   }
 
-  public html(): JSX.Element {
+  public html(): string {
     return this.text;
   }
 
-  public static async newFromHtml({ html }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({
+    html,
+  }: NewFromHtmlOptions): Promise<Block> {
     return new Html({
       text: html,
     });

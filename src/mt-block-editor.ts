@@ -1,45 +1,41 @@
 import { t } from "./i18n";
 import "./mt-block-editor.scss";
 import Editor, { EditorOptions } from "./Editor";
+import EditorManager from "./EditorManager";
 
-class EditorManager {
-  private static _instance: EditorManager;
-  public editors: Editor[];
+import React from "react";
+import Block from "./Block";
+import Column from "./Block/Column";
+import BlockFactory from "./BlockFactory";
 
-  public static instance(): EditorManager {
-    this._instance = this._instance || new EditorManager();
-    return this._instance;
-  }
+interface BoilerplateBlockOptions {
+  id: string;
+  label: string;
+  icon: string;
+  html: string;
+  canRemoveBlock: boolean;
+  addableBlockTypes: string[];
+  shouldBeCompied: boolean;
+  previewHeader: string;
+}
 
-  public constructor() {
-    this.editors = [];
-  }
+interface BoilerplateBlockOverwrites {
+  _html: string;
+  canRemoveBlock?: boolean;
+  addableBlockTypes?: string[];
+  previewHeader?: string;
+}
 
-  public add(e: Editor): void {
-    this.editors.push(e);
-  }
-
-  public get(id: string): Editor {
-    return this.editors.find((e: Editor) => e.id === id);
-  }
-
-  public async remove(id: string): void {
-    const e = this.get(id);
-    if (!e) {
-      return;
-    }
-    await e.serialize();
-    e.unload();
-
-    const index = this.editors.indexOf(e);
-    if (index === -1) {
-      return;
-    }
-    this.editors.splice(index, 1);
-  }
+interface BoilerplateBlockInitOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 class EditorUtil {
+  public static i18n = { t };
+  public static React = React;
+  public static Block = Block;
+
   public static apply(opts: EditorOptions): void {
     const m = EditorManager.instance();
     const e = new Editor(opts);
@@ -51,71 +47,67 @@ class EditorUtil {
     return m.get(id);
   }
 
-  public static async unload({ id }: { id: string }): void {
+  public static async unload({ id }: { id: string }): Promise<void> {
     const m = EditorManager.instance();
     m.remove(id);
   }
 
-  public static async serialize(): void {
+  public static async serialize(): Promise<void> {
     const m = EditorManager.instance();
     await Promise.all(m.editors.map(e => e.serialize()));
   }
-}
 
-import React from "react";
-import Block from "./Block";
-import Column from "./Block/Column";
-import BlockFactory from "./BlockFactory";
+  public static registerBlock(block: typeof Block): void {
+    BlockFactory.registerType(block);
+  }
 
-EditorUtil.i18n = { t };
-EditorUtil.React = React;
-EditorUtil.Block = Block;
-EditorUtil.registerBlock = block => {
-  BlockFactory.registerType(block);
-};
-EditorUtil.createBoilerplateBlock = ({
-  id,
-  label,
-  icon,
-  html,
-  canRemoveBlock,
-  addableBlockTypes,
-  shouldBeCompied,
-  previewHeader,
-}) => {
-  const newClass = function(init) {
-    const overwrite = {
-      _html: html,
+  public static createBoilerplateBlock({
+    id,
+    label,
+    icon,
+    html,
+    canRemoveBlock,
+    addableBlockTypes,
+    shouldBeCompied,
+    previewHeader,
+  }: BoilerplateBlockOptions): typeof Block {
+    const BoilerplateBlock = function(
+      this: Column,
+      init: BoilerplateBlockInitOptions
+    ): void {
+      const overwrite: BoilerplateBlockOverwrites = {
+        _html: html,
+      };
+      if (canRemoveBlock !== undefined) {
+        overwrite.canRemoveBlock = canRemoveBlock;
+      }
+      if (addableBlockTypes) {
+        overwrite.addableBlockTypes = addableBlockTypes;
+      }
+      if (previewHeader !== undefined) {
+        overwrite.previewHeader = previewHeader;
+      }
+      Column.call(this, Object.assign(overwrite, init || {}));
     };
-    if (canRemoveBlock !== undefined) {
-      overwrite.canRemoveBlock = canRemoveBlock;
-    }
-    if (addableBlockTypes) {
-      overwrite.addableBlockTypes = addableBlockTypes;
-    }
-    if (previewHeader !== undefined) {
-      overwrite.previewHeader = previewHeader;
-    }
-    Column.call(this, Object.assign(overwrite, init || {}));
-  };
 
-  newClass.prototype = Object.create(Column.prototype);
-  newClass.prototype.constructor = newClass;
-  newClass.typeId = id;
-  newClass.className = id;
-  newClass.label = label;
-  if (icon) {
-    newClass.icon = icon;
+    BoilerplateBlock.prototype = Object.create(Column.prototype);
+    BoilerplateBlock.prototype.constructor = BoilerplateBlock;
+    BoilerplateBlock.typeId = id;
+    BoilerplateBlock.className = id;
+    BoilerplateBlock.label = label;
+    if (icon) {
+      BoilerplateBlock.icon = icon;
+    }
+    BoilerplateBlock.selectable = true;
+    if (shouldBeCompied !== undefined) {
+      BoilerplateBlock.shouldBeCompied = shouldBeCompied;
+    }
+
+    Object.setPrototypeOf(BoilerplateBlock, Column);
+
+    return (BoilerplateBlock as unknown) as typeof Block;
   }
-  newClass.selectable = true;
-  if (shouldBeCompied !== undefined) {
-    newClass.shouldBeCompied = shouldBeCompied;
-  }
-
-  Object.setPrototypeOf(newClass, Column);
-
-  return newClass;
-};
+}
 
 declare global {
   interface Window {

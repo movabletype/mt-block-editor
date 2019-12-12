@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useEditorContext } from "../Context";
 import Block from "../Block";
+import Editor from "../Editor";
 
 interface EditorProps {
   block: Block;
   header?: string;
-  onSetCompiledHtml?: () => void;
+  onSetCompiledHtml?: (error?: Error) => void;
 }
 
-function postMessageFunc() {
+function postMessageFunc(): void {
   const body = document.body;
   const html = document.documentElement;
   const height = Math.max(
@@ -38,7 +39,7 @@ function postMessageFunc() {
   );
 }
 
-function setCompiledHtmlFunc(html) {
+function setCompiledHtmlFunc(html: string): void {
   parent.postMessage(
     {
       method: "MTBlockEditorSetCompiledHtml",
@@ -62,18 +63,26 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     // ignore;
   }
 
-  const [src, setSrc] = useState("");
   const [, _setCompiledHtml] = useState(
     block.compiledHtml || block.htmlString()
   );
   const [size, setSize] = useState({ width: "100%", height: "100px" });
 
-  const setCompiledHtml = html => {
-    block.compiledHtml = html;
+  const setCompiledHtml = (res: string | Error): void => {
+    if (res instanceof Error) {
+      if (onSetCompiledHtml) {
+        onSetCompiledHtml(res);
+      } else {
+        // TODO: report error
+      }
+      return;
+    }
+
+    block.compiledHtml = res;
     if (onSetCompiledHtml) {
       onSetCompiledHtml();
     }
-    _setCompiledHtml(html);
+    _setCompiledHtml(res);
   };
 
   const html = block.compiledHtml || block.htmlString();
@@ -100,14 +109,10 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     ],
     { type: "text/html" }
   );
-  const reader = new FileReader();
-  reader.readAsDataURL(blob);
-  reader.onload = () => {
-    setSrc(reader.result);
-  };
+  const src = URL.createObjectURL(blob);
 
   useEffect(() => {
-    const onMessage = ev => {
+    const onMessage = (ev: MessageEvent): void => {
       if (!(typeof ev.data === "object" && ev.data.blockId === block.id)) {
         return;
       }
@@ -122,7 +127,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           }
           break;
         case "MTBlockEditorSetCompiledHtml":
-          setCompiledHtml(ev.data.html);
+          setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"));
           break;
       }
     };
@@ -138,16 +143,15 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     };
   });
 
-  return src ? (
+  return (
     <div style={{ padding: "20px" }}>
       <iframe
         src={src}
         frameBorder="0"
+        sandbox="allow-scripts"
         style={Object.assign({ border: "1px solid #ccc" }, size)}
       />
     </div>
-  ) : (
-    <span />
   );
 };
 

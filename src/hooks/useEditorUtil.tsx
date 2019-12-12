@@ -54,11 +54,12 @@ export function useEditorUtil(
           if (!ev.target) {
             return;
           }
-          const value = (ev.target as HTMLInputElement).value;
+          const target = ev.target as HTMLElement;
+          const value = (target as HTMLInputElement).value;
           block[n] = value;
 
-          (ev.target as HTMLTextareaElement).rows = Math.max(
-            parseInt(ev.target.dataset.defaultRows, 10),
+          (target as HTMLTextAreaElement).rows = Math.max(
+            parseInt(target.dataset.defaultRows || "0", 10),
             value.split(/\r|\n/).length
           );
 

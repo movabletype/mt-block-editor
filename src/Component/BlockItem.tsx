@@ -20,7 +20,7 @@ interface DragObject extends DragObjectWithType {
 
 interface Props {
   block: Block;
-  setFocus: () => void;
+  setFocus?: () => void;
   focus: boolean;
   id: string;
   index: number;
@@ -123,7 +123,11 @@ const BlockItem: React.FC<Props> = ({
   return (
     <div
       key={b.id}
-      onClick={() => setFocus()}
+      onClick={() => {
+        if (setFocus) {
+          setFocus();
+        }
+      }}
       className={`block-wrapper ${focus ? "focus" : ""}`}
       style={{ opacity }}
       ref={ref}

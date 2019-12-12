@@ -41,19 +41,17 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     },
   };
 
-  useEffect(
-    block._html === null
-      ? () => {}
-      : () => {
-          parseContent(preParseContent(block._html), editor.factory).then(
-            blocks => {
-              block._html = null;
-              block.blocks = blocks;
-              updateBlocks(([] as Block[]).concat(block.blocks));
-            }
-          );
-        }
-  );
+  useEffect(() => {
+    if (block._html === "") {
+      return;
+    }
+
+    parseContent(preParseContent(block._html), editor.factory).then(blocks => {
+      block._html = "";
+      block.blocks = blocks;
+      updateBlocks(([] as Block[]).concat(block.blocks));
+    });
+  });
 
   return (
     <BlocksContext.Provider value={blocksContext}>
@@ -63,7 +61,6 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             key={b.id}
             id={b.id}
             block={b}
-            setFocus={() => {}}
             focus={focus}
             index={i}
             parentId={block.id}
@@ -89,8 +86,8 @@ class Column extends Block {
     return t("Column");
   }
 
-  public _html: string = null;
-  public previewHeader: string = null;
+  public _html = "";
+  public previewHeader = "";
   public blocks: Block[] = [];
 
   public canRemoveBlock = true;
@@ -117,18 +114,20 @@ class Column extends Block {
   }
 
   public html(): string {
-    const className = (this.constructor as typeof Block).className;
-    return `<div${className ? ` class="${className}"` : ""}>${this.blocks
-      .map(c => c.htmlString())
-      .join("")}</div>`;
+    const className = (this.constructor as typeof Column).className;
+    return `<div${
+      className ? ` class="${className}"` : ""
+    }>${this.blocks.map(c => c.htmlString()).join("")}</div>`;
   }
 
-  public async serializedString(): string {
-    const serializedBlocks = await Promise.all(this.blocks.map(c => c.serialize()));
+  public async serializedString(): Promise<string> {
+    const serializedBlocks = await Promise.all(
+      this.blocks.map(c => c.serialize())
+    );
     return serializedBlocks.join("");
   }
 
-  public async compile() {
+  public async compile(): Promise<void> {
     return new Promise((resolve, reject) => {
       const div = document.createElement("DIV");
       Object.assign(div.style, {
@@ -139,23 +138,28 @@ class Column extends Block {
       });
       document.body.appendChild(div);
 
-      const onSetCompiledHtml = () => {
+      const onSetCompiledHtml = (error?: Error): void => {
         div.remove();
-        resolve();
-      }
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      };
 
       render(
-          <BlockIframePreview
-            key={this.id}
-            block={this}
-            header={this.previewHeader}
-            onSetCompiledHtml={onSetCompiledHtml}
-          />
-      , div)
+        <BlockIframePreview
+          key={this.id}
+          block={this}
+          header={this.previewHeader}
+          onSetCompiledHtml={onSetCompiledHtml}
+        />,
+        div
+      );
     });
   }
 
-  public async serialize(): string {
+  public async serialize(): Promise<string> {
     if (
       (this.constructor as typeof Block).shouldBeCompied ||
       this.compiledHtml
@@ -163,8 +167,8 @@ class Column extends Block {
       return super.serialize();
     }
 
-    const typeId = (this.constructor as typeof Block).typeId;
-    const className = (this.constructor as typeof Block).className;
+    const typeId = (this.constructor as typeof Column).typeId;
+    const className = (this.constructor as typeof Column).className;
     return `<!-- mtEditorBlock data-mt-block-type="${typeId}" --><div${
       className ? ` class="${className}"` : ""
     }>${await this.serializedString()}</div><!-- /mtEditorBlock -->`;
@@ -173,14 +177,14 @@ class Column extends Block {
   public static async newFromHtml({
     node,
     factory,
-  }: NewFromHtmlOptions): Block {
+  }: NewFromHtmlOptions): Promise<Block> {
     const html =
       preParseContent(node.getAttribute("data-mt-block-html") || "") ||
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, "");
     const blocks = await parseContent(html, factory);
-    return new this({ blocks, _html: null });
+    return new this({ blocks, _html: undefined });
   }
 }
 

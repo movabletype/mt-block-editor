@@ -11,10 +11,15 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
   const { editor } = useEditorContext();
   const { addBlock } = useBlocksContext();
   const [showList, setShowList] = useState(false);
-  const buttonEl = useRef(null);
+  const buttonElRef = useRef(null);
 
-  const onDrop = ev => {
-    buttonEl.current.classList.remove("droppable");
+  const onDrop = (): void => {
+    if (buttonElRef.current === null) {
+      return;
+    }
+
+    const buttonEl = (buttonElRef.current as unknown) as HTMLElement;
+    buttonEl.classList.remove("droppable");
   };
   useEffect(() => {
     document.addEventListener("drop", onDrop, {
@@ -37,7 +42,7 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
     <>
       <div
         style={{ position: "relative" }}
-        ref={buttonEl}
+        ref={buttonElRef}
         onDragOver={ev => {
           if (!ev.dataTransfer.types.find(t => t === "Files")) {
             return;

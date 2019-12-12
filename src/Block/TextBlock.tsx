@@ -4,6 +4,7 @@ import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
 import { useBlocksContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
+import { getElementById } from "../util";
 
 declare const tinymce: EditorManager;
 
@@ -28,9 +29,12 @@ const Editor: React.FC<EditorProps> = ({
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
         "bullist numlist outdent indent | blockquote link unlink",
       ],
+
       // selection_toolbar: "formatselect | bold italic underline | quicklink blockquote",
       // insert_toolbar: "formatselect | bold italic underline | quicklink blockquote",
       // theme: "inlite",
+
+      // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       skin: "lightgray",
       inline: true,
@@ -61,9 +65,8 @@ const Editor: React.FC<EditorProps> = ({
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
-          document.getElementById(
-            `${block.tinymceId()}toolbar`
-          ).style.visibility = "hidden";
+          getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+            "hidden";
 
           if (
             (e.keyCode === 8 || e.keyCode === 46) &&
@@ -78,12 +81,12 @@ const Editor: React.FC<EditorProps> = ({
       },
     });
 
-    const onMouseMove = () => {
+    const onMouseMove = (): void => {
       if (tinymce.activeEditor !== editor) {
         return;
       }
 
-      document.getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+      getElementById(`${block.tinymceId()}toolbar`).style.visibility =
         "visible";
     };
     window.addEventListener("mousemove", onMouseMove, {
@@ -106,14 +109,12 @@ const Editor: React.FC<EditorProps> = ({
     <div
       style={{ position: "relative" }}
       onClick={() => {
-        document.getElementById(
-          `${block.tinymceId()}toolbar`
-        ).style.visibility = "visible";
+        getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+          "visible";
       }}
       onMouseMove={() => {
-        document.getElementById(
-          `${block.tinymceId()}toolbar`
-        ).style.visibility = "visible";
+        getElementById(`${block.tinymceId()}toolbar`).style.visibility =
+          "visible";
       }}
     >
       <div
@@ -172,7 +173,9 @@ class TextBlock extends Block {
     }
   }
 
-  public static async newFromHtml({ html }: NewFromHtmlOptions): Block {
+  public static async newFromHtml({
+    html,
+  }: NewFromHtmlOptions): Promise<Block> {
     return new TextBlock({ text: html });
   }
 }

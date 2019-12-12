@@ -54,7 +54,7 @@ export function preParseContent(value: string): string {
 export async function parseContent(
   value: string,
   factory: BlockFactory
-): Block[] {
+): Promise<Block[]> {
   if (!value) {
     return [];
   }
@@ -62,6 +62,7 @@ export async function parseContent(
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(
     `<xml>${value.replace(
+      // eslint-disable-next-line no-control-regex
       /[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD]/gm,
       ""
     )}</xml>`,

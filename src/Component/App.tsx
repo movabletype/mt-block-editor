@@ -13,7 +13,7 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
-  const editorEl = useRef(null);
+  const editorElRef = useRef(null);
   const [focusedId, setFocus] = useState<string | null>(null);
   const [blocks, updateBlocks] = useState(editor.blocks);
   const editorContext = {
@@ -51,9 +51,13 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   window.addEventListener(
     "click",
     ev => {
-      if (
-        editorEl.current.querySelector(`[data-mt-block-editor-keep-focus="1"]`)
-      ) {
+      if (editorElRef.current === null) {
+        return;
+      }
+
+      const editorEl = (editorElRef.current as unknown) as HTMLElement;
+
+      if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
         return;
       }
 
@@ -62,7 +66,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         if (target.classList.contains("mce-container")) {
           return;
         }
-        if (target === editorEl.current) {
+        if (target === editorEl) {
           return;
         }
         target = target.parentNode as HTMLElement;
@@ -80,7 +84,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
         <DndProvider backend={HTML5Backend}>
-          <div ref={editorEl}>
+          <div ref={editorElRef}>
             {blocks.map((b, i) => {
               const focus = b.id === focusedId;
               return (
@@ -94,6 +98,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                   focus={focus}
                   index={i}
                   showButton={true}
+                  canRemove={true}
                 />
               );
             })}

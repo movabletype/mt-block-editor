@@ -28,16 +28,17 @@ class Editor {
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
 
-    if (!this.inputElement.parentNode) {
-      return;
-    }
+    this.editorElement = document.createElement("DIV");
+    this.blocks = [];
 
     parseContent(preParseContent(this.inputElement.value), this.factory).then(
       blocks => {
         this.blocks = blocks;
-
-        this.editorElement = document.createElement("DIV");
         this.editorElement.classList.add("mt-block-editor");
+
+        if (!this.inputElement.parentNode) {
+          return;
+        }
 
         this.inputElement.parentNode.insertBefore(
           this.editorElement,
@@ -60,8 +61,8 @@ class Editor {
     blocks.splice(index, 1);
   }
 
-  public async serialize(): void {
-    const values = await Promise.all(this.blocks.map((b) => b.serialize()));
+  public async serialize(): Promise<void> {
+    const values = await Promise.all(this.blocks.map(b => b.serialize()));
     this.inputElement.value = values.join("");
   }
 
