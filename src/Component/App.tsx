@@ -20,6 +20,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     editor: editor,
   };
   const blocksContext = {
+    addableBlockTypes: null,
     addBlock: (b: Block, index: number | Block) => {
       if (index instanceof Block) {
         index = editor.blocks.indexOf(index) + 1;

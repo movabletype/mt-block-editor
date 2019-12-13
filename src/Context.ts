@@ -15,6 +15,7 @@ export function useEditorContext(): EditorContextProps {
 }
 
 interface BlocksContextProps {
+  addableBlockTypes: string[] | null;
   addBlock: (b: Block, index: number | Block) => void;
   removeBlock: (b: Block) => void;
   swapBlocks: (a: number, b: number, scroll?: boolean) => void;

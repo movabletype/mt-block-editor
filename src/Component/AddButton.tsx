@@ -9,7 +9,7 @@ interface AddButtonProps {
 
 const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
   const { editor } = useEditorContext();
-  const { addBlock } = useBlocksContext();
+  const { addableBlockTypes, addBlock } = useBlocksContext();
   const [showList, setShowList] = useState(false);
   const buttonElRef = useRef(null);
 
@@ -88,24 +88,34 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
       <div className="block-list-wrapper">
         {showList && (
           <ul className="block-list">
-            {editor.factory.selectableTypes().map((t: typeof Block) => (
-              <li key={t.typeId}>
-                <a
-                  href="#"
-                  onClick={ev => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    ev.nativeEvent.stopImmediatePropagation();
-                    addBlock(new (t as typeof TextBlock)() as Block, index);
-                    setShowList(false);
-                  }}
-                >
-                  <img src={t.icon} />
-                  <br />
-                  {t.label}
-                </a>
-              </li>
-            ))}
+            {editor.factory
+              .selectableTypes()
+              .filter(t => {
+                if (!addableBlockTypes) {
+                  return true;
+                }
+                return (
+                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
+                );
+              })
+              .map((t: typeof Block) => (
+                <li key={t.typeId}>
+                  <a
+                    href="#"
+                    onClick={ev => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      ev.nativeEvent.stopImmediatePropagation();
+                      addBlock(new (t as typeof TextBlock)() as Block, index);
+                      setShowList(false);
+                    }}
+                  >
+                    <img src={t.icon} />
+                    <br />
+                    {t.label}
+                  </a>
+                </li>
+              ))}
           </ul>
         )}
       </div>

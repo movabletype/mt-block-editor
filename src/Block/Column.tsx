@@ -17,6 +17,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
   const [blocks, updateBlocks] = useState(block.blocks);
   const blocksContext = {
+    addableBlockTypes: block.addableBlockTypes,
     addBlock: (b: Block, index: number | Block) => {
       if (index instanceof Block) {
         index = block.blocks.indexOf(index) + 1;
@@ -93,7 +94,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             showButton={focus && block.canRemoveBlock}
           />
         ))}
-        {focus && !block.addableBlockTypes && (
+        {focus && block.canRemoveBlock && (
           <div className="btn-add-bottom">
             <AddButton index={blocks.length} />
           </div>
