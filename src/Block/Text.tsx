@@ -9,7 +9,7 @@ import { getElementById } from "../util";
 declare const tinymce: EditorManager;
 
 interface EditorProps extends EditorOptions {
-  block: TextBlock;
+  block: Text;
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -60,7 +60,7 @@ const Editor: React.FC<EditorProps> = ({
           ed.dom.remove(newBlock);
           if (canRemove) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            addBlock(new TextBlock(), block);
+            addBlock(new Text(), block);
           }
         });
 
@@ -135,17 +135,17 @@ const Editor: React.FC<EditorProps> = ({
   );
 };
 
-class TextBlock extends Block {
-  public static typeId = "textblock";
+class Text extends Block {
+  public static typeId = "text";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {
-    return t("TextBlock");
+    return t("Text");
   }
 
   public text = "";
 
-  public constructor(init?: Partial<TextBlock>) {
+  public constructor(init?: Partial<Text>) {
     super();
     if (init) {
       Object.assign(this, init);
@@ -176,8 +176,8 @@ class TextBlock extends Block {
   public static async newFromHtml({
     html,
   }: NewFromHtmlOptions): Promise<Block> {
-    return new TextBlock({ text: html });
+    return new Text({ text: html });
   }
 }
 
-export default TextBlock;
+export default Text;

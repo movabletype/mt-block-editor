@@ -1,6 +1,6 @@
 import Block from "./Block";
 import BlockFactory from "./BlockFactory";
-import TextBlock from "./Block/TextBlock";
+import Text from "./Block/Text";
 import Column from "./Block/Column";
 
 export function getElementById(id: string): HTMLElement {
@@ -90,7 +90,7 @@ export async function parseContent(
 
     const block = await t
       .newFromHtml(param)
-      .catch(() => TextBlock.newFromHtml(param));
+      .catch(() => Text.newFromHtml(param));
     blocks.push(block);
   }
 

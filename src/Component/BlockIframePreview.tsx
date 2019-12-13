@@ -7,6 +7,7 @@ interface EditorProps {
   block: Block;
   header?: string;
   onSetCompiledHtml?: (error?: Error) => void;
+  border?: string;
 }
 
 function postMessageFunc(): void {
@@ -70,6 +71,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   block,
   header,
   onSetCompiledHtml,
+  border,
 }: EditorProps) => {
   let editor: Editor | undefined;
   try {
@@ -176,7 +178,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         src={src}
         frameBorder="0"
         sandbox="allow-scripts"
-        style={Object.assign({ border: "1px solid #ccc" }, size)}
+        style={Object.assign({ border: border || "1px solid #ccc" }, size)}
       />
     </div>
   );

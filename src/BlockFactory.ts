@@ -15,7 +15,7 @@ class BlockFactory {
   }
 }
 
-import TextBlock from "./Block/TextBlock";
+import Text from "./Block/Text";
 //import Image from "./Block/Image";
 //import File from "./Block/File";
 import Table from "./Block/Table";
@@ -24,7 +24,7 @@ import Html from "./Block/Html";
 import Columns from "./Block/Columns";
 import Column from "./Block/Column";
 
-BlockFactory.registerType(TextBlock);
+BlockFactory.registerType(Text);
 //BlockFactory.registerType(Image);
 //BlockFactory.registerType(File);
 BlockFactory.registerType(Table);

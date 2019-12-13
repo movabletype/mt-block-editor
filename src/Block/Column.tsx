@@ -127,13 +127,16 @@ class Column extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    if (!focus) {
+    if ((this.constructor as typeof Column).typeId !== "column" && !focus) {
       return (
-        <BlockIframePreview
-          key={this.id}
-          block={this}
-          header={this.previewHeader}
-        />
+        <div className="column" style={{ width: "100%" }}>
+          <BlockIframePreview
+            key={this.id}
+            block={this}
+            header={this.previewHeader}
+            border="none"
+          />
+        </div>
       );
     }
     return <Editor key={this.id} block={this} focus={focus} />;
@@ -210,6 +213,11 @@ class Column extends Block {
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, "");
     const blocks = await parseContent(html, factory);
+
+    if (html && blocks.length === 0) {
+      throw Error("This content is not for this block");
+    }
+
     return new this({ blocks, _html: "" });
   }
 }

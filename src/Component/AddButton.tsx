@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
-import TextBlock from "../Block/TextBlock";
+import Text from "../Block/Text";
 
 interface AddButtonProps {
   index: number;
@@ -106,7 +106,7 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
                       ev.preventDefault();
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();
-                      addBlock(new (t as typeof TextBlock)() as Block, index);
+                      addBlock(new (t as typeof Text)() as Block, index);
                       setShowList(false);
                     }}
                   >
