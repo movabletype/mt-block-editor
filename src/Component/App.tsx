@@ -36,7 +36,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       }
       updateBlocks(([] as Block[]).concat(editor.blocks));
     },
-    swapBlocks: (dragIndex: number, hoverIndex: number) => {
+    swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
         dragIndex === undefined ||
         hoverIndex === undefined ||
@@ -46,22 +46,24 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         return;
       }
 
-      const destEl = document.querySelector(
-        `[data-mt-block-editor-block-id="${editor.blocks[dragIndex].id}"]`
-      );
-      if (!destEl) {
-        return;
+      if (scroll) {
+        const destEl = document.querySelector(
+          `[data-mt-block-editor-block-id="${editor.blocks[dragIndex].id}"]`
+        );
+        if (!destEl) {
+          return;
+        }
+
+        const rect = destEl.getBoundingClientRect();
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const offsetTop = rect.height + 22;
+
+        window.scrollTo({
+          top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
+          behavior: "smooth",
+        });
       }
-
-      const rect = destEl.getBoundingClientRect();
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const offsetTop = rect.height + 22;
-
-      window.scrollTo({
-        top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
-        behavior: "smooth",
-      });
 
       [editor.blocks[dragIndex], editor.blocks[hoverIndex]] = [
         editor.blocks[hoverIndex],

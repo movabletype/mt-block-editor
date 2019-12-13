@@ -29,7 +29,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       editor.removeBlock(block.blocks, b);
       updateBlocks(([] as Block[]).concat(block.blocks));
     },
-    swapBlocks: (dragIndex: number, hoverIndex: number) => {
+    swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
         dragIndex === undefined ||
         hoverIndex === undefined ||
@@ -38,6 +38,26 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       ) {
         return;
       }
+
+      if (scroll) {
+        const destEl = document.querySelector(
+          `[data-mt-block-editor-block-id="${block.blocks[dragIndex].id}"]`
+        );
+        if (!destEl) {
+          return;
+        }
+
+        const rect = destEl.getBoundingClientRect();
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const offsetTop = rect.height + 22;
+
+        window.scrollTo({
+          top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
+          behavior: "smooth",
+        });
+      }
+
       [block.blocks[dragIndex], block.blocks[hoverIndex]] = [
         block.blocks[hoverIndex],
         block.blocks[dragIndex],
@@ -189,7 +209,7 @@ class Column extends Block {
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, "");
     const blocks = await parseContent(html, factory);
-    return new this({ blocks, _html: undefined });
+    return new this({ blocks, _html: "" });
   }
 }
 

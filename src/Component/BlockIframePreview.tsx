@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext } from "../Context";
 import Block from "../Block";
 import Editor from "../Editor";
@@ -50,6 +50,22 @@ function setCompiledHtmlFunc(html: string): void {
   );
 }
 
+function onClickFunc(): void {
+  document.addEventListener(
+    "click",
+    function() {
+      parent.postMessage(
+        {
+          method: "MTBlockEditorOnClick",
+          blockId: document.body.dataset.blockId,
+        },
+        "*"
+      );
+    },
+    { capture: true }
+  );
+}
+
 const BlockIframePreview: React.FC<EditorProps> = ({
   block,
   header,
@@ -63,6 +79,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     // ignore;
   }
 
+  const containerElRef = useRef(null);
   const [, _setCompiledHtml] = useState(
     block.compiledHtml || block.htmlString()
   );
@@ -97,6 +114,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           var MTBlockEditorSetCompiledHtml = (function() {
             return ${setCompiledHtmlFunc.toString()};
           })();
+          (function() {
+            (${onClickFunc.toString()})();
+          })();
         </script>
         ${editor &&
           editor.opts.stylesheets.map(
@@ -117,6 +137,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         return;
       }
 
+      const containerEl = containerElRef.current;
+
       switch (ev.data.method) {
         case "MTBlockEditorSetSize":
           if (
@@ -124,6 +146,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             size.height !== ev.data.arguments.height
           ) {
             setSize(ev.data.arguments);
+          }
+          break;
+        case "MTBlockEditorOnClick":
+          if (containerEl) {
+            (containerEl as HTMLElement).click();
           }
           break;
         case "MTBlockEditorSetCompiledHtml":
@@ -144,7 +171,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   });
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div ref={containerElRef}>
       <iframe
         src={src}
         frameBorder="0"

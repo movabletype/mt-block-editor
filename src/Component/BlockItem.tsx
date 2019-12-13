@@ -141,13 +141,15 @@ const BlockItem: React.FC<Props> = ({
       {showButton && (
         <div className="btn-move-wrapper">
           <button
+            type="button"
             className="btn-up"
-            onClick={() => swapBlocks(index, index - 1)}
+            onClick={() => swapBlocks(index, index - 1, true)}
           ></button>
-          <button className="btn-move" ref={drag}></button>
+          <button type="button" className="btn-move" ref={drag}></button>
           <button
+            type="button"
             className="btn-down"
-            onClick={() => swapBlocks(index, index + 1)}
+            onClick={() => swapBlocks(index, index + 1, true)}
           ></button>
         </div>
       )}

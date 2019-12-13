@@ -42,14 +42,14 @@ class EditorUtil {
     m.add(e);
   }
 
-  public static get({ id }: { id: string }): Editor {
+  public static get({ id }: { id: string }): Editor | undefined {
     const m = EditorManager.instance();
     return m.get(id);
   }
 
   public static async unload({ id }: { id: string }): Promise<void> {
     const m = EditorManager.instance();
-    m.remove(id);
+    await m.remove(id);
   }
 
   public static async serialize(): Promise<void> {
@@ -79,7 +79,7 @@ class EditorUtil {
         _html: html,
       };
       if (canRemoveBlock !== undefined) {
-        overwrite.canRemoveBlock = canRemoveBlock;
+        overwrite.canRemoveBlock = !!canRemoveBlock;
       }
       if (addableBlockTypes) {
         overwrite.addableBlockTypes = addableBlockTypes;

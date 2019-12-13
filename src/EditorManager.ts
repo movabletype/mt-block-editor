@@ -17,12 +17,8 @@ class EditorManager {
     this.editors.push(e);
   }
 
-  public get(id: string): Editor {
-    const editor = this.editors.find((e: Editor) => e.id === id);
-    if (!editor) {
-      throw new Error("Can not find editor");
-    }
-    return editor;
+  public get(id: string): Editor | undefined {
+    return this.editors.find((e: Editor) => e.id === id);
   }
 
   public async remove(id: string): Promise<void> {
