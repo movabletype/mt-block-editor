@@ -123,6 +123,7 @@ const BlockItem: React.FC<Props> = ({
   return (
     <div
       key={b.id}
+      data-mt-block-editor-block-id={b.id}
       onClick={() => {
         if (setFocus) {
           setFocus();
@@ -138,26 +139,36 @@ const BlockItem: React.FC<Props> = ({
         </div>
       )}
       {showButton && (
+        <div className="btn-move-wrapper">
+          <button
+            className="btn-up"
+            onClick={() => swapBlocks(index, index - 1)}
+          ></button>
+          <button className="btn-move" ref={drag}></button>
+          <button
+            className="btn-down"
+            onClick={() => swapBlocks(index, index + 1)}
+          ></button>
+        </div>
+      )}
+      <div className="block">
+        {focus ? (
+          b.editor({ focus: true, canRemove: canRemove === true })
+        ) : (
+          <root.div>
+            <div className="entry">
+              {editor.opts.stylesheets.map(s => (
+                <link rel="stylesheet" key={s} href={s} />
+              ))}
+              {b.editor({ focus: false, canRemove: canRemove === true })}
+            </div>
+          </root.div>
+        )}
+      </div>
+      {showButton && (
         <div className="btn-remove-wrapper">
           <RemoveButton block={b} />
         </div>
-      )}
-      {showButton && (
-        <div className="btn-move-wrapper" ref={drag}>
-          <button className="btn-move"></button>
-        </div>
-      )}
-      {focus ? (
-        b.editor({ focus: true, canRemove: canRemove === true })
-      ) : (
-        <root.div>
-          <div className="entry">
-            {editor.opts.stylesheets.map(s => (
-              <link rel="stylesheet" key={s} href={s} />
-            ))}
-            {b.editor({ focus: false, canRemove: canRemove === true })}
-          </div>
-        </root.div>
       )}
     </div>
   );

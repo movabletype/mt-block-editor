@@ -30,7 +30,12 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       updateBlocks(([] as Block[]).concat(block.blocks));
     },
     swapBlocks: (dragIndex: number, hoverIndex: number) => {
-      if (dragIndex === undefined || hoverIndex === undefined) {
+      if (
+        dragIndex === undefined ||
+        hoverIndex === undefined ||
+        !block.blocks[dragIndex] ||
+        !block.blocks[hoverIndex]
+      ) {
         return;
       }
       [block.blocks[dragIndex], block.blocks[hoverIndex]] = [

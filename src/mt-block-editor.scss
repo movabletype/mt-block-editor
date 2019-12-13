@@ -33,11 +33,6 @@
     content: '';
     background: url(./img/remove.svg);
     background-size: cover;
-
-    display: none;
-  }
-  .block-wrapper:hover .btn-remove {
-    display: inline-block;
   }
 
   .btn-move {
@@ -46,21 +41,44 @@
 
     cursor: move;
 
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     content: '';
     background: url(./img/move.svg);
     background-size: cover;
-
-    display: none;
   }
-  .block-wrapper:hover .btn-move {
-    display: inline-block;
+
+  .btn-up {
+    background: none;
+    border: none;
+
+    cursor: pointer;
+
+    width: 18px;
+    height: 18px;
+    content: '';
+    background: url(./img/up.svg);
+    background-size: cover;
+  }
+
+  .btn-down {
+    background: none;
+    border: none;
+
+    cursor: pointer;
+
+    width: 18px;
+    height: 18px;
+    content: '';
+    background: url(./img/down.svg);
+    background-size: cover;
   }
 
   .block-wrapper {
     margin: 20px 0;
     position: relative;
+    display: flex;
+    align-items: flex-start;
 
     .btn-add {
       visibility: hidden;
@@ -80,25 +98,34 @@
 
 
     .btn-remove-wrapper {
-      position: absolute;
-      z-index: 999;
-      top: -20px;
-      right: 0;
-      text-align: right;
+      display: flex;
+      flex-direction: column;
+      visibility: hidden;
+    }
+    &:hover .btn-remove-wrapper {
+      visibility: visible;
     }
 
-
     .btn-move-wrapper {
-      position: absolute;
-      z-index: 999;
-      top: -20px;
-      left: 0;
-      text-align: left;
+      display: flex;
+      flex-direction: column;
+      visibility: hidden;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    &:hover .btn-move-wrapper {
+      visibility: visible;
+    }
+
+    .btn-add-bottom .btn-add {
+      visibility: visible;
     }
   }
 
-  .block-wrapper .btn-add-bottom .btn-add {
-    visibility: visible;
+  .block {
+    width: 100%;
+    margin: 0 10px;
   }
 
   .btn-add-bottom {
@@ -136,7 +163,11 @@
     }
   }
 
-  .focus {
+  .block {
+    padding: 15px;
+  }
+
+  .focus .block {
     outline: 1px solid #ccc;
   }
 

@@ -37,9 +37,32 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       updateBlocks(([] as Block[]).concat(editor.blocks));
     },
     swapBlocks: (dragIndex: number, hoverIndex: number) => {
-      if (dragIndex === undefined || hoverIndex === undefined) {
+      if (
+        dragIndex === undefined ||
+        hoverIndex === undefined ||
+        !editor.blocks[dragIndex] ||
+        !editor.blocks[hoverIndex]
+      ) {
         return;
       }
+
+      const destEl = document.querySelector(
+        `[data-mt-block-editor-block-id="${editor.blocks[dragIndex].id}"]`
+      );
+      if (!destEl) {
+        return;
+      }
+
+      const rect = destEl.getBoundingClientRect();
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const offsetTop = rect.height + 22;
+
+      window.scrollTo({
+        top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
+        behavior: "smooth",
+      });
+
       [editor.blocks[dragIndex], editor.blocks[hoverIndex]] = [
         editor.blocks[hoverIndex],
         editor.blocks[dragIndex],
