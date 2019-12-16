@@ -182,7 +182,6 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       <iframe
         src={src}
         frameBorder="0"
-        sandbox="allow-scripts"
         style={Object.assign({ border: border || "1px solid #ccc" }, size)}
       />
     </div>
