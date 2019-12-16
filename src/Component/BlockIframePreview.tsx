@@ -82,6 +82,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   }
 
   const containerElRef = useRef(null);
+  const [src, setSrc] = useState("");
   const [, _setCompiledHtml] = useState(
     block.compiledHtml || block.htmlString()
   );
@@ -131,7 +132,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     ],
     { type: "text/html" }
   );
-  const src = URL.createObjectURL(blob);
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload = () => {
+    setSrc(reader.result as string);
+  };
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
@@ -172,7 +177,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     };
   });
 
-  return (
+  return src ? (
     <div ref={containerElRef}>
       <iframe
         src={src}
@@ -181,6 +186,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         style={Object.assign({ border: border || "1px solid #ccc" }, size)}
       />
     </div>
+  ) : (
+    <span />
   );
 };
 
