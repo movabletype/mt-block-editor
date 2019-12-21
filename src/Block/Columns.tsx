@@ -18,7 +18,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 };
 
 class Columns extends Block {
-  public static typeId = "columns";
+  public static typeId = "core-columns";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {

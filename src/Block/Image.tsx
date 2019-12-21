@@ -26,7 +26,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 };
 
 class Image extends Block {
-  public static typeId = "image";
+  public static typeId = "core-image";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {

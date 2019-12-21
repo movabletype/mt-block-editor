@@ -43,7 +43,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 };
 
 class Table extends Block {
-  public static typeId = "table";
+  public static typeId = "core-table";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {

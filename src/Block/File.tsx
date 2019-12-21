@@ -29,7 +29,7 @@ const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
   useEditorUtil(Editor, props);
 
 class File extends Block {
-  public static typeId = "file";
+  public static typeId = "core-file";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {

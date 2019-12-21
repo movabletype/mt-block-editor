@@ -1,6 +1,7 @@
 MTBlockEditor.registerBlock(
   MTBlockEditor.createBoilerplateBlock({
-    id: "oembed",
+    id: "custom-oembed",
+    className: "oembed",
     label: "oembed",
     html: `<!-- mtEditorBlock data-mt-block-type="textblock"--><p>http://</p><!-- /mtEditorBlock -->`,
     canRemoveBlock: false,

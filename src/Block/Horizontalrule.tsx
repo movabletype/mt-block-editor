@@ -8,7 +8,7 @@ const Editor: React.FC = () => {
 };
 
 class Horizontalrule extends Block {
-  public static typeId = "horizontalrule";
+  public static typeId = "core-horizontalrule";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {

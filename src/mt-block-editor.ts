@@ -10,6 +10,7 @@ import BlockFactory from "./BlockFactory";
 
 interface BoilerplateBlockOptions {
   id: string;
+  className: string;
   label: string;
   icon: string;
   html: string;
@@ -63,6 +64,7 @@ class EditorUtil {
 
   public static createBoilerplateBlock({
     id,
+    className,
     label,
     icon,
     html,
@@ -93,7 +95,7 @@ class EditorUtil {
     BoilerplateBlock.prototype = Object.create(Column.prototype);
     BoilerplateBlock.prototype.constructor = BoilerplateBlock;
     BoilerplateBlock.typeId = id;
-    BoilerplateBlock.className = id;
+    BoilerplateBlock.className = className;
     BoilerplateBlock.label = label;
     if (icon) {
       BoilerplateBlock.icon = icon;

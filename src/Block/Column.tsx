@@ -105,7 +105,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 };
 
 class Column extends Block {
-  public static typeId = "column";
+  public static typeId = "core-column";
   public static className = "";
   public static selectable = false;
   public static get label(): string {
@@ -127,7 +127,10 @@ class Column extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    if ((this.constructor as typeof Column).typeId !== "column" && !focus) {
+    if (
+      (this.constructor as typeof Column).typeId !== "core-column" &&
+      !focus
+    ) {
       return (
         <div className="column" style={{ width: "100%" }}>
           <BlockIframePreview

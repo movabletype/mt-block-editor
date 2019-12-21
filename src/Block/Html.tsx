@@ -21,7 +21,7 @@ const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
   useEditorUtil(Editor, props);
 
 class Html extends Block {
-  public static typeId = "html";
+  public static typeId = "core-html";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {

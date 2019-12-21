@@ -136,7 +136,7 @@ const Editor: React.FC<EditorProps> = ({
 };
 
 class Text extends Block {
-  public static typeId = "text";
+  public static typeId = "core-text";
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {
