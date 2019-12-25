@@ -9,7 +9,7 @@ import Column from "./Block/Column";
 import BlockFactory from "./BlockFactory";
 
 interface BoilerplateBlockOptions {
-  id: string;
+  typeId: string;
   className: string;
   label: string;
   icon: string;
@@ -63,7 +63,7 @@ class EditorUtil {
   }
 
   public static createBoilerplateBlock({
-    id,
+    typeId,
     className,
     label,
     icon,
@@ -94,7 +94,7 @@ class EditorUtil {
 
     BoilerplateBlock.prototype = Object.create(Column.prototype);
     BoilerplateBlock.prototype.constructor = BoilerplateBlock;
-    BoilerplateBlock.typeId = id;
+    BoilerplateBlock.typeId = typeId;
     BoilerplateBlock.className = className;
     BoilerplateBlock.label = label;
     if (icon) {
