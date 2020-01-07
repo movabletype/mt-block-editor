@@ -16,7 +16,7 @@
       display: inline-block;
       width: 20px;
       height: 20px;
-      content: '';
+      content: "";
       background: url(./img/add.svg);
       background-size: cover;
     }
@@ -30,7 +30,7 @@
 
     width: 20px;
     height: 20px;
-    content: '';
+    content: "";
     background: url(./img/remove.svg);
     background-size: cover;
   }
@@ -43,7 +43,7 @@
 
     width: 18px;
     height: 18px;
-    content: '';
+    content: "";
     background: url(./img/move.svg);
     background-size: cover;
   }
@@ -56,7 +56,7 @@
 
     width: 18px;
     height: 18px;
-    content: '';
+    content: "";
     background: url(./img/up.svg);
     background-size: cover;
   }
@@ -69,7 +69,7 @@
 
     width: 18px;
     height: 18px;
-    content: '';
+    content: "";
     background: url(./img/down.svg);
     background-size: cover;
   }
@@ -95,7 +95,6 @@
     .btn-add-wrapper:hover .btn-add {
       visibility: visible;
     }
-
 
     .btn-remove-wrapper {
       display: flex;
@@ -149,7 +148,7 @@
         display: inline-block;
         width: 130px;
         list-style: none;
-        font-size: .8rem;
+        font-size: 0.8rem;
 
         a {
           display: block;
@@ -182,7 +181,7 @@
     content: " ";
     text-align: center;
     color: white;
-    background-color: rgba(21, 50, 76, .9);
+    background-color: rgba(21, 50, 76, 0.9);
   }
 
   /* columns */

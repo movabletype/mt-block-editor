@@ -30,20 +30,10 @@ const Editor: React.FC<EditorProps> = ({
         "bullist numlist outdent indent | blockquote link unlink",
       ],
 
-      // selection_toolbar: "formatselect | bold italic underline | quicklink blockquote",
-      // insert_toolbar: "formatselect | bold italic underline | quicklink blockquote",
-      // theme: "inlite",
-
       // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       skin: "lightgray",
       inline: true,
-
-      // TinyMCE 5
-      // plugins: [ 'quickbars' ],
-      // toolbar: false,
-      // menubar: false,
-      // inline: true,
 
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
@@ -79,6 +69,12 @@ const Editor: React.FC<EditorProps> = ({
           }
         });
       },
+
+      // TinyMCE 5 ?
+      // plugins: [ 'quickbars' ],
+      // toolbar: false,
+      // menubar: false,
+      // inline: true,
     });
 
     const onMouseMove = (): void => {

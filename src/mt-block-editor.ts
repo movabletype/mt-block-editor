@@ -116,4 +116,5 @@ declare global {
     MTBlockEditor: typeof EditorUtil;
   }
 }
+
 window.MTBlockEditor = EditorUtil;

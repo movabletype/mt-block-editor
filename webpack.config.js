@@ -29,7 +29,7 @@ module.exports = async function(_, env) {
         },
         {
           test: /\.scss$/,
-          include: '/src/Block/',
+          include: "/src/Block/",
           use: [
             { loader: "css-loader", options: { sourceMap: isProd } },
             { loader: "postcss-loader", options: { sourceMap: isProd } },
@@ -37,7 +37,7 @@ module.exports = async function(_, env) {
         },
         {
           test: /\.scss$/,
-          exclude: '/src/Block/',
+          exclude: "/src/Block/",
           use: [
             isProd ? MiniCssExtractPlugin.loader : "style-loader",
             { loader: "css-loader", options: { sourceMap: isProd } },

@@ -16,7 +16,6 @@
     }
   },
   "author": "Taku Amano <tamano@sixapart.com>",
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.7.5",
     "@babel/plugin-proposal-class-properties": "^7.7.4",

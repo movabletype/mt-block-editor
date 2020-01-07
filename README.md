@@ -10,7 +10,7 @@ The block editor
 
 MIT License
 
-Copyright (c) 2019 Six Apart, Ltd.
+Copyright (c) 2020 Six Apart Ltd.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
