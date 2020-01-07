@@ -58,7 +58,7 @@ class EditorUtil {
     await Promise.all(m.editors.map(e => e.serialize()));
   }
 
-  public static registerBlock(block: typeof Block): void {
+  public static registerBlockType(block: typeof Block): void {
     BlockFactory.registerType(block);
   }
 

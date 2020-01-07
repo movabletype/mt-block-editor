@@ -6,6 +6,8 @@ import Block from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 
+import "./import-default-blocks";
+
 export interface EditorOptions {
   id: string;
   stylesheets: Array<string>;

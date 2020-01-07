@@ -1,4 +1,4 @@
-MTBlockEditor.registerBlock(
+MTBlockEditor.registerBlockType(
   MTBlockEditor.createBoilerplateBlock({
     typeId: "custom-oembed",
     className: "oembed",
