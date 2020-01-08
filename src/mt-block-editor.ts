@@ -8,6 +8,10 @@ import Block from "./Block";
 import Column from "./Block/Column";
 import BlockFactory from "./BlockFactory";
 
+import BlockIframePreview from "./Component/BlockIframePreview";
+
+import { useEditorUtil } from "./hooks/useEditorUtil";
+
 interface BoilerplateBlockOptions {
   typeId: string;
   className: string;
@@ -34,6 +38,8 @@ interface BoilerplateBlockInitOptions {
 
 class EditorUtil {
   public static i18n = { t };
+  public static Component = { BlockIframePreview };
+  public static hooks = { useEditorUtil };
   public static React = React;
   public static Block = Block;
 

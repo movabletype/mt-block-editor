@@ -19,7 +19,7 @@ export interface Metadata {
   [key: string]: any;
 }
 
-export default abstract class Block {
+abstract class Block {
   public static typeId: string;
   public static label: string;
   public static icon: string = icon;
@@ -89,3 +89,5 @@ export default abstract class Block {
   abstract editor(opts: EditorOptions): JSX.Element;
   abstract html(): JSX.Element | string;
 }
+
+export default Block;
