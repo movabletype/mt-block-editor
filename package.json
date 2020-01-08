@@ -8,7 +8,7 @@
     "start": "webpack-dev-server --hot --inline",
     "test": "jest",
     "check-types": "tsc",
-    "lint": "eslint --fix --ext .ts --ext .tsx ./src"
+    "lint": "eslint --fix --ext .ts --ext .tsx ./src ./block/src"
   },
   "husky": {
     "hooks": {

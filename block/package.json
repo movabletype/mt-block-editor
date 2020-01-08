@@ -1,0 +1,22 @@
+{
+  "name": "mt-block-editor-block",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc -d src/*.ts --outDir dist && cpy \"./src/index.d.ts\" \"./dist/*\" ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cpy": "^8.0.0",
+    "cpy-cli": "^3.0.0",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "@types/i18next": "^13.0.0"
+  }
+}
