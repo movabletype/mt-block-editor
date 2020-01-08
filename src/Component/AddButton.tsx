@@ -88,7 +88,7 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
       <div className="block-list-wrapper">
         {showList && (
           <ul className="block-list">
-            {editor.factory
+            {editor
               .selectableTypes()
               .filter(t => {
                 if (!addableBlockTypes) {

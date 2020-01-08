@@ -11,6 +11,7 @@ import "./import-default-blocks";
 export interface EditorOptions {
   id: string;
   stylesheets: Array<string>;
+  selectableBlockTypes?: string[];
 }
 
 class Editor {
@@ -49,6 +50,16 @@ class Editor {
         render(React.createElement(App, { editor: this }), this.editorElement);
       }
     );
+  }
+
+  public selectableTypes(): Array<typeof Block> {
+    const types = this.factory.selectableTypes();
+    if (!this.opts.selectableBlockTypes) {
+      return types;
+    }
+    return this.opts.selectableBlockTypes
+      .map(typeId => types.find(t => t.typeId === typeId))
+      .filter(t => t) as Array<typeof Block>;
   }
 
   public addBlock(blocks: Block[], b: Block, index: number): void {
