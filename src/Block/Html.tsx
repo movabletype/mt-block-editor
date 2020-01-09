@@ -25,7 +25,7 @@ class Html extends Block {
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {
-    return t("Html");
+    return t("HTML");
   }
 
   public text = "";

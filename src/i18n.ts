@@ -24,7 +24,7 @@ i18n
 
     backend: {
       loadPath:
-        "https://mt-net-cdn.s3.amazonaws.com/libs/mt-block-editor/0.0.1/locales/{{lng}}/{{ns}}.json",
+        "https://mt-net-cdn.s3.amazonaws.com/libs/mt-block-editor/0.0.3/locales/{{lng}}/{{ns}}.json",
       crossDomain: true,
     },
   });
