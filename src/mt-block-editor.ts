@@ -1,4 +1,5 @@
-import { t } from "./i18n";
+import i18n, { init as initI18n } from "./i18n";
+import { InitOptions as InitOptionsI18n } from "i18next";
 import "./mt-block-editor.scss";
 import Editor, { EditorOptions } from "./Editor";
 import EditorManager from "./EditorManager";
@@ -36,16 +37,23 @@ interface BoilerplateBlockInitOptions {
   [key: string]: any;
 }
 
+interface InitOptions extends EditorOptions {
+  i18n?: InitOptionsI18n;
+}
+
 class EditorUtil {
-  public static i18n = { t };
+  public static i18n = i18n;
   public static Component = { BlockIframePreview };
   public static hooks = { useEditorUtil };
   public static React = React;
   public static Block = Block;
 
-  public static apply(opts: EditorOptions): void {
+  public static async apply(opts: InitOptions): Promise<void> {
+    const optsI18n: InitOptionsI18n = opts.i18n || {};
+    await initI18n(optsI18n);
+
     const m = EditorManager.instance();
-    const e = new Editor(opts);
+    const e = new Editor(opts as EditorOptions);
     m.add(e);
   }
 
