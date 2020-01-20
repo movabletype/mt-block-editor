@@ -1,3 +1,2 @@
-const { t } = window.MTBlockEditor.i18n;
-
-export { t };
+const i18n = window.MTBlockEditor.i18n;
+export default i18n;

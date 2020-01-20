@@ -1,3 +1,5 @@
+import { i18n } from "i18next";
+
 interface Map {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -21,7 +23,7 @@ export class Block {
 }
 
 export class EditorUtil {
-  public static i18n: { t: (msgid: string) => string };
+  public static i18n: i18n;
   public static Component: Map;
   public static hooks: Map;
   public static React: Map;

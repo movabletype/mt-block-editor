@@ -10,4 +10,9 @@ export interface NewFromHtmlOptions {
   factory: any;
 }
 
+export interface Metadata {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export default window.MTBlockEditor.Block;
