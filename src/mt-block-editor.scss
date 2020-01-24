@@ -184,8 +184,12 @@
     background-color: rgba(21, 50, 76, 0.9);
   }
 
-  /* columns */
+  /* blocks */
+  p {
+    font-size: initial;
+  }
 
+  /* columns */
   .column {
     outline: 1px solid #ccc;
     padding: 10px;
