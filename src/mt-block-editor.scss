@@ -129,11 +129,17 @@
 
   .btn-add-bottom {
     text-align: center;
+
+    position: relative;
   }
 
   .block-list-wrapper {
     display: flex;
     justify-content: center;
+
+    position: absolute;
+    top: 30px;
+    left: calc(50% - 195px);
 
     .block-list {
       display: flex;
