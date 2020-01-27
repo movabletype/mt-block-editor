@@ -3,6 +3,10 @@ export interface EditorOptions {
   canRemove?: boolean;
 }
 
+export interface NewOptions {
+  event: Event;
+}
+
 export interface NewFromHtmlOptions {
   html: string;
   node: Element;

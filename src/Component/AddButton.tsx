@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
-import Text from "../Block/Text";
 
 interface AddButtonProps {
   index: number;
@@ -102,12 +101,15 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
                 <li key={t.typeId}>
                   <a
                     href="#"
-                    onClick={ev => {
+                    onClick={async ev => {
                       ev.preventDefault();
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();
-                      addBlock(new (t as typeof Text)() as Block, index);
                       setShowList(false);
+                      addBlock(
+                        await t.new({ event: new Event("addButton") }),
+                        index
+                      );
                     }}
                   >
                     <img src={t.icon} />

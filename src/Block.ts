@@ -8,6 +8,10 @@ export interface EditorOptions {
   canRemove?: boolean;
 }
 
+export interface NewOptions {
+  event: Event;
+}
+
 export interface NewFromHtmlOptions {
   html: string;
   node: Element;
@@ -19,7 +23,7 @@ export interface Metadata {
   [key: string]: any;
 }
 
-abstract class Block {
+class Block {
   public static typeId: string;
   public static label: string;
   public static icon: string = icon;
@@ -27,6 +31,11 @@ abstract class Block {
   public static shouldBeCompied = false;
   public id: string;
   public compiledHtml = "";
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static async new(opts: NewOptions): Promise<Block> {
+    return new this();
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static async newFromHtml(opts: NewFromHtmlOptions): Promise<Block> {
@@ -86,8 +95,14 @@ abstract class Block {
     }-->${this.compiledHtml || html}<!-- /mtEditorBlock -->`;
   }
 
-  abstract editor(opts: EditorOptions): JSX.Element;
-  abstract html(): JSX.Element | string;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public editor(opts: EditorOptions): JSX.Element {
+    throw "Should be implemented for each concrete class";
+  }
+
+  public html(): JSX.Element | string {
+    throw "Should be implemented for each concrete class";
+  }
 }
 
 export default Block;
