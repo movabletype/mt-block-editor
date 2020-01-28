@@ -1,15 +1,16 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface BlockToolbarProps {
-  children: ReactNode;
+  children?: ReactNode;
   id?: string;
   className?: string;
   rows?: number;
   hasBorder?: boolean;
-  onClick: (ev: Event) => undefined;
 }
 
-const BlockToolbar: React.FC<BlockToolbarProps> = props => {
+const BlockToolbar: React.FC<BlockToolbarProps> = (
+  props: BlockToolbarProps
+) => {
   let className = "block-toolbar";
   if (props.className) {
     className += ` ${props.className}`;

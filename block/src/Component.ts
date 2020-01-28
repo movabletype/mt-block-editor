@@ -4,4 +4,4 @@ const {
   BlockToolbarButton,
 } = window.MTBlockEditor.Component;
 
-export { BlockIframePreview };
+export { BlockIframePreview, BlockToolbar, BlockToolbarButton };

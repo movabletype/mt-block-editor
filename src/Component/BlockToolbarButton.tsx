@@ -1,10 +1,10 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 
 interface BlockToolbarButtonProps {
   icon: string;
   label?: string;
   isActive?: boolean;
-  onClick: (ev: Event) => undefined;
+  onClick: (event: MouseEvent) => void;
 }
 
 const BlockToolbarButton: React.FC<BlockToolbarButtonProps> = ({
