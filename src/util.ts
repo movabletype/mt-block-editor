@@ -1,3 +1,4 @@
+import React from "react";
 import Block from "./Block";
 import BlockFactory from "./BlockFactory";
 import Text from "./Block/Text";
@@ -96,3 +97,20 @@ export async function parseContent(
 
   return blocks;
 }
+
+export const nl2br = (() => {
+  const regex = /(\r\n|\r|\n)/g;
+
+  return function nl2br(str: string): Array<string | JSX.Element> {
+    if (typeof str !== "string") {
+      return str;
+    }
+
+    return str.split(regex).map((line, index) => {
+      if (line.match(regex)) {
+        return React.createElement("br", { key: index });
+      }
+      return line;
+    });
+  };
+})();

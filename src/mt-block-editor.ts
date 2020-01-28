@@ -15,6 +15,8 @@ import BlockToolbarButton from "./Component/BlockToolbarButton";
 
 import * as icons from "./icons";
 
+import { nl2br } from "./util";
+
 import { useEditorUtil } from "./hooks/useEditorUtil";
 
 interface BoilerplateBlockOptions {
@@ -56,6 +58,7 @@ class EditorUtil {
   public static React = React;
   public static Block = Block;
   public static icons = icons;
+  public static util = { nl2br };
 
   public static async apply(opts: InitOptions): Promise<void> {
     const optsI18n: InitOptionsI18n = opts.i18n || {};
