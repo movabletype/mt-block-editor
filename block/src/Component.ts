@@ -1,3 +1,7 @@
-const { BlockIframePreview } = window.MTBlockEditor.Component;
+const {
+  BlockIframePreview,
+  BlockToolbar,
+  BlockToolbarButton,
+} = window.MTBlockEditor.Component;
 
 export { BlockIframePreview };

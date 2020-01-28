@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
 import icon from "../img/icon/table.svg";
+import BlockToolbar from "../Component/BlockToolbar";
 
 declare const tinymce: EditorManager;
 
@@ -18,6 +19,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       menubar: false,
       plugins: "table",
       toolbar: "table",
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
@@ -35,10 +38,16 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   });
 
   return (
-    <div
-      id={block.tinymceId()}
-      dangerouslySetInnerHTML={{ __html: block.html() }}
-    ></div>
+    <div>
+      <div
+        id={block.tinymceId()}
+        dangerouslySetInnerHTML={{ __html: block.html() }}
+      ></div>
+      <BlockToolbar
+        id={`${block.tinymceId()}toolbar`}
+        hasBorder={false}
+      ></BlockToolbar>
+    </div>
   );
 };
 

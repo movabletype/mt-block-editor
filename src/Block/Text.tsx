@@ -5,6 +5,7 @@ import { Editor as TinyMCE, EditorManager } from "tinymce";
 import { useBlocksContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
 import { getElementById } from "../util";
+import BlockToolbar from "../Component/BlockToolbar";
 
 declare const tinymce: EditorManager;
 
@@ -55,8 +56,9 @@ const Editor: React.FC<EditorProps> = ({
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
-          getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-            "hidden";
+          getElementById(`${block.tinymceId()}toolbar`).classList.add(
+            "invisible"
+          );
 
           if (
             (e.keyCode === 8 || e.keyCode === 46) &&
@@ -82,8 +84,9 @@ const Editor: React.FC<EditorProps> = ({
         return;
       }
 
-      getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-        "visible";
+      getElementById(`${block.tinymceId()}toolbar`).classList.remove(
+        "invisible"
+      );
     };
     window.addEventListener("mousemove", onMouseMove, {
       capture: true,
@@ -103,30 +106,27 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <div
-      style={{ position: "relative" }}
       onClick={() => {
-        getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-          "visible";
+        getElementById(`${block.tinymceId()}toolbar`).classList.remove(
+          "invisible"
+        );
       }}
       onMouseMove={() => {
-        getElementById(`${block.tinymceId()}toolbar`).style.visibility =
-          "visible";
+        getElementById(`${block.tinymceId()}toolbar`).classList.remove(
+          "invisible"
+        );
       }}
     >
       <div
         id={block.tinymceId()}
         dangerouslySetInnerHTML={{ __html: html }}
       ></div>
-      <div
+      <BlockToolbar
         id={`${block.tinymceId()}toolbar`}
-        style={{
-          position: "absolute",
-          top: "-71px",
-          background: "white",
-          zIndex: 9999,
-          visibility: html === "" ? "hidden" : "visible",
-        }}
-      ></div>
+        rows={2}
+        hasBorder={false}
+        className={html !== "" ? "invisible" : ""}
+      ></BlockToolbar>
     </div>
   );
 };
@@ -153,11 +153,24 @@ class Text extends Block {
   }
 
   public editor({ focus, canRemove }: EditorOptions): JSX.Element {
-    return focus ? (
-      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
-    ) : (
-      <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>
-    );
+    if (focus) {
+      return (
+        <Editor
+          key={this.id}
+          block={this}
+          focus={focus}
+          canRemove={canRemove}
+        />
+      );
+    }
+
+    const html =
+      this.html() ||
+      `<span class="mt-block-editor-text-muted" style="color: gray">${t(
+        "Start writing"
+      )}</span>`;
+
+    return <div dangerouslySetInnerHTML={{ __html: html }}></div>;
   }
 
   public html(): string {

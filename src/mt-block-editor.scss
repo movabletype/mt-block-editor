@@ -125,6 +125,7 @@
   .block {
     width: 100%;
     margin: 0 10px;
+    position: relative;
   }
 
   .btn-add-bottom {
@@ -201,5 +202,53 @@
     padding: 10px;
     position: relative;
     flex-basis: 50%;
+  }
+
+  .block-toolbar {
+    position: absolute;
+    left: -1px;
+    background: white;
+    z-index: 1000;
+
+    top: -36px;
+    &.block-toolbar--x2 {
+      top: -70px;
+    }
+
+    border: 1px solid #ccc;
+    &.block-toolbar--no-border {
+      border: none;
+    }
+
+    .mce-tinymce {
+      box-shadow: none;
+    }
+
+    .block-toolbar-button {
+      margin: 4px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      height: 26px;
+
+      img {
+        margin: 2px;
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        outline: 1px solid #ccc;
+      }
+    }
+  }
+
+  /* utility */
+  .visible {
+    visibility: visible;
+  }
+  .invisible {
+    visibility: hidden;
   }
 }

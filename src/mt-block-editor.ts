@@ -10,6 +10,8 @@ import Column from "./Block/Column";
 import BlockFactory from "./BlockFactory";
 
 import BlockIframePreview from "./Component/BlockIframePreview";
+import BlockToolbar from "./Component/BlockToolbar";
+import BlockToolbarButton from "./Component/BlockToolbarButton";
 
 import { useEditorUtil } from "./hooks/useEditorUtil";
 
@@ -43,7 +45,11 @@ interface InitOptions extends EditorOptions {
 
 class EditorUtil {
   public static i18n = i18n;
-  public static Component = { BlockIframePreview };
+  public static Component = {
+    BlockIframePreview,
+    BlockToolbar,
+    BlockToolbarButton,
+  };
   public static hooks = { useEditorUtil };
   public static React = React;
   public static Block = Block;
