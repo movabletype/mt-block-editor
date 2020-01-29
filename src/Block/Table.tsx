@@ -17,8 +17,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       selector: `#${block.tinymceId()}`,
       //toolbar: false,
       menubar: false,
-      plugins: "table",
-      toolbar: "table",
+      plugins: "table code",
+      toolbar: "table,code",
       // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
