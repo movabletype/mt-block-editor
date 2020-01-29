@@ -19,8 +19,6 @@ const Editor: React.FC<EditorProps> = ({
   canRemove,
 }: EditorProps) => {
   const { addBlock, removeBlock } = useBlocksContext();
-  let editor: TinyMCE;
-
   useEffect(() => {
     tinymce.init({
       selector: `#${block.tinymceId()}`,
@@ -38,7 +36,7 @@ const Editor: React.FC<EditorProps> = ({
 
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
-        editor = ed;
+        block.tinymce = ed;
 
         // ed.setContent(block.text);
         if (focus) {
@@ -95,7 +93,7 @@ const Editor: React.FC<EditorProps> = ({
     });
 
     const onMouseMove = (): void => {
-      if (tinymce.activeEditor !== editor) {
+      if (tinymce.activeEditor !== block.tinymce) {
         return;
       }
 
@@ -113,6 +111,8 @@ const Editor: React.FC<EditorProps> = ({
         capture: true,
       });
       block.text = tinymce.get(block.tinymceId()).getContent();
+
+      block.tinymce = null;
       tinymce.get(block.tinymceId()).remove();
     };
   });
@@ -155,12 +155,17 @@ class Text extends Block {
   }
 
   public text = "";
+  public tinymce: TinyMCE | null = null;
 
   public constructor(init?: Partial<Text>) {
     super();
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public isBlank(): boolean {
+    return (this.tinymce ? this.tinymce.getContent() : this.text) === "";
   }
 
   public tinymceId(): string {

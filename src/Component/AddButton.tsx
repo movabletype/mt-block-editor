@@ -4,9 +4,13 @@ import Block from "../Block";
 
 interface AddButtonProps {
   index: number;
+  className?: string;
 }
 
-const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
+const AddButton: React.FC<AddButtonProps> = ({
+  index,
+  className,
+}: AddButtonProps) => {
   const { editor } = useEditorContext();
   const { addableBlockTypes, addBlock } = useBlocksContext();
   const [showList, setShowList] = useState(false);
@@ -111,7 +115,10 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
           }}
         ></button>
       </div>
-      <div className="block-list-wrapper" ref={blockListElRef}>
+      <div
+        className={`block-list-wrapper ${className || ""}`}
+        ref={blockListElRef}
+      >
         {showList && (
           <ul className="block-list">
             {editor

@@ -26,6 +26,7 @@ interface Props {
   index: number;
   canRemove: boolean;
   showButton: boolean;
+  showLeftButton?: boolean;
   parentId?: string;
 }
 
@@ -41,6 +42,7 @@ const BlockItem: React.FC<Props> = ({
   index,
   canRemove,
   showButton,
+  showLeftButton,
   parentId,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
@@ -151,6 +153,13 @@ const BlockItem: React.FC<Props> = ({
             className="btn-down"
             onClick={() => swapBlocks(index, index + 1, true)}
           ></button>
+        </div>
+      )}
+      {showLeftButton && (
+        <div className="btn-add-left">
+          <div style={{ position: "relative" }}>
+            <AddButton index={i} className="block-list-wrapper--right" />
+          </div>
         </div>
       )}
       <div className="block">

@@ -3,6 +3,7 @@ import { render } from "react-dom";
 
 import { getElementById, preParseContent, parseContent } from "./util";
 import Block from "./Block";
+import Text from "./Block/Text";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 
@@ -36,6 +37,10 @@ class Editor {
 
     parseContent(preParseContent(this.inputElement.value), this.factory).then(
       blocks => {
+        if (blocks.length === 0) {
+          blocks.push(new Text());
+        }
+
         this.blocks = blocks;
         this.editorElement.classList.add("mt-block-editor");
 

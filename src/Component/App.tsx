@@ -4,9 +4,9 @@ import HTML5Backend from "react-dnd-html5-backend";
 
 import Editor from "../Editor";
 import Block from "../Block";
+import Text from "../Block/Text";
 import BlockItem from "./BlockItem";
 import { EditorContext, BlocksContext } from "../Context";
-import AddButton from "./AddButton";
 
 interface AppProps {
   editor: Editor;
@@ -124,13 +124,16 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                   focus={focus}
                   index={i}
                   showButton={true}
+                  showLeftButton={
+                    i === blocks.length - 1 &&
+                    !focus &&
+                    b instanceof Text &&
+                    b.isBlank()
+                  }
                   canRemove={true}
                 />
               );
             })}
-            <div className="btn-add-bottom">
-              <AddButton index={blocks.length} />
-            </div>
           </div>
         </DndProvider>
       </BlocksContext.Provider>
