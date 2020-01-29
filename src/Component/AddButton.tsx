@@ -11,6 +11,7 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
   const { addableBlockTypes, addBlock } = useBlocksContext();
   const [showList, setShowList] = useState(false);
   const buttonElRef = useRef(null);
+  const blockListElRef = useRef(null);
 
   const onDrop = (): void => {
     if (buttonElRef.current === null) {
@@ -20,14 +21,40 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
     const buttonEl = (buttonElRef.current as unknown) as HTMLElement;
     buttonEl.classList.remove("droppable");
   };
+
+  const onWindowClick = (ev: MouseEvent): void => {
+    if (blockListElRef.current === null) {
+      return;
+    }
+
+    const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
+
+    let target = ev.target as HTMLElement;
+    while (target.parentNode && target.parentNode !== target) {
+      if (target === blockListEl) {
+        return;
+      }
+      target = target.parentNode as HTMLElement;
+    }
+
+    setShowList(false);
+  };
+
   useEffect(() => {
     document.addEventListener("drop", onDrop, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("click", onWindowClick, {
       capture: true,
       passive: true,
     });
 
     return () => {
       document.removeEventListener("drop", onDrop, {
+        capture: true,
+      });
+      window.removeEventListener("click", onWindowClick, {
         capture: true,
       });
     };
@@ -84,7 +111,7 @@ const AddButton: React.FC<AddButtonProps> = ({ index }: AddButtonProps) => {
           }}
         ></button>
       </div>
-      <div className="block-list-wrapper">
+      <div className="block-list-wrapper" ref={blockListElRef}>
         {showList && (
           <ul className="block-list">
             {editor
