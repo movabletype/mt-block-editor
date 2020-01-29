@@ -47,12 +47,27 @@ const Editor: React.FC<EditorProps> = ({
           ed.selection.collapse(false);
         }
 
-        ed.on("NewBlock", ({ newBlock }: { newBlock: Element }) => {
-          ed.dom.remove(newBlock);
-          if (canRemove) {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            addBlock(new Text(), block);
+        const root = ed.dom.getRoot();
+
+        ed.on("NodeChange Change", () => {
+          if (root.childNodes.length <= 1) {
+            return;
           }
+
+          const children = [...root.childNodes] as HTMLElement[];
+          if (children.length === 1) {
+            return;
+          }
+
+          children.shift();
+          children.reverse();
+          children.forEach(c => {
+            ed.dom.remove(c);
+          });
+          children.forEach(c => {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            addBlock(new Text({ text: c.outerHTML }), block);
+          });
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {

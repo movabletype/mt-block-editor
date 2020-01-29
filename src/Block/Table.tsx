@@ -2,6 +2,7 @@ import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
+import { useBlocksContext } from "../Context";
 import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 
@@ -12,6 +13,8 @@ interface EditorProps extends EditorOptions {
 }
 
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
+  const { addBlock } = useBlocksContext();
+
   useEffect(() => {
     tinymce.init({
       selector: `#${block.tinymceId()}`,
@@ -28,6 +31,41 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         if (focus) {
           ed.focus(false);
         }
+
+        const root = ed.dom.getRoot();
+
+        ed.on("NodeChange Change", () => {
+          if (root.childNodes.length <= 1) {
+            return;
+          }
+
+          let children = [...root.childNodes] as HTMLElement[];
+
+          children = children
+            .map(c => {
+              if (c.tagName === "TABLE") {
+                return c;
+              } else {
+                ed.dom.remove(c);
+                return null;
+              }
+            })
+            .filter(c => c) as HTMLElement[];
+
+          if (children.length === 1) {
+            return;
+          }
+
+          children.shift();
+          children.reverse();
+          children.forEach(c => {
+            ed.dom.remove(c);
+          });
+          children.forEach(c => {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            addBlock(new Table({ text: c.outerHTML }), block);
+          });
+        });
       },
     });
 
