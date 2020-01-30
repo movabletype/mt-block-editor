@@ -85,6 +85,10 @@ class Editor {
       return;
     }
     blocks.splice(index, 1);
+
+    if (!this.blocks.find(b => b instanceof Text)) {
+      blocks.push(new Text());
+    }
   }
 
   public async serialize(): Promise<void> {
