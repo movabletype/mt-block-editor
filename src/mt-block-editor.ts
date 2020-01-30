@@ -13,9 +13,9 @@ import BlockIframePreview from "./Component/BlockIframePreview";
 import BlockToolbar from "./Component/BlockToolbar";
 import BlockToolbarButton from "./Component/BlockToolbarButton";
 
+import * as Context from "./Context";
 import * as icons from "./icons";
-
-import { nl2br } from "./util";
+import * as util from "./util";
 
 import { useEditorUtil } from "./hooks/useEditorUtil";
 
@@ -57,8 +57,9 @@ class EditorUtil {
   public static hooks = { useEditorUtil };
   public static React = React;
   public static Block = Block;
+  public static Context = Context;
   public static icons = icons;
-  public static util = { nl2br };
+  public static util = util;
 
   public static async apply(opts: InitOptions): Promise<void> {
     const optsI18n: InitOptionsI18n = opts.i18n || {};

@@ -41,6 +41,7 @@ export class EditorUtil {
   public static icons: Map;
   public static util: Map;
   public static React: Map;
+  public static Context: Map;
   public static Block: typeof Block;
   public static registerBlockType(block: typeof Block): void;
 }
