@@ -9,10 +9,16 @@ import BlockFactory from "./BlockFactory";
 
 import "./import-default-blocks";
 
+interface Map {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface EditorOptions {
   id: string;
   stylesheets: Array<string>;
   selectableBlockTypes?: string[];
+  block: Map;
 }
 
 class Editor {
@@ -27,6 +33,8 @@ class Editor {
   public constructor(opts: EditorOptions) {
     this.id = opts.id;
     this.opts = opts;
+    opts.block = opts.block || {};
+
     this.factory = new BlockFactory();
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;

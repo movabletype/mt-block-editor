@@ -14,6 +14,7 @@ export interface EditorOptions {
   id: string;
   stylesheets: Array<string>;
   selectableBlockTypes?: string[];
+  block: Map;
 }
 
 export class Editor {
