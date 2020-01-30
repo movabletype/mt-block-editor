@@ -7,6 +7,7 @@ import React, { useRef } from "react";
 import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
+import Text from "../Block/Text";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 
@@ -163,15 +164,15 @@ const BlockItem: React.FC<Props> = ({
         </div>
       )}
       <div className="block">
-        {focus ? (
-          b.editor({ focus: true, canRemove: canRemove === true })
+        {focus || (b instanceof Text && b.isBlank()) ? (
+          b.editor({ focus, canRemove: canRemove === true })
         ) : (
           <root.div>
             <div className="entry">
               {editor.opts.stylesheets.map(s => (
                 <link rel="stylesheet" key={s} href={s} />
               ))}
-              {b.editor({ focus: false, canRemove: canRemove === true })}
+              {b.editor({ focus, canRemove: canRemove === true })}
             </div>
           </root.div>
         )}

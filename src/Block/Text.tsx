@@ -184,13 +184,38 @@ class Text extends Block {
       );
     }
 
-    const html =
-      this.html() ||
-      `<span class="mt-block-editor-text-muted" style="color: gray">${t(
-        "Start writing"
-      )}</span>`;
+    if (this.html()) {
+      return <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>;
+    } else {
+      return (
+        <input
+          type="text"
+          className="start-writing"
+          placeholder={t("Start writing")}
+          onClick={ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            ev.nativeEvent.stopImmediatePropagation();
+          }}
+          onInput={ev => {
+            this.text = (ev.target as HTMLInputElement).value;
 
-    return <div dangerouslySetInnerHTML={{ __html: html }}></div>;
+            const wrapper = (ev.target as HTMLElement).closest(
+              ".block-wrapper"
+            );
+            if (wrapper) {
+              (wrapper as HTMLAnchorElement).click();
+            }
+          }}
+          onFocus={ev => {
+            ev.target.placeholder = "";
+          }}
+          onBlur={ev => {
+            ev.target.placeholder = t("Start writing");
+          }}
+        />
+      );
+    }
   }
 
   public html(): string {
