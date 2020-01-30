@@ -45,7 +45,7 @@ class Editor {
 
     parseContent(preParseContent(this.inputElement.value), this.factory).then(
       blocks => {
-        if (blocks.length === 0) {
+        if (!blocks.find(b => b instanceof Text)) {
           blocks.push(new Text());
         }
 
@@ -87,7 +87,7 @@ class Editor {
     blocks.splice(index, 1);
 
     if (!this.blocks.find(b => b instanceof Text)) {
-      blocks.push(new Text());
+      this.blocks.push(new Text());
     }
   }
 
