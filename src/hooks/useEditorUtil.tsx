@@ -45,6 +45,15 @@ export function useEditorUtil(
       !child.props.onChange
     ) {
       const n = child.props.name;
+      const onKeyDown = (ev: KeyboardEvent): void => {
+        const target = ev.target as HTMLElement;
+        if (!(target instanceof HTMLInputElement)) {
+          return;
+        }
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+        }
+      };
 
       return React.cloneElement(child, {
         value: block[n],
@@ -65,6 +74,7 @@ export function useEditorUtil(
 
           setBlock(Object.assign({}, block));
         },
+        onKeyDown: child.props.onKeyDown || onKeyDown,
       });
     } else {
       return child;
