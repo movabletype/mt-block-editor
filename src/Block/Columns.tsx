@@ -51,7 +51,7 @@ class Columns extends Block {
     );
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
-    }" --><div class="columns" style="display: flex">${serializedColumns.join(
+    }" --><div class="mt-block-editor-columns" style="display: flex">${serializedColumns.join(
       ""
     )}</div><!-- /mtEditorBlock -->`;
   }

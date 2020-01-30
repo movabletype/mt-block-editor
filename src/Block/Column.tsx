@@ -106,7 +106,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
 class Column extends Block {
   public static typeId = "core-column";
-  public static className = "";
+  public static className = "mt-block-editor-column";
   public static selectable = false;
   public static get label(): string {
     return t("Column");
@@ -147,9 +147,9 @@ class Column extends Block {
 
   public html(): string {
     const className = (this.constructor as typeof Column).className;
-    return `<div${
-      className ? ` class="${className}"` : ""
-    }>${this.blocks.map(c => c.htmlString()).join("")}</div>`;
+    return `<div class="${className}">${this.blocks
+      .map(c => c.htmlString())
+      .join("")}</div>`;
   }
 
   public async serializedString(): Promise<string> {
