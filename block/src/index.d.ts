@@ -10,6 +10,17 @@ export interface Metadata {
   [key: string]: any;
 }
 
+export interface EditorOptions {
+  id: string;
+  stylesheets: Array<string>;
+  selectableBlockTypes?: string[];
+}
+
+export class Editor {
+  public id: string;
+  public opts: EditorOptions;
+}
+
 export class Block {
   public static typeId: string;
   public static label: string;

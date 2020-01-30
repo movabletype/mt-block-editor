@@ -1,4 +1,5 @@
 import ReactDOMServer from "react-dom/server";
+import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
 import { escapeHtml } from "./util";
 import icon from "./img/icon/default-block.svg";
@@ -9,6 +10,7 @@ export interface EditorOptions {
 }
 
 export interface NewOptions {
+  editor: Editor;
   event: Event;
 }
 

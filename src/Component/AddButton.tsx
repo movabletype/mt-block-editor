@@ -141,7 +141,10 @@ const AddButton: React.FC<AddButtonProps> = ({
                       ev.nativeEvent.stopImmediatePropagation();
                       setShowList(false);
                       addBlock(
-                        await t.new({ event: new Event("addButton") }),
+                        await t.new({
+                          editor: editor,
+                          event: new Event("addButton"),
+                        }),
                         index
                       );
                     }}

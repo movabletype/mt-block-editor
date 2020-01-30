@@ -1,9 +1,12 @@
+import { Editor } from "./index";
+
 export interface EditorOptions {
   focus: boolean;
   canRemove?: boolean;
 }
 
 export interface NewOptions {
+  editor: Editor;
   event: Event;
 }
 
