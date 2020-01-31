@@ -59,7 +59,7 @@ class Image extends Block {
     return true;
   }
 
-  public static async newFromFile(file: File): Promise<Block> {
+  public static async newFromFile({ file }: { file: File }): Promise<Block> {
     return new Image({
       url: URL.createObjectURL(file),
     });

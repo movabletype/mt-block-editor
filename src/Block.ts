@@ -48,12 +48,12 @@ class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static canNewFromFile(file: File): boolean {
+  static canNewFromFile({ file }: { file: File }): boolean {
     return false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static async newFromFile(file: File): Promise<Block> {
+  static async newFromFile({ file }: { file: File }): Promise<Block> {
     throw "Should be implemented for each concrete class";
   }
 

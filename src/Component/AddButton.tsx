@@ -98,9 +98,9 @@ const AddButton: React.FC<AddButtonProps> = ({
             const f = files[i];
             const t = editor.factory
               .selectableTypes()
-              .find((t: typeof Block) => t.canNewFromFile(f));
+              .find((t: typeof Block) => t.canNewFromFile({ file: f }));
             if (t) {
-              const b = await t.newFromFile(f);
+              const b = await t.newFromFile({ file: f });
               addBlock(b, index);
             }
           }
