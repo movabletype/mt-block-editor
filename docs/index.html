@@ -21,6 +21,7 @@
         <input type="submit" id="submit" />
         <input type="reset" id="reset" />
         <input type="submit" id="unload" value="Unload" />
+        <input type="submit" id="toggle-mode" value="Toggle mode" />
       </form>
       <script>
         document.getElementById("body").value =
@@ -31,7 +32,7 @@
     <script src="./register-block.js"></script>
     <script>
       MTBlockEditor.apply({
-        mode: "setup", // or composition
+        mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
         id: "body",
         stylesheets: [
           (() => {
@@ -67,6 +68,15 @@
       document.getElementById("unload").addEventListener("click", function(ev) {
         ev.preventDefault();
         MTBlockEditor.unload({ id: "body" });
+      });
+
+      document.getElementById("toggle-mode").addEventListener("click", function(ev) {
+        ev.preventDefault();
+
+        const cur = sessionStorage.getItem("MTBlockEditorMode") || "composition";
+        const next = cur === "composition" ? "setup" : "composition";
+        sessionStorage.setItem("MTBlockEditorMode", next);
+        location.reload();
       });
     </script>
   </body>
