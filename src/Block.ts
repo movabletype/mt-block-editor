@@ -71,6 +71,21 @@ class Block {
     return null;
   }
 
+  public metadataByOwnKeys({ keys }: { keys?: string[] }): Metadata {
+    const data: Metadata = {};
+
+    if (!keys) {
+      const parentKeys = Reflect.ownKeys(new Block());
+      keys = Reflect.ownKeys(this).filter(
+        k => typeof k == "string" && !parentKeys.find(pk => pk === k)
+      ) as string[];
+    }
+
+    keys.forEach(k => (data[k] = (this as Metadata)[k]));
+
+    return data;
+  }
+
   public async serializedString(): Promise<string> {
     return this.htmlString();
   }

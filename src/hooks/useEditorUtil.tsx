@@ -41,7 +41,9 @@ export function useEditorUtil(
 
   return recursiveMap(children, (child: JSX.Element) => {
     if (
-      (child.type === "input" || child.type === "textarea") &&
+      (child.type === "input" ||
+        child.type === "textarea" ||
+        child.type === "select") &&
       !child.props.onChange
     ) {
       const n = child.props.name;
