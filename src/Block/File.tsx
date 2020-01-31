@@ -66,14 +66,20 @@ class File extends Block {
 
   public static async newFromHtml({
     html,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
     const domparser = new DOMParser();
     const doc = domparser.parseFromString(html, "text/html");
 
-    return new File({
-      url: (doc.querySelector("A") as HTMLAnchorElement).href || "",
-      text: (doc.querySelector("A") as HTMLAnchorElement).textContent || "",
-    });
+    return new File(
+      Object.assign(
+        {
+          url: (doc.querySelector("A") as HTMLAnchorElement).href || "",
+          text: (doc.querySelector("A") as HTMLAnchorElement).textContent || "",
+        },
+        meta
+      )
+    );
   }
 }
 

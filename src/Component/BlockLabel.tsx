@@ -16,9 +16,14 @@ const BlockLabel: React.FC<EditorProps> = ({
 
   return (
     <label>
-      <div>
-        {editor.opts.mode === "composition" ? block.label : t("Default Value")}
-      </div>
+      {editor.opts.mode === "composition" ? (
+        <>
+          <div className="mt-block-editor-label-block">{block.label}</div>
+          <div className="mt-block-editor-help-block">{block.helpText}</div>
+        </>
+      ) : (
+        <div>{t("Default Value")}</div>
+      )}
       {children}
     </label>
   );

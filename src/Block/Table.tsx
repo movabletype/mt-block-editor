@@ -134,8 +134,9 @@ class Table extends Block {
 
   public static async newFromHtml({
     html,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
-    return new Table({ text: html });
+    return new Table(Object.assign({ text: html }, meta));
   }
 }
 

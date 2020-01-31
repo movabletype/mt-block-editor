@@ -67,13 +67,19 @@ class Image extends Block {
 
   public static async newFromHtml({
     html,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
     const domparser = new DOMParser();
     const doc = domparser.parseFromString(html, "text/html");
 
-    return new Image({
-      url: (doc.querySelector("IMG") as HTMLImageElement).src || "",
-    });
+    return new Image(
+      Object.assign(
+        {
+          url: (doc.querySelector("IMG") as HTMLImageElement).src || "",
+        },
+        meta
+      )
+    );
   }
 }
 

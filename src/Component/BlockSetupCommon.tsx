@@ -21,6 +21,12 @@ const BlockSetupCommonInternal: React.FC<EditorProps> = ({
       </BlockSetup>
       <BlockSetup block={block}>
         <label>
+          <div>{t("Help Text")}</div>
+          <input type="text" name="helpText" style={{ width: "100%" }} />
+        </label>
+      </BlockSetup>
+      <BlockSetup block={block}>
+        <label>
           <div>{t("Class Name")}</div>
           <input type="text" name="className" style={{ width: "100%" }} />
         </label>

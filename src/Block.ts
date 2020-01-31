@@ -35,6 +35,7 @@ class Block {
   public id: string;
   public compiledHtml = "";
   public label = "";
+  public helpText = "";
   public className = "";
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,11 +71,12 @@ class Block {
     }
   }
 
-  public metadata(): Metadata {
-    return this.metadataByOwnKeys({ keys: ["label", "className"] });
+  public metadata(): Metadata | null {
+    return this.metadataByOwnKeys({ keys: [] });
   }
 
-  public metadataByOwnKeys({ keys }: { keys?: string[] }): Metadata {
+  public metadataByOwnKeys({ keys }: { keys?: string[] }): Metadata | null {
+    const src: Metadata = this as Metadata;
     const data: Metadata = {};
 
     if (!keys) {
@@ -84,9 +86,15 @@ class Block {
       ) as string[];
     }
 
-    keys.forEach(k => (data[k] = (this as Metadata)[k]));
+    keys.forEach(k => (data[k] = src[k]));
 
-    return data;
+    ["label", "helpText", "className"].forEach(k => {
+      if (src[k]) {
+        data[k] = src[k];
+      }
+    });
+
+    return Object.keys(data).length !== 0 ? data : null;
   }
 
   public async serializedString(): Promise<string> {

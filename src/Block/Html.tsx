@@ -56,10 +56,16 @@ class Html extends Block {
 
   public static async newFromHtml({
     html,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
-    return new Html({
-      text: html,
-    });
+    return new Html(
+      Object.assign(
+        {
+          text: html,
+        },
+        meta
+      )
+    );
   }
 }
 

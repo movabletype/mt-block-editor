@@ -212,6 +212,17 @@
     background-color: rgba(21, 50, 76, 0.9);
   }
 
+  /* setup */
+
+  .mt-block-editor-label-block {
+    font-weight: bold;
+  }
+
+  .mt-block-editor-help-block {
+    font-weight: normal;
+    color: #737373;
+  }
+
   /* columns */
   .column {
     outline: 1px solid #ccc;
