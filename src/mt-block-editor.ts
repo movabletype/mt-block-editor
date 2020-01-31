@@ -12,12 +12,15 @@ import BlockFactory from "./BlockFactory";
 import BlockIframePreview from "./Component/BlockIframePreview";
 import BlockToolbar from "./Component/BlockToolbar";
 import BlockToolbarButton from "./Component/BlockToolbarButton";
+import BlockSetup from "./Component/BlockSetup";
+import BlockSetupCommon from "./Component/BlockSetupCommon";
+import BlockLabel from "./Component/BlockLabel";
+import EditorMode from "./Component/EditorMode";
 
 import * as Context from "./Context";
 import * as icons from "./icons";
 import * as util from "./util";
-
-import { useEditorUtil } from "./hooks/useEditorUtil";
+import * as hooks from "./hooks";
 
 interface BoilerplateBlockOptions {
   typeId: string;
@@ -53,8 +56,12 @@ class EditorUtil {
     BlockIframePreview,
     BlockToolbar,
     BlockToolbarButton,
+    BlockSetup,
+    BlockSetupCommon,
+    BlockLabel,
+    EditorMode,
   };
-  public static hooks = { useEditorUtil };
+  public static hooks = hooks;
   public static React = React;
   public static Block = Block;
   public static Context = Context;

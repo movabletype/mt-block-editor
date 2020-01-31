@@ -1,8 +1,10 @@
 import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { useEditorUtil } from "../hooks/useEditorUtil";
+import { useEditorUtil } from "../hooks";
 import icon from "../img/icon/file.svg";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
+import BlockLabel from "../Component/BlockLabel";
 
 interface HtmlProps {
   block: File;
@@ -13,10 +15,13 @@ interface EditorProps extends EditorOptions {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
-  <>
-    <input type="text" name="text" />
-    <input type="url" name="url" />
-  </>
+  <div>
+    <BlockSetupCommon block={block} />
+    <BlockLabel block={block}>
+      <input type="text" name="text" />
+      <input type="url" name="url" />
+    </BlockLabel>
+  </div>
 );
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => (

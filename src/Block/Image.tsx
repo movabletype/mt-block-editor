@@ -2,6 +2,8 @@ import { t } from "../i18n";
 import React, { useState } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import icon from "../img/icon/image.svg";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
+import BlockLabel from "../Component/BlockLabel";
 
 interface EditorProps {
   block: Image;
@@ -12,15 +14,18 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 
   return (
     <div>
-      {url && <img src={url} style={{ maxWidth: "100%" }} />}
-      <input
-        type="url"
-        onChange={ev => {
-          block.url = ev.target.value;
-          setUrl(ev.target.value);
-        }}
-        value={url}
-      />
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        {url && <img src={url} style={{ maxWidth: "100%" }} />}
+        <input
+          type="url"
+          onChange={ev => {
+            block.url = ev.target.value;
+            setUrl(ev.target.value);
+          }}
+          value={url}
+        />
+      </BlockLabel>
     </div>
   );
 };

@@ -81,12 +81,14 @@ export async function parseContent(
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
     const typeId = node.getAttribute("data-mt-block-type");
+    const meta = JSON.parse(node.getAttribute("data-mt-block-meta") || "{}");
     const t =
       factory.types().find((t: typeof Block) => t.typeId === typeId) || Column;
     const param = {
       html: node.getAttribute("data-mt-block-html") || node.textContent || "",
       node,
       factory,
+      meta,
     };
 
     const block = await t

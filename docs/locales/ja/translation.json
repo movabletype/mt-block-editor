@@ -1,11 +1,14 @@
 {
+  "Class Name": "クラス名",
   "Column": "カラム",
   "Columns": "マルチカラム",
+  "Default Value": "規定値",
   "Edit": "編集",
   "File": "ファイル",
   "Horizontalrule": "罫線",
   "HTML": "HTML",
   "Image": "画像",
+  "Label": "ラベル",
   "Table": "テーブル",
   "Text": "テキストブロック"
 }

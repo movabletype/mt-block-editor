@@ -6,6 +6,8 @@ import { useBlocksContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
 import { getElementById } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
+import BlockLabel from "../Component/BlockLabel";
 
 declare const tinymce: EditorManager;
 
@@ -132,10 +134,13 @@ const Editor: React.FC<EditorProps> = ({
         );
       }}
     >
-      <div
-        id={block.tinymceId()}
-        dangerouslySetInnerHTML={{ __html: html }}
-      ></div>
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        <div
+          id={block.tinymceId()}
+          dangerouslySetInnerHTML={{ __html: html }}
+        ></div>
+      </BlockLabel>
       <BlockToolbar
         id={`${block.tinymceId()}toolbar`}
         rows={2}
@@ -229,8 +234,9 @@ class Text extends Block {
 
   public static async newFromHtml({
     html,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
-    return new Text({ text: html });
+    return new Text(Object.assign({ text: html }, meta));
   }
 }
 

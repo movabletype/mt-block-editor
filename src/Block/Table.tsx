@@ -5,6 +5,8 @@ import { Editor as TinyMCE, EditorManager } from "tinymce";
 import { useBlocksContext } from "../Context";
 import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
+import BlockLabel from "../Component/BlockLabel";
 
 declare const tinymce: EditorManager;
 
@@ -77,10 +79,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
   return (
     <div>
-      <div
-        id={block.tinymceId()}
-        dangerouslySetInnerHTML={{ __html: block.html() }}
-      ></div>
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        <div
+          id={block.tinymceId()}
+          dangerouslySetInnerHTML={{ __html: block.html() }}
+        ></div>
+      </BlockLabel>
       <BlockToolbar
         id={`${block.tinymceId()}toolbar`}
         hasBorder={false}

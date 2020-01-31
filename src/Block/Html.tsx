@@ -1,18 +1,23 @@
 import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { useEditorUtil } from "../hooks/useEditorUtil";
+import { useEditorUtil } from "../hooks";
 import BlockIframePreview from "../Component/BlockIframePreview";
 import icon from "../img/icon/html.svg";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
+import BlockLabel from "../Component/BlockLabel";
 
 interface EditorProps {
   block: Html;
 }
 
-const Editor: React.FC<EditorProps> = () => {
+const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   return (
     <div>
-      <textarea name="text" style={{ width: "100%" }} />
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        <textarea name="text" style={{ width: "100%" }} />
+      </BlockLabel>
     </div>
   );
 };

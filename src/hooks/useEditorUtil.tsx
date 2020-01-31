@@ -30,7 +30,7 @@ interface MapObject {
   [key: string]: any;
 }
 
-export function useEditorUtil(
+export default function useEditorUtil(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   editor: React.FC<any>,
   props: EditorProps

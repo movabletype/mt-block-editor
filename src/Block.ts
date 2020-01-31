@@ -4,6 +4,11 @@ import BlockFactory from "./BlockFactory";
 import { escapeHtml } from "./util";
 import icon from "./img/icon/default-block.svg";
 
+export interface Metadata {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface EditorOptions {
   focus: boolean;
   canRemove?: boolean;
@@ -18,11 +23,7 @@ export interface NewFromHtmlOptions {
   html: string;
   node: Element;
   factory: BlockFactory;
-}
-
-export interface Metadata {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  meta: Metadata;
 }
 
 class Block {
@@ -33,6 +34,8 @@ class Block {
   public static shouldBeCompied = false;
   public id: string;
   public compiledHtml = "";
+  public label = "";
+  public className = "";
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static async new(opts: NewOptions): Promise<Block> {
@@ -67,8 +70,8 @@ class Block {
     }
   }
 
-  public metadata(): Metadata | null {
-    return null;
+  public metadata(): Metadata {
+    return this.metadataByOwnKeys({ keys: ["label", "className"] });
   }
 
   public metadataByOwnKeys({ keys }: { keys?: string[] }): Metadata {
