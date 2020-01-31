@@ -31,6 +31,7 @@ export class Block {
   public id: string;
   public compiledHtml: string;
   public metadata(): Metadata | null;
+  public metadataByOwnKeys(opts?: { keys?: string[] }): Metadata | null;
   public compile(): Promise<void>;
 }
 

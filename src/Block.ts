@@ -75,9 +75,11 @@ class Block {
     return this.metadataByOwnKeys({ keys: [] });
   }
 
-  public metadataByOwnKeys({ keys }: { keys?: string[] }): Metadata | null {
+  public metadataByOwnKeys(opts?: { keys?: string[] }): Metadata | null {
     const src: Metadata = this as Metadata;
     const data: Metadata = {};
+
+    let keys = opts && opts.keys;
 
     if (!keys) {
       const parentKeys = Reflect.ownKeys(new Block());
