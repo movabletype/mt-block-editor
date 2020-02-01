@@ -7,6 +7,7 @@ import Block from "../Block";
 import Text from "../Block/Text";
 import BlockItem from "./BlockItem";
 import { EditorContext, BlocksContext } from "../Context";
+import AddButton from "./AddButton";
 
 interface AppProps {
   editor: Editor;
@@ -134,6 +135,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                 />
               );
             })}
+            <div className="btn-add-bottom">
+              <AddButton index={blocks.length} />
+            </div>
           </div>
         </DndProvider>
       </BlocksContext.Provider>
