@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "core-js": "^3.5.0",
+    "eventemitter3": "^4.0.0",
     "i18next": "^19.0.1",
     "i18next-xhr-backend": "^3.2.2",
     "react": "^16.12.0",

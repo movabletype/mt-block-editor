@@ -1,3 +1,4 @@
+import EventEmitter from "eventemitter3";
 import React from "react";
 import { render } from "react-dom";
 
@@ -22,7 +23,7 @@ export interface EditorOptions {
   mode: string;
 }
 
-class Editor {
+class Editor extends EventEmitter {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
@@ -32,6 +33,8 @@ class Editor {
   private editorElement: HTMLElement;
 
   public constructor(opts: EditorOptions) {
+    super();
+
     this.id = opts.id;
     this.opts = opts;
     opts.block = opts.block || {};
@@ -49,6 +52,7 @@ class Editor {
         if (!blocks.find(b => b instanceof Text)) {
           blocks.push(new Text());
         }
+        this.emit("onInitializeBlocks", { editor: this, blocks });
 
         this.blocks = blocks;
         this.editorElement.classList.add("mt-block-editor");
@@ -78,10 +82,21 @@ class Editor {
 
   public addBlock(blocks: Block[], b: Block, index: number): void {
     blocks.splice(index, 0, b);
+
+    this.emit("onChangeBlock", {
+      editor: this,
+      blocks,
+    });
   }
 
-  public removeBlock(blocks: Block[], b: Block): void {
-    const index = blocks.indexOf(b);
+  public removeBlock(blocks: Block[], block: Block): void {
+    this.emit("onRemoveBlock", {
+      editor: this,
+      blocks,
+      block,
+    });
+
+    const index = blocks.indexOf(block);
     if (index === -1) {
       return;
     }
@@ -90,6 +105,11 @@ class Editor {
     if (!this.blocks.find(b => b instanceof Text)) {
       this.blocks.push(new Text());
     }
+
+    this.emit("onChangeBlock", {
+      editor: this,
+      blocks,
+    });
   }
 
   public async serialize(): Promise<void> {

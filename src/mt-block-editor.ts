@@ -69,13 +69,15 @@ class EditorUtil {
   public static icons = icons;
   public static util = util;
 
-  public static async apply(opts: InitOptions): Promise<void> {
+  public static async apply(opts: InitOptions): Promise<Editor> {
     const optsI18n: InitOptionsI18n = opts.i18n || {};
     await initI18n(optsI18n);
 
     const m = EditorManager.instance();
     const e = new Editor(opts as EditorOptions);
     m.add(e);
+
+    return e;
   }
 
   public static get({ id }: { id: string }): Editor | undefined {
