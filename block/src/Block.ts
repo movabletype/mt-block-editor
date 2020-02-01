@@ -1,5 +1,10 @@
 import { Editor } from "./index";
 
+export interface Metadata {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface EditorOptions {
   focus: boolean;
   canRemove?: boolean;
@@ -15,11 +20,7 @@ export interface NewFromHtmlOptions {
   node: Element;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   factory: any;
-}
-
-export interface Metadata {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  meta: Metadata;
 }
 
 export default window.MTBlockEditor.Block;
