@@ -13,6 +13,16 @@ class BlockFactory {
   public selectableTypes(): Array<typeof Block> {
     return BlockFactory.allTypes.filter(t => t.selectable);
   }
+
+  public lookupType(typeId: string): typeof Block {
+    const t = BlockFactory.allTypes.find(t => t.typeId === typeId);
+
+    if (!t) {
+      throw `Unknown typeId: ${typeId}`;
+    }
+
+    return t;
+  }
 }
 
 export default BlockFactory;
