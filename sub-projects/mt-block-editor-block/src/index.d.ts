@@ -36,6 +36,7 @@ export class Block {
 }
 
 export class EditorUtil {
+  public static version: string;
   public static i18n: i18n;
   public static Component: Map;
   public static hooks: Map;
