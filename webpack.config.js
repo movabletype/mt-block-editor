@@ -58,6 +58,7 @@ module.exports = async function(_, env) {
       tinymce: "tinymce",
     },
     optimization: {
+      minimize: isProd,
       minimizer: [
         new TerserPlugin({
           cache: true,

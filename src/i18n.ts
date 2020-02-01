@@ -1,3 +1,4 @@
+import { version } from "../package.json";
 import i18n, { TFunction, InitOptions } from "i18next";
 import Backend from "i18next-xhr-backend";
 //import LanguageDetector from "i18next-browser-languagedetector";
@@ -31,8 +32,7 @@ export async function init(opts: InitOptions): Promise<TFunction> {
           },
 
           backend: {
-            loadPath:
-              "https://mt-net-cdn.s3.amazonaws.com/libs/mt-block-editor/0.0.4/locales/{{lng}}/{{ns}}.json",
+            loadPath: `https://cdn.movabletype.net/libs/mt-block-editor/${version}/locales/{{lng}}/{{ns}}.json`,
             crossDomain: true,
           },
         },

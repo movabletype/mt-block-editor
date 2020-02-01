@@ -1,5 +1,5 @@
 build:
 	npm run build
 deploy: build
-	aws --profile mt-net s3 cp --acl public-read --recursive docs/dist/ 's3://mt-net-cdn/libs/mt-block-editor/0.0.4/'
-	aws --profile mt-net s3 cp --acl public-read --recursive docs/locales/ 's3://mt-net-cdn/libs/mt-block-editor/0.0.4/locales/'
+	aws s3 cp --acl public-read --recursive docs/dist/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/$(shell npx -c 'echo "$$npm_package_version"')/'
+	aws s3 cp --acl public-read --recursive docs/locales/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/$(shell npx -c 'echo "$$npm_package_version"')/locales/'
