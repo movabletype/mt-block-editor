@@ -14,7 +14,7 @@ interface EditorProps {
 const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   return (
     <div>
-      <BlockSetupCommon block={block} />
+      <BlockSetupCommon block={block} keys={["label", "helpText"]} />
       <BlockLabel block={block}>
         <textarea name="text" style={{ width: "100%" }} />
       </BlockLabel>

@@ -6,31 +6,29 @@ import { useEditorUtil } from "../hooks";
 
 interface EditorProps {
   block: Block;
+  keys?: string[];
 }
+
+const labelMap: { [key: string]: string } = {
+  label: "Label",
+  helpText: "Help Text",
+  className: "Class Name",
+};
 
 const BlockSetupCommonInternal: React.FC<EditorProps> = ({
   block,
+  keys = ["label", "helpText", "className"],
 }: EditorProps) => {
   return (
     <>
-      <BlockSetup block={block}>
-        <label>
-          <div>{t("Label")}</div>
-          <input type="text" name="label" style={{ width: "100%" }} />
-        </label>
-      </BlockSetup>
-      <BlockSetup block={block}>
-        <label>
-          <div>{t("Help Text")}</div>
-          <input type="text" name="helpText" style={{ width: "100%" }} />
-        </label>
-      </BlockSetup>
-      <BlockSetup block={block}>
-        <label>
-          <div>{t("Class Name")}</div>
-          <input type="text" name="className" style={{ width: "100%" }} />
-        </label>
-      </BlockSetup>
+      {keys.map(k => (
+        <BlockSetup block={block} key={k}>
+          <label>
+            <div>{t(labelMap[k])}</div>
+            <input type="text" name={k} style={{ width: "100%" }} />
+          </label>
+        </BlockSetup>
+      ))}
     </>
   );
 };
