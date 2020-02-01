@@ -1,0 +1,60 @@
+{
+  "name": "mt-block-editor-block-form-element",
+  "version": "0.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "start": "webpack-dev-server --hot --inline",
+    "test": "jest",
+    "check-types": "tsc",
+    "lint": "eslint --fix --ext .ts --ext .tsx ./src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npx tsc && npm run build"
+    }
+  },
+  "author": "Taku Amano <tamano@sixapart.com>",
+  "devDependencies": {
+    "@babel/core": "^7.8.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.0",
+    "@babel/preset-env": "^7.8.2",
+    "@babel/preset-react": "^7.8.0",
+    "@babel/preset-typescript": "^7.8.0",
+    "@types/react": "^16.9.17",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.4.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.17.0",
+    "husky": "^3.1.0",
+    "i18next-parser": "^1.0.0-beta9",
+    "jest": "^24.9.0",
+    "mini-css-extract-plugin": "^0.8.2",
+    "mt-block-editor-block": "../mt-block-editor-block",
+    "postcss-flexbugs-fixes": "^4.1.0",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^3.0.0",
+    "postcss-nested": "^4.2.1",
+    "postcss-preset-env": "^6.7.0",
+    "prettier": "^1.19.1",
+    "style-loader": "^1.1.2",
+    "svg-url-loader": "^3.0.3",
+    "terser-webpack-plugin": "^2.3.2",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.8.0",
+    "a-table": "^1.4.18",
+    "core-js": "^3.6.3"
+  }
+}
