@@ -25,6 +25,7 @@ import * as hooks from "./hooks";
 interface BoilerplateBlockOptions {
   typeId: string;
   className: string;
+  rootBlock?: string | null;
   label: string;
   icon: string;
   html: string;
@@ -99,6 +100,7 @@ class EditorUtil {
   public static createBoilerplateBlock({
     typeId,
     className,
+    rootBlock,
     label,
     icon,
     html,
@@ -131,6 +133,9 @@ class EditorUtil {
     BoilerplateBlock.typeId = typeId;
     BoilerplateBlock.className = className;
     BoilerplateBlock.label = label;
+    if (rootBlock !== undefined) {
+      BoilerplateBlock.rootBlock = rootBlock;
+    }
     if (icon) {
       BoilerplateBlock.icon = icon;
     }

@@ -79,34 +79,48 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     });
   });
 
-  return (
+  const res = (
     <BlocksContext.Provider value={blocksContext}>
-      <div className="column" style={{ width: "100%" }}>
-        {blocks.map((b, i) => (
-          <BlockItem
-            key={b.id}
-            id={b.id}
-            block={b}
-            focus={focus}
-            index={i}
-            parentId={block.id}
-            canRemove={block.canRemoveBlock}
-            showButton={focus && block.canRemoveBlock}
-          />
-        ))}
-        {focus && block.canRemoveBlock && (
-          <div className="btn-add-bottom">
-            <AddButton index={blocks.length} />
-          </div>
-        )}
-      </div>
+      {blocks.map((b, i) => (
+        <BlockItem
+          key={b.id}
+          id={b.id}
+          block={b}
+          focus={focus}
+          index={i}
+          parentId={block.id}
+          canRemove={block.canRemoveBlock}
+          showButton={focus && block.canRemoveBlock}
+        />
+      ))}
+      {focus && block.canRemoveBlock && (
+        <div className="btn-add-bottom">
+          <AddButton index={blocks.length} />
+        </div>
+      )}
     </BlocksContext.Provider>
   );
+
+  if (block.rootBlock) {
+    return React.createElement(
+      block.rootBlock,
+      {
+        className: "column",
+        style: {
+          width: "100%",
+        },
+      },
+      res
+    );
+  } else {
+    return res;
+  }
 };
 
 class Column extends Block {
   public static typeId = "core-column";
   public static className = "mt-block-editor-column";
+  public static rootBlock: string | null = "div";
   public static selectable = false;
   public static get label(): string {
     return t("Column");
@@ -126,30 +140,50 @@ class Column extends Block {
     }
   }
 
+  public get rootBlock(): string | null {
+    return (this.constructor as typeof Column).rootBlock;
+  }
+
   public editor({ focus }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
       !focus
     ) {
-      return (
-        <div className="column" style={{ width: "100%" }}>
-          <BlockIframePreview
-            key={this.id}
-            block={this}
-            header={this.previewHeader}
-            border="none"
-          />
-        </div>
+      const res = (
+        <BlockIframePreview
+          key={this.id}
+          block={this}
+          header={this.previewHeader}
+          border="none"
+        />
       );
+      if (this.rootBlock) {
+        return React.createElement(
+          this.rootBlock,
+          {
+            className: "column",
+            style: {
+              width: "100%",
+            },
+          },
+          res
+        );
+      } else {
+        return res;
+      }
     }
     return <Editor key={this.id} block={this} focus={focus} />;
   }
 
   public html(): string {
     const className = (this.constructor as typeof Column).className;
-    return `<div class="${className}">${this.blocks
-      .map(c => c.htmlString())
-      .join("")}</div>`;
+    const blocksHtml = this.blocks.map(c => c.htmlString()).join("");
+
+    if (this.rootBlock) {
+      return `<${this.rootBlock} class="${className}">${blocksHtml}</${this.rootBlock}>`;
+    } else {
+      return blocksHtml;
+    }
   }
 
   public async serializedString(): Promise<string> {
@@ -201,9 +235,15 @@ class Column extends Block {
 
     const typeId = (this.constructor as typeof Column).typeId;
     const className = (this.constructor as typeof Column).className;
-    return `<!-- mtEditorBlock data-mt-block-type="${typeId}" --><div${
-      className ? ` class="${className}"` : ""
-    }>${await this.serializedString()}</div><!-- /mtEditorBlock -->`;
+    return [
+      `<!-- mtEditorBlock data-mt-block-type="${typeId}" -->`,
+      this.rootBlock
+        ? `<${this.rootBlock}${className ? ` class="${className}"` : ""}>`
+        : "",
+      await this.serializedString(),
+      this.rootBlock ? `</${this.rootBlock}>` : "",
+      `<!-- /mtEditorBlock -->`,
+    ].join("");
   }
 
   public static async newFromHtml({
@@ -213,8 +253,8 @@ class Column extends Block {
     const html =
       preParseContent(node.getAttribute("data-mt-block-html") || "") ||
       node.innerHTML
-        .replace(/^&lt;div.*?&gt;/, "")
-        .replace(/&lt;\/div&gt;$/, "");
+        .replace(/^&lt;div.*?&gt;(<!--\s+mtEditorBlock\s+)/, "$1")
+        .replace(/&lt;\/div&gt;(<!--\s+\/mtEditorBlock\s+--)>$/, "$1");
     const blocks = await parseContent(html, factory);
 
     if (html && blocks.length === 0) {
