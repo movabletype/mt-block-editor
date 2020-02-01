@@ -17,10 +17,11 @@ interface Map {
 
 export interface EditorOptions {
   id: string;
+  mode: string;
   stylesheets: Array<string>;
   selectableBlockTypes?: string[];
+  addButtons: Map;
   block: Map;
-  mode: string;
 }
 
 class Editor extends EventEmitter {
@@ -38,6 +39,7 @@ class Editor extends EventEmitter {
     this.id = opts.id;
     this.opts = opts;
     opts.block = opts.block || {};
+    opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
 
