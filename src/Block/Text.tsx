@@ -64,10 +64,12 @@ const Editor: React.FC<EditorProps> = ({
           children.forEach(c => {
             ed.dom.remove(c);
           });
-          children.forEach(c => {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            addBlock(new Text({ text: c.outerHTML }), block);
-          });
+          if (canRemove) {
+            children.forEach(c => {
+              // eslint-disable-next-line @typescript-eslint/no-use-before-define
+              addBlock(new Text({ text: c.outerHTML }), block);
+            });
+          }
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
