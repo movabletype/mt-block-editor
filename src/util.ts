@@ -82,15 +82,39 @@ export async function parseContent(
     const node = children[i];
     const typeId = node.getAttribute("data-mt-block-type");
     const meta = JSON.parse(node.getAttribute("data-mt-block-meta") || "{}");
-    const t =
-      factory.types().find((t: typeof Block) => t.typeId === typeId) || Column;
+
+    let html = node.getAttribute("data-mt-block-html") || "";
+    if (!html && node.textContent) {
+      let c = node.textContent;
+      if (meta.className) {
+        c = c.replace(
+          /^(<[^>]+)( class=")([^"]+)"/,
+          (m, tag, prefix, classNames) => {
+            const filtered = classNames
+              .split(/\s+/)
+              .filter((c: string) => c !== meta.className)
+              .join(" ");
+
+            if (filtered) {
+              return `${tag}${prefix}${filtered}"`;
+            } else {
+              return tag;
+            }
+          }
+        );
+      }
+      html = c;
+    }
+
     const param = {
-      html: node.getAttribute("data-mt-block-html") || node.textContent || "",
+      html,
       node,
       factory,
       meta,
     };
 
+    const t =
+      factory.types().find((t: typeof Block) => t.typeId === typeId) || Column;
     const block = await t
       .newFromHtml(param)
       .catch(() => Text.newFromHtml(param));

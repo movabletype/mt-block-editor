@@ -63,12 +63,32 @@ class Block {
   }
 
   public htmlString(): string {
-    const html = this.html();
-    if (typeof html === "string") {
-      return html;
-    } else {
-      return ReactDOMServer.renderToStaticMarkup(html);
+    let html = this.html();
+
+    if (typeof html !== "string") {
+      html = ReactDOMServer.renderToStaticMarkup(html);
     }
+
+    if (this.className) {
+      if (/^<[^>]+class="/.test(html)) {
+        html = html.replace(/^<[^>]+class="([^"]+)/, (m, classNames) => {
+          if (
+            classNames.split(/\s+/).find((c: string) => c === this.className)
+          ) {
+            return m;
+          } else {
+            return `${m} ${this.className}`;
+          }
+        });
+      } else {
+        html = html.replace(
+          /^<([^>]+)>/,
+          (m, tag) => `<${tag} class="${this.className}">`
+        );
+      }
+    }
+
+    return html;
   }
 
   public metadata(): Metadata | null {

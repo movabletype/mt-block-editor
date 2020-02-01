@@ -189,8 +189,10 @@ class Text extends Block {
       );
     }
 
-    if (this.html()) {
-      return <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>;
+    if (this.htmlString()) {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: this.htmlString() }}></div>
+      );
     } else {
       return (
         <input
