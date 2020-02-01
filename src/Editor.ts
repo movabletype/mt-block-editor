@@ -49,27 +49,29 @@ class Editor extends EventEmitter {
     this.editorElement = document.createElement("DIV");
     this.blocks = [];
 
-    parseContent(preParseContent(this.inputElement.value), this.factory).then(
-      blocks => {
-        if (!blocks.find(b => b instanceof Text)) {
-          blocks.push(new Text());
+    setTimeout(() => {
+      parseContent(preParseContent(this.inputElement.value), this.factory).then(
+        blocks => {
+          this.blocks = blocks;
+          this.emit("onInitializeBlocks", { editor: this, blocks });
+
+          this.editorElement.classList.add("mt-block-editor");
+
+          if (!this.inputElement.parentNode) {
+            return;
+          }
+
+          this.inputElement.parentNode.insertBefore(
+            this.editorElement,
+            this.inputElement
+          );
+          render(
+            React.createElement(App, { editor: this }),
+            this.editorElement
+          );
         }
-        this.emit("onInitializeBlocks", { editor: this, blocks });
-
-        this.blocks = blocks;
-        this.editorElement.classList.add("mt-block-editor");
-
-        if (!this.inputElement.parentNode) {
-          return;
-        }
-
-        this.inputElement.parentNode.insertBefore(
-          this.editorElement,
-          this.inputElement
-        );
-        render(React.createElement(App, { editor: this }), this.editorElement);
-      }
-    );
+      );
+    }, 0);
   }
 
   public selectableTypes(): Array<typeof Block> {
@@ -85,7 +87,7 @@ class Editor extends EventEmitter {
   public addBlock(blocks: Block[], b: Block, index: number): void {
     blocks.splice(index, 0, b);
 
-    this.emit("onChangeBlock", {
+    this.emit("onChangeBlocks", {
       editor: this,
       blocks,
     });
@@ -104,18 +106,20 @@ class Editor extends EventEmitter {
     }
     blocks.splice(index, 1);
 
-    if (!this.blocks.find(b => b instanceof Text)) {
-      this.blocks.push(new Text());
-    }
-
-    this.emit("onChangeBlock", {
+    this.emit("onChangeBlocks", {
       editor: this,
       blocks,
     });
   }
 
   public async serialize(): Promise<void> {
-    const values = await Promise.all(this.blocks.map(b => b.serialize()));
+    const blocks = this.blocks.concat();
+    this.emit("onSerialize", {
+      editor: this,
+      blocks,
+    });
+
+    const values = await Promise.all(blocks.map(b => b.serialize()));
     this.inputElement.value = values.join("");
   }
 
