@@ -119,6 +119,10 @@ class Block {
     return Object.keys(data).length !== 0 ? data : null;
   }
 
+  public isSetupBlank() {
+    return !(this.label || this.helpText || this.className);
+  }
+
   public async serializedString(): Promise<string> {
     return this.htmlString();
   }
