@@ -119,7 +119,7 @@ class Table extends Block {
     return focus ? (
       <Editor key={this.id} block={this} focus={focus} />
     ) : (
-      <div dangerouslySetInnerHTML={{ __html: this.html() }}></div>
+      <div dangerouslySetInnerHTML={{ __html: this.htmlString() }}></div>
     );
   }
 

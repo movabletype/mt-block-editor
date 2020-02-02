@@ -56,7 +56,7 @@ class File extends Block {
     return focus ? (
       <EditorUtil key={this.id} block={this} focus={focus} />
     ) : (
-      this.html()
+      this.htmlString()
     );
   }
 
