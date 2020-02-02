@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Taku Amano",
+      "authorEmail": "tamano@sixapart.com",
+      "authorUrl": ""
+    }
+  }
+}
