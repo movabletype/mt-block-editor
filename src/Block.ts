@@ -120,8 +120,12 @@ class Block {
     return Object.keys(data).length !== 0 ? data : null;
   }
 
-  public isSetupBlank() {
+  public isSetupBlank(): boolean {
     return !(this.label || this.helpText || this.className);
+  }
+
+  public isBlank(): boolean {
+    return this.htmlString() === "";
   }
 
   public async serializedString(): Promise<string> {
