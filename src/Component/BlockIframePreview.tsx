@@ -121,6 +121,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             (${onClickFunc.toString()})();
           })();
         </script>
+        <style type="text/css">
+        /* FIXME */
+        .mt-block-editor-column {
+          width: 100%;
+        }
+        </style>
         ${editor &&
           editor.opts.stylesheets.map(
             s => `<link rel="stylesheet" href=${s} />`
