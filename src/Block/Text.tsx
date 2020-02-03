@@ -179,7 +179,7 @@ class Text extends Block {
     return `textarea-${this.id}`;
   }
 
-  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
+  public editor({ focus, canRemove, parentBlock }: EditorOptions): JSX.Element {
     if (focus) {
       return (
         <Editor
@@ -191,9 +191,13 @@ class Text extends Block {
       );
     }
 
-    if (this.htmlString()) {
+    if (this.htmlString() || parentBlock) {
       return (
-        <div dangerouslySetInnerHTML={{ __html: this.htmlString() }}></div>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: this.htmlString() || t("Start writing"),
+          }}
+        ></div>
       );
     } else {
       return (

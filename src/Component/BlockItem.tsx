@@ -28,7 +28,7 @@ interface Props {
   canRemove: boolean;
   showButton: boolean;
   showLeftButton?: boolean;
-  parentId?: string;
+  parentBlock?: Block;
 }
 
 interface BlockInstance {
@@ -44,7 +44,7 @@ const BlockItem: React.FC<Props> = ({
   canRemove,
   showButton,
   showLeftButton,
-  parentId,
+  parentBlock,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
   const { editor } = useEditorContext();
@@ -53,7 +53,7 @@ const BlockItem: React.FC<Props> = ({
 
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop({
-    accept: parentId || "block",
+    accept: parentBlock ? parentBlock.id : "block",
     hover(item: DragObject, monitor: DropTargetMonitor) {
       if (!ref.current) {
         return;
@@ -113,7 +113,7 @@ const BlockItem: React.FC<Props> = ({
   });
 
   const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: parentId || "block", id, index },
+    item: { type: parentBlock ? parentBlock.id : "block", id, index },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     collect: (monitor: any) => ({
       isDragging: monitor.isDragging(),
@@ -165,14 +165,14 @@ const BlockItem: React.FC<Props> = ({
       )}
       <div className="block">
         {focus || (b instanceof Text && b.isBlank()) ? (
-          b.editor({ focus, canRemove: canRemove === true })
+          b.editor({ focus, canRemove: canRemove === true, parentBlock })
         ) : (
           <root.div>
             <div className="entry">
               {editor.opts.stylesheets.map(s => (
                 <link rel="stylesheet" key={s} href={s} />
               ))}
-              {b.editor({ focus, canRemove: canRemove === true })}
+              {b.editor({ focus, canRemove: canRemove === true, parentBlock })}
             </div>
           </root.div>
         )}

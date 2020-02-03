@@ -56,7 +56,11 @@ class File extends Block {
     return focus ? (
       <EditorUtil key={this.id} block={this} focus={focus} />
     ) : (
-      this.htmlString()
+      <div
+        dangerouslySetInnerHTML={{
+          __html: this.htmlString(),
+        }}
+      ></div>
     );
   }
 

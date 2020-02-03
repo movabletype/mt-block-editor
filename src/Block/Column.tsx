@@ -88,7 +88,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           block={b}
           focus={focus}
           index={i}
-          parentId={block.id}
+          parentBlock={block}
           canRemove={block.canRemoveBlock}
           showButton={focus && block.canRemoveBlock}
         />
