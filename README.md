@@ -1,31 +1,53 @@
-# mt-block-editor
+## これは何か
 
-The block editor
+* MovableType.net向けに開発しているブロックエディタ
+* まだ「とりあえずそれっぽく動く」程度
 
-## Screenshot
+## とりあえず動かしてみる場合
 
-![Screenshot](https://raw.githubusercontent.com/xxx/mt-block-editor/master/artwork/screenshot.png)
+```shell
+$ npm install
+$ npm run start
+```
 
-## License
+## 特徴
 
-MIT License
+* WYSIWYG的に気持ちよく編集が可能でありながら、ブロック的な構造も意識して編集することができる
+* 出力されるHTMLに無駄がなく、再利用もしやすい
+* JSによるブロックタイプの追加に対応している
 
-Copyright (c) 2020 Six Apart Ltd.
+## sub-projects以下について
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+以下のディレクトリは、ブロックタイプの追加のためのユーティリティ、およびブロックタイプの参照実装が含まれている。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+これらは将来的には、オープンソースライセンスとして公開され、npmでインストールできるようになる。（おそらく）
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+### mt-block-editor-block
+
+ブロックタイプを作成するためのユーティリティ。ブロックタイプを作成する場合に、以下のように定義をインポートしたりするために利用する。
+```javascript
+import Block from "mt-block-editor-block/Block";
+```
+
+### generator-mt-block-editor-block
+
+ブロックタイプの雛形を作成する。以下のような感じで実行できる。
+```
+npx -p yo -p ./generator-mt-block-editor-block -- yo mt-block-editor-block
+```
+
+### mt-block-editor-block-oembed
+
+参照実装その１。
+
+oEmbed を埋め込むためのブロックタイプ。
+
+### mt-block-editor-block-form-element
+
+参照実装その2。
+
+* INPUT
+* TEXTAREA
+* SELECT
+
+といったシンプルなフォーム要素を埋め込むためのブロックタイプ。
