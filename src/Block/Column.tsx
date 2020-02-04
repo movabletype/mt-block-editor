@@ -12,7 +12,18 @@ interface EditorProps extends EditorOptions {
   block: Column;
 }
 
-const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({
+  block,
+  focus,
+  canRemove,
+}: EditorProps) => {
+  if (
+    (block.constructor as typeof Block).typeId !== "core-column" ||
+    typeof canRemove === "undefined"
+  ) {
+    canRemove = block.canRemoveBlock;
+  }
+
   const { editor } = useEditorContext();
 
   const [blocks, updateBlocks] = useState(block.blocks);
@@ -89,11 +100,11 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           focus={focus}
           index={i}
           parentBlock={block}
-          canRemove={block.canRemoveBlock}
-          showButton={focus && block.canRemoveBlock}
+          canRemove={canRemove === true}
+          showButton={focus && canRemove === true}
         />
       ))}
-      {focus && block.canRemoveBlock && (
+      {focus && canRemove && (
         <div className="btn-add-bottom">
           <AddButton index={blocks.length} />
         </div>
@@ -144,7 +155,7 @@ class Column extends Block {
     return (this.constructor as typeof Column).rootBlock;
   }
 
-  public editor({ focus }: EditorOptions): JSX.Element {
+  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
       !focus
@@ -172,7 +183,9 @@ class Column extends Block {
         return res;
       }
     }
-    return <Editor key={this.id} block={this} focus={focus} />;
+    return (
+      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
+    );
   }
 
   public html(): string {

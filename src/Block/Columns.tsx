@@ -9,10 +9,14 @@ interface EditorProps extends EditorOptions {
   block: Columns;
 }
 
-const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({
+  block,
+  focus,
+  canRemove,
+}: EditorProps) => {
   return (
     <div className="columns" style={{ display: "flex" }}>
-      {block.columns.map(c => c.editor({ focus }))}
+      {block.columns.map(c => c.editor({ focus, canRemove }))}
     </div>
   );
 };
@@ -35,8 +39,10 @@ class Columns extends Block {
     }
   }
 
-  public editor({ focus }: EditorOptions): JSX.Element {
-    return <Editor key={this.id} block={this} focus={focus} />;
+  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
+    return (
+      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
+    );
   }
 
   public html(): string {

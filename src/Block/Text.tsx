@@ -191,14 +191,16 @@ class Text extends Block {
       );
     }
 
-    if (this.htmlString() || parentBlock) {
+    if (this.htmlString()) {
       return (
         <div
           dangerouslySetInnerHTML={{
-            __html: this.htmlString() || t("Start writing"),
+            __html: this.htmlString(),
           }}
         ></div>
       );
+    } else if (parentBlock) {
+      return <p>{t("Start writing")}</p>;
     } else {
       return (
         <input
