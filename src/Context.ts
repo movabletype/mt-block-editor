@@ -4,6 +4,8 @@ import Block from "./Block";
 
 interface EditorContextProps {
   editor: Editor;
+  setFocusedId: (id: string | null) => void;
+  getFocusedId: () => string | null;
 }
 export const EditorContext = createContext<EditorContextProps | null>(null);
 export function useEditorContext(): EditorContextProps {

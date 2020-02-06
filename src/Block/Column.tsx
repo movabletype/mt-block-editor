@@ -24,7 +24,7 @@ const Editor: React.FC<EditorProps> = ({
     canRemove = block.canRemoveBlock;
   }
 
-  const { editor } = useEditorContext();
+  const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
   const [blocks, updateBlocks] = useState(block.blocks);
   const blocksContext = {
@@ -34,7 +34,7 @@ const Editor: React.FC<EditorProps> = ({
         index = block.blocks.indexOf(index) + 1;
       }
       editor.addBlock(block.blocks, b, index);
-      // setFocus(b.id);
+      setFocusedId(b.id);
       updateBlocks(([] as Block[]).concat(block.blocks));
     },
     removeBlock: (b: Block) => {
@@ -92,18 +92,21 @@ const Editor: React.FC<EditorProps> = ({
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
-      {blocks.map((b, i) => (
-        <BlockItem
-          key={b.id}
-          id={b.id}
-          block={b}
-          focus={focus}
-          index={i}
-          parentBlock={block}
-          canRemove={canRemove === true}
-          showButton={focus && canRemove === true}
-        />
-      ))}
+      {blocks.map((b, i) => {
+        const focus = getFocusedId() === b.id;
+        return (
+          <BlockItem
+            key={b.id}
+            id={b.id}
+            block={b}
+            focus={focus}
+            index={i}
+            parentBlock={block}
+            canRemove={canRemove === true}
+            showButton={focus && canRemove === true}
+          />
+        );
+      })}
       {focus && canRemove && (
         <div className="btn-add-bottom">
           <AddButton index={blocks.length} />
@@ -159,10 +162,15 @@ class Column extends Block {
     return (this.constructor as typeof Column).rootBlock;
   }
 
-  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
+  public editor({
+    focus,
+    focusDescendant,
+    canRemove,
+  }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
-      !focus
+      !focus &&
+      !focusDescendant
     ) {
       const res = (
         <BlockIframePreview

@@ -15,10 +15,12 @@ interface AppProps {
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   const editorElRef = useRef(null);
-  const [focusedId, setFocus] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
   const [blocks, updateBlocks] = useState(editor.blocks);
   const editorContext = {
     editor: editor,
+    setFocusedId: setFocusedId,
+    getFocusedId: () => focusedId,
   };
   const blocksContext = {
     addableBlockTypes: null,
@@ -27,14 +29,14 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         index = editor.blocks.indexOf(index) + 1;
       }
       editor.addBlock(editor.blocks, b, index);
-      setFocus(b.id);
+      setFocusedId(b.id);
       updateBlocks(([] as Block[]).concat(editor.blocks));
     },
     removeBlock: (b: Block) => {
       const index = editor.blocks.indexOf(b);
       editor.removeBlock(editor.blocks, b);
       if (index > 0) {
-        setFocus(editor.blocks[index - 1].id);
+        setFocusedId(editor.blocks[index - 1].id);
       }
       updateBlocks(([] as Block[]).concat(editor.blocks));
     },
@@ -99,7 +101,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         target = target.parentNode as HTMLElement;
       }
 
-      setFocus(null);
+      setFocusedId(null);
     },
     {
       capture: true,
@@ -119,9 +121,6 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                   key={b.id}
                   id={b.id}
                   block={b}
-                  setFocus={() => {
-                    setFocus(b.id);
-                  }}
                   focus={focus}
                   index={i}
                   showButton={true}

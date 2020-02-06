@@ -10,6 +10,7 @@ import Block from "../Block";
 import Text from "../Block/Text";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
+import { findDescendantBlock } from "../util";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
 import { XYCoord } from "dnd-core";
@@ -21,7 +22,6 @@ interface DragObject extends DragObjectWithType {
 
 interface Props {
   block: Block;
-  setFocus?: () => void;
   focus: boolean;
   id: string;
   index: number;
@@ -38,7 +38,6 @@ interface BlockInstance {
 const BlockItem: React.FC<Props> = ({
   id,
   block,
-  setFocus,
   focus,
   index,
   canRemove,
@@ -47,7 +46,7 @@ const BlockItem: React.FC<Props> = ({
   parentBlock,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
-  const { editor } = useEditorContext();
+  const { editor, getFocusedId, setFocusedId } = useEditorContext();
   const b = block;
   const i = index;
 
@@ -122,15 +121,18 @@ const BlockItem: React.FC<Props> = ({
 
   const opacity = isDragging ? 0 : 1;
   preview(drop(ref));
+  const focusDescendant = !!findDescendantBlock(b, getFocusedId());
 
   return (
     <div
       key={b.id}
       data-mt-block-editor-block-id={b.id}
-      onClick={() => {
-        if (setFocus) {
-          setFocus();
-        }
+      onClick={ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.nativeEvent.stopImmediatePropagation();
+
+        setFocusedId(b.id);
       }}
       className={`block-wrapper ${focus ? "focus" : ""}`}
       style={{ opacity }}
@@ -164,15 +166,25 @@ const BlockItem: React.FC<Props> = ({
         </div>
       )}
       <div className="block">
-        {focus || (b instanceof Text && b.isBlank()) ? (
-          b.editor({ focus, canRemove: canRemove === true, parentBlock })
+        {focus || (b instanceof Text && b.isBlank()) || focusDescendant ? (
+          b.editor({
+            focus,
+            focusDescendant,
+            canRemove: canRemove === true,
+            parentBlock,
+          })
         ) : (
           <root.div>
             <div className="entry">
               {editor.opts.stylesheets.map(s => (
                 <link rel="stylesheet" key={s} href={s} />
               ))}
-              {b.editor({ focus, canRemove: canRemove === true, parentBlock })}
+              {b.editor({
+                focus,
+                focusDescendant,
+                canRemove: canRemove === true,
+                parentBlock,
+              })}
             </div>
           </root.div>
         )}
