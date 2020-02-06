@@ -1,7 +1,11 @@
 import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { Editor as TinyMCE, EditorManager } from "tinymce";
+import {
+  Editor as TinyMCE,
+  EditorManager,
+  Settings as TinyMCESettings,
+} from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
@@ -19,74 +23,66 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const { addBlock } = useBlocksContext();
 
   useEffect(() => {
-    const tinymceInitOpt =
-      (editor.opts.block["core-table"] || {}).tinymce || {};
-    const initInstanceCallback: (ed: TinyMCE) => void =
-      tinymceInitOpt.init_instance_callback ||
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      function() {};
-    delete tinymceInitOpt.init_instance_callback;
+    const settings: TinyMCESettings = {
+      language: editor.opts.i18n.lng,
+      selector: `#${block.tinymceId()}`,
+      //toolbar: false,
+      menubar: false,
+      plugins: "table code paste media",
+      toolbar: "table,code",
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
+      inline: true,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      init_instance_callback: (ed: TinyMCE) => {
+        //        ed.setContent(block.text);
+        if (focus) {
+          ed.focus(false);
+        }
 
-    tinymce.init(
-      Object.assign(
-        {
-          language: editor.opts.i18n.lng,
-          selector: `#${block.tinymceId()}`,
-          //toolbar: false,
-          menubar: false,
-          plugins: "table code paste media",
-          toolbar: "table,code",
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-          inline: true,
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          init_instance_callback: (ed: TinyMCE) => {
-            //        ed.setContent(block.text);
-            if (focus) {
-              ed.focus(false);
-            }
+        const root = ed.dom.getRoot();
 
-            const root = ed.dom.getRoot();
+        ed.on("NodeChange Change", () => {
+          if (root.childNodes.length <= 1) {
+            return;
+          }
 
-            ed.on("NodeChange Change", () => {
-              if (root.childNodes.length <= 1) {
-                return;
-              }
+          let children = [...root.childNodes] as HTMLElement[];
 
-              let children = [...root.childNodes] as HTMLElement[];
-
-              children = children
-                .map(c => {
-                  if (c.tagName === "TABLE") {
-                    return c;
-                  } else {
-                    ed.dom.remove(c);
-                    return null;
-                  }
-                })
-                .filter(c => c) as HTMLElement[];
-
-              if (children.length === 1) {
-                return;
-              }
-
-              children.shift();
-              children.reverse();
-              children.forEach(c => {
+          children = children
+            .map(c => {
+              if (c.tagName === "TABLE") {
+                return c;
+              } else {
                 ed.dom.remove(c);
-              });
-              children.forEach(c => {
-                // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                addBlock(new Table({ text: c.outerHTML }), block);
-              });
-            });
+                return null;
+              }
+            })
+            .filter(c => c) as HTMLElement[];
 
-            initInstanceCallback(ed);
-          },
-        },
-        tinymceInitOpt
-      )
-    );
+          if (children.length === 1) {
+            return;
+          }
+
+          children.shift();
+          children.reverse();
+          children.forEach(c => {
+            ed.dom.remove(c);
+          });
+          children.forEach(c => {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            addBlock(new Table({ text: c.outerHTML }), block);
+          });
+        });
+      },
+    };
+
+    editor.emit("onBuildTinyMCESettings", {
+      editor,
+      block,
+      settings,
+    });
+    tinymce.init(settings);
 
     return () => {
       block.text = tinymce.get(block.tinymceId()).getContent();

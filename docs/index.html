@@ -49,6 +49,10 @@
         ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);
         });
+        ed.on("onBuildTinyMCESettings", ({ block, settings }) => {
+          console.log(block.constructor.typeId);
+          console.log(settings);
+        });
       });
 
       document
