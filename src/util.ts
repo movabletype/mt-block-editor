@@ -141,19 +141,22 @@ export const nl2br = (() => {
   };
 })();
 
-export function findDescendantBlock(block: Block, id: string | null): Block | null {
+export function findDescendantBlock(
+  block: Block,
+  id: string | null
+): Block | null {
   if (!id) {
-    return false;
+    return null;
   }
 
-  const childBlocks = this.childBlocks();
+  const childBlocks = block.childBlocks();
   for (let i = 0; i < childBlocks.length; i++) {
     const b = childBlocks[i];
     if (b.id === id) {
       return b;
     }
 
-    const cb = findChildBlock(b, id);
+    const cb = findDescendantBlock(b, id);
     if (cb) {
       return cb;
     }
