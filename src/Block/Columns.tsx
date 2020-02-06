@@ -39,6 +39,10 @@ class Columns extends Block {
     }
   }
 
+  public childBlocks(): Block[] {
+    return this.columns;
+  }
+
   public editor({ focus, canRemove }: EditorOptions): JSX.Element {
     return (
       <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />

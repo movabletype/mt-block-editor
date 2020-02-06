@@ -151,6 +151,10 @@ class Column extends Block {
     }
   }
 
+  public childBlocks(): Block[] {
+    return this.blocks;
+  }
+
   public get rootBlock(): string | null {
     return (this.constructor as typeof Column).rootBlock;
   }

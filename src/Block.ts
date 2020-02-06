@@ -63,6 +63,10 @@ class Block {
     this.id = Math.round(Math.random() * 10000000) + "";
   }
 
+  public childBlocks(): Block[] {
+    return [];
+  }
+
   public htmlString(): string {
     let html = this.html();
 
