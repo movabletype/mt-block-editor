@@ -24,6 +24,13 @@ const Editor: React.FC<EditorProps> = ({
   const { addBlock, removeBlock } = useBlocksContext();
 
   useEffect(() => {
+    const tinymceInitOpt = (editor.opts.block["core-text"] || {}).tinymce || {};
+    const initInstanceCallback: (ed: TinyMCE) => void =
+      tinymceInitOpt.init_instance_callback ||
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      function() {};
+    delete tinymceInitOpt.init_instance_callback;
+
     tinymce.init(
       Object.assign(
         {
@@ -92,6 +99,8 @@ const Editor: React.FC<EditorProps> = ({
                 e.preventDefault();
               }
             });
+
+            initInstanceCallback(ed);
           },
 
           // TinyMCE 5 ?
@@ -100,7 +109,7 @@ const Editor: React.FC<EditorProps> = ({
           // menubar: false,
           // inline: true,
         },
-        (editor.opts.block["core-text"] || {}).tinymce || {}
+        tinymceInitOpt
       )
     );
 

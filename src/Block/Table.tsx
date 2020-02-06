@@ -19,6 +19,14 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const { addBlock } = useBlocksContext();
 
   useEffect(() => {
+    const tinymceInitOpt =
+      (editor.opts.block["core-table"] || {}).tinymce || {};
+    const initInstanceCallback: (ed: TinyMCE) => void =
+      tinymceInitOpt.init_instance_callback ||
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      function() {};
+    delete tinymceInitOpt.init_instance_callback;
+
     tinymce.init(
       Object.assign(
         {
@@ -72,9 +80,11 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
                 addBlock(new Table({ text: c.outerHTML }), block);
               });
             });
+
+            initInstanceCallback(ed);
           },
         },
-        (editor.opts.block["core-table"] || {}).tinymce || {}
+        tinymceInitOpt
       )
     );
 
