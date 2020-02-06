@@ -43,10 +43,10 @@
           })(),
         ],
         i18n: {
-          lng: 'ja',
-        }
+          lng: "ja",
+        },
       }).then(ed => {
-        ed.on("onInitializeBlocks", ({blocks}) => {
+        ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);
         });
       });
@@ -75,14 +75,17 @@
         MTBlockEditor.unload({ id: "body" });
       });
 
-      document.getElementById("toggle-mode").addEventListener("click", function(ev) {
-        ev.preventDefault();
+      document
+        .getElementById("toggle-mode")
+        .addEventListener("click", function(ev) {
+          ev.preventDefault();
 
-        const cur = sessionStorage.getItem("MTBlockEditorMode") || "composition";
-        const next = cur === "composition" ? "setup" : "composition";
-        sessionStorage.setItem("MTBlockEditorMode", next);
-        location.reload();
-      });
+          const cur =
+            sessionStorage.getItem("MTBlockEditorMode") || "composition";
+          const next = cur === "composition" ? "setup" : "composition";
+          sessionStorage.setItem("MTBlockEditorMode", next);
+          location.reload();
+        });
     </script>
   </body>
 </html>
