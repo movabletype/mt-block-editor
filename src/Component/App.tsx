@@ -69,10 +69,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         });
       }
 
-      [editor.blocks[dragIndex], editor.blocks[hoverIndex]] = [
-        editor.blocks[hoverIndex],
-        editor.blocks[dragIndex],
-      ];
+      editor.swapBlocks(editor.blocks, dragIndex, hoverIndex);
       updateBlocks(([] as Block[]).concat(editor.blocks));
     },
   };

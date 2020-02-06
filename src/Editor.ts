@@ -111,6 +111,15 @@ class Editor extends EventEmitter {
     });
   }
 
+  public swapBlocks(blocks: Block[], a: number, b: number): void {
+    [blocks[a], blocks[b]] = [blocks[b], blocks[a]];
+
+    this.emit("onChangeBlocks", {
+      editor: this,
+      blocks,
+    });
+  }
+
   public async serialize(): Promise<void> {
     const blocks = this.blocks.concat();
     this.emit("onSerialize", {

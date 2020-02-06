@@ -70,10 +70,7 @@ const Editor: React.FC<EditorProps> = ({
         });
       }
 
-      [block.blocks[dragIndex], block.blocks[hoverIndex]] = [
-        block.blocks[hoverIndex],
-        block.blocks[dragIndex],
-      ];
+      editor.swapBlocks(block.blocks, dragIndex, hoverIndex);
       updateBlocks(([] as Block[]).concat(block.blocks));
     },
   };
