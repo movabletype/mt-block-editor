@@ -1,9 +1,13 @@
 import { t } from "../i18n";
-import React from "react";
+import React, { useState, MouseEvent } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import Column from "./Column";
 import { parseContent } from "../util";
 import icon from "../img/icon/columns.svg";
+import BlockToolbar from "../Component/BlockToolbar";
+import BlockToolbarButton from "../Component/BlockToolbarButton";
+import BlockConfigPanel from "../Component/BlockConfigPanel";
+import { edit as editIcon } from "../icons";
 
 interface EditorProps extends EditorOptions {
   block: Columns;
@@ -14,10 +18,72 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
+  const [showConfigPanel, setConfigPanel] = useState(false);
+  function toggleConfigPanel(): void {
+    setConfigPanel(!showConfigPanel);
+  }
+
+  function changeLayout(ev: MouseEvent): void {
+    const inputEl = ev.currentTarget.querySelector("input");
+    if (!inputEl) {
+      throw "error";
+    }
+    block.setColumnLayout(inputEl.value);
+    setConfigPanel(false);
+  }
+
+  const curLayout = block.getColumnLayout();
   return (
-    <div className="columns" style={{ display: "flex" }}>
-      {block.columns.map(c => c.editor({ focus, canRemove }))}
-    </div>
+    <>
+      <div className="columns" style={{ display: "flex" }}>
+        {block.columns.map(c => c.editor({ focus, canRemove }))}
+      </div>
+      {focus && (
+        <BlockToolbar>
+          <BlockToolbarButton
+            icon={editIcon}
+            label={t("Edit")}
+            onClick={toggleConfigPanel}
+          />
+        </BlockToolbar>
+      )}
+      {focus && showConfigPanel && (
+        <BlockConfigPanel>
+          <ul style={{ display: "flex", listStyle: "none" }}>
+            <li>
+              <label onClick={changeLayout}>
+                <input
+                  type="radio"
+                  value="2"
+                  defaultChecked={curLayout === "2"}
+                />
+                : 2
+              </label>
+            </li>
+            <li>
+              <label onClick={changeLayout}>
+                <input
+                  type="radio"
+                  value="3"
+                  defaultChecked={curLayout === "3"}
+                />
+                : 3
+              </label>
+            </li>
+            <li>
+              <label onClick={changeLayout}>
+                <input
+                  type="radio"
+                  value="4"
+                  defaultChecked={curLayout === "4"}
+                />
+                : 4
+              </label>
+            </li>
+          </ul>
+        </BlockConfigPanel>
+      )}
+    </>
   );
 };
 
@@ -36,6 +102,27 @@ class Columns extends Block {
     this.columns = [new Column(), new Column()];
     if (init) {
       Object.assign(this, init);
+    }
+  }
+
+  public getColumnLayout(): string {
+    return `${this.columns.length}`;
+  }
+
+  public setColumnLayout(layout: string): void {
+    if (layout === this.getColumnLayout()) {
+      return;
+    }
+
+    const cols = parseInt(layout);
+    const len = this.columns.length;
+
+    if (len < cols) {
+      for (let i = cols - len; i > 0; i--) {
+        this.columns.push(new Column());
+      }
+    } else {
+      this.columns.splice(cols, len - cols);
     }
   }
 
