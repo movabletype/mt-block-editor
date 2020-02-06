@@ -2,7 +2,7 @@ import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { Editor as TinyMCE, EditorManager } from "tinymce";
-import { useBlocksContext } from "../Context";
+import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
 import { getElementById } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
@@ -20,81 +20,89 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
+  const { editor } = useEditorContext();
   const { addBlock, removeBlock } = useBlocksContext();
+
   useEffect(() => {
-    tinymce.init({
-      selector: `#${block.tinymceId()}`,
-      menubar: false,
-      plugins: ["lists paste media textcolor code hr link"].join(" "),
-      toolbar: [
-        "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
-        "bullist numlist outdent indent | blockquote link unlink",
-      ],
+    tinymce.init(
+      Object.assign(
+        {
+          language: editor.opts.i18n.lng,
+          selector: `#${block.tinymceId()}`,
+          menubar: false,
+          plugins: "lists paste media textcolor code hr link",
+          toolbar: [
+            "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
+            "bullist numlist outdent indent | blockquote link unlink",
+          ],
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      skin: "lightgray",
-      inline: true,
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
+          skin: "lightgray",
+          inline: true,
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      init_instance_callback: (ed: TinyMCE) => {
-        block.tinymce = ed;
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          init_instance_callback: (ed: TinyMCE) => {
+            block.tinymce = ed;
 
-        // ed.setContent(block.text);
-        if (focus) {
-          ed.focus(false);
-          ed.selection.select(ed.getBody(), true);
-          ed.selection.collapse(false);
-        }
-
-        const root = ed.dom.getRoot();
-
-        ed.on("NodeChange Change", () => {
-          if (root.childNodes.length <= 1) {
-            return;
-          }
-
-          const children = [...root.childNodes] as HTMLElement[];
-          if (children.length === 1) {
-            return;
-          }
-
-          children.shift();
-          children.reverse();
-          children.forEach(c => {
-            ed.dom.remove(c);
-          });
-          if (canRemove) {
-            children.forEach(c => {
-              // eslint-disable-next-line @typescript-eslint/no-use-before-define
-              addBlock(new Text({ text: c.outerHTML }), block);
-            });
-          }
-        });
-
-        ed.on("keydown", (e: KeyboardEvent) => {
-          getElementById(`${block.tinymceId()}toolbar`).classList.add(
-            "invisible"
-          );
-
-          if (
-            (e.keyCode === 8 || e.keyCode === 46) &&
-            ed.dom.isEmpty(ed.dom.getRoot())
-          ) {
-            if (canRemove) {
-              removeBlock(block);
+            // ed.setContent(block.text);
+            if (focus) {
+              ed.focus(false);
+              ed.selection.select(ed.getBody(), true);
+              ed.selection.collapse(false);
             }
-            e.preventDefault();
-          }
-        });
-      },
 
-      // TinyMCE 5 ?
-      // plugins: [ 'quickbars' ],
-      // toolbar: false,
-      // menubar: false,
-      // inline: true,
-    });
+            const root = ed.dom.getRoot();
+
+            ed.on("NodeChange Change", () => {
+              if (root.childNodes.length <= 1) {
+                return;
+              }
+
+              const children = [...root.childNodes] as HTMLElement[];
+              if (children.length === 1) {
+                return;
+              }
+
+              children.shift();
+              children.reverse();
+              children.forEach(c => {
+                ed.dom.remove(c);
+              });
+              if (canRemove) {
+                children.forEach(c => {
+                  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                  addBlock(new Text({ text: c.outerHTML }), block);
+                });
+              }
+            });
+
+            ed.on("keydown", (e: KeyboardEvent) => {
+              getElementById(`${block.tinymceId()}toolbar`).classList.add(
+                "invisible"
+              );
+
+              if (
+                (e.keyCode === 8 || e.keyCode === 46) &&
+                ed.dom.isEmpty(ed.dom.getRoot())
+              ) {
+                if (canRemove) {
+                  removeBlock(block);
+                }
+                e.preventDefault();
+              }
+            });
+          },
+
+          // TinyMCE 5 ?
+          // plugins: [ 'quickbars' ],
+          // toolbar: false,
+          // menubar: false,
+          // inline: true,
+        },
+        (editor.opts.block["core-text"] || {}).tinymce || {}
+      )
+    );
 
     const onMouseMove = (): void => {
       if (tinymce.activeEditor !== block.tinymce) {

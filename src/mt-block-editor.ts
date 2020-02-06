@@ -48,10 +48,6 @@ interface BoilerplateBlockInitOptions {
   [key: string]: any;
 }
 
-interface InitOptions extends EditorOptions {
-  i18n?: InitOptionsI18n;
-}
-
 class EditorUtil {
   public static version = version;
   public static i18n = i18n;
@@ -71,7 +67,7 @@ class EditorUtil {
   public static icons = icons;
   public static util = util;
 
-  public static async apply(opts: InitOptions): Promise<Editor> {
+  public static async apply(opts: EditorOptions): Promise<Editor> {
     const optsI18n: InitOptionsI18n = opts.i18n || {};
     await initI18n(optsI18n);
 

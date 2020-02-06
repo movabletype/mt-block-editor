@@ -1,6 +1,7 @@
 import EventEmitter from "eventemitter3";
 import React from "react";
 import { render } from "react-dom";
+import { InitOptions as InitOptionsI18n } from "i18next";
 
 import { getElementById, preParseContent, parseContent } from "./util";
 import Block from "./Block";
@@ -21,6 +22,7 @@ export interface EditorOptions {
   selectableBlockTypes?: string[];
   addButtons: Map;
   block: Map;
+  i18n: InitOptionsI18n;
 }
 
 class Editor extends EventEmitter {
@@ -38,6 +40,7 @@ class Editor extends EventEmitter {
     this.id = opts.id;
     this.opts = opts;
     opts.block = opts.block || {};
+    opts.i18n = opts.i18n || {};
     opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
