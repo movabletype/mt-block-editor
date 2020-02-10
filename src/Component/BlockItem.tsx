@@ -8,6 +8,8 @@ import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
 import Text from "../Block/Text";
+import Columns from "../Block/Columns";
+import Column from "../Block/Column";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 import { findDescendantBlock } from "../util";
@@ -167,6 +169,13 @@ const BlockItem: React.FC<Props> = ({
       )}
       <div className="block">
         {focus || (b instanceof Text && b.isBlank()) || focusDescendant ? (
+          b.editor({
+            focus,
+            focusDescendant,
+            canRemove: canRemove === true,
+            parentBlock,
+          })
+        ) : b instanceof Column || b instanceof Columns ? (
           b.editor({
             focus,
             focusDescendant,

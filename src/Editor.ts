@@ -30,9 +30,9 @@ class Editor extends EventEmitter {
   public opts: EditorOptions;
   public factory: BlockFactory;
   public blocks: Block[];
+  public editorElement: HTMLElement;
 
   private inputElement: HTMLInputElement;
-  private editorElement: HTMLElement;
 
   public constructor(opts: EditorOptions) {
     super();

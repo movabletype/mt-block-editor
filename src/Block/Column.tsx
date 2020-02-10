@@ -100,7 +100,7 @@ const Editor: React.FC<EditorProps> = ({
             index={i}
             parentBlock={block}
             canRemove={canRemove === true}
-            showButton={focus && canRemove === true}
+            showButton={canRemove === true}
           />
         );
       })}

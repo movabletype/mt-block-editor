@@ -1,6 +1,6 @@
 .mt-block-editor {
   border: 1px solid #ddd;
-  padding: 10px;
+  padding: 10px 40px;
   border-radius: 4px;
   font-size: initial;
 
@@ -8,6 +8,7 @@
     font-size: initial;
     border: none;
     outline: none;
+    margin-top: 15px;
   }
 
   .btn-add {
@@ -104,6 +105,8 @@
     }
 
     .btn-remove-wrapper {
+      position: absolute;
+      right: -30px;
       display: flex;
       flex-direction: column;
       visibility: hidden;
@@ -113,6 +116,8 @@
     }
 
     .btn-move-wrapper {
+      position: absolute;
+      left: -30px;
       display: flex;
       flex-direction: column;
       visibility: hidden;
@@ -132,15 +137,30 @@
 
     .btn-add-left {
       position: absolute;
+      left: -30px;
       padding-top: 15px;
       text-align: center;
     }
   }
 
+  &[data-mt-block-editor-add-button="visible"] .block-wrapper .btn-add-wrapper {
+    z-index: initial;
+  }
+
   .block {
     width: 100%;
-    margin: 0 10px;
     position: relative;
+
+    padding: 0 10px;
+    .block {
+      margin-left: -10px;
+    }
+  }
+
+  .block-wrapper .block {
+    .btn-move-wrapper {
+      left: -40px;
+    }
   }
 
   .btn-add-bottom {
@@ -190,12 +210,12 @@
     }
   }
 
-  .block {
-    padding: 15px;
-  }
-
   .focus .block {
     outline: 1px solid #ccc;
+
+    .block {
+      outline: none;
+    }
   }
 
   .droppable:before {
@@ -225,10 +245,17 @@
 
   /* columns */
   .column {
-    outline: 1px solid #ccc;
-    padding: 10px;
     position: relative;
     flex-basis: 50%;
+    padding: 0 15px;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
   }
 
   .block-toolbar {

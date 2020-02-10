@@ -44,7 +44,15 @@ const AddButton: React.FC<AddButtonProps> = ({
     setShowList(false);
   };
 
+  editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
+    if (showList) {
+      editor.editorElement.setAttribute(
+        "data-mt-block-editor-add-button",
+        "visible"
+      );
+    }
+
     document.addEventListener("drop", onDrop, {
       capture: true,
       passive: true,
