@@ -104,7 +104,7 @@ const Editor: React.FC<EditorProps> = ({
           />
         );
       })}
-      {focus && canRemove && (
+      {(focus || blocks.length === 0) && canRemove && (
         <div className="btn-add-bottom">
           <AddButton index={blocks.length} />
         </div>
