@@ -3,7 +3,7 @@
  * http://react-dnd.github.io/react-dnd/examples
  */
 
-import React, { useRef } from "react";
+import React, { useRef, createRef } from "react";
 import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
@@ -124,6 +124,15 @@ const BlockItem: React.FC<Props> = ({
   const opacity = isDragging ? 0 : 1;
   preview(drop(ref));
   const focusDescendant = !!findDescendantBlock(b, getFocusedId());
+  const clickBlockTargetRef = createRef<HTMLElement>();
+
+  const ed = b.editor({
+    focus,
+    focusDescendant,
+    canRemove: canRemove === true,
+    parentBlock,
+    clickBlockTargetRef,
+  });
 
   return (
     <div
@@ -134,7 +143,11 @@ const BlockItem: React.FC<Props> = ({
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
-        setFocusedId(b.id);
+        if (clickBlockTargetRef.current) {
+          clickBlockTargetRef.current.click();
+        } else {
+          setFocusedId(b.id);
+        }
       }}
       className={`block-wrapper ${focus ? "focus" : ""}`}
       style={{ opacity }}
@@ -168,32 +181,19 @@ const BlockItem: React.FC<Props> = ({
         </div>
       )}
       <div className="block">
-        {focus || (b instanceof Text && b.isBlank()) || focusDescendant ? (
-          b.editor({
-            focus,
-            focusDescendant,
-            canRemove: canRemove === true,
-            parentBlock,
-          })
-        ) : b instanceof Column || b instanceof Columns ? (
-          b.editor({
-            focus,
-            focusDescendant,
-            canRemove: canRemove === true,
-            parentBlock,
-          })
+        {focus ||
+        (b instanceof Text && b.isBlank()) ||
+        focusDescendant ||
+        b instanceof Column ||
+        b instanceof Columns ? (
+          ed
         ) : (
           <root.div>
             <div className="entry">
               {editor.opts.stylesheets.map(s => (
                 <link rel="stylesheet" key={s} href={s} />
               ))}
-              {b.editor({
-                focus,
-                focusDescendant,
-                canRemove: canRemove === true,
-                parentBlock,
-              })}
+              {ed}
             </div>
           </root.div>
         )}

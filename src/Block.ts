@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
@@ -14,6 +15,7 @@ export interface EditorOptions {
   focusDescendant?: boolean;
   canRemove?: boolean;
   parentBlock?: Block;
+  clickBlockTargetRef?: RefObject<HTMLElement>;
 }
 
 export interface NewOptions {

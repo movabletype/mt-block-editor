@@ -19,6 +19,11 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         {url && <img src={url} style={{ maxWidth: "100%" }} />}
         <input
           type="url"
+          onKeyDown={ev => {
+            if (ev.key === "Enter") {
+              ev.preventDefault();
+            }
+          }}
           onChange={ev => {
             block.url = ev.target.value;
             setUrl(ev.target.value);
