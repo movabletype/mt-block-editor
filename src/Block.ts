@@ -4,6 +4,7 @@ import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
 import { escapeHtml } from "./util";
 import icon from "./img/icon/default-block.svg";
+import { Size, defaultSize } from "./Component/BlockIframePreview";
 
 export interface Metadata {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,6 +42,7 @@ class Block {
   public label = "";
   public helpText = "";
   public className = "";
+  public iframePreviewSize: Size = defaultSize;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static async new(opts: NewOptions): Promise<Block> {

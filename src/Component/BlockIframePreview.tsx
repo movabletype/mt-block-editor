@@ -3,6 +3,13 @@ import { useEditorContext } from "../Context";
 import Block from "../Block";
 import Editor from "../Editor";
 
+export interface Size {
+  width: string;
+  height: string;
+}
+
+export const defaultSize = { width: "100%", height: "100px" };
+
 interface EditorProps {
   block: Block;
   header?: string;
@@ -86,7 +93,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const [, _setCompiledHtml] = useState(
     block.compiledHtml || block.htmlString()
   );
-  const [size, setSize] = useState({ width: "100%", height: "100px" });
+  const [size, _setSize] = useState(block.iframePreviewSize);
+  const setSize = (size: Size): void => {
+    block.iframePreviewSize = size;
+    _setSize(size);
+  };
 
   const setCompiledHtml = (res: string | Error): void => {
     if (res instanceof Error) {
