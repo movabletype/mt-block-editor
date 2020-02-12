@@ -62,11 +62,20 @@ const Editor: React.FC<EditorProps> = ({
         const root = ed.dom.getRoot();
 
         ed.on("NodeChange Change", () => {
-          if (root.childNodes.length <= 1) {
+          if (
+            root.childNodes.length <= 1 ||
+            root.querySelector(".mce-pastebin")
+          ) {
             return;
           }
 
-          const children = [...root.childNodes] as HTMLElement[];
+          const children = ([...root.childNodes] as HTMLElement[]).filter(
+            n =>
+              !(
+                n.tagName === "P" &&
+                n.innerHTML.match(/<br\s+data-mce-bogus="1">/)
+              )
+          );
           if (children.length === 1) {
             return;
           }
