@@ -169,6 +169,8 @@ class Column extends Block {
       !focus &&
       !focusDescendant
     ) {
+      this.compiledHtml = "";
+
       const res = (
         <BlockIframePreview
           key={this.id}
