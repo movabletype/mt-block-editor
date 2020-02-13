@@ -47,7 +47,9 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
     <div className={css.Oembed}>
       <BlockSetupCommon block={block} keys={["label", "helpText"]} />
       <BlockLabel block={block}>
-        <input type="url" name="url" />
+        <p>
+          <input type="url" name="url" />
+        </p>
       </BlockLabel>
     </div>
   );
