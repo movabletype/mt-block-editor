@@ -1,4 +1,3 @@
-import { version } from "../package.json";
 import i18n, { TFunction, InitOptions } from "i18next";
 import { locales } from "../i18next-parser.config";
 import Backend from "i18next-xhr-backend";

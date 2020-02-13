@@ -69,13 +69,7 @@ const Editor: React.FC<EditorProps> = ({
             return;
           }
 
-          const children = ([...root.childNodes] as HTMLElement[]).filter(
-            n =>
-              !(
-                n.tagName === "P" &&
-                n.innerHTML.match(/<br\s+data-mce-bogus="1">/)
-              )
-          );
+          const children = [...root.childNodes] as HTMLElement[];
           if (children.length === 1) {
             return;
           }
