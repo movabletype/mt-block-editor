@@ -41,7 +41,16 @@
         stylesheets: [],
         i18n: {
           lng: 'ja',
-        }
+        },
+        block: {
+          "sixapart-oembed": {
+            resolver: async (url) => {
+              const res = await fetch("https://noembed.com/embed?url=" + url);
+              const data = await res.json();
+              return data.html;
+            },
+          },
+        },
       }).then(ed => {
         ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);

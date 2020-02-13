@@ -99,11 +99,11 @@ class Oembed extends Block {
     }
 
     const opts = editor.opts.block["sixapart-oembed"] || {};
-    if (!opts.resolver) {
-      throw "Requires resolver for sixapart-oembed.";
+    if (typeof opts.resolver !== "function") {
+      throw "Requires resolver function for sixapart-oembed.";
     }
 
-    this.compiledHtml = opts.resolver(this.url);
+    this.compiledHtml = await opts.resolver(this.url);
   }
 
   public static async newFromHtml({
