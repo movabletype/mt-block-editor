@@ -5,7 +5,7 @@ i18n.on("initialized", () => {
   locales.forEach(lang => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const l = require(`./locales/${lang}/translation.json`);
-    i18n.addResources(lang, "translation", l);
+    i18n.addResourceBundle(lang, "translation", l, true, false);
   });
 });
 

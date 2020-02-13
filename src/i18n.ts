@@ -1,5 +1,6 @@
 import { version } from "../package.json";
 import i18n, { TFunction, InitOptions } from "i18next";
+import { locales } from "../i18next-parser.config";
 import Backend from "i18next-xhr-backend";
 //import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
@@ -12,7 +13,14 @@ i18n
   // learn more: https://github.com/i18next/i18next-browser-languageDetector
   //.use(LanguageDetector)
   // pass the i18n instance to react-i18next.
-  .use(initReactI18next);
+  .use(initReactI18next)
+  .on("initialized", () => {
+    locales.forEach(lang => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const l = require(`./locales/${lang}/translation.json`);
+      i18n.addResourceBundle(lang, "translation", l, true, false);
+    });
+  });
 
 export default i18n;
 
@@ -25,15 +33,10 @@ export async function init(opts: InitOptions): Promise<TFunction> {
       Object.assign(
         {
           fallbackLng: "en",
-          debug: true,
+          debug: false,
 
           interpolation: {
             escapeValue: false, // not needed for react as it escapes by default
-          },
-
-          backend: {
-            loadPath: `https://cdn.movabletype.net/libs/mt-block-editor/${version}/locales/{{lng}}/{{ns}}.json`,
-            crossDomain: true,
           },
         },
         opts

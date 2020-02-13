@@ -44,6 +44,11 @@
         ],
         i18n: {
           lng: "ja",
+          debug: true,
+          //backend: {
+          //  loadPath: `https://example.com/mt-block-editor/locales/{{lng}}/{{ns}}.json`,
+          //  crossDomain: true,
+          //},
         },
       }).then(ed => {
         ed.on("onInitializeBlocks", ({ blocks }) => {
