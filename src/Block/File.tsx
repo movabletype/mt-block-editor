@@ -1,6 +1,7 @@
 import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import { sanitize } from "../util";
 import { useEditorUtil } from "../hooks";
 import icon from "../img/icon/file.svg";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -58,7 +59,7 @@ class File extends Block {
     ) : (
       <div
         dangerouslySetInnerHTML={{
-          __html: this.htmlString(),
+          __html: sanitize(this.htmlString()),
         }}
       ></div>
     );

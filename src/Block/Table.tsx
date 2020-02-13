@@ -1,6 +1,7 @@
 import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import { sanitize } from "../util";
 import {
   Editor as TinyMCE,
   EditorManager,
@@ -35,7 +36,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       inline: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
-        //        ed.setContent(block.text);
+        ed.setContent(block.text);
+
         if (focus) {
           ed.focus(false);
         }
@@ -96,7 +98,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       <BlockLabel block={block}>
         <div
           id={block.tinymceId()}
-          dangerouslySetInnerHTML={{ __html: block.html() }}
+          dangerouslySetInnerHTML={{ __html: sanitize(block.html()) }}
         ></div>
       </BlockLabel>
       <BlockToolbar
@@ -132,7 +134,9 @@ class Table extends Block {
     return focus ? (
       <Editor key={this.id} block={this} focus={focus} />
     ) : (
-      <div dangerouslySetInnerHTML={{ __html: this.htmlString() }}></div>
+      <div
+        dangerouslySetInnerHTML={{ __html: sanitize(this.htmlString()) }}
+      ></div>
     );
   }
 

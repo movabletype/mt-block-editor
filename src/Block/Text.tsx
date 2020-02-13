@@ -8,7 +8,7 @@ import {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import { getElementById } from "../util";
+import { getElementById, sanitize } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -52,7 +52,7 @@ const Editor: React.FC<EditorProps> = ({
       init_instance_callback: (ed: TinyMCE) => {
         block.tinymce = ed;
 
-        // ed.setContent(block.text);
+        ed.setContent(block.text);
         if (focus) {
           ed.focus(false);
           ed.selection.select(ed.getBody(), true);
@@ -162,7 +162,7 @@ const Editor: React.FC<EditorProps> = ({
       <BlockLabel block={block}>
         <div
           id={block.tinymceId()}
-          dangerouslySetInnerHTML={{ __html: html }}
+          dangerouslySetInnerHTML={{ __html: sanitize(html) }}
         ></div>
       </BlockLabel>
       <BlockToolbar
@@ -266,7 +266,7 @@ class Text extends Block {
       return (
         <div
           dangerouslySetInnerHTML={{
-            __html: this.htmlString(),
+            __html: sanitize(this.htmlString()),
           }}
         ></div>
       );

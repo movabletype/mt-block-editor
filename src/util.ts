@@ -1,4 +1,5 @@
 import React from "react";
+import createDOMPurify from "dompurify";
 import Block from "./Block";
 import BlockFactory from "./BlockFactory";
 import Text from "./Block/Text";
@@ -163,4 +164,9 @@ export function findDescendantBlock(
   }
 
   return null;
+}
+
+const DOMPurify = createDOMPurify(window);
+export function sanitize(str: string): string {
+  return DOMPurify.sanitize(str);
 }
