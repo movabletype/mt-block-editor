@@ -2,4 +2,3 @@ build:
 	npm run build
 deploy: build
 	aws s3 cp --acl public-read --recursive docs/dist/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/$(shell npx -c 'echo "$$npm_package_version"')/'
-	aws s3 cp --acl public-read --recursive docs/locales/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/$(shell npx -c 'echo "$$npm_package_version"')/locales/'
