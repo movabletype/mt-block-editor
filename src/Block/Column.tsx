@@ -21,6 +21,8 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
+  block.compiledHtml = "";
+
   if (
     (block.constructor as typeof Block).typeId !== "core-column" ||
     typeof canRemove === "undefined"
@@ -173,8 +175,6 @@ class Column extends Block {
       !focus &&
       !focusDescendant
     ) {
-      this.compiledHtml = "";
-
       const res = (
         <BlockIframePreview
           key={this.id}
