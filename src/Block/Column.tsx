@@ -2,7 +2,11 @@ import { t } from "../i18n";
 import React, { useState, useEffect } from "react";
 import { render } from "react-dom";
 import { useEditorContext, BlocksContext } from "../Context";
-import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import Block, {
+  NewFromHtmlOptions,
+  EditorOptions,
+  SerializeOptions,
+} from "../Block";
 import AddButton from "../Component/AddButton";
 import BlockItem from "../Component/BlockItem";
 import BlockIframePreview from "../Component/BlockIframePreview";
@@ -210,9 +214,9 @@ class Column extends Block {
     }
   }
 
-  public async serializedString(): Promise<string> {
+  public async serializedString(opts: SerializeOptions): Promise<string> {
     const serializedBlocks = await Promise.all(
-      this.blocks.map(c => c.serialize())
+      this.blocks.map(c => c.serialize(opts))
     );
     return serializedBlocks.join("");
   }
@@ -249,12 +253,12 @@ class Column extends Block {
     });
   }
 
-  public async serialize(): Promise<string> {
+  public async serialize(opts: SerializeOptions): Promise<string> {
     if (
       (this.constructor as typeof Block).shouldBeCompied ||
       this.compiledHtml
     ) {
-      return super.serialize();
+      return super.serialize(opts);
     }
 
     const typeId = (this.constructor as typeof Column).typeId;
@@ -264,7 +268,7 @@ class Column extends Block {
       this.rootBlock
         ? `<${this.rootBlock}${className ? ` class="${className}"` : ""}>`
         : "",
-      await this.serializedString(),
+      await this.serializedString(opts),
       this.rootBlock ? `</${this.rootBlock}>` : "",
       `<!-- /mtEditorBlock -->`,
     ].join("");

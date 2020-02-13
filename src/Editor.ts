@@ -130,7 +130,9 @@ class Editor extends EventEmitter {
       blocks,
     });
 
-    const values = await Promise.all(blocks.map(b => b.serialize()));
+    const values = await Promise.all(
+      blocks.map(b => b.serialize({ editor: this }))
+    );
     this.inputElement.value = values.join("");
   }
 

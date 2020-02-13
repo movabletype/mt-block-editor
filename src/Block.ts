@@ -31,6 +31,10 @@ export interface NewFromHtmlOptions {
   meta: Metadata;
 }
 
+export interface SerializeOptions {
+  editor: Editor;
+}
+
 class Block {
   public static typeId: string;
   public static label: string;
@@ -137,24 +141,26 @@ class Block {
     return this.htmlString() === "";
   }
 
-  public async serializedString(): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async serializedString(opts: SerializeOptions): Promise<string> {
     return this.htmlString();
   }
 
-  public async compile(): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async compile(opts: SerializeOptions): Promise<void> {
     throw "Should be implemented for each concrete class";
   }
 
-  public async serialize(): Promise<string> {
+  public async serialize(opts: SerializeOptions): Promise<string> {
     if (
       (this.constructor as typeof Block).shouldBeCompied &&
       !this.compiledHtml
     ) {
-      await this.compile();
+      await this.compile(opts);
     }
 
     const m = this.metadata();
-    const html = await this.serializedString();
+    const html = await this.serializedString(opts);
 
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId

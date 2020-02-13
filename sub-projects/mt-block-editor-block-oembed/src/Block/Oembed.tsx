@@ -10,7 +10,9 @@ import Block, {
   Metadata,
   NewFromHtmlOptions,
   EditorOptions,
+  SerializeOptions,
 } from "mt-block-editor-block/Block";
+import { useEditorContext } from "mt-block-editor-block/Context";
 
 import icon from "../img/icon/oembed.svg";
 import css from "../css/Oembed.scss";
@@ -37,11 +39,12 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 };
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
+  const { editor } = useEditorContext();
   const [, setCompiledHtml] = useState("");
 
   useEffect(() => {
     (async () => {
-      await block.compile();
+      await block.compile({ editor });
       setCompiledHtml(block.compiledHtml);
     })();
   });
@@ -90,14 +93,17 @@ class Oembed extends Block {
     return <Html key={this.id} block={this} />;
   }
 
-  public async compile(): Promise<void> {
+  public async compile({ editor }: SerializeOptions): Promise<void> {
     if (!this.url) {
       this.compiledHtml = "";
     }
 
-    const res = await fetch("https://noembed.com/embed?url=" + this.url);
-    const data = await res.json();
-    this.compiledHtml = data.html;
+    const opts = editor.opts.block["sixapart-oembed"] || {};
+    if (!opts.resolver) {
+      throw "Requires resolver for sixapart-oembed.";
+    }
+
+    this.compiledHtml = opts.resolver(this.url);
   }
 
   public static async newFromHtml({

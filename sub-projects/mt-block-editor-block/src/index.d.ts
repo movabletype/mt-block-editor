@@ -17,6 +17,10 @@ export interface EditorOptions {
   block: Map;
 }
 
+export interface SerializeOptions {
+  editor: Editor;
+}
+
 export class Editor {
   public id: string;
   public opts: EditorOptions;
@@ -32,7 +36,7 @@ export class Block {
   public compiledHtml: string;
   public metadata(): Metadata | null;
   public metadataByOwnKeys(opts?: { keys?: string[] }): Metadata | null;
-  public compile(): Promise<void>;
+  public compile(opts: SerializeOptions): Promise<void>;
 }
 
 export class EditorUtil {

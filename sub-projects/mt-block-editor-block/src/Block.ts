@@ -23,4 +23,8 @@ export interface NewFromHtmlOptions {
   meta: Metadata;
 }
 
+export interface SerializeOptions {
+  editor: Editor;
+}
+
 export default window.MTBlockEditor.Block;

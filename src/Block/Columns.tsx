@@ -1,6 +1,10 @@
 import { t } from "../i18n";
 import React, { useState, MouseEvent } from "react";
-import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import Block, {
+  NewFromHtmlOptions,
+  EditorOptions,
+  SerializeOptions,
+} from "../Block";
 import Column from "./Column";
 import { parseContent } from "../util";
 import icon from "../img/icon/columns.svg";
@@ -142,9 +146,9 @@ class Columns extends Block {
       .join("")}</div>`;
   }
 
-  public async serialize(): Promise<string> {
+  public async serialize(opts: SerializeOptions): Promise<string> {
     const serializedColumns = await Promise.all(
-      this.columns.map(c => c.serialize())
+      this.columns.map(c => c.serialize(opts))
     );
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
