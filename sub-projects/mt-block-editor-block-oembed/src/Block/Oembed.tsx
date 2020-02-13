@@ -25,6 +25,21 @@ interface HtmlProps {
   block: Oembed;
 }
 
+interface OembedData {
+  version: string;
+  type: string;
+  width: number;
+  height: number;
+  title: string;
+  html: string;
+  author_name: string;
+  author_url: string;
+  provider_name: string;
+  provider_url: string;
+}
+
+type Resolver = (url: string) => Promise<OembedData>;
+
 const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   block.compiledHtml = "";
 
@@ -102,8 +117,10 @@ class Oembed extends Block {
     if (typeof opts.resolver !== "function") {
       throw "Requires resolver function for sixapart-oembed.";
     }
+    const resolver = opts.resolver as Resolver;
+    const res = await resolver(this.url);
 
-    this.compiledHtml = await opts.resolver(this.url);
+    this.compiledHtml = res.html;
   }
 
   public static async newFromHtml({

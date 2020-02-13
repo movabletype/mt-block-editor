@@ -46,8 +46,7 @@
           "sixapart-oembed": {
             resolver: async (url) => {
               const res = await fetch("https://noembed.com/embed?url=" + url);
-              const data = await res.json();
-              return data.html;
+              return await res.json();
             },
           },
         },
