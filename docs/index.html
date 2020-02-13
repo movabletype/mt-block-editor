@@ -57,6 +57,18 @@
         ed.on("onBuildTinyMCESettings", ({ block, settings }) => {
           console.log(block.constructor.typeId);
           console.log(settings);
+          settings.plugins += " mt_security";
+          settings.extended_valid_elements = [
+            // we embed 'a[onclick]' by inserting image with popup
+            'a[href|title|target|name|id|class|onclick]',
+            // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
+            '+p[style|class]',
+            // allow SCRIPT element
+            'script[id|name|type|src]',
+            // allow SPAN element without attributes
+            '+span[*]',
+          ].join(',');
+          settings.valid_children = '+a[div]';
         });
       });
 
