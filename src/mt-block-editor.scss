@@ -205,11 +205,6 @@
     z-index: initial;
   }
 
-  &[data-mt-block-editor-add-button="visible"] .block-list-wrapper {
-    opacity: 1;
-    top: 32px;
-  }
-
   .block {
     width: 100%;
     position: relative;
@@ -259,7 +254,14 @@
     z-index: 1100;
     left: calc(50% - 144px);
     opacity: 0;
+    pointer-events: none;
     transition: 0.2s ease-in-out;
+
+    &.show {
+      pointer-events: initial;
+      opacity: 1;
+      top: 32px;
+    }
 
     &.block-list-wrapper--right {
       top: -5px;

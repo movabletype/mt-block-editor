@@ -47,10 +47,10 @@ const AddButton: React.FC<AddButtonProps> = ({
   editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
     if (showList) {
-      editor.editorElement.setAttribute(
-        "data-mt-block-editor-add-button",
-        "visible"
-      );
+      blockListElRef.current.classList.add("show");
+    }
+    else {
+      blockListElRef.current.classList.remove("show");
     }
 
     document.addEventListener("drop", onDrop, {
@@ -127,45 +127,43 @@ const AddButton: React.FC<AddButtonProps> = ({
         className={`block-list-wrapper ${className || ""}`}
         ref={blockListElRef}
       >
-        {showList && (
-          <ul className="block-list">
-            {editor
-              .selectableTypes()
-              .filter(t => {
-                if (!addableBlockTypes) {
-                  return true;
-                }
-                return (
-                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
-                );
-              })
-              .map((t: typeof Block) => (
-                <li key={t.typeId}>
-                  <a
-                    href="#"
-                    onClick={async ev => {
-                      ev.preventDefault();
-                      ev.stopPropagation();
-                      ev.nativeEvent.stopImmediatePropagation();
-                      setShowList(false);
-                      addBlock(
-                        await t.new({
-                          editor: editor,
-                          event: new Event("addButton"),
-                        }),
-                        index
-                      );
-                    }}
-                  >
-                    <div>
-                      <img src={t.icon} />
-                      <span>{t.label}</span>
-                    </div>
-                  </a>
-                </li>
-              ))}
-          </ul>
-        )}
+        <ul className="block-list">
+          {editor
+            .selectableTypes()
+            .filter(t => {
+              if (!addableBlockTypes) {
+                return true;
+              }
+              return (
+                addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
+              );
+            })
+            .map((t: typeof Block) => (
+              <li key={t.typeId}>
+                <a
+                  href="#"
+                  onClick={async ev => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    setShowList(false);
+                    addBlock(
+                      await t.new({
+                        editor: editor,
+                        event: new Event("addButton"),
+                      }),
+                      index
+                    );
+                  }}
+                >
+                  <div>
+                    <img src={t.icon} />
+                    <span>{t.label}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+        </ul>
       </div>
     </>
   );
