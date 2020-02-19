@@ -185,7 +185,7 @@ const Placeholder: React.FC<PlaceholderProps> = ({
     <input
       type="text"
       className="start-writing"
-      placeholder={t("Start writing")}
+      placeholder={t("ここに入力")}
       ref={clickBlockTargetRef as RefObject<HTMLInputElement>}
       onKeyDown={ev => {
         if (ev.key === "Enter") {
@@ -213,7 +213,7 @@ const Placeholder: React.FC<PlaceholderProps> = ({
         ev.target.placeholder = "";
       }}
       onBlur={ev => {
-        ev.target.placeholder = t("Start writing");
+        ev.target.placeholder = t("ここに入力");
       }}
     />
   );
@@ -271,7 +271,7 @@ class Text extends Block {
         ></div>
       );
     } else if (parentBlock) {
-      return <p>{t("Start writing")}</p>;
+      return <p>{t("ここに入力")}</p>;
     } else {
       return (
         <Placeholder block={this} clickBlockTargetRef={clickBlockTargetRef} />
