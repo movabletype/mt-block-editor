@@ -179,6 +179,7 @@ const Placeholder: React.FC<PlaceholderProps> = ({
   block,
   clickBlockTargetRef,
 }: PlaceholderProps) => {
+  const { setFocusedId } = useEditorContext();
   const { addBlock } = useBlocksContext();
 
   return (
@@ -203,11 +204,7 @@ const Placeholder: React.FC<PlaceholderProps> = ({
       }}
       onInput={ev => {
         block.text = (ev.target as HTMLInputElement).value;
-
-        const wrapper = (ev.target as HTMLElement).closest(".block-wrapper");
-        if (wrapper) {
-          (wrapper as HTMLAnchorElement).click();
-        }
+        setFocusedId(block.id);
       }}
       onFocus={ev => {
         ev.target.placeholder = "";
