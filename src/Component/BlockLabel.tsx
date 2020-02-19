@@ -16,7 +16,7 @@ const BlockLabel: React.FC<EditorProps> = ({
 
   return (
     <>
-      <label style={{ display: "block" }}>
+      <label className="label-name" style={{ display: "block" }}>
         {editor.opts.mode === "composition" ? (
           <>
             <div className="mt-block-editor-label-block">{block.label}</div>

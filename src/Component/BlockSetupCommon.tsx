@@ -23,7 +23,7 @@ const BlockSetupCommonInternal: React.FC<EditorProps> = ({
     <>
       {keys.map(k => (
         <BlockSetup block={block} key={k}>
-          <label style={{ display: "inline-block", width: "100%" }}>
+          <label className="label-name" style={ { display: "inline-block", width: "100%" }}>
             <div>{t(labelMap[k])}</div>
             <input type="text" name={k} style={{ width: "100%" }} />
           </label>

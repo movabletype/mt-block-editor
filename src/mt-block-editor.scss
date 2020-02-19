@@ -1,45 +1,65 @@
 .mt-block-editor {
-  border: 1px solid #ddd;
-  padding: 10px 40px;
+  padding: 0 40px 0 40px;
   border-radius: 4px;
   font-size: initial;
-
+  position: relative;
+  
   p {
     margin: 16px 0;
   }
 
   .start-writing {
-    font-size: initial;
+    font-size: 0.75rem;
+    color: #666;
     border: none;
     outline: none;
-    margin-top: 15px;
   }
-
-  .btn-add {
-    background: none;
-    border: none;
-
-    &:hover {
-      cursor: pointer;
-      opacity: 0.5;
+  
+    .btn-add {
+      width: 100%;
+      display: block;
+      background-color: #ffffff;
+      padding: 8px 0;
+      border: 0;
+      transition: .3s;
+      &:focus {
+      outline: none;
+      background-color: #f9f9f9;
+      }
+      &:hover {
+        cursor: pointer;
+        background-color: #f9f9f9;
+      }
+      &:before {
+        display: inline-block;
+        width: 100%;
+        height: 24px;
+        line-height: 24px;
+        content: "＋ ブロックを追加";
+        color: #666;
+      }
+      &::after {
+        content: "";
+        background-image: linear-gradient(to right, #999, #999 2px, transparent 2px, transparent 5px),
+        linear-gradient(to right, #999, #999 2px, transparent 2px, transparent 5px),
+        linear-gradient(to bottom, #999, #999 2px, transparent 2px, transparent 5px),
+        linear-gradient(to bottom, #999, #999 2px, transparent 2px, transparent 5px);
+        background-size: 5px 1px, 5px 1px, 1px 5px, 1px 5px;
+        background-position: left top, left bottom, left top, right top;
+        background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        pointer-events: none;
+      }
     }
-
-    &:before {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      content: "";
-      background: url(./img/add.svg);
-      background-size: cover;
-    }
-  }
 
   .btn-remove {
     background: none;
     border: none;
-
     cursor: pointer;
-
     width: 20px;
     height: 20px;
     content: "";
@@ -50,9 +70,7 @@
   .btn-move {
     background: none;
     border: none;
-
     cursor: move;
-
     width: 18px;
     height: 18px;
     content: "";
@@ -63,9 +81,7 @@
   .btn-up {
     background: none;
     border: none;
-
     cursor: pointer;
-
     width: 18px;
     height: 18px;
     content: "";
@@ -76,9 +92,7 @@
   .btn-down {
     background: none;
     border: none;
-
     cursor: pointer;
-
     width: 18px;
     height: 18px;
     content: "";
@@ -87,13 +101,12 @@
   }
 
   .block-wrapper {
-    margin: 10px 0;
     position: relative;
     display: flex;
     align-items: flex-start;
 
     .btn-add {
-      visibility: hidden;
+      transition: .1s;
     }
 
     .btn-add-wrapper {
@@ -105,7 +118,7 @@
     }
 
     .btn-add-wrapper:hover .btn-add {
-      visibility: visible;
+      opacity: 1;
     }
 
     .btn-remove-wrapper {
@@ -114,73 +127,139 @@
       display: flex;
       flex-direction: column;
       visibility: hidden;
+      top: calc(50% - 15px);
+      button {
+        transition: .1s;
+        &:hover {
+          opacity: 0.5;
+        }
+      }
     }
     &.focus > .btn-remove-wrapper {
       visibility: visible;
+      z-index: 50;
     }
 
     .btn-move-wrapper {
       position: absolute;
       left: -30px;
+      height: 50px;
+      top: calc(50% - 28px);
       display: flex;
       flex-direction: column;
       visibility: hidden;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      
+      button {
+        transition: .1s;
+        &:hover {
+          opacity: 0.3;
+        }
+      }
     }
 
     &.focus > .btn-move-wrapper {
       visibility: visible;
     }
-
-    .btn-add-bottom, .btn-add-left {
+    
+    .btn-add-left {
+      width: 100%;
+      display: block;
+      position: absolute;
+      left: 0px;
+      top: -12px;
+      height: 24px;
+      
       .btn-add {
-        visibility: visible;
+        position: absolute;
+        text-align: left;
+        
+        &:before {
+          position: absolute;
+          top: -12px;
+          left: -20px;
+          content: "＋";
+          font-size: 16px;
+          transition: .1s;
+          color: #ccc;
+        }
+        &:after {
+          height: 2px;
+          background: none;
+          transition: .1s;
+        }
+        &:hover {
+          background: none;
+          
+          &:before {
+            color: #666;
+          }
+          &:after {
+            background: #ccc;
+          }
+        }
       }
     }
-
-    .btn-add-left {
-      position: absolute;
-      left: -30px;
-      padding-top: 15px;
-      text-align: center;
-    }
   }
-
+  
   &[data-mt-block-editor-add-button="visible"] .block-wrapper .btn-add-wrapper {
     z-index: initial;
+  }
+
+  &[data-mt-block-editor-add-button="visible"] .block-list-wrapper {
+    opacity: 1;
+    top: 32px;
   }
 
   .block {
     width: 100%;
     position: relative;
-
-    padding: 0 10px;
-    .block {
-      margin-left: -10px;
+    padding: 12px;
+    margin-bottom: 20px;
+    transition: .3s;
+    border: 1px solid #ccc;
+    
+  .label-name {
+      margin-bottom: 20px;
+      font-size: 0.75rem;
+      color: #666;
+      > input {
+        width: calc(100% - 15px) !important;
+        font-size: 1rem;
+        padding: 6px;
+        margin-top: 4px;
+        &:focus {
+          outline-offset: -2px;
+          outline: #ccc auto 3px;
+        }
+      }
     }
   }
+
+  .block:hover {
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.3);
+  }
+
 
   .block-wrapper .block {
     .btn-move-wrapper {
       left: -40px;
     }
   }
-
+  
   .btn-add-bottom {
     text-align: center;
-
     position: relative;
   }
 
   .block-list-wrapper {
     display: flex;
     justify-content: center;
-
     position: absolute;
-    top: 30px;
+    top: 20px;
     z-index: 1100;
-    left: calc(50% - 195px);
+    left: calc(50% - 144px);
+    opacity: 0;
+    transition: 0.2s ease-in-out;
 
     &.block-list-wrapper--right {
       top: -5px;
@@ -190,33 +269,57 @@
     .block-list {
       display: flex;
       margin: 0;
-      padding: 0;
+      padding: 0px;
       background: white;
       border: 1px solid #ccc;
-      width: 400px;
+      width: 290px;
       flex-wrap: wrap;
-
+      
       li {
-        display: inline-block;
-        width: 130px;
+        width: calc(80px + 16px);
+        height: calc(68px + 16px);
         list-style: none;
-        font-size: 0.8rem;
+        border: 1px solid #f0f0f0;
+        border-width: 0 1px 1px 0;
 
-        a {
-          display: block;
+        &:nth-child(3n){
+          border-width: 0 0 1px 0;
         }
-
-        img {
-          width: 30px;
-          height: 30px;
+        &:nth-last-child(-n+2) {
+          border-width: 0 1px 0 0;
+        }
+        a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          width: 80px;
+          height: 68px;
+          padding: 8px;
+          text-decoration: none;
+          font-size: 0.5rem;
+          color: #333333;
+          transition: 0.1s;
+          
+          &:hover {
+            background-color: #f9f9f9;
+          }
+          
+          img {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 8px;
+          }
+          
+          span {
+            display: block;
+          }
         }
       }
     }
   }
 
   .focus .block {
-    outline: 1px solid #ccc;
-
     .block {
       outline: none;
     }
@@ -260,6 +363,10 @@
     &:last-child {
       padding-right: 0;
     }
+    
+    .btn-add {
+     opacity: 1;
+    }
   }
 
   .block-toolbar {
@@ -267,8 +374,8 @@
     left: -1px;
     background: white;
     z-index: 1000;
-
     top: -36px;
+    
     &.block-toolbar--x2 {
       top: -70px;
     }
@@ -319,5 +426,10 @@
   }
   .invisible {
     visibility: hidden;
+  }
+  
+  /* tinymce */
+  .mce-edit-focus {
+    outline: 0px !important;
   }
 }

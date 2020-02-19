@@ -157,9 +157,10 @@ const AddButton: React.FC<AddButtonProps> = ({
                       );
                     }}
                   >
-                    <img src={t.icon} />
-                    <br />
-                    {t.label}
+                    <div>
+                      <img src={t.icon} />
+                      <span>{t.label}</span>
+                    </div>
                   </a>
                 </li>
               ))}

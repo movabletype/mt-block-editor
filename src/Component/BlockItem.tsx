@@ -154,11 +154,6 @@ const BlockItem: React.FC<Props> = ({
       ref={ref}
     >
       {showButton && (
-        <div className="btn-add-wrapper">
-          <AddButton index={i} />
-        </div>
-      )}
-      {showButton && (
         <div className="btn-move-wrapper">
           <button
             type="button"
@@ -173,7 +168,7 @@ const BlockItem: React.FC<Props> = ({
           ></button>
         </div>
       )}
-      {showLeftButton && (
+      {showButton && (
         <div className="btn-add-left">
           <div style={{ position: "relative" }}>
             <AddButton index={i} className="block-list-wrapper--right" />
