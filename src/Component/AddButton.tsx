@@ -49,8 +49,7 @@ const AddButton: React.FC<AddButtonProps> = ({
     const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
     if (showList) {
       blockListEl.classList.add("show");
-    }
-    else {
+    } else {
       blockListEl.classList.remove("show");
     }
 

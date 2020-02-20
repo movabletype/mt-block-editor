@@ -238,8 +238,7 @@ class Text extends Block {
     const m = this.htmlString().match(/<(\w+)/);
     if (m) {
       return m[1].toLowerCase();
-    }
-    else {
+    } else {
       return super.contentLabel();
     }
   }
