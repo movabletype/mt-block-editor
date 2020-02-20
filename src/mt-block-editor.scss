@@ -252,6 +252,17 @@
         }
       }
     }
+
+    .content-label {
+      pointer-events: none;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      font-size: 0.75rem;
+      padding: 1px;
+      outline: 1px solid gray;
+      background: #eee;
+    }
   }
 
   .block:hover {

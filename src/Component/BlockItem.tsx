@@ -183,14 +183,17 @@ const BlockItem: React.FC<Props> = ({
         b instanceof Columns ? (
           ed
         ) : (
-          <root.div>
-            <div className="entry">
-              {editor.opts.stylesheets.map(s => (
-                <link rel="stylesheet" key={s} href={s} />
-              ))}
-              {ed}
-            </div>
-          </root.div>
+          <>
+            <div className="content-label">{b.contentLabel()}</div>
+            <root.div>
+              <div className="entry">
+                {editor.opts.stylesheets.map(s => (
+                  <link rel="stylesheet" key={s} href={s} />
+                ))}
+                {ed}
+              </div>
+            </root.div>
+          </>
         )}
       </div>
       {showButton && (

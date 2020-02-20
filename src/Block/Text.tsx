@@ -234,6 +234,16 @@ class Text extends Block {
     }
   }
 
+  public contentLabel(): string {
+    const m = this.htmlString().match(/<(\w+)/);
+    if (m) {
+      return m[1].toLowerCase();
+    }
+    else {
+      return super.contentLabel();
+    }
+  }
+
   public isBlank(): boolean {
     return (this.tinymce ? this.tinymce.getContent() : this.text) === "";
   }
