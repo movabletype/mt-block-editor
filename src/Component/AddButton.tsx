@@ -46,11 +46,12 @@ const AddButton: React.FC<AddButtonProps> = ({
 
   editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
+    const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
     if (showList) {
-      blockListElRef.current.classList.add("show");
+      blockListEl.classList.add("show");
     }
     else {
-      blockListElRef.current.classList.remove("show");
+      blockListEl.classList.remove("show");
     }
 
     document.addEventListener("drop", onDrop, {
