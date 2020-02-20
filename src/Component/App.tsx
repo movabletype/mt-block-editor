@@ -121,12 +121,6 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                   focus={focus}
                   index={i}
                   showButton={true}
-                  showLeftButton={
-                    i === blocks.length - 1 &&
-                    !focus &&
-                    b instanceof Text &&
-                    b.isBlank()
-                  }
                   canRemove={true}
                 />
               );

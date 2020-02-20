@@ -29,7 +29,6 @@ interface Props {
   index: number;
   canRemove: boolean;
   showButton: boolean;
-  showLeftButton?: boolean;
   parentBlock?: Block;
 }
 
@@ -44,7 +43,6 @@ const BlockItem: React.FC<Props> = ({
   index,
   canRemove,
   showButton,
-  showLeftButton,
   parentBlock,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
