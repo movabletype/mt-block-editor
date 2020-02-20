@@ -18,7 +18,6 @@
   .btn-add {
     width: 100%;
     display: block;
-    background-color: #ffffff;
     padding: 8px 0;
     border: 0;
     transition: 0.3s;
@@ -151,7 +150,7 @@
       display: flex;
       flex-direction: column;
       visibility: hidden;
-      top: calc(50% - 15px);
+      top: calc(50% - 30px);
       button {
         transition: 0.1s;
         &:hover {
@@ -168,7 +167,7 @@
       position: absolute;
       left: -30px;
       height: 50px;
-      top: calc(50% - 28px);
+      top: calc(50% - 45px);
       display: flex;
       flex-direction: column;
       visibility: hidden;
@@ -190,35 +189,46 @@
       display: block;
       position: absolute;
       left: 0px;
-      top: -12px;
+      top: -20px;
       height: 24px;
 
       .btn-add {
         position: absolute;
         text-align: left;
+        background-color: transparent;
+        
 
         &:before {
           position: absolute;
-          top: -12px;
-          left: -20px;
           content: "＋";
+          top: -10px;
+          left: -24px;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          line-height: 20px;
+          text-align: center;
+          font-weight: bold;
           font-size: 16px;
           transition: 0.1s;
-          color: #ccc;
+          color: #fff;
+          background-color: #ccc;
         }
         &:after {
-          height: 2px;
-          background: none;
+          height: 1px;
+          opacity: 0;
           transition: 0.1s;
         }
         &:hover {
           background: none;
+          background-color: transparent;
 
           &:before {
-            color: #666;
+            color: #fff;
+            background-color: #666;
           }
           &:after {
-            background: #ccc;
+            opacity: 1;
           }
         }
       }
@@ -233,7 +243,7 @@
     width: 100%;
     position: relative;
     padding: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     transition: 0.3s;
     border: 1px solid #ccc;
 
@@ -256,12 +266,14 @@
     .content-label {
       pointer-events: none;
       position: absolute;
-      top: 2px;
-      left: 2px;
-      font-size: 0.75rem;
-      padding: 1px;
-      outline: 1px solid gray;
-      background: #eee;
+      top: 0px;
+      left: 0px;
+      font-size: 0.5rem;
+      padding: 2px 4px;
+      border: 1px solid #ccc;
+      border-width: 0 1px 1px 0;
+      background: #fafafa;
+      color: #666;
     }
   }
 
@@ -289,7 +301,7 @@
     left: calc(50% - 144px);
     opacity: 0;
     pointer-events: none;
-    transition: 0.2s ease-in-out;
+    transition: 0.1s ease-in-out;
 
     &.show {
       pointer-events: initial;
@@ -399,7 +411,6 @@
     &:last-child {
       padding-right: 0;
     }
-
     .btn-add {
       opacity: 1;
     }
