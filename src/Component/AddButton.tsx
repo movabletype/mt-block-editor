@@ -116,6 +116,14 @@ const AddButton: React.FC<AddButtonProps> = ({
           }
         }}
       >
+        <button
+          type="button"
+          className="btn-add"
+          onClick={ev => {
+            ev.stopPropagation();
+            setShowList(!showList);
+          }}
+        ></button>
         {showShortcuts && (
           <ul className="shortcut-block-list">
             {editor
@@ -154,14 +162,6 @@ const AddButton: React.FC<AddButtonProps> = ({
               ))}
           </ul>
         )}
-        <button
-          type="button"
-          className="btn-add"
-          onClick={ev => {
-            ev.stopPropagation();
-            setShowList(!showList);
-          }}
-        ></button>
       </div>
       <div
         className={`block-list-wrapper ${className || ""}`}
