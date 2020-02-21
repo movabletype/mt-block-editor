@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
+
+enum ListStatus {
+  Visible, // visible
+  Hidden, // hide with animation
+  None, // hide without animation
+}
 
 interface AddButtonProps {
   index: number;
@@ -13,7 +20,7 @@ const AddButton: React.FC<AddButtonProps> = ({
 }: AddButtonProps) => {
   const { editor } = useEditorContext();
   const { addableBlockTypes, addBlock } = useBlocksContext();
-  const [showList, setShowList] = useState(false);
+  const [showList, setShowList] = useState(ListStatus.Hidden);
   const buttonElRef = useRef(null);
   const blockListElRef = useRef(null);
 
@@ -41,16 +48,16 @@ const AddButton: React.FC<AddButtonProps> = ({
       target = target.parentNode as HTMLElement;
     }
 
-    setShowList(false);
+    setShowList(ListStatus.Hidden);
   };
 
   editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
-    const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
-    if (showList) {
-      blockListEl.classList.add("show");
-    } else {
-      blockListEl.classList.remove("show");
+    if (showList === ListStatus.Visible) {
+      editor.editorElement.setAttribute(
+        "data-mt-block-editor-add-button",
+        "visible"
+      );
     }
 
     document.addEventListener("drop", onDrop, {
@@ -119,52 +126,72 @@ const AddButton: React.FC<AddButtonProps> = ({
           className="btn-add"
           onClick={ev => {
             ev.stopPropagation();
-            setShowList(!showList);
+            setShowList(
+              showList === ListStatus.Visible
+                ? ListStatus.Hidden
+                : ListStatus.Visible
+            );
           }}
         ></button>
       </div>
-      <div
-        className={`block-list-wrapper ${className || ""}`}
-        ref={blockListElRef}
+      <CSSTransition
+        timeout={500}
+        in={showList === ListStatus.Visible}
+        classNames="block-list-wrapper"
       >
-        <ul className="block-list">
-          {editor
-            .selectableTypes()
-            .filter(t => {
-              if (!addableBlockTypes) {
-                return true;
-              }
-              return (
-                addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
-              );
-            })
-            .map((t: typeof Block) => (
-              <li key={t.typeId}>
-                <a
-                  href="#"
-                  onClick={async ev => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    ev.nativeEvent.stopImmediatePropagation();
-                    setShowList(false);
-                    addBlock(
-                      await t.new({
-                        editor: editor,
-                        event: new Event("addButton"),
-                      }),
-                      index
-                    );
-                  }}
-                >
-                  <div>
-                    <img src={t.icon} />
-                    <span>{t.label}</span>
-                  </div>
-                </a>
-              </li>
-            ))}
-        </ul>
-      </div>
+        <div
+          className={`block-list-wrapper ${className || ""} ${
+            showList === ListStatus.None ? "block-list-wrapper-none" : ""
+          }`}
+          ref={blockListElRef}
+        >
+          <TransitionGroup>
+            {showList === ListStatus.Visible && (
+              <CSSTransition timeout={500}>
+                <ul className="block-list">
+                  {editor
+                    .selectableTypes()
+                    .filter(t => {
+                      if (!addableBlockTypes) {
+                        return true;
+                      }
+                      return (
+                        addableBlockTypes.indexOf(
+                          (t as typeof Block).typeId
+                        ) !== -1
+                      );
+                    })
+                    .map((t: typeof Block) => (
+                      <li key={t.typeId}>
+                        <a
+                          href="#"
+                          onClick={async ev => {
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                            ev.nativeEvent.stopImmediatePropagation();
+                            setShowList(ListStatus.None);
+                            addBlock(
+                              await t.new({
+                                editor: editor,
+                                event: new Event("addButton"),
+                              }),
+                              index
+                            );
+                          }}
+                        >
+                          <div>
+                            <img src={t.icon} />
+                            <span>{t.label}</span>
+                          </div>
+                        </a>
+                      </li>
+                    ))}
+                </ul>
+              </CSSTransition>
+            )}
+          </TransitionGroup>
+        </div>
+      </CSSTransition>
     </>
   );
 };

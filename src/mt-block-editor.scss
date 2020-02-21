@@ -300,13 +300,16 @@
     z-index: 1100;
     left: calc(50% - 144px);
     opacity: 0;
-    pointer-events: none;
     transition: 0.1s ease-in-out;
 
-    &.show {
-      pointer-events: initial;
+    &.block-list-wrapper-enter,
+    &.block-list-wrapper-enter-done {
       opacity: 1;
       top: 32px;
+    }
+
+    &.block-list-wrapper-none {
+      display: none;
     }
 
     &.block-list-wrapper--right {
