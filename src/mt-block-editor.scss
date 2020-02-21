@@ -196,7 +196,6 @@
         position: absolute;
         text-align: left;
         background-color: transparent;
-        
 
         &:before {
           position: absolute;
@@ -362,6 +361,33 @@
           span {
             display: block;
           }
+        }
+      }
+    }
+  }
+
+  .shortcut-block-list {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+    padding: 0px;
+    background: white;
+
+    li {
+      list-style: none;
+
+      a {
+        display: flex;
+        padding: 10px 10px 0 10px;
+
+        img {
+          width: 20px;
+          height: 20px;
+        }
+
+        span {
+          display: none;
         }
       }
     }

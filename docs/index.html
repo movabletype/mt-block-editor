@@ -50,6 +50,7 @@
           //  crossDomain: true,
           //},
         },
+        shortcutBlockTypes: ["core-text", "core-image", "core-file"],
       }).then(ed => {
         ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);

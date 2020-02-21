@@ -5,11 +5,13 @@ import Block from "../Block";
 interface AddButtonProps {
   index: number;
   className?: string;
+  showShortcuts?: boolean;
 }
 
 const AddButton: React.FC<AddButtonProps> = ({
   index,
   className,
+  showShortcuts,
 }: AddButtonProps) => {
   const { editor } = useEditorContext();
   const { addableBlockTypes, addBlock } = useBlocksContext();
@@ -114,6 +116,44 @@ const AddButton: React.FC<AddButtonProps> = ({
           }
         }}
       >
+        {showShortcuts && (
+          <ul className="shortcut-block-list">
+            {editor
+              .shortcutTypes()
+              .filter(t => {
+                if (!addableBlockTypes) {
+                  return true;
+                }
+                return (
+                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
+                );
+              })
+              .map((t: typeof Block) => (
+                <li key={t.typeId}>
+                  <a
+                    href="#"
+                    onClick={async ev => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      ev.nativeEvent.stopImmediatePropagation();
+                      addBlock(
+                        await t.new({
+                          editor: editor,
+                          event: new Event("addButton"),
+                        }),
+                        index
+                      );
+                    }}
+                  >
+                    <div>
+                      <img src={t.icon} />
+                      <span>{t.label}</span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        )}
         <button
           type="button"
           className="btn-add"

@@ -20,6 +20,7 @@ export interface EditorOptions {
   mode: string;
   stylesheets: Array<string>;
   selectableBlockTypes?: string[];
+  shortcutBlockTypes?: string[];
   addButtons: Map;
   block: Map;
   i18n: InitOptionsI18n;
@@ -82,6 +83,16 @@ class Editor extends EventEmitter {
       return types;
     }
     return this.opts.selectableBlockTypes
+      .map(typeId => types.find(t => t.typeId === typeId))
+      .filter(t => t) as Array<typeof Block>;
+  }
+
+  public shortcutTypes(): Array<typeof Block> {
+    const types = this.factory.selectableTypes();
+    if (!this.opts.shortcutBlockTypes) {
+      return [];
+    }
+    return this.opts.shortcutBlockTypes
       .map(typeId => types.find(t => t.typeId === typeId))
       .filter(t => t) as Array<typeof Block>;
   }
