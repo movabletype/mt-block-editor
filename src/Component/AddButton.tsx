@@ -81,6 +81,7 @@ const AddButton: React.FC<AddButtonProps> = ({
   return (
     <>
       <div
+        className="btn-wrap"
         style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={ev => {
@@ -153,10 +154,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                       );
                     }}
                   >
-                    <div>
-                      <img src={t.icon} />
-                      <span>{t.label}</span>
-                    </div>
+                  <img src={t.icon} />
                   </a>
                 </li>
               ))}
