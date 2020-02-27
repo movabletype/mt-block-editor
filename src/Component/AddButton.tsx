@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
 
@@ -173,8 +173,9 @@ const AddButton: React.FC<AddButtonProps> = ({
         )}
       </div>
       <CSSTransition
-        timeout={500}
+        timeout={100}
         in={showList === ListStatus.Visible}
+        unmountOnExit
         classNames="block-list-wrapper"
       >
         <div
@@ -183,51 +184,43 @@ const AddButton: React.FC<AddButtonProps> = ({
           }`}
           ref={blockListElRef}
         >
-          <TransitionGroup>
-            {showList === ListStatus.Visible && (
-              <CSSTransition timeout={500}>
-                <ul className="block-list">
-                  {editor
-                    .selectableTypes()
-                    .filter(t => {
-                      if (!addableBlockTypes) {
-                        return true;
-                      }
-                      return (
-                        addableBlockTypes.indexOf(
-                          (t as typeof Block).typeId
-                        ) !== -1
+          <ul className="block-list">
+            {editor
+              .selectableTypes()
+              .filter(t => {
+                if (!addableBlockTypes) {
+                  return true;
+                }
+                return (
+                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
+                );
+              })
+              .map((t: typeof Block) => (
+                <li key={t.typeId}>
+                  <a
+                    href="#"
+                    onClick={async ev => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      ev.nativeEvent.stopImmediatePropagation();
+                      setShowList(ListStatus.None);
+                      addBlock(
+                        await t.new({
+                          editor: editor,
+                          event: new Event("addButton"),
+                        }),
+                        index
                       );
-                    })
-                    .map((t: typeof Block) => (
-                      <li key={t.typeId}>
-                        <a
-                          href="#"
-                          onClick={async ev => {
-                            ev.preventDefault();
-                            ev.stopPropagation();
-                            ev.nativeEvent.stopImmediatePropagation();
-                            setShowList(ListStatus.None);
-                            addBlock(
-                              await t.new({
-                                editor: editor,
-                                event: new Event("addButton"),
-                              }),
-                              index
-                            );
-                          }}
-                        >
-                          <div>
-                            <img src={t.icon} />
-                            <span>{t.label}</span>
-                          </div>
-                        </a>
-                      </li>
-                    ))}
-                </ul>
-              </CSSTransition>
-            )}
-          </TransitionGroup>
+                    }}
+                  >
+                    <div>
+                      <img src={t.icon} />
+                      <span>{t.label}</span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+          </ul>
         </div>
       </CSSTransition>
     </>

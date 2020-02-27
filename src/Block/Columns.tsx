@@ -51,42 +51,40 @@ const Editor: React.FC<EditorProps> = ({
           />
         </BlockToolbar>
       )}
-      {focus && showConfigPanel && (
-        <BlockConfigPanel>
-          <ul style={{ display: "flex", listStyle: "none" }}>
-            <li>
-              <label onClick={changeLayout}>
-                <input
-                  type="radio"
-                  value="2"
-                  defaultChecked={curLayout === "2"}
-                />
-                : 2
-              </label>
-            </li>
-            <li>
-              <label onClick={changeLayout}>
-                <input
-                  type="radio"
-                  value="3"
-                  defaultChecked={curLayout === "3"}
-                />
-                : 3
-              </label>
-            </li>
-            <li>
-              <label onClick={changeLayout}>
-                <input
-                  type="radio"
-                  value="4"
-                  defaultChecked={curLayout === "4"}
-                />
-                : 4
-              </label>
-            </li>
-          </ul>
-        </BlockConfigPanel>
-      )}
+      <BlockConfigPanel in={focus && showConfigPanel}>
+        <ul style={{ display: "flex", listStyle: "none" }}>
+          <li>
+            <label onClick={changeLayout}>
+              <input
+                type="radio"
+                value="2"
+                defaultChecked={curLayout === "2"}
+              />
+              : 2
+            </label>
+          </li>
+          <li>
+            <label onClick={changeLayout}>
+              <input
+                type="radio"
+                value="3"
+                defaultChecked={curLayout === "3"}
+              />
+              : 3
+            </label>
+          </li>
+          <li>
+            <label onClick={changeLayout}>
+              <input
+                type="radio"
+                value="4"
+                defaultChecked={curLayout === "4"}
+              />
+              : 4
+            </label>
+          </li>
+        </ul>
+      </BlockConfigPanel>
     </>
   );
 };

@@ -298,7 +298,6 @@
     top: 20px;
     z-index: 1100;
     left: calc(50% - 144px);
-    opacity: 0;
     transition: 0.1s ease-in-out;
 
     &.block-list-wrapper-none {
@@ -311,6 +310,11 @@
     }
 
     &.block-list-wrapper-enter,
+    &.block-list-wrapper-exit {
+      opacity: 0;
+    }
+
+    &.block-list-wrapper-enter-active,
     &.block-list-wrapper-enter-done {
       opacity: 1;
       top: 32px;
@@ -505,6 +509,18 @@
 
     width: 100%;
     height: 100%;
+
+    transition: 0.1s ease-in-out;
+
+    &.block-config-panel-enter,
+    &.block-config-panel-exit {
+      opacity: 0;
+    }
+
+    &.block-config-panel-enter-active,
+    &.block-config-panel-enter-done {
+      opacity: 1;
+    }
   }
 
   /* utility */
