@@ -61,8 +61,8 @@ const Editor: React.FC<EditorProps> = ({
                   value="2"
                   defaultChecked={curLayout === "2"}
                 />
-                : 2
-              </label>
+                2カラム
+                </label>
             </li>
             <li>
               <label onClick={changeLayout}>
@@ -71,7 +71,7 @@ const Editor: React.FC<EditorProps> = ({
                   value="3"
                   defaultChecked={curLayout === "3"}
                 />
-                : 3
+                3カラム
               </label>
             </li>
             <li>
@@ -81,7 +81,7 @@ const Editor: React.FC<EditorProps> = ({
                   value="4"
                   defaultChecked={curLayout === "4"}
                 />
-                : 4
+                4カラム
               </label>
             </li>
           </ul>
