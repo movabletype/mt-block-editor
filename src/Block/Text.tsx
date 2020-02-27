@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect, RefObject } from "react";
+import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import {
   Editor as TinyMCE,
@@ -17,11 +17,6 @@ declare const tinymce: EditorManager;
 
 interface EditorProps extends EditorOptions {
   block: Text;
-}
-
-interface PlaceholderProps {
-  block: Text;
-  clickBlockTargetRef?: RefObject<HTMLElement>;
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -175,47 +170,6 @@ const Editor: React.FC<EditorProps> = ({
   );
 };
 
-const Placeholder: React.FC<PlaceholderProps> = ({
-  block,
-  clickBlockTargetRef,
-}: PlaceholderProps) => {
-  const { setFocusedId } = useEditorContext();
-  const { addBlock } = useBlocksContext();
-
-  return (
-    <input
-      type="text"
-      className="start-writing"
-      placeholder={t("ここに入力")}
-      ref={clickBlockTargetRef as RefObject<HTMLInputElement>}
-      onKeyDown={ev => {
-        if (ev.key === "Enter") {
-          ev.preventDefault();
-          if (block.htmlString() === "") {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            addBlock(new Text(), block);
-          }
-        }
-      }}
-      onClick={() => {
-        clickBlockTargetRef &&
-          clickBlockTargetRef.current &&
-          clickBlockTargetRef.current.focus();
-      }}
-      onInput={ev => {
-        block.text = (ev.target as HTMLInputElement).value;
-        setFocusedId(block.id);
-      }}
-      onFocus={ev => {
-        ev.target.placeholder = "";
-      }}
-      onBlur={ev => {
-        ev.target.placeholder = t("ここに入力");
-      }}
-    />
-  );
-};
-
 class Text extends Block {
   public static typeId = "core-text";
   public static selectable = true;
@@ -251,12 +205,7 @@ class Text extends Block {
     return `textarea-${this.id}`;
   }
 
-  public editor({
-    focus,
-    canRemove,
-    parentBlock,
-    clickBlockTargetRef,
-  }: EditorOptions): JSX.Element {
+  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
     if (focus) {
       return (
         <Editor
@@ -276,12 +225,8 @@ class Text extends Block {
           }}
         ></div>
       );
-    } else if (parentBlock) {
-      return <p>{t("ここに入力")}</p>;
     } else {
-      return (
-        <Placeholder block={this} clickBlockTargetRef={clickBlockTargetRef} />
-      );
+      return <p>{"\u00A0"}</p>;
     }
   }
 
