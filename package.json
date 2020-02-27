@@ -26,6 +26,7 @@
     "@types/dompurify": "^2.0.1",
     "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.5",
+    "@types/react-transition-group": "^4.2.3",
     "@types/tinymce": "^4.5.23",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
     "@typescript-eslint/parser": "^2.19.2",
@@ -65,6 +66,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-i18next": "^11.3.2",
-    "react-shadow": "^17.5.0"
+    "react-shadow": "^17.5.0",
+    "react-transition-group": "^4.3.0"
   }
 }

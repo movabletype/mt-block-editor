@@ -4,7 +4,6 @@ import HTML5Backend from "react-dnd-html5-backend";
 
 import Editor from "../Editor";
 import Block from "../Block";
-import Text from "../Block/Text";
 import BlockItem from "./BlockItem";
 import { EditorContext, BlocksContext } from "../Context";
 import AddButton from "./AddButton";

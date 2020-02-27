@@ -299,11 +299,19 @@
     z-index: 1100;
     left: calc(50% - 144px);
     opacity: 0;
-    pointer-events: none;
     transition: 0.1s ease-in-out;
 
-    &.show {
-      pointer-events: initial;
+    &.block-list-wrapper-none {
+      display: none;
+    }
+
+    &.block-list-wrapper--right {
+      top: -5px;
+      left: 40px;
+    }
+
+    &.block-list-wrapper-enter,
+    &.block-list-wrapper-enter-done {
       opacity: 1;
       top: 32px;
     }
