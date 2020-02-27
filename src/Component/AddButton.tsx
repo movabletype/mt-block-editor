@@ -154,7 +154,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                       );
                     }}
                   >
-                  <img src={t.icon} />
+                    <img src={t.icon} />
                   </a>
                 </li>
               ))}

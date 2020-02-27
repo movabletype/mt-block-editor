@@ -7,7 +7,6 @@ import React, { useRef, createRef } from "react";
 import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
-import Text from "../Block/Text";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
 import AddButton from "./AddButton";
@@ -175,7 +174,6 @@ const BlockItem: React.FC<Props> = ({
       )}
       <div className="block">
         {focus ||
-        (b instanceof Text && b.isBlank()) ||
         focusDescendant ||
         b instanceof Column ||
         b instanceof Columns ? (
