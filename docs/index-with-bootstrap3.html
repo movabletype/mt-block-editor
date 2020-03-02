@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+      crossorigin="anonymous"
+    />
+    <script
+      src="./tinymce/js/tinymce/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+  </head>
+  <body>
+    <div>
+      <form style="margin-top: 80px;">
+        <textarea id="body"></textarea>
+        <input type="submit" id="submit" />
+        <input type="reset" id="reset" />
+        <input type="submit" id="unload" value="Unload" />
+        <input type="submit" id="toggle-mode" value="Toggle mode" />
+      </form>
+      <script>
+        document.getElementById("body").value =
+          sessionStorage.getItem("MTBlockEditorBody") || "";
+      </script>
+    </div>
+    <!-- <link rel="stylesheet" href="./dist/mt-block-editor.css"/> -->
+    <script src="./dist/mt-block-editor.js"></script>
+    <script src="./register-block.js"></script>
+    <script>
+      MTBlockEditor.apply({
+        mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
+        id: "body",
+        stylesheets: [
+          (() => {
+            const a = document.createElement("A");
+            a.href = "./editor-content.css";
+            return a.href;
+          })(),
+        ],
+        i18n: {
+          lng: "ja",
+          debug: true,
+          //backend: {
+          //  loadPath: `https://example.com/mt-block-editor/locales/{{lng}}/{{ns}}.json`,
+          //  crossDomain: true,
+          //},
+        },
+        shortcutBlockTypes: ["core-text", "core-image", "core-file"],
+      }).then(ed => {
+        ed.on("onInitializeBlocks", ({ blocks }) => {
+          console.log(blocks);
+        });
+        ed.on("onBuildTinyMCESettings", ({ block, settings }) => {
+          console.log(block.constructor.typeId);
+          console.log(settings);
+          settings.plugins += " mt_security";
+          settings.extended_valid_elements = [
+            // we embed 'a[onclick]' by inserting image with popup
+            "a[href|title|target|name|id|class|onclick]",
+            // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
+            "+p[style|class]",
+            // allow SCRIPT element
+            "script[id|name|type|src]",
+            // allow SPAN element without attributes
+            "+span[*]",
+          ].join(",");
+          settings.valid_children = "+a[div]";
+        });
+      });
+
+      document
+        .getElementById("submit")
+        .form.addEventListener("submit", function(ev) {
+          ev.preventDefault();
+          MTBlockEditor.serialize().then(function() {
+            console.log("serialized");
+            sessionStorage.setItem(
+              "MTBlockEditorBody",
+              document.querySelector("#body").value
+            );
+          });
+        });
+
+      document.getElementById("reset").addEventListener("click", function(ev) {
+        ev.preventDefault();
+        sessionStorage.setItem("MTBlockEditorBody", "");
+        location.reload();
+      });
+
+      document.getElementById("unload").addEventListener("click", function(ev) {
+        ev.preventDefault();
+        MTBlockEditor.unload({ id: "body" });
+      });
+
+      document
+        .getElementById("toggle-mode")
+        .addEventListener("click", function(ev) {
+          ev.preventDefault();
+
+          const cur =
+            sessionStorage.getItem("MTBlockEditorMode") || "composition";
+          const next = cur === "composition" ? "setup" : "composition";
+          sessionStorage.setItem("MTBlockEditorMode", next);
+          location.reload();
+        });
+    </script>
+  </body>
+</html>
