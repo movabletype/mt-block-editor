@@ -76,6 +76,11 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             addBlock(new Table({ text: c.outerHTML }), block);
           });
         });
+
+        if (block.showModal) {
+          ed.execCommand("mceInsertTable");
+          block.showModal = false;
+        }
       },
     };
 
@@ -117,6 +122,7 @@ class Table extends Block {
     return t("Table");
   }
 
+  public showModal = false;
   public text = "";
 
   public constructor(init?: Partial<Table>) {
@@ -156,6 +162,10 @@ class Table extends Block {
     } else {
       return this.text;
     }
+  }
+
+  public static async new({ editor }) {
+    return new this({ showModal: true });
   }
 
   public static async newFromHtml({
