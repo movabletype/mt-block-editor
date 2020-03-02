@@ -48,8 +48,18 @@ class Editor extends EventEmitter {
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
+    if (!this.inputElement.parentNode) {
+      throw "error";
+    }
 
     this.editorElement = document.createElement("DIV");
+    this.editorElement.classList.add("mt-block-editor");
+
+    this.inputElement.parentNode.insertBefore(
+      this.editorElement,
+      this.inputElement
+    );
+
     this.blocks = [];
 
     setTimeout(() => {
@@ -58,16 +68,6 @@ class Editor extends EventEmitter {
           this.blocks = blocks;
           this.emit("onInitializeBlocks", { editor: this, blocks });
 
-          this.editorElement.classList.add("mt-block-editor");
-
-          if (!this.inputElement.parentNode) {
-            return;
-          }
-
-          this.inputElement.parentNode.insertBefore(
-            this.editorElement,
-            this.inputElement
-          );
           render(
             React.createElement(App, { editor: this }),
             this.editorElement
