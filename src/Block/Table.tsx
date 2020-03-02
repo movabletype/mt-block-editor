@@ -126,6 +126,15 @@ class Table extends Block {
     }
   }
 
+  public contentLabel(): string {
+    const m = this.htmlString().match(/<(\w+)/);
+    if (m) {
+      return m[1].toLowerCase();
+    } else {
+      return super.contentLabel();
+    }
+  }
+
   public tinymceId(): string {
     return `textarea-${this.id}`;
   }

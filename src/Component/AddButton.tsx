@@ -1,19 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
+import { CSSTransition } from "react-transition-group";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
+
+enum ListStatus {
+  Visible, // visible
+  Hidden, // hide with animation
+  None, // hide without animation
+}
 
 interface AddButtonProps {
   index: number;
   className?: string;
+  showShortcuts?: boolean;
 }
 
 const AddButton: React.FC<AddButtonProps> = ({
   index,
   className,
+  showShortcuts,
 }: AddButtonProps) => {
   const { editor } = useEditorContext();
   const { addableBlockTypes, addBlock } = useBlocksContext();
-  const [showList, setShowList] = useState(false);
+  const [showList, setShowList] = useState(ListStatus.Hidden);
   const buttonElRef = useRef(null);
   const blockListElRef = useRef(null);
 
@@ -41,12 +50,12 @@ const AddButton: React.FC<AddButtonProps> = ({
       target = target.parentNode as HTMLElement;
     }
 
-    setShowList(false);
+    setShowList(ListStatus.Hidden);
   };
 
   editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
-    if (showList) {
+    if (showList === ListStatus.Visible) {
       editor.editorElement.setAttribute(
         "data-mt-block-editor-add-button",
         "visible"
@@ -79,6 +88,7 @@ const AddButton: React.FC<AddButtonProps> = ({
   return (
     <>
       <div
+        className="btn-wrap"
         style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={ev => {
@@ -119,15 +129,61 @@ const AddButton: React.FC<AddButtonProps> = ({
           className="btn-add"
           onClick={ev => {
             ev.stopPropagation();
-            setShowList(!showList);
+            setShowList(
+              showList === ListStatus.Visible
+                ? ListStatus.Hidden
+                : ListStatus.Visible
+            );
           }}
         ></button>
+        {showShortcuts && (
+          <ul className="shortcut-block-list">
+            {editor
+              .shortcutTypes()
+              .filter(t => {
+                if (!addableBlockTypes) {
+                  return true;
+                }
+                return (
+                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
+                );
+              })
+              .map((t: typeof Block) => (
+                <li key={t.typeId}>
+                  <a
+                    href="#"
+                    onClick={async ev => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      ev.nativeEvent.stopImmediatePropagation();
+                      addBlock(
+                        await t.new({
+                          editor: editor,
+                          event: new Event("addButton"),
+                        }),
+                        index
+                      );
+                    }}
+                  >
+                    <img src={t.icon} />
+                  </a>
+                </li>
+              ))}
+          </ul>
+        )}
       </div>
-      <div
-        className={`block-list-wrapper ${className || ""}`}
-        ref={blockListElRef}
+      <CSSTransition
+        timeout={100}
+        in={showList === ListStatus.Visible}
+        unmountOnExit
+        classNames="block-list-wrapper"
       >
-        {showList && (
+        <div
+          className={`block-list-wrapper ${className || ""} ${
+            showList === ListStatus.None ? "block-list-wrapper-none" : ""
+          }`}
+          ref={blockListElRef}
+        >
           <ul className="block-list">
             {editor
               .selectableTypes()
@@ -147,7 +203,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                       ev.preventDefault();
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();
-                      setShowList(false);
+                      setShowList(ListStatus.None);
                       addBlock(
                         await t.new({
                           editor: editor,
@@ -157,15 +213,16 @@ const AddButton: React.FC<AddButtonProps> = ({
                       );
                     }}
                   >
-                    <img src={t.icon} />
-                    <br />
-                    {t.label}
+                    <div>
+                      <img src={t.icon} />
+                      <span>{t.label}</span>
+                    </div>
                   </a>
                 </li>
               ))}
           </ul>
-        )}
-      </div>
+        </div>
+      </CSSTransition>
     </>
   );
 };

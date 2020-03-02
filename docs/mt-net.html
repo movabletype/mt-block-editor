@@ -50,7 +50,6 @@
           //  crossDomain: true,
           //},
         },
-        shortcutBlockTypes: ["core-text", "core-image", "core-file"],
       }).then(ed => {
         ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);
@@ -71,6 +70,19 @@
           ].join(',');
           settings.valid_children = '+a[div]';
         });
+
+        const Text = ed.factory.lookupType("core-text");
+
+        function ensureTextBlock() {
+          if (
+            ed.blocks.length === 0 ||
+            !(ed.blocks[ed.blocks.length - 1] instanceof Text)
+          ) {
+            ed.blocks.push(new Text());
+          }
+        }
+        ed.on("onInitializeBlocks", ensureTextBlock);
+        ed.on("onChangeBlocks", ensureTextBlock);
       });
 
       document

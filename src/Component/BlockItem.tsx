@@ -7,7 +7,6 @@ import React, { useRef, createRef } from "react";
 import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
-import Text from "../Block/Text";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
 import AddButton from "./AddButton";
@@ -29,7 +28,6 @@ interface Props {
   index: number;
   canRemove: boolean;
   showButton: boolean;
-  showLeftButton?: boolean;
   parentBlock?: Block;
 }
 
@@ -44,7 +42,6 @@ const BlockItem: React.FC<Props> = ({
   index,
   canRemove,
   showButton,
-  showLeftButton,
   parentBlock,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
@@ -154,11 +151,6 @@ const BlockItem: React.FC<Props> = ({
       ref={ref}
     >
       {showButton && (
-        <div className="btn-add-wrapper">
-          <AddButton index={i} />
-        </div>
-      )}
-      {showButton && (
         <div className="btn-move-wrapper">
           <button
             type="button"
@@ -173,7 +165,7 @@ const BlockItem: React.FC<Props> = ({
           ></button>
         </div>
       )}
-      {showLeftButton && (
+      {showButton && (
         <div className="btn-add-left">
           <div style={{ position: "relative" }}>
             <AddButton index={i} className="block-list-wrapper--right" />
@@ -182,20 +174,22 @@ const BlockItem: React.FC<Props> = ({
       )}
       <div className="block">
         {focus ||
-        (b instanceof Text && b.isBlank()) ||
         focusDescendant ||
         b instanceof Column ||
         b instanceof Columns ? (
           ed
         ) : (
-          <root.div>
-            <div className="entry">
-              {editor.opts.stylesheets.map(s => (
-                <link rel="stylesheet" key={s} href={s} />
-              ))}
-              {ed}
-            </div>
-          </root.div>
+          <>
+            <div className="content-label">{b.contentLabel()}</div>
+            <root.div>
+              <div className="entry">
+                {editor.opts.stylesheets.map(s => (
+                  <link rel="stylesheet" key={s} href={s} />
+                ))}
+                {ed}
+              </div>
+            </root.div>
+          </>
         )}
       </div>
       {showButton && (

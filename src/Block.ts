@@ -72,6 +72,10 @@ class Block {
     this.id = Math.round(Math.random() * 10000000) + "";
   }
 
+  public contentLabel(): string {
+    return (this.constructor as typeof Block).label;
+  }
+
   public childBlocks(): Block[] {
     return [];
   }
