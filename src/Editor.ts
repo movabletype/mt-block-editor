@@ -148,8 +148,14 @@ class Editor extends EventEmitter {
   }
 
   public unload(): void {
+    this.emit("onBeforeUnload", {
+      editor: this,
+    });
     this.editorElement.remove();
     this.inputElement.style.display = "";
+    this.emit("onUnload", {
+      editor: this,
+    });
   }
 }
 
