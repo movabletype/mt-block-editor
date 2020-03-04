@@ -9,6 +9,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <script
       src="./tinymce/js/tinymce/tinymce.min.js"
       referrerpolicy="origin"
@@ -61,15 +67,15 @@
           settings.plugins += " mt_security";
           settings.extended_valid_elements = [
             // we embed 'a[onclick]' by inserting image with popup
-            'a[href|title|target|name|id|class|onclick]',
+            "a[href|title|target|name|id|class|onclick]",
             // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
-            '+p[style|class]',
+            "+p[style|class]",
             // allow SCRIPT element
-            'script[id|name|type|src]',
+            "script[id|name|type|src]",
             // allow SPAN element without attributes
-            '+span[*]',
-          ].join(',');
-          settings.valid_children = '+a[div]';
+            "+span[*]",
+          ].join(",");
+          settings.valid_children = "+a[div]";
         });
       });
 
