@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="レイヤー_1" focusable="false"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
-	 style="enable-background:new 0 0 512 512;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#666666;}
-</style>
-<path class="st0" d="M464,32H48C21.5,32,0,53.5,0,80v352c0,26.5,21.5,48,48,48h416c26.5,0,48-21.5,48-48V80
-	C512,53.5,490.5,32,464,32z M224,416H64v-96h160V416z M224,256H64v-96h160V256z M448,416H288v-96h160V416z M448,256H288v-96h160V256
-	z"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><style>.st0{fill:#666}</style><path class="st0" d="M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zM224 416H64v-96h160v96zm0-160H64v-96h160v96zm224 160H288v-96h160v96zm0-160H288v-96h160v96z"/></svg>
