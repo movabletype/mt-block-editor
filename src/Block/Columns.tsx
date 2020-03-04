@@ -11,7 +11,6 @@ import icon from "../img/icon/columns.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockToolbarButton from "../Component/BlockToolbarButton";
 import BlockConfigPanel from "../Component/BlockConfigPanel";
-import { edit as editIcon } from "../icons";
 
 interface EditorProps extends EditorOptions {
   block: Columns;
@@ -45,7 +44,7 @@ const Editor: React.FC<EditorProps> = ({
       {focus && (
         <BlockToolbar>
           <BlockToolbarButton
-            icon={editIcon}
+            icon={icon}
             label={t("Edit")}
             onClick={toggleConfigPanel}
           />
