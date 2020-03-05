@@ -110,6 +110,10 @@ class Oembed extends Block {
     return <Html key={this.id} block={this} />;
   }
 
+  public async serializedString(): Promise<string> {
+    return "";
+  }
+
   public async compile({ editor }: SerializeOptions): Promise<void> {
     if (!this.url) {
       this.compiledHtml = "";
