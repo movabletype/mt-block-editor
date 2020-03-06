@@ -37,6 +37,9 @@
       color: #666;
       font-size: 11px;
     }
+  }
+
+  .btn-wrap {
     &::after {
       content: "";
       z-index: 999;
@@ -77,6 +80,33 @@
       left: 0;
       right: 0;
       pointer-events: none;
+    }
+  }
+
+  .btn-add-bottom {
+    .btn-wrap.btn-wrap--shortcuts-all {
+      .btn-add {
+        display: none;
+      }
+
+      @media (min-width: 991.5px) {
+        width: auto;
+        display: inline-block;
+
+        .shortcut-block-list {
+          &:after {
+            width: 0;
+          }
+        }
+      }
+
+      @media (max-width: 991.5px) {
+        .shortcut-block-list {
+          &:after {
+            height: 0;
+          }
+        }
+      }
     }
   }
 
@@ -292,7 +322,6 @@
 
   .btn-add-bottom {
     width: 100%;
-    text-align: center;
     position: relative;
     .btn-wrap {
       width: 100%;
@@ -568,7 +597,7 @@
   }
 }
 
-@media (max-width: 991px){
+@media (max-width: 991.5px) {
   .mt-block-editor {
     padding: 0 0;
     .btn-add-bottom .btn-wrap {
