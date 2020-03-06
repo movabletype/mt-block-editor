@@ -85,10 +85,29 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
+  const shortcutsAll =
+    showShortcuts &&
+    (() => {
+      const selectableTypes = editor.selectableTypes().filter(t => {
+        if (!addableBlockTypes) {
+          return true;
+        }
+        return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
+      });
+      const shortcutTypes = editor.shortcutTypes().filter(t => {
+        if (!addableBlockTypes) {
+          return true;
+        }
+        return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
+      });
+
+      return selectableTypes.length === shortcutTypes.length;
+    })();
+
   return (
     <>
       <div
-        className="btn-wrap"
+        className={`btn-wrap ${shortcutsAll ? "btn-wrap--shortcuts-all" : ""}`}
         style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={ev => {
