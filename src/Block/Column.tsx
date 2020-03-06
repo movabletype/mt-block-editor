@@ -16,11 +16,7 @@ interface EditorProps extends EditorOptions {
   block: Column;
 }
 
-const Editor: React.FC<EditorProps> = ({
-  block,
-  focus,
-  canRemove,
-}: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   block.compiledHtml = "";
 
   if (
@@ -110,7 +106,7 @@ const Editor: React.FC<EditorProps> = ({
           />
         );
       })}
-      {(focus || blocks.length === 0) && canRemove && (
+      {canRemove && (
         <div className="btn-add-bottom">
           <AddButton index={blocks.length} />
         </div>
