@@ -5,9 +5,9 @@
   position: relative;
 
   p {
-    margin: 16px 0;
+    margin: 0;
   }
-
+  
   .start-writing {
     font-size: 0.75rem;
     color: #666;
@@ -272,7 +272,6 @@
     padding: 8px;
     margin-bottom: 1rem;
     transition: 0.1s;
-
     &:hover,
     &:focus,
     &:focus-within {
