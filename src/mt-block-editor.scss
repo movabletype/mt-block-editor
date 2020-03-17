@@ -357,27 +357,20 @@
     }
 
     .block-list {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 1px;
       margin: 0;
       padding: 0px;
       background: white;
-      border: 1px solid #ddd;
+      outline: 1px solid #ddd;
       width: 290px;
-      flex-wrap: wrap;
 
       li {
-        width: calc(80px + 16px);
         height: calc(68px + 16px);
         list-style: none;
-        border: 1px solid #eeeeee;
-        border-width: 0 1px 1px 0;
+        outline: 1px solid #eee;
 
-        &:nth-child(3n) {
-          border-width: 0 0 1px 0;
-        }
-        &:nth-last-child(-n + 2) {
-          border-width: 0 1px 0 0;
-        }
         a {
           display: flex;
           justify-content: center;
