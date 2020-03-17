@@ -57,6 +57,16 @@
           //},
         },
         shortcutBlockTypes: ["core-text", "core-image", "core-file"],
+        panelBlockTypes: [
+          "core-text",
+          "core-image",
+          "core-file",
+          "core-horizontalrule",
+          "core-html",
+          "core-table",
+          "core-columns",
+          "custom-oembed",
+        ],
       }).then(ed => {
         ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);

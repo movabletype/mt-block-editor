@@ -85,29 +85,12 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
-  const shortcutsAll =
-    showShortcuts &&
-    (() => {
-      const selectableTypes = editor.selectableTypes().filter(t => {
-        if (!addableBlockTypes) {
-          return true;
-        }
-        return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
-      });
-      const shortcutTypes = editor.shortcutTypes().filter(t => {
-        if (!addableBlockTypes) {
-          return true;
-        }
-        return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
-      });
-
-      return selectableTypes.length === shortcutTypes.length;
-    })();
+  const onlyShortcuts = showShortcuts && editor.panelTypes().length === 0;
 
   return (
     <>
       <div
-        className={`btn-wrap ${shortcutsAll ? "btn-wrap--shortcuts-all" : ""}`}
+        className={`btn-wrap ${onlyShortcuts ? "btn-wrap--only-shortcuts" : ""}`}
         style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={ev => {
@@ -204,8 +187,7 @@ const AddButton: React.FC<AddButtonProps> = ({
           ref={blockListElRef}
         >
           <ul className="block-list">
-            {editor
-              .selectableTypes()
+            {(showShortcuts ? editor.panelTypes() : editor.selectableTypes())
               .filter(t => {
                 if (!addableBlockTypes) {
                   return true;
