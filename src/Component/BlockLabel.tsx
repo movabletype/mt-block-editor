@@ -32,15 +32,12 @@ const BlockLabel: React.FC<EditorProps> = ({
   return (
     <>
       <label className="label-name" style={{ display: "block" }}>
-        <>
-          {block.label ? (
-            <div className="mt-block-editor-label-block">{block.label}</div>
-          ) : null}
-          {block.helpText ? (
-            <div className="mt-block-editor-help-block">{block.helpText}</div>
-          ) : null}
-        </>
-        ) : (<div>{t("Default Value")}</div>
+        {block.label ? (
+          <div className="mt-block-editor-label-block">{block.label}</div>
+        ) : null}
+        {block.helpText ? (
+          <div className="mt-block-editor-help-block">{block.helpText}</div>
+        ) : null}
       </label>
       {children}
     </>
