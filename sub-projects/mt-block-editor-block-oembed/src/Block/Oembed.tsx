@@ -117,6 +117,7 @@ class Oembed extends Block {
   public async compile({ editor }: SerializeOptions): Promise<void> {
     if (!this.url) {
       this.compiledHtml = "";
+      return;
     }
 
     const opts = editor.opts.block["sixapart-oembed"] || {};
