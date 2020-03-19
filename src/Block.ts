@@ -40,7 +40,7 @@ class Block {
   public static label: string;
   public static icon: string = icon;
   public static selectable: boolean;
-  public static shouldBeCompied = false;
+  public static shouldBeCompiled = false;
   public id: string;
   public compiledHtml = "";
   public label = "";
@@ -157,7 +157,7 @@ class Block {
 
   public async serialize(opts: SerializeOptions): Promise<string> {
     if (
-      (this.constructor as typeof Block).shouldBeCompied &&
+      (this.constructor as typeof Block).shouldBeCompiled &&
       !this.compiledHtml
     ) {
       await this.compile(opts);

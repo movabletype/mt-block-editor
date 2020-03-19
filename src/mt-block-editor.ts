@@ -32,7 +32,7 @@ interface BoilerplateBlockOptions {
   html: string;
   canRemoveBlock: boolean;
   addableBlockTypes: string[];
-  shouldBeCompied: boolean;
+  shouldBeCompiled: boolean;
   previewHeader: string;
 }
 
@@ -106,7 +106,7 @@ class EditorUtil {
     html,
     canRemoveBlock,
     addableBlockTypes,
-    shouldBeCompied,
+    shouldBeCompiled,
     previewHeader,
   }: BoilerplateBlockOptions): typeof Block {
     const BoilerplateBlock = function(
@@ -140,8 +140,8 @@ class EditorUtil {
       BoilerplateBlock.icon = icon;
     }
     BoilerplateBlock.selectable = true;
-    if (shouldBeCompied !== undefined) {
-      BoilerplateBlock.shouldBeCompied = shouldBeCompied;
+    if (shouldBeCompiled !== undefined) {
+      BoilerplateBlock.shouldBeCompiled = shouldBeCompiled;
     }
 
     Object.setPrototypeOf(BoilerplateBlock, Column);

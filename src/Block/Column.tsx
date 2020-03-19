@@ -252,7 +252,7 @@ class Column extends Block {
 
   public async serialize(opts: SerializeOptions): Promise<string> {
     if (
-      (this.constructor as typeof Block).shouldBeCompied ||
+      (this.constructor as typeof Block).shouldBeCompiled ||
       this.compiledHtml
     ) {
       return super.serialize(opts);

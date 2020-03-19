@@ -6,7 +6,7 @@ MTBlockEditor.registerBlockType(
     html: `<!-- mtEditorBlock data-mt-block-type="textblock"--><p>http://</p><!-- /mtEditorBlock -->`,
     canRemoveBlock: false,
     addableBlockTypes: [],
-    shouldBeCompied: true,
+    shouldBeCompiled: true,
     previewHeader: `
 <script>
 document.addEventListener("DOMContentLoaded", async () => {

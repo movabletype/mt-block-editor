@@ -31,7 +31,7 @@ export class Block {
   public static label: string;
   public static icon: string;
   public static selectable: boolean;
-  public static shouldBeCompied: boolean;
+  public static shouldBeCompiled: boolean;
   public id: string;
   public compiledHtml: string;
   public metadata(): Metadata | null;
