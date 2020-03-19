@@ -83,9 +83,13 @@ const Editor: React.FC<EditorProps> = ({
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
-          getElementById(`${block.tinymceId()}toolbar`).classList.add(
-            "invisible"
-          );
+          try {
+            getElementById(`${block.tinymceId()}toolbar`).classList.add(
+              "invisible"
+            );
+          } catch (e) {
+            // ignore
+          }
 
           if (
             (e.keyCode === 8 || e.keyCode === 46) &&
