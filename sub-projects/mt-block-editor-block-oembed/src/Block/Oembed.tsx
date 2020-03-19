@@ -67,7 +67,7 @@ const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
   });
 
   return block.compiledHtml ? (
-    <BlockIframePreview key={block.id} block={block} />
+    <BlockIframePreview key={block.id} block={block} html={block.compiledHtml}/>
   ) : block.url ? (
     <>{block.url}</>
   ) : (
