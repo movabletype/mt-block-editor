@@ -83,7 +83,7 @@ const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
 class Oembed extends Block {
   public static typeId = "sixapart-oembed";
   public static selectable = true;
-  public static shouldBeCompied = true;
+  public static shouldBeCompiled = true;
   public static icon = icon;
   public static get label(): string {
     return t("oEmbed");
