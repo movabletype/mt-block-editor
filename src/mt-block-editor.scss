@@ -304,12 +304,8 @@
       transition: 0.1s;
       opacity: 0;
     }
-    &:hover,
-    &:focus,
-    &:focus-within {
-      .content-label {
-        opacity: 1;
-      }
+    &:hover > .content-label {
+      opacity: 1;
     }
     hr {
       border-top: 1px solid #666;
