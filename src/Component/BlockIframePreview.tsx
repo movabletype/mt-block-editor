@@ -12,6 +12,7 @@ export const defaultSize = { width: "100%", height: "100px" };
 
 interface EditorProps {
   block: Block;
+  html?: string | Promise<string>;
   header?: string;
   onSetCompiledHtml?: (error?: Error) => void;
   border?: string;
@@ -76,23 +77,20 @@ function onClickFunc(): void {
 
 const BlockIframePreview: React.FC<EditorProps> = ({
   block,
+  html,
   header,
   onSetCompiledHtml,
   border,
 }: EditorProps) => {
-  let editor: Editor | undefined;
-  try {
-    const ctx = useEditorContext();
-    editor = ctx.editor;
-  } catch (e) {
-    // ignore;
+  const { editor } = useEditorContext();
+
+  if (typeof html === "undefined") {
+    html = block.serializedString({ editor });
   }
 
   const containerElRef = useRef(null);
   const [src, setSrc] = useState("");
-  const [, _setCompiledHtml] = useState(
-    block.compiledHtml || block.htmlString()
-  );
+  const [htmlText, _setHtmlText] = useState(typeof html === "string" ? html : "");
   const [size, _setSize] = useState(block.iframePreviewSize);
   const setSize = (size: Size): void => {
     block.iframePreviewSize = size;
@@ -113,14 +111,17 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     if (onSetCompiledHtml) {
       onSetCompiledHtml();
     }
-    _setCompiledHtml(res);
+    _setHtmlText(res);
   };
 
-  const html = block.compiledHtml || block.htmlString();
+  if (typeof html !== "string") {
+    html.then(_setHtmlText);
+  }
+
   const blob = new Blob(
     [
       `
-      <html${html.match(/<amp-/) ? " amp" : ""}>
+      <html${htmlText.match(/<amp-/) ? " amp" : ""}>
       <head>
         <meta charset="utf-8">
         <script>
@@ -144,7 +145,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           )}
         ${block.compiledHtml ? "" : header || ""}
       </head>
-      <body data-block-id="${block.id}">${html}</body>
+      <body data-block-id="${block.id}">${htmlText}</body>
       </html>`,
     ],
     { type: "text/html" }

@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import React, { useState, useEffect } from "react";
 import { render } from "react-dom";
-import { useEditorContext, BlocksContext } from "../Context";
+import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
@@ -199,15 +199,8 @@ class Column extends Block {
     );
   }
 
-  public html(): string {
-    const className = (this.constructor as typeof Column).className;
-    const blocksHtml = this.blocks.map(c => c.htmlString()).join("");
-
-    if (this.rootBlock) {
-      return `<${this.rootBlock} class="${className}">${blocksHtml}</${this.rootBlock}>`;
-    } else {
-      return blocksHtml;
-    }
+  public isBlank(): boolean {
+    return this.blocks.length === 0;
   }
 
   public async serializedString(opts: SerializeOptions): Promise<string> {
@@ -217,7 +210,7 @@ class Column extends Block {
     return serializedBlocks.join("");
   }
 
-  public async compile(): Promise<void> {
+  public async compile({ editor }: SerializeOptions): Promise<void> {
     return new Promise((resolve, reject) => {
       const div = document.createElement("DIV");
       Object.assign(div.style, {
@@ -237,13 +230,21 @@ class Column extends Block {
         }
       };
 
+      const editorContext = {
+        editor,
+        setFocusedId: () => null,
+        getFocusedId: () => null,
+      };
+
       render(
-        <BlockIframePreview
-          key={this.id}
-          block={this}
-          header={this.previewHeader}
-          onSetCompiledHtml={onSetCompiledHtml}
-        />,
+        <EditorContext.Provider value={editorContext}>
+          <BlockIframePreview
+            key={this.id}
+            block={this}
+            header={this.previewHeader}
+            onSetCompiledHtml={onSetCompiledHtml}
+          />
+        </EditorContext.Provider>,
         div
       );
     });
