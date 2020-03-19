@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext } from "../Context";
 import Block from "../Block";
-import Editor from "../Editor";
 
 export interface Size {
   width: string;
@@ -90,7 +89,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const containerElRef = useRef(null);
   const [src, setSrc] = useState("");
-  const [htmlText, _setHtmlText] = useState(typeof html === "string" ? html : "");
+  const [htmlText, _setHtmlText] = useState(
+    typeof html === "string" ? html : ""
+  );
   const [size, _setSize] = useState(block.iframePreviewSize);
   const setSize = (size: Size): void => {
     block.iframePreviewSize = size;

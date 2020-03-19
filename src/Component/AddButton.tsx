@@ -90,7 +90,9 @@ const AddButton: React.FC<AddButtonProps> = ({
   return (
     <>
       <div
-        className={`btn-wrap ${onlyShortcuts ? "btn-wrap--only-shortcuts" : ""}`}
+        className={`btn-wrap ${
+          onlyShortcuts ? "btn-wrap--only-shortcuts" : ""
+        }`}
         style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={ev => {
