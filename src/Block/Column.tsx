@@ -16,6 +16,8 @@ interface EditorProps extends EditorOptions {
   block: Column;
 }
 
+const COMPILE_TIMEOUT = 2000;
+
 const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   block.compiledHtml = "";
 
@@ -247,6 +249,12 @@ class Column extends Block {
         </EditorContext.Provider>,
         div
       );
+
+      const opts = editor.opts.block["core-column"] || {};
+      setTimeout(async () => {
+        this.compiledHtml = await this.serializedString({ editor });
+        onSetCompiledHtml();
+      }, opts["compile-timeout"] || COMPILE_TIMEOUT);
     });
   }
 
