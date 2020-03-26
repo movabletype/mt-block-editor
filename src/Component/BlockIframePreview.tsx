@@ -109,6 +109,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     }
 
     block.compiledHtml = res;
+
+    editor.emit("onSetCompiledHtmlIframePreview", {
+      editor,
+      block,
+    });
+
     if (onSetCompiledHtml) {
       onSetCompiledHtml();
     }
@@ -118,6 +124,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   if (typeof html !== "string") {
     html.then(_setHtmlText);
   }
+
+  editor.emit("onBeforeRenderIframePreview", {
+    editor,
+    html: htmlText,
+  });
 
   const blob = new Blob(
     [
