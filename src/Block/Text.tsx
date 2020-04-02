@@ -110,6 +110,13 @@ const Editor: React.FC<EditorProps> = ({
       // inline: true,
     };
 
+    if (!canRemove) {
+      /* eslint-disable-next-line @typescript-eslint/camelcase, @typescript-eslint/no-explicit-any */
+      (settings as any).force_br_newlines = true;
+      // eslint-disable-next-line @typescript-eslint/camelcase, @typescript-eslint/no-explicit-any
+      (settings as any).force_p_newlines = false;
+    }
+
     editor.emit("onBuildTinyMCESettings", {
       editor,
       block,
