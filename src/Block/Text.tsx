@@ -65,19 +65,28 @@ const Editor: React.FC<EditorProps> = ({
           }
 
           const children = [...root.childNodes] as HTMLElement[];
-          if (children.length === 1) {
+          const firstChild = children.shift();
+          if (!firstChild) {
             return;
           }
 
-          children.shift();
           children.reverse();
           children.forEach(c => {
             ed.dom.remove(c);
           });
           if (canRemove) {
             children.forEach(c => {
+              focusIfIos(dummyInputElRef);
+
               // eslint-disable-next-line @typescript-eslint/no-use-before-define
               addBlock(new Text({ text: c.outerHTML }), block);
+            });
+          } else {
+            children.forEach(c => {
+              firstChild.appendChild(document.createElement("BR"));
+              [...c.childNodes].forEach(cc => {
+                firstChild.appendChild(cc);
+              });
             });
           }
         });
@@ -109,13 +118,6 @@ const Editor: React.FC<EditorProps> = ({
       // menubar: false,
       // inline: true,
     };
-
-    if (!canRemove) {
-      /* eslint-disable-next-line @typescript-eslint/camelcase, @typescript-eslint/no-explicit-any */
-      (settings as any).force_br_newlines = true;
-      // eslint-disable-next-line @typescript-eslint/camelcase, @typescript-eslint/no-explicit-any
-      (settings as any).force_p_newlines = false;
-    }
 
     editor.emit("onBuildTinyMCESettings", {
       editor,
