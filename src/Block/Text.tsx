@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import {
   Editor as TinyMCE,
@@ -8,7 +8,7 @@ import {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import { getElementById, sanitize } from "../util";
+import { getElementById, sanitize, focusIfIos } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -26,6 +26,7 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor } = useEditorContext();
   const { addBlock, removeBlock } = useBlocksContext();
+  const dummyInputElRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -179,6 +180,7 @@ const Editor: React.FC<EditorProps> = ({
         hasBorder={false}
         className={html !== "" ? "invisible" : ""}
       ></BlockToolbar>
+      <input ref={dummyInputElRef} className="input--hidden" tabIndex={-1} />
     </div>
   );
 };

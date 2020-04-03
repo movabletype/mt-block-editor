@@ -1,4 +1,4 @@
-import React from "react";
+import React, { RefObject } from "react";
 import createDOMPurify from "dompurify";
 import Block from "./Block";
 import BlockFactory from "./BlockFactory";
@@ -169,4 +169,16 @@ export function findDescendantBlock(
 const DOMPurify = createDOMPurify(window);
 export function sanitize(str: string): string {
   return DOMPurify.sanitize(str);
+}
+
+export function focusIfIos(ref: RefObject<HTMLElement>): void {
+  if (!/ip(hone|(o|a)d)/i.test(navigator.userAgent)) {
+    return;
+  }
+
+  if (ref.current === null) {
+    return;
+  }
+
+  ref.current.focus();
 }

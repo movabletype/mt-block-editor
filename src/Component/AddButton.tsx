@@ -1,3 +1,4 @@
+import { focusIfIos } from "../util";
 import React, { useState, useEffect, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { useEditorContext, useBlocksContext } from "../Context";
@@ -25,6 +26,7 @@ const AddButton: React.FC<AddButtonProps> = ({
   const [showList, setShowList] = useState(ListStatus.Hidden);
   const buttonElRef = useRef(null);
   const blockListElRef = useRef(null);
+  const dummyInputElRef = useRef<HTMLInputElement>(null);
 
   const onDrop = (): void => {
     if (buttonElRef.current === null) {
@@ -89,6 +91,7 @@ const AddButton: React.FC<AddButtonProps> = ({
 
   return (
     <>
+      <input ref={dummyInputElRef} className="input--hidden" tabIndex={-1} />
       <div
         className={`btn-wrap ${
           onlyShortcuts ? "btn-wrap--only-shortcuts" : ""
@@ -160,6 +163,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                       ev.preventDefault();
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();
+                      focusIfIos(dummyInputElRef);
                       addBlock(
                         await t.new({
                           editor: editor,
@@ -207,6 +211,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();
                       setShowList(ListStatus.None);
+                      focusIfIos(dummyInputElRef);
                       addBlock(
                         await t.new({
                           editor: editor,
