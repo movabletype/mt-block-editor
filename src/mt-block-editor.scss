@@ -488,7 +488,6 @@
 
   .block-toolbar {
     height: 32px;
-    width: 32px;
     position: absolute;
     left: -8px;
     background: white;
@@ -496,17 +495,8 @@
     top: -39px;
     border: 1px solid #ddd;
 
-    &.block-toolbar--x2 {
-      top: -70px;
-      left: -1px;
-    }
-
     &.block-toolbar--no-border {
       border: none;
-    }
-
-    .mce-tinymce {
-      box-shadow: none;
     }
 
     .block-toolbar-button {
@@ -528,6 +518,35 @@
       }
       &:focus {
         outline: none;
+      }
+    }
+
+    &.block-toolbar--tinymce {
+      top: -70px;
+      left: -1px;
+    }
+
+    .mce-tinymce {
+      box-shadow: none;
+    }
+
+    &.block-toolbar--x2 {
+      top: -70px;
+      left: -1px;
+
+      @media (max-width: 991.5px) {
+        top: -138px;
+        width: 100%;
+
+        .mce-tinymce, .mce-container-body {
+          max-width: 100%;
+        }
+
+        .mce-container-body.mce-flow-layout {
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: row;
+        }
       }
     }
   }
