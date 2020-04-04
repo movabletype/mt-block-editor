@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
+import TouchBackend from 'react-dnd-touch-backend';
 
 import Editor from "../Editor";
 import Block from "../Block";
@@ -11,6 +12,9 @@ import AddButton from "./AddButton";
 interface AppProps {
   editor: Editor;
 }
+
+// FIXME
+const DndBackend = /ip(hone|(o|a)d)|android/i.test(navigator.userAgent) ? TouchBackend : HTML5Backend;
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   const editorElRef = useRef(null);
@@ -108,7 +112,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   return (
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={DndBackend}>
           <div ref={editorElRef}>
             {blocks.map((b, i) => {
               const focus = b.id === focusedId;
