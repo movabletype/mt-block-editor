@@ -6,6 +6,7 @@ interface BlockToolbarProps {
   className?: string;
   rows?: number;
   hasBorder?: boolean;
+  fullWidth?: boolean;
 }
 
 const BlockToolbar: React.FC<BlockToolbarProps> = (
@@ -20,6 +21,9 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   }
   if (props.hasBorder === false) {
     className += " block-toolbar--no-border";
+  }
+  if (props.fullWidth === true) {
+    className += " block-toolbar--full-width";
   }
 
   return (

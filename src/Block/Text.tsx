@@ -121,6 +121,11 @@ const Editor: React.FC<EditorProps> = ({
             e.preventDefault();
           }
         });
+
+        setTimeout(() => {
+          const toolbar = getElementById(`${block.tinymceId()}toolbar`);
+          toolbar.style.top = `-${toolbar.offsetHeight}px`;
+        }, 0);
       },
 
       // TinyMCE 5 ?
@@ -187,6 +192,7 @@ const Editor: React.FC<EditorProps> = ({
       <BlockToolbar
         id={`${block.tinymceId()}toolbar`}
         rows={2}
+        fullWidth={true}
         hasBorder={false}
         className={html !== "" ? "invisible" : ""}
       ></BlockToolbar>

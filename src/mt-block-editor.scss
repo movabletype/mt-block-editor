@@ -487,7 +487,6 @@
   }
 
   .block-toolbar {
-    height: 32px;
     position: absolute;
     left: -8px;
     background: white;
@@ -533,20 +532,23 @@
     &.block-toolbar--x2 {
       top: -70px;
       left: -1px;
+    }
 
-      @media (max-width: 991.5px) {
-        top: -138px;
-        width: 100%;
+    &.block-toolbar--full-width {
+      width: 100%;
+    }
 
-        .mce-tinymce, .mce-container-body {
-          max-width: 100%;
-        }
+    @media (max-width: 991.5px) {
+      left: 0;
 
-        .mce-container-body.mce-flow-layout {
-          display: flex;
-          flex-wrap: wrap;
-          flex-direction: row;
-        }
+      .mce-tinymce, .mce-container-body {
+        max-width: 100%;
+      }
+
+      .mce-container-body.mce-flow-layout {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
       }
     }
   }
