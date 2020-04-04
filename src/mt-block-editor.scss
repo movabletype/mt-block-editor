@@ -586,6 +586,15 @@
   .mce-edit-focus {
     outline: 0px !important;
   }
+
+  .input--hidden {
+    position: absolute;
+    width:1px;
+    height:1px;
+    border:none;
+    margin:0;
+    padding:0;
+  }
 }
 
 @media (max-width: 991.5px) {
@@ -606,13 +615,4 @@
       }
     }
   }
-}
-
-.input--hidden {
-  position: absolute;
-  width:1px;
-  height:1px;
-  border:none;
-  margin:0;
-  padding:0;
 }

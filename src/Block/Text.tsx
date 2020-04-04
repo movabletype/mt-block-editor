@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import {
   Editor as TinyMCE,
@@ -8,7 +8,7 @@ import {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import { getElementById, sanitize, focusIfIos } from "../util";
+import { getElementById, sanitize } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -26,7 +26,6 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor } = useEditorContext();
   const { addBlock, removeBlock } = useBlocksContext();
-  const dummyInputElRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -77,7 +76,18 @@ const Editor: React.FC<EditorProps> = ({
           });
           if (canRemove) {
             children.forEach(c => {
-              focusIfIos(dummyInputElRef);
+              if (/ip(hone|(o|a)d)/i.test(navigator.userAgent)) {
+                const editorRect = editor.editorElement.getBoundingClientRect();
+                const rootRect = ed.dom.getRoot().getBoundingClientRect();
+                const input = document.createElement("INPUT");
+                input.classList.add("input--hidden");
+                input.style.top = rootRect.top - editorRect.top + "px";
+                editor.editorElement.appendChild(input);
+                input.focus();
+                setTimeout(() => {
+                  input.remove();
+                }, 5 * 1000);
+              }
 
               // eslint-disable-next-line @typescript-eslint/no-use-before-define
               addBlock(new Text({ text: c.outerHTML }), block);
@@ -180,7 +190,6 @@ const Editor: React.FC<EditorProps> = ({
         hasBorder={false}
         className={html !== "" ? "invisible" : ""}
       ></BlockToolbar>
-      <input ref={dummyInputElRef} className="input--hidden" tabIndex={-1} />
     </div>
   );
 };
