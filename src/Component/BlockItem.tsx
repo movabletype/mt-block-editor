@@ -3,6 +3,7 @@
  * http://react-dnd.github.io/react-dnd/examples
  */
 
+import CSS from "csstype";
 import React, { useRef, createRef } from "react";
 import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
@@ -14,6 +15,7 @@ import RemoveButton from "./RemoveButton";
 import { findDescendantBlock } from "../util";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
+import { featurePreview } from "./DndBackend";
 import { XYCoord } from "dnd-core";
 import { DragObjectWithType } from "react-dnd/lib/interfaces";
 
@@ -166,10 +168,19 @@ const BlockItem: React.FC<Props> = ({
     }),
   });
 
-  const opacity = isDragging ? 0 : 1;
+  const style: CSS.Properties = {};
+  style.opacity = isDragging ? (featurePreview ? 0 : 0.5) : 1;
   preview(drop(ref));
   const focusDescendant = !!findDescendantBlock(b, getFocusedId());
   const clickBlockTargetRef = createRef<HTMLElement>();
+
+  // TODO: render preview
+  // import { useDragLayer } from "react-dnd";
+  // if (!featurePreview) {
+  //   const { clientOffset } = useDragLayer((monitor: any) => ({
+  //     clientOffset: monitor.getClientOffset(),
+  //   }));
+  // }
 
   const ed = b.editor({
     focus,
@@ -195,7 +206,7 @@ const BlockItem: React.FC<Props> = ({
         }
       }}
       className={`block-wrapper ${focus ? "focus" : ""}`}
-      style={{ opacity }}
+      style={style}
       ref={ref}
     >
       {showButton && (
