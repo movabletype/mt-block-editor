@@ -11,5 +11,8 @@
   "Image": "画像",
   "Label": "ラベル",
   "Table": "テーブル",
-  "Text": "テキストブロック"
+  "Text": "テキストブロック",
+  "Two columns": "2カラム",
+  "Three columns": "3カラム",
+  "Four columns": "4カラム"
 }

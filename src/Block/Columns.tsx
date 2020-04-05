@@ -59,7 +59,7 @@ const Editor: React.FC<EditorProps> = ({
                 value="2"
                 defaultChecked={curLayout === "2"}
               />
-              2カラム
+              {t("Two columns")}
             </label>
           </li>
           <li>
@@ -69,7 +69,7 @@ const Editor: React.FC<EditorProps> = ({
                 value="3"
                 defaultChecked={curLayout === "3"}
               />
-              3カラム
+              {t("Three columns")}
             </label>
           </li>
           <li>
@@ -79,7 +79,7 @@ const Editor: React.FC<EditorProps> = ({
                 value="4"
                 defaultChecked={curLayout === "4"}
               />
-              4カラム
+              {t("Four columns")}
             </label>
           </li>
         </ul>
