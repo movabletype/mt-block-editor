@@ -117,8 +117,8 @@
     width: 20px;
     height: 20px;
     content: "";
-    background: url(./img/remove.svg);
-    background-size: cover;
+    background: url(./img/remove.svg) no-repeat;
+    background-size: 20px;
   }
 
   .btn-move {
@@ -128,8 +128,8 @@
     width: 18px;
     height: 18px;
     content: "";
-    background: url(./img/move.svg);
-    background-size: cover;
+    background: url(./img/move.svg) no-repeat;
+    background-size: 18px;
   }
 
   .btn-up {
@@ -139,8 +139,8 @@
     width: 18px;
     height: 18px;
     content: "";
-    background: url(./img/up.svg);
-    background-size: cover;
+    background: url(./img/up.svg) no-repeat;
+    background-size: 18px;
   }
 
   .btn-down {
@@ -150,8 +150,8 @@
     width: 18px;
     height: 18px;
     content: "";
-    background: url(./img/down.svg);
-    background-size: cover;
+    background: url(./img/down.svg) no-repeat;
+    background-size: 18px;
   }
 
   .block-wrapper {
