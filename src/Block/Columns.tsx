@@ -6,11 +6,12 @@ import Block, {
   SerializeOptions,
 } from "../Block";
 import Column from "./Column";
-import { parseContent } from "../util";
+import { parseContent, escapeHtml } from "../util";
 import icon from "../img/icon/columns.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockToolbarButton from "../Component/BlockToolbarButton";
 import BlockConfigPanel from "../Component/BlockConfigPanel";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
 
 interface EditorProps extends EditorOptions {
   block: Columns;
@@ -38,6 +39,7 @@ const Editor: React.FC<EditorProps> = ({
   const curLayout = block.getColumnLayout();
   return (
     <>
+      <BlockSetupCommon block={block} keys={["className"]} />
       <div className="columns" style={{ display: "flex" }}>
         {block.columns.map(c => c.editor({ focus, canRemove }))}
       </div>
@@ -138,18 +140,25 @@ class Columns extends Block {
   }
 
   public html(): string {
-    return `<div className="columns" style="display: flex">${this.columns
+    return `<div class="columns${
+      this.className ? ` ${this.className}` : ""
+    }" style="display: flex">${this.columns
       .map(c => c.htmlString())
       .join("")}</div>`;
   }
 
   public async serialize(opts: SerializeOptions): Promise<string> {
+    const m = this.metadata();
     const serializedColumns = await Promise.all(
       this.columns.map(c => c.serialize(opts))
     );
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId
-    }" --><div class="mt-block-editor-columns" style="display: flex">${serializedColumns.join(
+    }"${
+      m ? ` data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""
+    } --><div class="mt-block-editor-columns${
+      this.className ? ` ${this.className}` : ""
+    }" style="display: flex">${serializedColumns.join(
       ""
     )}</div><!-- /mtEditorBlock -->`;
   }
@@ -157,6 +166,7 @@ class Columns extends Block {
   public static async newFromHtml({
     node,
     factory,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
     const columns = (await parseContent(
       node.innerHTML
@@ -164,7 +174,7 @@ class Columns extends Block {
         .replace(/&lt;\/div&gt;$/, ""),
       factory
     )) as Column[];
-    return new Columns({ columns });
+    return new Columns(Object.assign({ columns }, meta));
   }
 }
 

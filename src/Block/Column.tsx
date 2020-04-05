@@ -10,7 +10,8 @@ import Block, {
 import AddButton from "../Component/AddButton";
 import BlockItem from "../Component/BlockItem";
 import BlockIframePreview from "../Component/BlockIframePreview";
-import { parseContent, preParseContent } from "../util";
+import BlockSetupCommon from "../Component/BlockSetupCommon";
+import { parseContent, preParseContent, escapeHtml } from "../util";
 
 interface EditorProps extends EditorOptions {
   block: Column;
@@ -93,6 +94,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
+      <BlockSetupCommon block={block} keys={["className"]} />
       {blocks.map((b, i) => {
         const focus = getFocusedId() === b.id;
         return (
@@ -266,12 +268,20 @@ class Column extends Block {
       return super.serialize(opts);
     }
 
+    const m = this.metadata();
     const typeId = (this.constructor as typeof Column).typeId;
-    const className = (this.constructor as typeof Column).className;
+    const classNames = [
+      (this.constructor as typeof Column).className,
+      this.className,
+    ].filter(c => c);
     return [
-      `<!-- mtEditorBlock data-mt-block-type="${typeId}" -->`,
+      `<!-- mtEditorBlock data-mt-block-type="${typeId}"${
+        m ? ` data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""
+      } -->`,
       this.rootBlock
-        ? `<${this.rootBlock}${className ? ` class="${className}"` : ""}>`
+        ? `<${this.rootBlock}${
+            classNames.length ? ` class="${classNames.join(" ")}"` : ""
+          }>`
         : "",
       await this.serializedString(opts),
       this.rootBlock ? `</${this.rootBlock}>` : "",
@@ -282,19 +292,14 @@ class Column extends Block {
   public static async newFromHtml({
     node,
     factory,
+    meta,
   }: NewFromHtmlOptions): Promise<Block> {
     const html =
       preParseContent(node.getAttribute("data-mt-block-html") || "") ||
-      node.innerHTML
-        .replace(/^&lt;div.*?&gt;(<!--\s+mtEditorBlock\s+)/, "$1")
-        .replace(/&lt;\/div&gt;(<!--\s+\/mtEditorBlock\s+--)>$/, "$1");
+      node.innerHTML;
     const blocks = await parseContent(html, factory);
 
-    if (html && blocks.length === 0) {
-      throw Error("This content is not for this block");
-    }
-
-    return new this({ blocks, _html: "" });
+    return new this(Object.assign({ blocks, _html: "" }, meta));
   }
 }
 
