@@ -8,7 +8,7 @@ import {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import { getElementById, sanitize } from "../util";
+import { getElementById, sanitize, isIos, isTouchDevice } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -75,8 +75,8 @@ const Editor: React.FC<EditorProps> = ({
             ed.dom.remove(c);
           });
           if (canRemove) {
-            children.forEach(c => {
-              if (/ip(hone|(o|a)d)/i.test(navigator.userAgent)) {
+            children.forEach((c, i) => {
+              if (i === 0 && isIos()) {
                 const editorRect = editor.editorElement.getBoundingClientRect();
                 const rootRect = ed.dom.getRoot().getBoundingClientRect();
                 const input = document.createElement("INPUT");
@@ -151,15 +151,20 @@ const Editor: React.FC<EditorProps> = ({
         "invisible"
       );
     };
-    window.addEventListener("mousemove", onMouseMove, {
-      capture: true,
-      passive: true,
-    });
+
+    if (!isTouchDevice) {
+      window.addEventListener("mousemove", onMouseMove, {
+        capture: true,
+        passive: true,
+      });
+    }
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove, {
-        capture: true,
-      });
+      if (!isTouchDevice) {
+        window.removeEventListener("mousemove", onMouseMove, {
+          capture: true,
+        });
+      }
       block.text = tinymce.get(block.tinymceId()).getContent();
 
       block.tinymce = null;

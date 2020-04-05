@@ -171,8 +171,17 @@ export function sanitize(str: string): string {
   return DOMPurify.sanitize(str);
 }
 
+export function isIos(): boolean {
+  return /ip(hone|(o|a)d)/i.test(navigator.userAgent);
+}
+
+export function isTouchDevice(): boolean {
+  // FIXME
+  return /ip(hone|(o|a)d)|android/i.test(navigator.userAgent);
+}
+
 export function focusIfIos(ref: RefObject<HTMLElement>): void {
-  if (!/ip(hone|(o|a)d)/i.test(navigator.userAgent)) {
+  if (!isIos()) {
     return;
   }
 
