@@ -3,12 +3,22 @@ import React from "react";
 import { render } from "react-dom";
 import { InitOptions as InitOptionsI18n } from "i18next";
 
+import resetCss from "./reset.css";
 import { getElementById, preParseContent, parseContent } from "./util";
 import Block from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 
 import "./import-default-blocks";
+
+export enum StylesheetType {
+  url,
+  css,
+}
+interface Stylesheet {
+  type: StylesheetType;
+  data: string;
+}
 
 interface Map {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,7 +40,8 @@ class Editor extends EventEmitter {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
-  public blocks: Block[];
+  public blocks: Block[] = [];
+  public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
 
   private inputElement: HTMLInputElement;
@@ -60,20 +71,16 @@ class Editor extends EventEmitter {
       this.inputElement
     );
 
-    this.blocks = [];
-
-    setTimeout(() => {
-      parseContent(preParseContent(this.inputElement.value), this.factory).then(
-        blocks => {
-          this.blocks = blocks;
-          this.emit("onInitializeBlocks", { editor: this, blocks });
-
-          render(
-            React.createElement(App, { editor: this }),
-            this.editorElement
-          );
-        }
+    setTimeout(async () => {
+      this.stylesheets = await Promise.all(this.buildStylesheets());
+      const blocks = await parseContent(
+        preParseContent(this.inputElement.value),
+        this.factory
       );
+      this.blocks = blocks;
+      this.emit("onInitializeBlocks", { editor: this, blocks });
+
+      render(React.createElement(App, { editor: this }), this.editorElement);
     }, 0);
   }
 
@@ -160,6 +167,34 @@ class Editor extends EventEmitter {
     this.emit("onUnload", {
       editor: this,
     });
+  }
+
+  private buildStylesheets(): Array<Stylesheet | Promise<Stylesheet>> {
+    return [
+      {
+        type: StylesheetType.css,
+        data: resetCss,
+      },
+      ...this.opts.stylesheets.map(async s => {
+        if (/^blob:/.test(s)) {
+          const res = await fetch(s);
+          return {
+            type: StylesheetType.css,
+            data: await res.text(),
+          };
+        } else if (/^https?:/.test(s)) {
+          return {
+            type: StylesheetType.url,
+            data: s,
+          };
+        } else {
+          return {
+            type: StylesheetType.css,
+            data: s,
+          };
+        }
+      }),
+    ];
   }
 }
 

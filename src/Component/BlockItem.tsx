@@ -7,6 +7,7 @@ import CSS from "csstype";
 import React, { useRef, createRef } from "react";
 import root from "react-shadow";
 import { useEditorContext, useBlocksContext } from "../Context";
+import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
@@ -18,54 +19,6 @@ import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
 import { featurePreview } from "./DndBackend";
 import { XYCoord } from "dnd-core";
 import { DragObjectWithType } from "react-dnd/lib/interfaces";
-
-const resetCssUrl = URL.createObjectURL(
-  new Blob(
-    [
-      `
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin-top: 0;
-	margin-bottom: 0;
-	padding-top: 0;
-	padding-bottom: 0;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-`,
-    ],
-    { type: "text/css" }
-  )
-);
 
 interface DragObject extends DragObjectWithType {
   index: number;
@@ -242,10 +195,17 @@ const BlockItem: React.FC<Props> = ({
             <div className="content-label">{b.contentLabel()}</div>
             <root.div>
               <div className="entry">
-                <link rel="stylesheet" href={resetCssUrl} />
-                {editor.opts.stylesheets.map(s => (
-                  <link rel="stylesheet" key={s} href={s} />
-                ))}
+                {editor.stylesheets.map((s, i) => {
+                  if (s.type === StylesheetType.css) {
+                    return (
+                      <style type="text/css" key={i}>
+                        {s.data}
+                      </style>
+                    );
+                  } else {
+                    return <link rel="stylesheet" key={i} href={s.data} />;
+                  }
+                })}
                 {ed}
               </div>
             </root.div>

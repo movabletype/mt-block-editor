@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext } from "../Context";
+import { StylesheetType } from "../Editor";
 import Block from "../Block";
 
 export interface Size {
@@ -153,10 +154,15 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           width: 100%;
         }
         </style>
-        ${editor &&
-          editor.opts.stylesheets.map(
-            s => `<link rel="stylesheet" href=${s} />`
-          )}
+        ${editor.stylesheets
+          .map(s => {
+            if (s.type === StylesheetType.css) {
+              return `<style type="text/css">${s.data}</style>`;
+            } else {
+              return `<link rel="stylesheet" href="${s.data}" />`;
+            }
+          })
+          .join("")}
         ${block.compiledHtml ? "" : header || ""}
       </head>
       <body data-block-id="${block.id}">${htmlText}</body>
