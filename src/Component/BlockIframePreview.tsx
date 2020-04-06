@@ -89,7 +89,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const containerElRef = useRef(null);
   const [src, setSrc] = useState("");
-  const [htmlText, _setHtmlText] = useState(
+  const [rawHtmlText, _setHtmlText] = useState(
     typeof html === "string" ? html : ""
   );
   const [size, _setSize] = useState(block.iframePreviewSize);
@@ -125,10 +125,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     html.then(_setHtmlText);
   }
 
-  editor.emit("onBeforeRenderIframePreview", {
+  const onBeforeRenderIframePreviewOpt = {
     editor,
-    html: htmlText,
-  });
+    html: rawHtmlText,
+  };
+  editor.emit("onBeforeRenderIframePreview", onBeforeRenderIframePreviewOpt);
+  const htmlText = onBeforeRenderIframePreviewOpt.html;
 
   const blob = new Blob(
     [
