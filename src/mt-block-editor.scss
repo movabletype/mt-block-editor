@@ -536,7 +536,7 @@
     }
 
     &.block-toolbar--full-width {
-      width: 100%;
+      max-width: 100%;
     }
 
     @media (max-width: 991.5px) {
