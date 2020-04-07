@@ -125,7 +125,12 @@ class EditorUtil {
       if (previewHeader !== undefined) {
         overwrite.previewHeader = previewHeader;
       }
-      Column.call(this, Object.assign(overwrite, init || {}));
+
+      return Reflect.construct(
+        Column,
+        [Object.assign(overwrite, init || {})],
+        BoilerplateBlock
+      );
     };
 
     BoilerplateBlock.prototype = Object.create(Column.prototype);
