@@ -1,5 +1,9 @@
 import { t } from "../i18n";
-import React, { useState, useEffect } from "mt-block-editor-block/React";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+} from "mt-block-editor-block/React";
 import { useEditorUtil } from "mt-block-editor-block/hooks";
 import {
   BlockIframePreview,
@@ -43,12 +47,20 @@ type Resolver = (url: string) => Promise<OembedData>;
 const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   block.compiledHtml = "";
 
+  const inputElRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputElRef.current) {
+      inputElRef.current.focus();
+    }
+  });
+
   return (
     <div className={css.Oembed}>
       <BlockSetupCommon block={block} keys={["label", "helpText"]} />
       <BlockLabel block={block}>
         <p>
-          <input type="url" name="url" />
+          <input type="url" name="url" ref={inputElRef} />
         </p>
       </BlockLabel>
     </div>
@@ -67,7 +79,11 @@ const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
   });
 
   return block.compiledHtml ? (
-    <BlockIframePreview key={block.id} block={block} html={block.compiledHtml}/>
+    <BlockIframePreview
+      key={block.id}
+      block={block}
+      html={block.compiledHtml}
+    />
   ) : block.url ? (
     <>{block.url}</>
   ) : (
