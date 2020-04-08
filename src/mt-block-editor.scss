@@ -521,11 +521,6 @@
       }
     }
 
-    &.block-toolbar--tinymce {
-      top: -70px;
-      left: -1px;
-    }
-
     .mce-tinymce {
       box-shadow: none;
     }
@@ -535,23 +530,13 @@
       left: -1px;
     }
 
-    &.block-toolbar--full-width {
-      max-width: 100%;
+    &.block-toolbar--default {
+      display: none;
     }
+  }
 
-    @media (max-width: 991.5px) {
-      left: 0;
-
-      .mce-tinymce, .mce-container-body {
-        max-width: 100%;
-      }
-
-      .mce-container-body.mce-flow-layout {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-      }
-    }
+  .block-toolbar-default-items {
+    display: none;
   }
 
   .block-config-panel {
@@ -611,11 +596,11 @@
 
   .input--hidden {
     position: absolute;
-    width:1px;
-    height:1px;
-    border:none;
-    margin:0;
-    padding:0;
+    width: 1px;
+    height: 1px;
+    border: none;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -634,6 +619,64 @@
         top: 0px;
         left: 8px;
         z-index: 200;
+      }
+    }
+
+    .block-toolbar {
+      width: 100% !important;
+      left: 0;
+
+      &.block-toolbar--default {
+        display: block;
+        height: 32px;
+      }
+
+      &.block-toolbar--tinymce {
+        width: 100vw !important;
+        .mce-tinymce,
+        .mce-container-body {
+          width: 100vw !important;
+        }
+      }
+
+      .mce-container-body.mce-flow-layout {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+    }
+
+    .columns .block-toolbar.block-toolbar--tinymce {
+      width: calc(100vw - 15px) !important;
+
+      .mce-tinymce,
+      .mce-container-body {
+        width: calc(100vw - 15px) !important;
+      }
+    }
+
+    .block-toolbar-default-items {
+      display: inline;
+      position: absolute;
+      z-index: 1;
+      bottom: 0;
+      right: 0;
+    }
+
+    .block-toolbar--tinymce {
+      .block-toolbar-default-items {
+        bottom: 4px;
+        right: 3px;
+      }
+    }
+
+    .block-wrapper {
+      margin: 10px 0;
+
+      .btn-move-wrapper,
+      .btn-remove-wrapper,
+      .btn-add-left {
+        display: none;
       }
     }
   }

@@ -13,16 +13,14 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({
 
   return (
     <>
-      <div>
-        <button
-          type="button"
-          className="btn-remove"
-          onClick={ev => {
-            ev.stopPropagation();
-            removeBlock(block);
-          }}
-        ></button>
-      </div>
+      <button
+        type="button"
+        className="btn-remove"
+        onClick={ev => {
+          ev.stopPropagation();
+          removeBlock(block);
+        }}
+      ></button>
     </>
   );
 };

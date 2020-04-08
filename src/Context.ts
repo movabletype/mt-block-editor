@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import Editor from "./Editor";
 import Block from "./Block";
 
@@ -25,6 +25,23 @@ interface BlocksContextProps {
 export const BlocksContext = createContext<BlocksContextProps | null>(null);
 export function useBlocksContext(): BlocksContextProps {
   const c = useContext(BlocksContext);
+  if (!c) {
+    throw Error("BlocksContext is not initialized");
+  }
+  return c;
+}
+
+export interface ToolbarProps {
+  id: string;
+  className: string;
+  children: ReactNode;
+}
+interface BlockContextProps {
+  setToolbarProps: (props: ToolbarProps) => void;
+}
+export const BlockContext = createContext<BlockContextProps | null>(null);
+export function useBlockContext(): BlockContextProps {
+  const c = useContext(BlockContext);
   if (!c) {
     throw Error("BlocksContext is not initialized");
   }

@@ -4,9 +4,14 @@
  */
 
 import CSS from "csstype";
-import React, { useRef, createRef } from "react";
+import React, { useRef, createRef, ReactNode } from "react";
 import root from "react-shadow";
-import { useEditorContext, useBlocksContext } from "../Context";
+import {
+  useEditorContext,
+  useBlocksContext,
+  BlockContext,
+  ToolbarProps,
+} from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import Columns from "../Block/Columns";
@@ -24,6 +29,11 @@ interface DragObject extends DragObjectWithType {
   index: number;
 }
 
+interface ToolbarPropsInternal {
+  props: ToolbarProps;
+  children: ReactNode;
+}
+
 interface Props {
   block: Block;
   focus: boolean;
@@ -37,6 +47,19 @@ interface Props {
 interface BlockInstance {
   getNode(): HTMLDivElement | null;
 }
+
+const Toolbar: React.FC<ToolbarPropsInternal> = ({
+  props,
+  children,
+}: ToolbarPropsInternal) => {
+  const className = props.className || "block-toolbar--default";
+  return (
+    <div id={props.id} className={`block-toolbar ${className}`}>
+      {props.children}
+      {children}
+    </div>
+  );
+};
 
 const BlockItem: React.FC<Props> = ({
   id,
@@ -143,6 +166,23 @@ const BlockItem: React.FC<Props> = ({
     clickBlockTargetRef,
   });
 
+  React.Children.map(ed, (child: JSX.Element) => {
+    React.Children.map(child.props.children, (child2: JSX.Element) => {
+      console.log(child2);
+    });
+  });
+
+  const toolbarProps: ToolbarProps = {
+    id: "",
+    className: "",
+    children: [],
+  };
+  const blockContext = {
+    setToolbarProps(props: ToolbarProps) {
+      Object.assign(toolbarProps, props);
+    },
+  };
+
   return (
     <div
       key={b.id}
@@ -189,7 +229,26 @@ const BlockItem: React.FC<Props> = ({
         focusDescendant ||
         b instanceof Column ||
         b instanceof Columns ? (
-          ed
+          <BlockContext.Provider value={blockContext}>
+            {ed}
+            {focus && (
+              <Toolbar props={toolbarProps}>
+                <div className="block-toolbar-default-items">
+                  <button
+                    type="button"
+                    className="btn-up"
+                    onClick={() => swapBlocks(index, index - 1, true)}
+                  ></button>
+                  <button
+                    type="button"
+                    className="btn-down"
+                    onClick={() => swapBlocks(index, index + 1, true)}
+                  ></button>
+                  <RemoveButton block={b} />
+                </div>
+              </Toolbar>
+            )}
+          </BlockContext.Provider>
         ) : (
           <>
             <div className="content-label">{b.contentLabel()}</div>

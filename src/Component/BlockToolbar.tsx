@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { useBlockContext } from "../Context";
 
 interface BlockToolbarProps {
   children?: ReactNode;
@@ -12,7 +13,9 @@ interface BlockToolbarProps {
 const BlockToolbar: React.FC<BlockToolbarProps> = (
   props: BlockToolbarProps
 ) => {
-  let className = "block-toolbar";
+  const { setToolbarProps } = useBlockContext();
+
+  let className = "block-toolbar--block";
   if (props.className) {
     className += ` ${props.className}`;
   }
@@ -22,15 +25,14 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   if (props.hasBorder === false) {
     className += " block-toolbar--no-border";
   }
-  if (props.fullWidth === true) {
-    className += " block-toolbar--full-width";
-  }
 
-  return (
-    <div id={props.id || ""} className={className}>
-      {props.children}
-    </div>
-  );
+  setToolbarProps({
+    id: props.id || "",
+    className: className,
+    children: props.children,
+  });
+
+  return null;
 };
 
 export default BlockToolbar;

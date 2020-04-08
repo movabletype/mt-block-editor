@@ -197,9 +197,8 @@ const Editor: React.FC<EditorProps> = ({
       <BlockToolbar
         id={`${block.tinymceId()}toolbar`}
         rows={2}
-        fullWidth={true}
         hasBorder={false}
-        className={html !== "" ? "invisible" : ""}
+        className={`block-toolbar--tinymce ${html !== "" ? "invisible" : ""}`}
       ></BlockToolbar>
     </div>
   );
