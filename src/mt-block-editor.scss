@@ -632,10 +632,10 @@
       }
 
       &.block-toolbar--tinymce {
-        width: 100vw !important;
+        width: 100% !important;
         .mce-tinymce,
         .mce-container-body {
-          width: 100vw !important;
+          width: 100% !important;
         }
       }
 
