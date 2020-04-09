@@ -123,6 +123,10 @@
     background: none;
     width: auto;
     padding: 8px 0;
+    height: 40px;
+    line-height: 40px;
+    padding: 0;
+    font-size: 12px;
   }
 
   .btn-move {
@@ -656,12 +660,58 @@
 @media (max-width: 991.5px) {
   .mt-block-editor {
     padding: 0 0;
+    margin: 0 16px;
+    .btn-command {
+			width: 28px;
+			height: 32px;
+			position: relative;
+      top: 3px;
+			&:before {
+				font-size: 18px;
+				position: relative;
+        display: block;
+        top: -5px;
+			}
+		}
+    
+    .btn-move {
+			height: 28px;
+			background-position: center center;
+		}
+    
+    .btn-up, .btn-down {
+      width: 24px;
+      height: 32px;
+      padding: 12px 12px;
+      background-size: 22px;
+			background-position: center center;
+    }
+    
+    .btn-add {
+      height: 40px;
+      line-height: 40px;
+      padding: 0;
+      font-size: 12px;
+      &:before {
+        height: 28px;
+        line-height: 28px;
+        font-size: 12px;
+      }
+    }
     .btn-add-bottom .btn-wrap {
       display: block;
     }
     .shortcut-block-list {
       justify-content: center;
-
+      li {
+				 a {
+					 padding: 6px 12px;
+					 img {
+						 width: 24px;
+						 height: 24px;
+					 }
+				 }
+			}
       &:after {
         width: calc(100% - 18px);
         height: 1px;
@@ -671,6 +721,12 @@
       }
     }
 
+    .block {
+      .content-label {
+        font-size: 12px;
+      }
+    }
+    
     .block-toolbar {
       width: 100% !important;
       left: 0;
@@ -729,8 +785,26 @@
       }
     }
 
+    .block-list-wrapper {
+       .block-list {
+          li {
+            a {
+              font-size: 12px;
+              line-height: 1;
+              img {
+                width: 24px;
+                height: 24px;
+                margin-bottom: 8px;
+              }
+            }
+          }
+       }
+    }
     .block-list-wrapper:not(.block-list-wrapper--bottom) {
       position: fixed;
+    }
+    .block-command-panel {
+      padding: 4px 12px;
     }
   }
 }
