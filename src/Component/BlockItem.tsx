@@ -4,8 +4,15 @@
  */
 
 import CSS from "csstype";
-import React, { useRef, createRef, ReactNode } from "react";
+import React, { useRef, createRef, useState } from "react";
 import root from "react-shadow";
+
+import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
+import { featurePreview } from "./DndBackend";
+import { XYCoord } from "dnd-core";
+import { DragObjectWithType } from "react-dnd/lib/interfaces";
+
+import { t } from "../i18n";
 import {
   useEditorContext,
   useBlocksContext,
@@ -18,12 +25,8 @@ import Columns from "../Block/Columns";
 import Column from "../Block/Column";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
+import BlockCommandPanel from "./BlockCommandPanel";
 import { findDescendantBlock } from "../util";
-
-import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
-import { featurePreview } from "./DndBackend";
-import { XYCoord } from "dnd-core";
-import { DragObjectWithType } from "react-dnd/lib/interfaces";
 
 interface DragObject extends DragObjectWithType {
   index: number;
@@ -31,7 +34,8 @@ interface DragObject extends DragObjectWithType {
 
 interface ToolbarPropsInternal {
   props: ToolbarProps;
-  children: ReactNode;
+  index: number;
+  block: Block;
 }
 
 interface Props {
@@ -50,14 +54,56 @@ interface BlockInstance {
 
 const Toolbar: React.FC<ToolbarPropsInternal> = ({
   props,
-  children,
+  index,
+  block,
 }: ToolbarPropsInternal) => {
+  const { swapBlocks } = useBlocksContext();
+  const [showCommandPanel, setCommandPanel] = useState(false);
+  function toggleCommandPanel(): void {
+    setCommandPanel(!showCommandPanel);
+  }
+
   const className = props.className || "block-toolbar--default";
   return (
-    <div id={props.id} className={`block-toolbar ${className}`}>
-      {props.children}
-      {children}
-    </div>
+    <>
+      <div id={props.id} className={`block-toolbar ${className}`}>
+        {props.children}
+        <div className="block-toolbar-default-items">
+          <button
+            type="button"
+            className="btn-up"
+            onClick={() => swapBlocks(index, index - 1, true)}
+          ></button>
+          <button
+            type="button"
+            className="btn-down"
+            onClick={() => swapBlocks(index, index + 1, true)}
+          ></button>
+          <button
+            type="button"
+            className="btn-command"
+            onClick={toggleCommandPanel}
+          ></button>
+        </div>
+      </div>
+      <BlockCommandPanel in={showCommandPanel}>
+        <ul className="command-list">
+          <li>
+            <AddButton index={index} label={t("Insert before")} />
+          </li>
+          <li>
+            <AddButton index={index + 1} label={t("Insert after")} />
+          </li>
+          <li>
+            <RemoveButton
+              block={block}
+              confirm={true}
+              label={t("Remove block")}
+            />
+          </li>
+        </ul>
+      </BlockCommandPanel>
+    </>
   );
 };
 
@@ -220,7 +266,7 @@ const BlockItem: React.FC<Props> = ({
       {showButton && (
         <div className="btn-add-left">
           <div style={{ position: "relative" }}>
-            <AddButton index={i} className="block-list-wrapper--right" />
+            <AddButton index={i} />
           </div>
         </div>
       )}
@@ -231,23 +277,7 @@ const BlockItem: React.FC<Props> = ({
         b instanceof Columns ? (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && (
-              <Toolbar props={toolbarProps}>
-                <div className="block-toolbar-default-items">
-                  <button
-                    type="button"
-                    className="btn-up"
-                    onClick={() => swapBlocks(index, index - 1, true)}
-                  ></button>
-                  <button
-                    type="button"
-                    className="btn-down"
-                    onClick={() => swapBlocks(index, index + 1, true)}
-                  ></button>
-                  <RemoveButton block={b} />
-                </div>
-              </Toolbar>
-            )}
+            {focus && <Toolbar props={toolbarProps} block={b} index={i} />}
           </BlockContext.Provider>
         ) : (
           <>

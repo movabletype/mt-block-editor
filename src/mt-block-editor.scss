@@ -22,6 +22,8 @@
     border: 0;
     background-color: transparent;
     transition: 0.1s;
+    color: #666;
+    font-size: 11px;
     &:focus {
       outline: none;
       background-color: #eee;
@@ -29,13 +31,6 @@
     &:hover {
       cursor: pointer;
       background-color: #eee;
-    }
-    &:before {
-      height: 24px;
-      line-height: 24px;
-      content: "＋ ブロックを追加";
-      color: #666;
-      font-size: 11px;
     }
   }
 
@@ -119,6 +114,15 @@
     content: "";
     background: url(./img/remove.svg) no-repeat;
     background-size: 20px;
+    color: #666;
+    font-size: 11px;
+  }
+
+  .btn-remove--label-only {
+    width: auto;
+    background: none;
+    width: auto;
+    padding: 8px 0;
   }
 
   .btn-move {
@@ -127,7 +131,6 @@
     cursor: move;
     width: 18px;
     height: 18px;
-    content: "";
     background: url(./img/move.svg) no-repeat;
     background-size: 18px;
   }
@@ -138,9 +141,19 @@
     cursor: pointer;
     width: 18px;
     height: 18px;
-    content: "";
     background: url(./img/up.svg) no-repeat;
     background-size: 18px;
+  }
+
+  .btn-command {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    &:before {
+      content: "…";
+    }
   }
 
   .btn-down {
@@ -581,6 +594,43 @@
     }
   }
 
+  .block-command-panel {
+    font-size: 0.75rem;
+    position: absolute;
+    width: auto;
+    height: auto;
+    right: 0px;
+    top: -4px;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+
+    color: #666;
+    padding: 12px;
+    border: 1px solid #ddd;
+
+    transition: 0.1s ease-in-out;
+
+    &.block-command-panel-enter,
+    &.block-command-panel-exit {
+      opacity: 0;
+    }
+
+    &.block-command-panel-enter-active,
+    &.block-command-panel-enter-done {
+      opacity: 1;
+    }
+
+    .command-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .btn-add {
+      text-align: left;
+    }
+  }
+
   /* utility */
   .visible {
     visibility: visible;
@@ -678,6 +728,10 @@
       .btn-add-left {
         display: none;
       }
+    }
+
+    .block-list-wrapper:not(.block-list-wrapper--bottom) {
+      position: fixed;
     }
   }
 }

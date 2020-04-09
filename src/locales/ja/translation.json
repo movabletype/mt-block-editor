@@ -1,5 +1,9 @@
 {
   "Class Name": "クラス名",
+  "+ addBlock": "＋ ブロックを追加",
+  "Insert before": "上にブロックを追加",
+  "Insert after": "下にブロックを追加",
+  "Remove block": "ブロックを削除",
   "Column": "カラム",
   "Columns": "マルチカラム",
   "Default Value": "規定値",

@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React, { useState, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { DndBackend } from "./DndBackend";
@@ -126,7 +127,12 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
             })}
             {editor.opts.addButtons["bottom"] && (
               <div className="btn-add-bottom">
-                <AddButton index={blocks.length} showShortcuts={true} />
+                <AddButton
+                  className="block-list-wrapper--bottom"
+                  index={blocks.length}
+                  showShortcuts={true}
+                  label={t("+ addBlock")}
+                />
               </div>
             )}
           </div>

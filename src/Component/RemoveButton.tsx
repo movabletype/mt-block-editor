@@ -4,23 +4,39 @@ import Block from "../Block";
 
 interface RemoveButtonProps {
   block: Block;
+  label?: string;
+  confirm?: boolean;
 }
 
 const RemoveButton: React.FC<RemoveButtonProps> = ({
   block,
+  label,
+  confirm,
 }: RemoveButtonProps) => {
   const { removeBlock } = useBlocksContext();
+  let className = "btn-remove";
+  if (label) {
+    className += " btn-remove--label-only";
+  }
 
   return (
     <>
       <button
         type="button"
-        className="btn-remove"
+        className={className}
         onClick={ev => {
           ev.stopPropagation();
-          removeBlock(block);
+          if (confirm) {
+            if (window.confirm("Are you sure you want to remove the block?")) {
+              removeBlock(block);
+            }
+          } else {
+            removeBlock(block);
+          }
         }}
-      ></button>
+      >
+        {label || ""}
+      </button>
     </>
   );
 };

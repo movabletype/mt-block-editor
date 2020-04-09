@@ -12,12 +12,14 @@ enum ListStatus {
 
 interface AddButtonProps {
   index: number;
+  label?: string;
   className?: string;
   showShortcuts?: boolean;
 }
 
 const AddButton: React.FC<AddButtonProps> = ({
   index,
+  label,
   className,
   showShortcuts,
 }: AddButtonProps) => {
@@ -142,7 +144,9 @@ const AddButton: React.FC<AddButtonProps> = ({
                 : ListStatus.Visible
             );
           }}
-        ></button>
+        >
+          {label || ""}
+        </button>
         {showShortcuts && (
           <ul className="shortcut-block-list">
             {editor

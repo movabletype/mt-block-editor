@@ -112,7 +112,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       })}
       {canRemove && (
         <div className="btn-add-bottom">
-          <AddButton index={blocks.length} />
+          <AddButton index={blocks.length} label={t("+ addBlock")} />
         </div>
       )}
     </BlocksContext.Provider>
