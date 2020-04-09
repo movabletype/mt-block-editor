@@ -155,7 +155,7 @@ class EditorUtil {
   }
 
   public static isSupportedEnvironment(): boolean {
-    if (/Trident|MSIE/.test(window.navigator.userAgent)) {
+    if (/Trident|MSIE|Edge/.test(window.navigator.userAgent)) {
       return false;
     }
 
