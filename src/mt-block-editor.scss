@@ -662,15 +662,15 @@
     padding: 0 0;
     margin: 0 16px;
     .btn-command {
-      width: 28px;
-      height: 32px;
+      width: 32px;
+      height: 34px;
       position: relative;
-      top: 3px;
       &:before {
         font-size: 18px;
         position: relative;
         display: block;
         top: -5px;
+        left: -9px;
       }
     }
 
@@ -681,8 +681,9 @@
 
     .btn-up,
     .btn-down {
-      width: 24px;
-      height: 32px;
+      width: 34px;
+      height: 35px;
+      border-right: 1px solid #dddddd;
       padding: 12px 12px;
       background-size: 22px;
       background-position: center center;
@@ -750,6 +751,10 @@
         flex-wrap: wrap;
         flex-direction: row;
       }
+
+      .block-toolbar-button {
+        border-right: 1px solid #dddddd;
+      }
     }
 
     .columns .block-toolbar.block-toolbar--tinymce {
@@ -760,19 +765,27 @@
         width: calc(100vw - 15px) !important;
       }
     }
-
     .block-toolbar-default-items {
       display: inline;
       position: absolute;
       z-index: 1;
       bottom: 0;
       right: 0;
+      border: 1px solid #dddddd;
     }
 
     .block-toolbar--tinymce {
+      .mce-btn-group:not(:first-child) {
+        border-left: 0px;
+      }
       .block-toolbar-default-items {
-        bottom: 4px;
-        right: 3px;
+        bottom: 0px;
+        right: 0px;
+        border: 0;
+        .btn-up,
+        .btn-down {
+          border-right: 0px;
+        }
       }
     }
 
