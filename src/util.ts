@@ -171,13 +171,18 @@ export function sanitize(str: string): string {
   return DOMPurify.sanitize(str);
 }
 
+const _isIos = /ip(hone|(o|a)d)/i.test(navigator.userAgent);
 export function isIos(): boolean {
-  return /ip(hone|(o|a)d)/i.test(navigator.userAgent);
+  return _isIos;
 }
 
+// FIXME
+let _isTouchDevice = /ip(hone|(o|a)d)|android/i.test(navigator.userAgent);
+document.addEventListener("touchstart", () => {
+  _isTouchDevice = true;
+});
 export function isTouchDevice(): boolean {
-  // FIXME
-  return /ip(hone|(o|a)d)|android/i.test(navigator.userAgent);
+  return _isTouchDevice;
 }
 
 export function focusIfIos(ref: RefObject<HTMLElement>): void {
