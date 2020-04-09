@@ -153,6 +153,14 @@ class EditorUtil {
 
     return (BoilerplateBlock as unknown) as typeof Block;
   }
+
+  public static isSupportedEnvironment(): boolean {
+    if (/Trident|MSIE/.test(window.navigator.userAgent)) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 declare global {
