@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import React from "react";
 import { useBlocksContext } from "../Context";
 import Block from "../Block";
@@ -27,7 +28,9 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({
         onClick={ev => {
           ev.stopPropagation();
           if (confirm) {
-            if (window.confirm("Are you sure you want to remove the block?")) {
+            if (
+              window.confirm(t("Are you sure you want to remove the block?"))
+            ) {
               removeBlock(block);
             }
           } else {

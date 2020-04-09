@@ -4,6 +4,7 @@
   "Insert before": "上にブロックを追加",
   "Insert after": "下にブロックを追加",
   "Remove block": "ブロックを削除",
+  "Are you sure you want to remove the block?": "ブロックを削除してもよろしいですか？",
   "Column": "カラム",
   "Columns": "マルチカラム",
   "Default Value": "規定値",

@@ -152,7 +152,7 @@ const Editor: React.FC<EditorProps> = ({
       );
     };
 
-    if (!isTouchDevice) {
+    if (!isTouchDevice()) {
       window.addEventListener("mousemove", onMouseMove, {
         capture: true,
         passive: true,
@@ -160,7 +160,7 @@ const Editor: React.FC<EditorProps> = ({
     }
 
     return () => {
-      if (!isTouchDevice) {
+      if (!isTouchDevice()) {
         window.removeEventListener("mousemove", onMouseMove, {
           capture: true,
         });
