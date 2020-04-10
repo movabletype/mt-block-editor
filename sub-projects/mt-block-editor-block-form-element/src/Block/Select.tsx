@@ -27,7 +27,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
     <div>
       <BlockSetupCommon block={block} />
       <BlockSetup block={block}>
-        <label style={{ display: "inline-block", width: "100%" }}>
+        <label className="label-name" style={{ display: "inline-block", width: "100%" }}>
           <div>{t("Block Element")}</div>
           <select name="blockElement">
             <option value="p">P</option>
