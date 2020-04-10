@@ -759,14 +759,6 @@
       }
     }
 
-    .columns .block-toolbar.block-toolbar--tinymce {
-      width: calc(100vw - 15px) !important;
-
-      .mce-tinymce,
-      .mce-container-body {
-        width: calc(100vw - 15px) !important;
-      }
-    }
     .block-toolbar-default-items {
       display: inline;
       position: absolute;

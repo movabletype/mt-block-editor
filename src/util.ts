@@ -5,6 +5,8 @@ import BlockFactory from "./BlockFactory";
 import Text from "./Block/Text";
 import Column from "./Block/Column";
 
+export const mediaBreakPoint = 991.5;
+
 export function getElementById(id: string): HTMLElement {
   const e = document.getElementById(id);
   if (!e) {

@@ -8,7 +8,13 @@ import {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import { getElementById, sanitize, isIos, isTouchDevice } from "../util";
+import {
+  getElementById,
+  sanitize,
+  isIos,
+  isTouchDevice,
+  mediaBreakPoint,
+} from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -78,7 +84,7 @@ const Editor: React.FC<EditorProps> = ({
             children.forEach((c, i) => {
               if (i === 0 && isIos()) {
                 const editorRect = editor.editorElement.getBoundingClientRect();
-                const rootRect = ed.dom.getRoot().getBoundingClientRect();
+                const rootRect = root.getBoundingClientRect();
                 const input = document.createElement("INPUT");
                 input.classList.add("input--hidden");
                 input.style.top = rootRect.top - editorRect.top + "px";
@@ -122,10 +128,23 @@ const Editor: React.FC<EditorProps> = ({
           }
         });
 
-        setTimeout(() => {
-          const toolbar = getElementById(`${block.tinymceId()}toolbar`);
-          toolbar.style.top = `-${toolbar.offsetHeight}px`;
-        }, 0);
+        for (let i = 0; i < 10; i++) {
+          setTimeout(() => {
+            const toolbar = getElementById(`${block.tinymceId()}toolbar`);
+            toolbar.style.top = `-${toolbar.offsetHeight}px`;
+
+            if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
+              const editorRect = editor.editorElement.getBoundingClientRect();
+              const blockRect = root.closest(".block").getBoundingClientRect();
+              toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
+              toolbar.style.setProperty(
+                "width",
+                `calc(100vw - ${editorRect.left}px)`,
+                "important"
+              );
+            }
+          }, i * 100);
+        }
       },
 
       // TinyMCE 5 ?
