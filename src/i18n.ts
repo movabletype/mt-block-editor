@@ -37,6 +37,11 @@ export async function init(opts: InitOptions): Promise<TFunction> {
           interpolation: {
             escapeValue: false, // not needed for react as it escapes by default
           },
+
+          backend: {
+            loadPath: "",
+            crossDomain: true,
+          },
         },
         opts
       )
