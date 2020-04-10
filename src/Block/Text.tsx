@@ -139,6 +139,11 @@ const Editor: React.FC<EditorProps> = ({
                 return;
               }
 
+              // Set width property only when this block in inside .column
+              if (!blockEl.closest(".column")) {
+                return;
+              }
+
               const editorRect = editor.editorElement.getBoundingClientRect();
               const blockRect = blockEl.getBoundingClientRect();
               toolbar.style.left = `-${blockRect.left - editorRect.left}px`;

@@ -758,6 +758,15 @@
       }
     }
 
+    .columns .block-toolbar.block-toolbar--tinymce {
+      max-width: calc(100vw - 15px) !important;
+
+      .mce-tinymce,
+      .mce-container-body {
+        max-width: calc(100vw - 15px) !important;
+      }
+    }
+
     .block-toolbar-default-items {
       display: inline;
       position: absolute;
