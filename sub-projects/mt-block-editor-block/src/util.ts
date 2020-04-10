@@ -1,3 +1,9 @@
-const { nl2br } = window.MTBlockEditor.util;
+const {
+  nl2br,
+  sanitize,
+  isIos,
+  isTouchDevice,
+  focusIfIos,
+} = window.MTBlockEditor.util;
 
-export { nl2br };
+export { nl2br, sanitize, isIos, isTouchDevice, focusIfIos };
