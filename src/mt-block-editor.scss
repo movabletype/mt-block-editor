@@ -670,7 +670,7 @@
         position: relative;
         display: block;
         top: -5px;
-        left: -9px;
+        left: 0;
       }
     }
 
@@ -732,6 +732,8 @@
     .block-toolbar {
       width: 100% !important;
       left: 0;
+      border: 0;
+      background: transparent;
 
       &.block-toolbar--default {
         display: block;
@@ -768,10 +770,12 @@
     .block-toolbar-default-items {
       display: inline;
       position: absolute;
+      height: 36px;
       z-index: 1;
       bottom: 0;
       right: 0;
       border: 1px solid #dddddd;
+      background-color: #ffffff;
     }
 
     .block-toolbar--tinymce {
@@ -782,6 +786,7 @@
         bottom: 0px;
         right: 0px;
         border: 0;
+        background-color: transparent;
         .btn-up,
         .btn-down {
           border-right: 0px;
