@@ -670,7 +670,7 @@
         position: relative;
         display: block;
         top: -5px;
-        left: 0;
+        left: -9px;
       }
     }
 
@@ -755,7 +755,7 @@
       }
 
       .block-toolbar-button {
-        border-right: 1px solid #dddddd;
+        border: 1px solid #dddddd;
       }
     }
 
@@ -790,6 +790,7 @@
         .btn-up,
         .btn-down {
           border-right: 0px;
+          width: 26px;
         }
       }
     }
