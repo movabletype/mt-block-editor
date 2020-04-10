@@ -134,8 +134,13 @@ const Editor: React.FC<EditorProps> = ({
             toolbar.style.top = `-${toolbar.offsetHeight}px`;
 
             if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
+              const blockEl = root.closest(".block");
+              if (!blockEl) {
+                return;
+              }
+
               const editorRect = editor.editorElement.getBoundingClientRect();
-              const blockRect = root.closest(".block").getBoundingClientRect();
+              const blockRect = blockEl.getBoundingClientRect();
               toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
               toolbar.style.setProperty(
                 "width",
