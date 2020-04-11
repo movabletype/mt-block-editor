@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Improve generator of block ID.
+
 ## [0.0.8] - 2020-04-11
 
 ### Changed
