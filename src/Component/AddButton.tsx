@@ -100,8 +100,8 @@ const AddButton: React.FC<AddButtonProps> = ({
         }`}
         style={{ position: "relative" }}
         ref={buttonElRef}
-        onDragOver={ev => {
-          if (!ev.dataTransfer.types.find(t => t === "Files")) {
+        onDragOver={(ev) => {
+          if (!ev.dataTransfer.types.find((t) => t === "Files")) {
             return;
           }
 
@@ -110,14 +110,14 @@ const AddButton: React.FC<AddButtonProps> = ({
           ev.dataTransfer.dropEffect = "copy";
           ev.currentTarget.classList.add("droppable");
         }}
-        onDragEnter={ev => {
+        onDragEnter={(ev) => {
           ev.preventDefault();
           ev.stopPropagation();
         }}
-        onDragLeave={ev => {
+        onDragLeave={(ev) => {
           ev.currentTarget.classList.remove("droppable");
         }}
-        onDrop={async ev => {
+        onDrop={async (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
           const files = ev.dataTransfer.files;
@@ -136,7 +136,7 @@ const AddButton: React.FC<AddButtonProps> = ({
         <button
           type="button"
           className="btn-add"
-          onClick={ev => {
+          onClick={(ev) => {
             ev.stopPropagation();
             setShowList(
               showList === ListStatus.Visible
@@ -151,7 +151,7 @@ const AddButton: React.FC<AddButtonProps> = ({
           <ul className="shortcut-block-list">
             {editor
               .shortcutTypes()
-              .filter(t => {
+              .filter((t) => {
                 if (!addableBlockTypes) {
                   return true;
                 }
@@ -163,7 +163,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                 <li key={t.typeId}>
                   <a
                     href="#"
-                    onClick={async ev => {
+                    onClick={async (ev) => {
                       ev.preventDefault();
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();
@@ -198,7 +198,7 @@ const AddButton: React.FC<AddButtonProps> = ({
         >
           <ul className="block-list">
             {(showShortcuts ? editor.panelTypes() : editor.selectableTypes())
-              .filter(t => {
+              .filter((t) => {
                 if (!addableBlockTypes) {
                   return true;
                 }
@@ -210,7 +210,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                 <li key={t.typeId}>
                   <a
                     href="#"
-                    onClick={async ev => {
+                    onClick={async (ev) => {
                       ev.preventDefault();
                       ev.stopPropagation();
                       ev.nativeEvent.stopImmediatePropagation();

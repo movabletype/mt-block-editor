@@ -14,7 +14,7 @@ i18n
   // pass the i18n instance to react-i18next.
   .use(initReactI18next)
   .on("initialized", () => {
-    locales.forEach(lang => {
+    locales.forEach((lang) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const l = require(`./locales/${lang}/translation.json`);
       i18n.addResourceBundle(lang, "translation", l, true, false);

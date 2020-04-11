@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({
     <>
       <BlockSetupCommon block={block} keys={["className"]} />
       <div className="columns" style={{ display: "flex" }}>
-        {block.columns.map(c => c.editor({ focus, canRemove }))}
+        {block.columns.map((c) => c.editor({ focus, canRemove }))}
       </div>
       {focus && (
         <BlockToolbar>
@@ -143,14 +143,14 @@ class Columns extends Block {
     return `<div class="columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${this.columns
-      .map(c => c.htmlString())
+      .map((c) => c.htmlString())
       .join("")}</div>`;
   }
 
   public async serialize(opts: SerializeOptions): Promise<string> {
     const m = this.metadata();
     const serializedColumns = await Promise.all(
-      this.columns.map(c => c.serialize(opts))
+      this.columns.map((c) => c.serialize(opts))
     );
     return `<!-- mtEditorBlock data-mt-block-type="${
       (this.constructor as typeof Block).typeId

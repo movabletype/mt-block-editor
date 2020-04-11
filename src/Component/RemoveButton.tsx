@@ -25,7 +25,7 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({
       <button
         type="button"
         className={className}
-        onClick={ev => {
+        onClick={(ev) => {
           ev.stopPropagation();
           if (confirm) {
             if (

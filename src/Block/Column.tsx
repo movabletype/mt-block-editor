@@ -85,11 +85,13 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       return;
     }
 
-    parseContent(preParseContent(block._html), editor.factory).then(blocks => {
-      block._html = "";
-      block.blocks = blocks;
-      updateBlocks(([] as Block[]).concat(block.blocks));
-    });
+    parseContent(preParseContent(block._html), editor.factory).then(
+      (blocks) => {
+        block._html = "";
+        block.blocks = blocks;
+        updateBlocks(([] as Block[]).concat(block.blocks));
+      }
+    );
   });
 
   const res = (
@@ -209,7 +211,7 @@ class Column extends Block {
 
   public async serializedString(opts: SerializeOptions): Promise<string> {
     const serializedBlocks = await Promise.all(
-      this.blocks.map(c => c.serialize(opts))
+      this.blocks.map((c) => c.serialize(opts))
     );
     return serializedBlocks.join("");
   }
@@ -273,7 +275,7 @@ class Column extends Block {
     const classNames = [
       (this.constructor as typeof Column).className,
       this.className,
-    ].filter(c => c);
+    ].filter((c) => c);
     return [
       `<!-- mtEditorBlock data-mt-block-type="${typeId}"${
         m ? ` data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""

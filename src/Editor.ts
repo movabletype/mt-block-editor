@@ -94,8 +94,8 @@ class Editor extends EventEmitter {
       return types;
     }
     return this.opts.panelBlockTypes
-      .map(typeId => types.find(t => t.typeId === typeId))
-      .filter(t => t) as Array<typeof Block>;
+      .map((typeId) => types.find((t) => t.typeId === typeId))
+      .filter((t) => t) as Array<typeof Block>;
   }
 
   public shortcutTypes(): Array<typeof Block> {
@@ -104,8 +104,8 @@ class Editor extends EventEmitter {
       return [];
     }
     return this.opts.shortcutBlockTypes
-      .map(typeId => types.find(t => t.typeId === typeId))
-      .filter(t => t) as Array<typeof Block>;
+      .map((typeId) => types.find((t) => t.typeId === typeId))
+      .filter((t) => t) as Array<typeof Block>;
   }
 
   public addBlock(blocks: Block[], b: Block, index: number): void {
@@ -153,7 +153,7 @@ class Editor extends EventEmitter {
     });
 
     const values = await Promise.all(
-      blocks.map(b => b.serialize({ editor: this }))
+      blocks.map((b) => b.serialize({ editor: this }))
     );
     this.inputElement.value = values.join("");
   }
@@ -175,7 +175,7 @@ class Editor extends EventEmitter {
         type: StylesheetType.css,
         data: resetCss,
       },
-      ...this.opts.stylesheets.map(async s => {
+      ...this.opts.stylesheets.map(async (s) => {
         if (!s) {
           return null;
         } else if (/^blob:/.test(s)) {
@@ -196,7 +196,7 @@ class Editor extends EventEmitter {
           };
         }
       }),
-    ].filter(s => s) as Array<Stylesheet | Promise<Stylesheet>>;
+    ].filter((s) => s) as Array<Stylesheet | Promise<Stylesheet>>;
   }
 }
 

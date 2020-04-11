@@ -52,7 +52,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           let children = [...root.childNodes] as HTMLElement[];
 
           children = children
-            .map(c => {
+            .map((c) => {
               if (c.tagName === "TABLE") {
                 return c;
               } else {
@@ -60,7 +60,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
                 return null;
               }
             })
-            .filter(c => c) as HTMLElement[];
+            .filter((c) => c) as HTMLElement[];
 
           if (children.length === 1) {
             return;
@@ -68,10 +68,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
           children.shift();
           children.reverse();
-          children.forEach(c => {
+          children.forEach((c) => {
             ed.dom.remove(c);
           });
-          children.forEach(c => {
+          children.forEach((c) => {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             addBlock(new Table({ text: c.outerHTML }), block);
           });

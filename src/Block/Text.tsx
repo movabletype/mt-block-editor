@@ -77,7 +77,7 @@ const Editor: React.FC<EditorProps> = ({
           }
 
           children.reverse();
-          children.forEach(c => {
+          children.forEach((c) => {
             ed.dom.remove(c);
           });
           if (canRemove) {
@@ -99,9 +99,9 @@ const Editor: React.FC<EditorProps> = ({
               addBlock(new Text({ text: c.outerHTML }), block);
             });
           } else {
-            children.forEach(c => {
+            children.forEach((c) => {
               firstChild.appendChild(document.createElement("BR"));
-              [...c.childNodes].forEach(cc => {
+              [...c.childNodes].forEach((cc) => {
                 firstChild.appendChild(cc);
               });
             });

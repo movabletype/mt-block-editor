@@ -233,7 +233,7 @@ const BlockItem: React.FC<Props> = ({
     <div
       key={b.id}
       data-mt-block-editor-block-id={b.id}
-      onClick={ev => {
+      onClick={(ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();

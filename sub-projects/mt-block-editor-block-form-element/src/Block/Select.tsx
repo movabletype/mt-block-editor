@@ -27,7 +27,10 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
     <div>
       <BlockSetupCommon block={block} />
       <BlockSetup block={block}>
-        <label className="label-name" style={{ display: "inline-block", width: "100%" }}>
+        <label
+          className="label-name"
+          style={{ display: "inline-block", width: "100%" }}
+        >
           <div>{t("Block Element")}</div>
           <select name="blockElement">
             <option value="p">P</option>
@@ -81,8 +84,8 @@ class Select extends Block {
   }
 
   public optionElements(): JSX.Element {
-    const opts = this.options.split("\n").filter(o => o !== "");
-    if (this.text && !opts.find(o => o === this.text)) {
+    const opts = this.options.split("\n").filter((o) => o !== "");
+    if (this.text && !opts.find((o) => o === this.text)) {
       opts.push(this.text);
     }
 

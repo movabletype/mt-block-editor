@@ -90,7 +90,7 @@ class EditorUtil {
 
   public static async serialize(): Promise<void> {
     const m = EditorManager.instance();
-    await Promise.all(m.editors.map(e => e.serialize()));
+    await Promise.all(m.editors.map((e) => e.serialize()));
   }
 
   public static registerBlockType(block: typeof Block): void {
@@ -109,7 +109,7 @@ class EditorUtil {
     shouldBeCompiled,
     previewHeader,
   }: BoilerplateBlockOptions): typeof Block {
-    const BoilerplateBlock = function(
+    const BoilerplateBlock = function (
       this: Column,
       init: BoilerplateBlockInitOptions
     ): void {

@@ -62,7 +62,7 @@ function setCompiledHtmlFunc(html: string): void {
 function onClickFunc(): void {
   document.addEventListener(
     "click",
-    function() {
+    function () {
       parent.postMessage(
         {
           method: "MTBlockEditorOnClick",
@@ -155,7 +155,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         }
         </style>
         ${editor.stylesheets
-          .map(s => {
+          .map((s) => {
             if (s.type === StylesheetType.css) {
               return `<style type="text/css">${s.data}</style>`;
             } else {

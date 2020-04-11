@@ -16,7 +16,7 @@ const EditorMode: React.FC<EditorModeProps> = ({
 
   const { editor } = useEditorContext();
 
-  if (!mode.find(m => m === editor.opts.mode)) {
+  if (!mode.find((m) => m === editor.opts.mode)) {
     return null;
   }
 

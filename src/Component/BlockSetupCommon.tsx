@@ -21,7 +21,7 @@ const BlockSetupCommonInternal: React.FC<EditorProps> = ({
 }: EditorProps) => {
   return (
     <>
-      {keys.map(k => (
+      {keys.map((k) => (
         <BlockSetup block={block} key={k}>
           <label
             className="label-name"

@@ -20,14 +20,14 @@ export function getNodeValue(e: Element): string {
 }
 
 export function getNodeValueByTagName(e: Element, name: string): string {
-  return [...e.getElementsByTagName(name)].map(e => getNodeValue(e)).join("");
+  return [...e.getElementsByTagName(name)].map((e) => getNodeValue(e)).join("");
 }
 
 export function escapeHtml(string: string): string {
   if (typeof string !== "string") {
     return string;
   }
-  return string.replace(/[&'`"<>\t\n\r]/g, function(match) {
+  return string.replace(/[&'`"<>\t\n\r]/g, function (match) {
     return ({
       "\t": "&#x08;",
       "\n": "&#x0A;",

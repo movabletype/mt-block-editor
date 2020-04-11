@@ -76,7 +76,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
   window.addEventListener(
     "click",
-    ev => {
+    (ev) => {
       if (editorElRef.current === null) {
         return;
       }
