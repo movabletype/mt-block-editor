@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.9] - 2020-04-13
+
+### Added
+
+* If there is only one custom block, focus immediately on the first block.
+
 ### Changed
 
 * Improve generator of block ID.
