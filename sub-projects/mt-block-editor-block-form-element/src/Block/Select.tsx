@@ -33,6 +33,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         >
           <div>{t("Block Element")}</div>
           <select name="blockElement">
+            <option value="">{t("None")}</option>
             <option value="p">P</option>
             <option value="h1">H1</option>
             <option value="h2">H2</option>
@@ -58,7 +59,11 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 };
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
-  return React.createElement(block.blockElement, null, block.text);
+  return React.createElement(
+    block.blockElement || React.Fragment,
+    null,
+    block.text || block.defaultText()
+  );
 };
 
 const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
@@ -84,7 +89,7 @@ class Select extends Block {
   }
 
   public optionElements(): JSX.Element {
-    const opts = this.options.split("\n").filter((o) => o !== "");
+    const opts = this.optionItems();
     if (this.text && !opts.find((o) => o === this.text)) {
       opts.push(this.text);
     }
@@ -103,7 +108,18 @@ class Select extends Block {
   }
 
   public metadata(): Metadata | null {
-    return this.metadataByOwnKeys();
+    const data = this.metadataByOwnKeys();
+    data.text = data.text || this.defaultText();
+    return data;
+  }
+
+  private optionItems(): string[] {
+    return this.options.split("\n").filter((o) => o !== "");
+  }
+
+  public defaultText(): string {
+    const items = this.optionItems();
+    return items.length === 0 ? "" : items[0];
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {

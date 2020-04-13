@@ -34,6 +34,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         >
           <div>{t("Block Element")}</div>
           <select name="blockElement">
+            <option value="">{t("None")}</option>
             <option value="p">P</option>
             <option value="h1">H1</option>
             <option value="h2">H2</option>
@@ -65,7 +66,11 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 };
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
-  return React.createElement(block.blockElement, null, block.formattedText());
+  return React.createElement(
+    block.blockElement || React.Fragment,
+    null,
+    block.formattedText()
+  );
 };
 
 const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
