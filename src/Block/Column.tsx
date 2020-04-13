@@ -98,13 +98,15 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     <BlocksContext.Provider value={blocksContext}>
       <BlockSetupCommon block={block} keys={["className"]} />
       {blocks.map((b, i) => {
-        const focus = getFocusedId() === b.id;
+        const focusFirstBlock = canRemove !== true && blocks.length === 1;
+        const focus = focusFirstBlock || getFocusedId() === b.id;
         return (
           <BlockItem
             key={b.id}
             id={b.id}
             block={b}
             focus={focus}
+            ignoreClickEvent={focusFirstBlock}
             index={i}
             parentBlock={block}
             canRemove={canRemove === true}
@@ -171,6 +173,7 @@ class Column extends Block {
     focus,
     focusDescendant,
     canRemove,
+    clickBlockTargetRef,
   }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&

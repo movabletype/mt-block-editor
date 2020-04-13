@@ -41,6 +41,7 @@ interface ToolbarPropsInternal {
 interface Props {
   block: Block;
   focus: boolean;
+  ignoreClickEvent?: boolean;
   id: string;
   index: number;
   canRemove: boolean;
@@ -111,6 +112,7 @@ const BlockItem: React.FC<Props> = ({
   id,
   block,
   focus,
+  skipFocusEvent,
   index,
   canRemove,
   showButton,
@@ -240,7 +242,7 @@ const BlockItem: React.FC<Props> = ({
 
         if (clickBlockTargetRef.current) {
           clickBlockTargetRef.current.click();
-        } else {
+        } else if (!ignoreClickEvent) {
           setFocusedId(b.id);
         }
       }}
