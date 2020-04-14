@@ -112,7 +112,7 @@ const BlockItem: React.FC<Props> = ({
   id,
   block,
   focus,
-  skipFocusEvent,
+  ignoreClickEvent,
   index,
   canRemove,
   showButton,

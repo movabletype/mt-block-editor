@@ -173,7 +173,6 @@ class Column extends Block {
     focus,
     focusDescendant,
     canRemove,
-    clickBlockTargetRef,
   }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
