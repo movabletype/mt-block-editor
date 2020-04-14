@@ -175,28 +175,28 @@ class Editor extends EventEmitter {
         type: StylesheetType.css,
         data: resetCss,
       },
-      ...this.opts.stylesheets.map(async (s) => {
-        if (!s) {
-          return null;
-        } else if (/^blob:/.test(s)) {
-          const res = await fetch(s);
-          return {
-            type: StylesheetType.css,
-            data: await res.text(),
-          };
-        } else if (/^https?:/.test(s)) {
-          return {
-            type: StylesheetType.url,
-            data: s,
-          };
-        } else {
-          return {
-            type: StylesheetType.css,
-            data: s,
-          };
-        }
-      }),
-    ].filter((s) => s) as Array<Stylesheet | Promise<Stylesheet>>;
+      ...this.opts.stylesheets
+        .filter((s) => s)
+        .map(async (s) => {
+          if (/^blob:/.test(s)) {
+            const res = await fetch(s);
+            return {
+              type: StylesheetType.css,
+              data: await res.text(),
+            };
+          } else if (/^https?:/.test(s)) {
+            return {
+              type: StylesheetType.url,
+              data: s,
+            };
+          } else {
+            return {
+              type: StylesheetType.css,
+              data: s,
+            };
+          }
+        }),
+    ];
   }
 }
 
