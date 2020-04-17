@@ -214,12 +214,6 @@ const BlockItem: React.FC<Props> = ({
     clickBlockTargetRef,
   });
 
-  React.Children.map(ed, (child: JSX.Element) => {
-    React.Children.map(child.props.children, (child2: JSX.Element) => {
-      console.log(child2);
-    });
-  });
-
   const toolbarProps: ToolbarProps = {
     id: "",
     className: "",
