@@ -267,6 +267,9 @@ const BlockItem: React.FC<Props> = ({
         </div>
       )}
       <div className="block">
+        {!focus && !(b instanceof Columns) && (
+          <div className="content-label">{b.contentLabel()}</div>
+        )}
         {focus ||
         focusDescendant ||
         b instanceof Column ||
@@ -277,7 +280,6 @@ const BlockItem: React.FC<Props> = ({
           </BlockContext.Provider>
         ) : (
           <>
-            <div className="content-label">{b.contentLabel()}</div>
             <root.div>
               <div className="entry">
                 {editor.stylesheets.map((s, i) => {
