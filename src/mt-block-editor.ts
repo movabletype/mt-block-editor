@@ -97,6 +97,10 @@ class EditorUtil {
     BlockFactory.registerType(block);
   }
 
+  public static deregisterBlockType(block: typeof Block | string): void {
+    BlockFactory.deregisterType(block);
+  }
+
   public static createBoilerplateBlock({
     typeId,
     className,

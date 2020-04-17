@@ -2,8 +2,15 @@ import Block from "./Block";
 
 class BlockFactory {
   public static allTypes: Array<typeof Block> = [];
+
   public static registerType(t: typeof Block): void {
     this.allTypes.push(t);
+  }
+
+  public static deregisterType(t: typeof Block | string): void {
+    this.allTypes = this.allTypes.filter((registered) =>
+      typeof t === "string" ? registered.typeId === t : registered !== t
+    );
   }
 
   public types(): Array<typeof Block> {
