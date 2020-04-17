@@ -59,6 +59,68 @@ function setCompiledHtmlFunc(html: string): void {
   );
 }
 
+function addDroppableFunc(listener: (ev: Event) => void): void {
+  return new Promise((resolve) => {
+    function addEventListeners(elm: HTMLElement): void {
+      elm.classList.add("mt-block-editor-droppable-area");
+
+      elm.addEventListener("click", (ev) => {
+        if (ev.target.tagName === "INPUT") {
+          return;
+        }
+
+        ev.preventDefault();
+
+        const input = document.createElement("INPUT");
+        input.type = "file";
+        input.style.display = "none";
+        input.addEventListener("change", function (ev) {
+          listener(ev);
+        });
+
+        document.body.appendChild(input);
+        input.click();
+      });
+
+      elm.addEventListener("dragover", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.dataTransfer.dropEffect = "copy";
+        ev.currentTarget.classList.add("mt-block-editor-droppable");
+      });
+
+      elm.addEventListener("dragenter", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+      });
+
+      elm.addEventListener("dragleave", (ev) => {
+        ev.currentTarget.classList.remove("mt-block-editor-droppable");
+      });
+
+      elm.addEventListener("drop", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        listener(ev);
+      });
+
+      resolve();
+    }
+
+    if (
+      document.readyState === "complete" ||
+      document.readyState === "loaded" ||
+      document.readyState === "interactive"
+    ) {
+      addEventListeners(document.body);
+    } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        addEventListeners(document.body);
+      });
+    }
+  });
+}
+
 function onClickFunc(): void {
   document.addEventListener(
     "click",
@@ -144,11 +206,28 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           var MTBlockEditorSetCompiledHtml = (function() {
             return ${setCompiledHtmlFunc.toString()};
           })();
+          var MTBlockEditorAddDroppable = (function() {
+            return ${addDroppableFunc.toString()};
+          })();
           (function() {
             (${onClickFunc.toString()})();
           })();
         </script>
         <style type="text/css">
+        .mt-block-editor-droppable:before {
+          display: block;
+          position: absolute;
+          z-index: 200;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          content: " ";
+          text-align: center;
+          color: white;
+          background-color: rgba(21, 50, 76, 0.9);
+        }
+
         /* FIXME */
         .mt-block-editor-column {
           width: 100%;
@@ -163,9 +242,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             }
           })
           .join("")}
-        ${block.compiledHtml ? "" : header || ""}
+        ${header}
       </head>
-      <body data-block-id="${block.id}">${htmlText}</body>
+      <body data-block-id="${block.id}"${
+        block.compiledHtml && ` data-has-compiled-html="1"`
+      }>${htmlText}</body>
       </html>`,
     ],
     { type: "text/html" }
