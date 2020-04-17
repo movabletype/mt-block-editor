@@ -176,8 +176,8 @@ class Column extends Block {
   }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
-      !focus &&
-      !focusDescendant
+      ((this._html === "" && this.blocks.length === 0) ||
+        (!focus && !focusDescendant))
     ) {
       const res = (
         <BlockIframePreview
@@ -298,24 +298,27 @@ class Column extends Block {
     factory,
     meta,
   }: NewFromHtmlOptions): Promise<Block> {
-    const html =
-      preParseContent(node.getAttribute("data-mt-block-html") || "") ||
-      node.innerHTML
-        .replace(/^&lt;div.*?&gt;(<!--\s+mtEditorBlock\s+)/, "$1")
-        .replace(/&lt;\/div&gt;(<!--\s+\/mtEditorBlock\s+--)>$/, "$1")
-        .replace(
-          new RegExp(
-            `^&lt;div\\s+class="${this.className}[^"]*"&gt;&lt;/div&gt;$`
-          ),
-          ""
-        );
+    const html = node.hasAttribute("data-mt-block-html")
+      ? preParseContent(node.getAttribute("data-mt-block-html"))
+      : node.innerHTML
+          .replace(/^&lt;div.*?&gt;(<!--\s+mtEditorBlock\s+)/, "$1")
+          .replace(/&lt;\/div&gt;(<!--\s+\/mtEditorBlock\s+--)>$/, "$1")
+          .replace(
+            new RegExp(
+              `^&lt;div\\s+class="${this.className}[^"]*"&gt;&lt;/div&gt;$`
+            ),
+            ""
+          );
     const blocks = await parseContent(html, factory);
+    const compiledHtml = node.hasAttribute("data-mt-block-html")
+      ? node.textContent
+      : "";
 
     if (html && blocks.length === 0) {
       throw Error("This content is not for this block");
     }
 
-    return new this(Object.assign({ blocks, _html: "" }, meta));
+    return new this(Object.assign({ blocks, compiledHtml, _html: "" }, meta));
   }
 }
 
