@@ -54,6 +54,7 @@ export default function useEditorUtil(
         }
         if (ev.key === "Enter") {
           ev.preventDefault();
+          document.body.click(); // blur
         }
       };
 
