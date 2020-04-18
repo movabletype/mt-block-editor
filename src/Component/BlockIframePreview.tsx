@@ -59,19 +59,19 @@ function setCompiledHtmlFunc(html: string): void {
   );
 }
 
-function addDroppableFunc(listener: (ev: Event) => void): void {
-  return new Promise((resolve) => {
+function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
+  return new Promise<void>((resolve) => {
     function addEventListeners(elm: HTMLElement): void {
       elm.classList.add("mt-block-editor-droppable-area");
 
       elm.addEventListener("click", (ev) => {
-        if (ev.target.tagName === "INPUT") {
+        if (ev.target instanceof HTMLInputElement) {
           return;
         }
 
         ev.preventDefault();
 
-        const input = document.createElement("INPUT");
+        const input = document.createElement("INPUT") as HTMLInputElement;
         input.type = "file";
         input.style.display = "none";
         input.addEventListener("change", function (ev) {
@@ -85,8 +85,10 @@ function addDroppableFunc(listener: (ev: Event) => void): void {
       elm.addEventListener("dragover", (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        ev.dataTransfer.dropEffect = "copy";
-        ev.currentTarget.classList.add("mt-block-editor-droppable");
+        if (ev.dataTransfer) {
+          ev.dataTransfer.dropEffect = "copy";
+        }
+        elm.classList.add("mt-block-editor-droppable");
       });
 
       elm.addEventListener("dragenter", (ev) => {
@@ -94,8 +96,8 @@ function addDroppableFunc(listener: (ev: Event) => void): void {
         ev.stopPropagation();
       });
 
-      elm.addEventListener("dragleave", (ev) => {
-        ev.currentTarget.classList.remove("mt-block-editor-droppable");
+      elm.addEventListener("dragleave", () => {
+        elm.classList.remove("mt-block-editor-droppable");
       });
 
       elm.addEventListener("drop", (ev) => {
@@ -109,7 +111,6 @@ function addDroppableFunc(listener: (ev: Event) => void): void {
 
     if (
       document.readyState === "complete" ||
-      document.readyState === "loaded" ||
       document.readyState === "interactive"
     ) {
       addEventListeners(document.body);

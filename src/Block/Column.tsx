@@ -299,7 +299,7 @@ class Column extends Block {
     meta,
   }: NewFromHtmlOptions): Promise<Block> {
     const html = node.hasAttribute("data-mt-block-html")
-      ? preParseContent(node.getAttribute("data-mt-block-html"))
+      ? preParseContent(node.getAttribute("data-mt-block-html") || "")
       : node.innerHTML
           .replace(/^&lt;div.*?&gt;(<!--\s+mtEditorBlock\s+)/, "$1")
           .replace(/&lt;\/div&gt;(<!--\s+\/mtEditorBlock\s+--)>$/, "$1")
