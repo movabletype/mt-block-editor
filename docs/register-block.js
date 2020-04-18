@@ -78,7 +78,7 @@ function excelToTable(file) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   if (!document.body.dataset.hasCompiledHtml) {
-    document.body.textContent = "Please drag and drop here.";
+    document.body.textContent = "Please drag and drop an Excel file here.";
     Object.assign(document.body.style, {
       textAlign: "center",
       paddingTop: "40px",
