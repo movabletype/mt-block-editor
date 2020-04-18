@@ -52,7 +52,7 @@ export default function useEditorUtil(
         if (!(target instanceof HTMLInputElement)) {
           return;
         }
-        if (ev.key === "Enter") {
+        if (e.keyCode === 13) {
           ev.preventDefault();
           document.body.click(); // blur
         }
