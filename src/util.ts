@@ -47,7 +47,7 @@ export function preParseContent(value: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/&lt;!--\s+(\/?mtEditorBlock.*?)--&gt;/g, (all, tag) => {
+    .replace(/&lt;!--\s+(\/?mt:eb.*?)--&gt;/g, (all, tag) => {
       return `<${tag
         .replace(/&gt;/g, ">")
         .replace(/&lt;/g, "<")
@@ -83,10 +83,14 @@ export async function parseContent(
   const blocks = [];
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
-    const typeId = node.getAttribute("data-mt-block-type");
-    const meta = JSON.parse(node.getAttribute("data-mt-block-meta") || "{}");
+    const meta = JSON.parse(node.getAttribute("m") || "{}");
 
-    let html = node.getAttribute("data-mt-block-html") || "";
+    let typeId = node.getAttribute("t") || "core-text";
+    if (typeId.indexOf("-") === -1) {
+      typeId = `core-${typeId}`;
+    }
+
+    let html = node.getAttribute("h") || "";
     if (!html && node.textContent) {
       let c = node.textContent;
       if (meta.className) {
@@ -116,8 +120,8 @@ export async function parseContent(
       meta,
     };
 
-    const t =
-      factory.types().find((t: typeof Block) => t.typeId === typeId) || Column;
+    const types = factory.types();
+    const t = types.find((t: typeof Block) => t.typeId === typeId) || Column;
     const block = await t
       .newFromHtml(param)
       .catch(() => Text.newFromHtml(param));

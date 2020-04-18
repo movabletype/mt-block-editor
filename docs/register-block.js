@@ -3,7 +3,7 @@ MTBlockEditor.registerBlockType(
     typeId: "custom-oembed",
     className: "oembed",
     label: "oembed",
-    html: `<!-- mtEditorBlock data-mt-block-type="textblock"--><p>http://</p><!-- /mtEditorBlock -->`,
+    html: `<!-- mt:eb t="textblock"--><p>http://</p><!-- /mt:eb -->`,
     canRemoveBlock: false,
     addableBlockTypes: [],
     shouldBeCompiled: true,

@@ -168,11 +168,19 @@ class Block {
     const m = this.metadata();
     const html = await this.serializedString(opts);
 
-    return `<!-- mtEditorBlock data-mt-block-type="${
-      (this.constructor as typeof Block).typeId
-    }"${m ? ` data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""}${
-      this.compiledHtml ? ` data-mt-block-html="${escapeHtml(html)}"` : ""
-    }-->${this.compiledHtml || html}<!-- /mtEditorBlock -->`;
+    let typeId = (this.constructor as typeof Block).typeId;
+    if (typeId === "core-text") {
+      // default type
+      typeId = "";
+    } else if (/^core-/.test(typeId)) {
+      // omitted
+      typeId = typeId.replace(/^core-/, "");
+    }
+    return `<!-- mt:eb${typeId ? ` t="${typeId}"` : ""}${
+      m ? ` m="${escapeHtml(JSON.stringify(m))}"` : ""
+    }${this.compiledHtml ? ` h="${escapeHtml(html)}"` : ""}-->${
+      this.compiledHtml || html
+    }<!-- /mt:eb -->`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

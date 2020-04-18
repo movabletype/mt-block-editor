@@ -279,8 +279,8 @@ class Column extends Block {
       this.className,
     ].filter((c) => c);
     return [
-      `<!-- mtEditorBlock data-mt-block-type="${typeId}"${
-        m ? ` data-mt-block-meta="${escapeHtml(JSON.stringify(m))}"` : ""
+      `<!-- mt:eb t="${typeId}"${
+        m ? ` m="${escapeHtml(JSON.stringify(m))}"` : ""
       } -->`,
       this.rootBlock
         ? `<${this.rootBlock}${
@@ -289,7 +289,7 @@ class Column extends Block {
         : "",
       await this.serializedString(opts),
       this.rootBlock ? `</${this.rootBlock}>` : "",
-      `<!-- /mtEditorBlock -->`,
+      `<!-- /mt:eb -->`,
     ].join("");
   }
 
@@ -298,11 +298,11 @@ class Column extends Block {
     factory,
     meta,
   }: NewFromHtmlOptions): Promise<Block> {
-    const html = node.hasAttribute("data-mt-block-html")
-      ? preParseContent(node.getAttribute("data-mt-block-html") || "")
+    const html = node.hasAttribute("h")
+      ? preParseContent(node.getAttribute("h") || "")
       : node.innerHTML
-          .replace(/^&lt;div.*?&gt;(<!--\s+mtEditorBlock\s+)/, "$1")
-          .replace(/&lt;\/div&gt;(<!--\s+\/mtEditorBlock\s+--)>$/, "$1")
+          .replace(/^&lt;div.*?&gt;(<!--\s+mt:eb\s+)/, "$1")
+          .replace(/&lt;\/div&gt;(<!--\s+\/mt:eb\s+--)>$/, "$1")
           .replace(
             new RegExp(
               `^&lt;div\\s+class="${this.className}[^"]*"&gt;&lt;/div&gt;$`
@@ -310,9 +310,7 @@ class Column extends Block {
             ""
           );
     const blocks = await parseContent(html, factory);
-    const compiledHtml = node.hasAttribute("data-mt-block-html")
-      ? node.textContent
-      : "";
+    const compiledHtml = node.hasAttribute("h") ? node.textContent : "";
 
     if (html && blocks.length === 0) {
       throw Error("This content is not for this block");
