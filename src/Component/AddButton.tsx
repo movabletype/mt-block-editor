@@ -123,7 +123,7 @@ const AddButton: React.FC<AddButtonProps> = ({
           const files = ev.dataTransfer.files;
           for (let i = 0; i < files.length; i++) {
             const f = files[i];
-            const t = editor.factory
+            const t = editor
               .selectableTypes()
               .find((t: typeof Block) => t.canNewFromFile({ file: f }));
             if (t) {
