@@ -42,24 +42,24 @@ function excelToTable(file) {
     });
 
     workbook.SheetNames.forEach(function (sheetName) {
-      var XL_row_object = XLSX.utils.sheet_to_row_object_array(
+      var rows = XLSX.utils.sheet_to_row_object_array(
         workbook.Sheets[sheetName]
+        , {header:1}
       );
 
       var html = "<table>";
-      var keys = Object.keys(XL_row_object[0]);
 
       html += "<thead><tr>";
-      keys.forEach(function (k) {
-        html += "<th>" + k + "</th>";
+      rows.shift().forEach(function (v) {
+        html += "<th>" + v + "</th>";
       });
       html += "</tr></thead>";
 
       html += "<tbody>";
-      XL_row_object.forEach(function (row) {
+      rows.forEach(function (row) {
         html += "<tr>";
-        keys.forEach(function (k) {
-          html += "<td>" + row[k] + "</td>";
+        row.forEach(function (v) {
+          html += "<td>" + v + "</td>";
         });
         html += "</tr>";
       });
