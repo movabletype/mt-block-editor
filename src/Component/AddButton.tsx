@@ -123,9 +123,13 @@ const AddButton: React.FC<AddButtonProps> = ({
           const files = ev.dataTransfer.files;
           for (let i = 0; i < files.length; i++) {
             const f = files[i];
-            const t = editor
-              .selectableTypes()
-              .find((t: typeof Block) => t.canNewFromFile({ file: f }));
+            const t = editor.selectableTypes().find((t: typeof Block) => {
+              try {
+                return t.canNewFromFile({ file: f });
+              } catch (e) {
+                return false;
+              }
+            });
             if (t) {
               const b = await t.newFromFile({ file: f });
               addBlock(b, index);
