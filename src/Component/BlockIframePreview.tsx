@@ -9,6 +9,8 @@ export interface Size {
 }
 
 export const defaultSize = { width: "100%", height: "100px" };
+const MAX_WIDTH = "100%";
+const MAX_HEIGHT = "1000px";
 
 interface EditorProps {
   block: Block;
@@ -243,7 +245,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             }
           })
           .join("")}
-        ${header}
+        ${header || ""}
       </head>
       <body data-block-id="${block.id}"${
         block.compiledHtml && ` data-has-compiled-html="1"`
@@ -302,7 +304,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       <iframe
         src={src}
         frameBorder="0"
-        style={Object.assign({ border: border || "1px solid #ccc" }, size)}
+        style={Object.assign(
+          {
+            maxWidth: MAX_WIDTH,
+            maxHeight: MAX_HEIGHT,
+            border: border || "1px solid #ccc",
+          },
+          size
+        )}
       />
     </div>
   ) : (
