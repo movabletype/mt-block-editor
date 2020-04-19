@@ -175,7 +175,7 @@ class Block {
     }
     return `<!-- mt-beb${typeId ? ` t="${typeId}"` : ""}${
       m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
-    }${this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""}-->${
+    }${this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""} -->${
       this.compiledHtml || html
     }<!-- /mt-beb -->`;
   }

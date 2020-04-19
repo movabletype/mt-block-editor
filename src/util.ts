@@ -38,7 +38,7 @@ export function escapeSingleQuoteAttribute(string: string): string {
   if (typeof string !== "string") {
     return string;
   }
-  return string.replace(/[&'\t\n\r]/g, (match) => _entityMap[match]);
+  return string.replace(/[&<>'\t\n\r]/g, (match) => _entityMap[match]);
 }
 
 export function preParseContent(value: string): string {
