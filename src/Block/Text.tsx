@@ -30,7 +30,7 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
-  const { editor } = useEditorContext();
+  const { editor, setFocusedId } = useEditorContext();
   const { addBlock, removeBlock } = useBlocksContext();
 
   useEffect(() => {
@@ -104,12 +104,7 @@ const Editor: React.FC<EditorProps> = ({
               addBlock(new Text({ text: c.outerHTML }), block);
             });
           } else {
-            children.forEach((c) => {
-              firstChild.appendChild(document.createElement("BR"));
-              [...c.childNodes].forEach((cc) => {
-                firstChild.appendChild(cc);
-              });
-            });
+            setFocusedId(null);
           }
         });
 
