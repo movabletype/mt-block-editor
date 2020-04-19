@@ -279,7 +279,7 @@ class Column extends Block {
       this.className,
     ].filter((c) => c);
     return [
-      `<!-- mt:eb t="${typeId}"${
+      `<!-- mt-beb t="${typeId}"${
         m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
       } -->`,
       this.rootBlock
@@ -289,7 +289,7 @@ class Column extends Block {
         : "",
       await this.serializedString(opts),
       this.rootBlock ? `</${this.rootBlock}>` : "",
-      `<!-- /mt:eb -->`,
+      `<!-- /mt-beb -->`,
     ].join("");
   }
 
@@ -301,8 +301,8 @@ class Column extends Block {
     const html = node.hasAttribute("h")
       ? preParseContent(node.getAttribute("h") || "")
       : node.innerHTML
-          .replace(/^&lt;div.*?&gt;(<!--\s+mt:eb\s+)/, "$1")
-          .replace(/&lt;\/div&gt;(<!--\s+\/mt:eb\s+--)>$/, "$1")
+          .replace(/^&lt;div.*?&gt;(<!--\s+mt-beb\s+)/, "$1")
+          .replace(/&lt;\/div&gt;(<!--\s+\/mt-beb\s+--)>$/, "$1")
           .replace(
             new RegExp(
               `^&lt;div\\s+class="${this.className}[^"]*"&gt;&lt;/div&gt;$`

@@ -46,7 +46,7 @@ export function preParseContent(value: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/&lt;!--\s+(\/?mt:eb.*?)--&gt;/g, (all, tag) => {
+    .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag) => {
       return `<${tag
         .replace(/&gt;/g, ">")
         .replace(/&lt;/g, "<")

@@ -173,11 +173,11 @@ class Block {
       // default type
       typeId = "";
     }
-    return `<!-- mt:eb${typeId ? ` t="${typeId}"` : ""}${
+    return `<!-- mt-beb${typeId ? ` t="${typeId}"` : ""}${
       m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
     }${this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""}-->${
       this.compiledHtml || html
-    }<!-- /mt:eb -->`;
+    }<!-- /mt-beb -->`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

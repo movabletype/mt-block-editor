@@ -152,13 +152,13 @@ class Columns extends Block {
     const serializedColumns = await Promise.all(
       this.columns.map((c) => c.serialize(opts))
     );
-    return `<!-- mt:eb t="${(this.constructor as typeof Block).typeId}"${
+    return `<!-- mt-beb t="${(this.constructor as typeof Block).typeId}"${
       m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
     } --><div class="mt-block-editor-columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${serializedColumns.join(
       ""
-    )}</div><!-- /mt:eb -->`;
+    )}</div><!-- /mt-beb -->`;
   }
 
   public static async newFromHtml({
