@@ -175,9 +175,9 @@ class Block {
     }
     return `<!-- mt-beb${typeId ? ` t="${typeId}"` : ""}${
       m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
-    }${this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""} -->${
-      this.compiledHtml || html
-    }<!-- /mt-beb -->`;
+    }${
+      this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""
+    } -->${this.compiledHtml || html}<!-- /mt-beb -->`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
