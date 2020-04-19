@@ -2,7 +2,7 @@ import { RefObject } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
-import { escapeHtml } from "./util";
+import { escapeSingleQuoteAttribute } from "./util";
 import icon from "./img/icon/default-block.svg";
 import { Size, defaultSize } from "./Component/BlockIframePreview";
 
@@ -172,13 +172,10 @@ class Block {
     if (typeId === "core-text") {
       // default type
       typeId = "";
-    } else if (/^core-/.test(typeId)) {
-      // omitted
-      typeId = typeId.replace(/^core-/, "");
     }
     return `<!-- mt:eb${typeId ? ` t="${typeId}"` : ""}${
-      m ? ` m="${escapeHtml(JSON.stringify(m))}"` : ""
-    }${this.compiledHtml ? ` h="${escapeHtml(html)}"` : ""}-->${
+      m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
+    }${this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""}-->${
       this.compiledHtml || html
     }<!-- /mt:eb -->`;
   }

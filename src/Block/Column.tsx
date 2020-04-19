@@ -11,7 +11,7 @@ import AddButton from "../Component/AddButton";
 import BlockItem from "../Component/BlockItem";
 import BlockIframePreview from "../Component/BlockIframePreview";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
-import { parseContent, preParseContent, escapeHtml } from "../util";
+import { parseContent, preParseContent, escapeSingleQuoteAttribute } from "../util";
 
 interface EditorProps extends EditorOptions {
   block: Column;
@@ -280,11 +280,11 @@ class Column extends Block {
     ].filter((c) => c);
     return [
       `<!-- mt:eb t="${typeId}"${
-        m ? ` m="${escapeHtml(JSON.stringify(m))}"` : ""
+        m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
       } -->`,
       this.rootBlock
         ? `<${this.rootBlock}${
-            classNames.length ? ` class="${classNames.join(" ")}"` : ""
+            classNames.length ? ` class='${escapeSingleQuoteAttribute(classNames.join(" "))}'` : ""
           }>`
         : "",
       await this.serializedString(opts),

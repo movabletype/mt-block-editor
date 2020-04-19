@@ -23,23 +23,22 @@ export function getNodeValueByTagName(e: Element, name: string): string {
   return [...e.getElementsByTagName(name)].map((e) => getNodeValue(e)).join("");
 }
 
-export function escapeHtml(string: string): string {
+const _entityMap = {
+  "\t": "&#x08;",
+  "\n": "&#x0A;",
+  "\r": "&#x0D;",
+  "&": "&amp;",
+  "'": "&#x27;",
+  "`": "&#x60;",
+  '"': "&quot;",
+  "<": "&lt;",
+  ">": "&gt;",
+} as { [key: string]: string };
+export function escapeSingleQuoteAttribute(string: string): string {
   if (typeof string !== "string") {
     return string;
   }
-  return string.replace(/[&'`"<>\t\n\r]/g, function (match) {
-    return ({
-      "\t": "&#x08;",
-      "\n": "&#x0A;",
-      "\r": "&#x0D;",
-      "&": "&amp;",
-      "'": "&#x27;",
-      "`": "&#x60;",
-      '"': "&quot;",
-      "<": "&lt;",
-      ">": "&gt;",
-    } as { [key: string]: string })[match];
-  });
+  return string.replace(/[&'\t\n\r]/g, (match) => _entityMap[match]);
 }
 
 export function preParseContent(value: string): string {
@@ -83,12 +82,8 @@ export async function parseContent(
   const blocks = [];
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
+    const typeId = node.getAttribute("t") || "core-text";
     const meta = JSON.parse(node.getAttribute("m") || "{}");
-
-    let typeId = node.getAttribute("t") || "core-text";
-    if (typeId.indexOf("-") === -1) {
-      typeId = `core-${typeId}`;
-    }
 
     let html = node.getAttribute("h") || "";
     if (!html && node.textContent) {
@@ -120,8 +115,8 @@ export async function parseContent(
       meta,
     };
 
-    const types = factory.types();
-    const t = types.find((t: typeof Block) => t.typeId === typeId) || Column;
+    const t =
+      factory.types().find((t: typeof Block) => t.typeId === typeId) || Column;
     const block = await t
       .newFromHtml(param)
       .catch(() => Text.newFromHtml(param));

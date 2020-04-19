@@ -6,7 +6,7 @@ import Block, {
   SerializeOptions,
 } from "../Block";
 import Column from "./Column";
-import { parseContent, escapeHtml } from "../util";
+import { parseContent, escapeSingleQuoteAttribute } from "../util";
 import icon from "../img/icon/columns.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockToolbarButton from "../Component/BlockToolbarButton";
@@ -153,7 +153,7 @@ class Columns extends Block {
       this.columns.map((c) => c.serialize(opts))
     );
     return `<!-- mt:eb t="${(this.constructor as typeof Block).typeId}"${
-      m ? ` m="${escapeHtml(JSON.stringify(m))}"` : ""
+      m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
     } --><div class="mt-block-editor-columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${serializedColumns.join(
