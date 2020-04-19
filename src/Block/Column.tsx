@@ -89,6 +89,9 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       (blocks) => {
         block._html = "";
         block.blocks = blocks;
+        if (blocks[0]) {
+          setFocusedId(blocks[0].id);
+        }
         updateBlocks(([] as Block[]).concat(block.blocks));
       }
     );
