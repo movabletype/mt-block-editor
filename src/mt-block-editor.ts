@@ -29,6 +29,7 @@ interface BoilerplateBlockOptions {
   rootBlock?: string | null;
   label: string;
   icon: string;
+  iconString: string;
   html: string;
   canRemoveBlock: boolean;
   addableBlockTypes: string[];
@@ -107,6 +108,7 @@ class EditorUtil {
     rootBlock,
     label,
     icon,
+    iconString,
     html,
     canRemoveBlock,
     addableBlockTypes,
@@ -147,6 +149,9 @@ class EditorUtil {
     }
     if (icon) {
       BoilerplateBlock.icon = icon;
+    }
+    if (iconString) {
+      BoilerplateBlock.iconString = iconString;
     }
     BoilerplateBlock.selectable = true;
     if (shouldBeCompiled !== undefined) {

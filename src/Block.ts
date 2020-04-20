@@ -38,7 +38,6 @@ export interface SerializeOptions {
 class Block {
   public static typeId: string;
   public static label: string;
-  public static icon: string = icon;
   public static selectable: boolean;
   public static shouldBeCompiled = false;
   public id: string;
@@ -47,6 +46,19 @@ class Block {
   public helpText = "";
   public className = "";
   public iframePreviewSize: Size = defaultSize;
+
+  public static get icon(): string {
+    const str = this.iconString;
+    if (str) {
+      return icon.replace(/__str__/, str);
+    } else {
+      return icon;
+    }
+  }
+  public static get iconString(): string {
+    const m = this.typeId.match(/-(.)/);
+    return m ? m[1].toUpperCase() : "";
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static async new(opts: NewOptions): Promise<Block> {
