@@ -48,7 +48,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
       </label>
     </BlockSetup>
     <BlockLabel block={block}>
-      <select name="text" data-mt-block-editor-focus>
+      <select name="text" data-mt-block-editor-focus-default>
         {block.optionElements()}
       </select>
     </BlockLabel>

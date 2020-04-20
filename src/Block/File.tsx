@@ -20,7 +20,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
     <BlockSetupCommon block={block} />
     <BlockLabel block={block}>
       <input type="text" name="text" />
-      <input type="url" name="url" data-mt-block-editor-focus />
+      <input type="url" name="url" data-mt-block-editor-focus-default />
     </BlockLabel>
   </div>
 );

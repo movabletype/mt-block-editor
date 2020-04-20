@@ -27,7 +27,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
   <div className={css.<%= blockName %>}>
     <BlockSetupCommon block={block} />
     <BlockLabel block={block}>
-      <input type="text" name="text" data-mt-block-editor-focus />
+      <input type="text" name="text" data-mt-block-editor-focus-default />
     </BlockLabel>
   </div>
 );
