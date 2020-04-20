@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React from "mt-block-editor-block/React";
+import React, { useEffect, useRef } from "mt-block-editor-block/React";
 import { useEditorUtil } from "mt-block-editor-block/hooks";
 import {
   BlockSetupCommon,
@@ -24,6 +24,14 @@ interface HtmlProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
+  const textareaElRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaElRef.current) {
+      textareaElRef.current.focus();
+    }
+  });
+
   return (
     <div>
       <BlockSetupCommon block={block} />
@@ -59,7 +67,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         </label>
       </BlockSetup>
       <BlockLabel block={block}>
-        <textarea name="text" style={{ width: "100%" }} />
+        <textarea name="text" style={{ width: "100%" }} ref={textareaElRef} />
       </BlockLabel>
     </div>
   );

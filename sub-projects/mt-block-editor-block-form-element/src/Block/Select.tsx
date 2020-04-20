@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React from "mt-block-editor-block/React";
+import React, { useEffect, useRef } from "mt-block-editor-block/React";
 import { useEditorUtil } from "mt-block-editor-block/hooks";
 import {
   BlockSetupCommon,
@@ -23,6 +23,14 @@ interface HtmlProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
+  const selectElRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (selectElRef.current) {
+      selectElRef.current.focus();
+    }
+  });
+
   return (
     <div>
       <BlockSetupCommon block={block} />
@@ -52,7 +60,9 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         </label>
       </BlockSetup>
       <BlockLabel block={block}>
-        <select name="text">{block.optionElements()}</select>
+        <select name="text" ref={selectElRef}>
+          {block.optionElements()}
+        </select>
       </BlockLabel>
     </div>
   );
