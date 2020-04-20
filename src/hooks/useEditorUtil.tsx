@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Block from "../Block";
+import { useEditorContext } from "../Context";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveMap(children: any, fn: (child: JSX.Element) => void): any {
@@ -38,6 +39,7 @@ export default function useEditorUtil(
   const block: MapObject = props.block as MapObject;
   const [, setBlock] = useState(Object.assign({}, block));
   const children = editor(props);
+  const { setFocusedId } = useEditorContext();
 
   return recursiveMap(children, (child: JSX.Element) => {
     if (
@@ -54,7 +56,7 @@ export default function useEditorUtil(
         }
         if (ev.keyCode === 13) {
           ev.preventDefault();
-          document.body.click(); // blur
+          setFocusedId(null); // blur
         }
       };
 
