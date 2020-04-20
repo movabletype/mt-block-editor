@@ -22,41 +22,38 @@ interface HtmlProps {
   block: Select;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
-  return (
-    <div>
-      <BlockSetupCommon block={block} />
-      <BlockSetup block={block}>
-        <label
-          className="label-name"
-          style={{ display: "inline-block", width: "100%" }}
-        >
-          <div>{t("Block Element")}</div>
-          <select name="blockElement">
-            <option value="">{t("None")}</option>
-            <option value="p">P</option>
-            <option value="h1">H1</option>
-            <option value="h2">H2</option>
-            <option value="h3">H3</option>
-            <option value="h4">H4</option>
-            <option value="h5">H5</option>
-            <option value="h6">H6</option>
-            <option value="pre">PRE</option>
-          </select>
-        </label>
-      </BlockSetup>
-      <BlockSetup block={block}>
-        <label style={{ display: "inline-block", width: "100%" }}>
-          <div>{t("Options")}</div>
-          <textarea name="options" style={{ width: "100%" }}></textarea>
-        </label>
-      </BlockSetup>
-      <BlockLabel block={block}>
-        <select name="text">{block.optionElements()}</select>
-      </BlockLabel>
-    </div>
-  );
-};
+const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
+  <div>
+    <BlockSetupCommon block={block} />
+    <BlockSetup block={block}>
+      <label className="label-name">
+        <div>{t("Block Element")}</div>
+        <select name="blockElement">
+          <option value="">{t("None")}</option>
+          <option value="p">P</option>
+          <option value="h1">H1</option>
+          <option value="h2">H2</option>
+          <option value="h3">H3</option>
+          <option value="h4">H4</option>
+          <option value="h5">H5</option>
+          <option value="h6">H6</option>
+          <option value="pre">PRE</option>
+        </select>
+      </label>
+    </BlockSetup>
+    <BlockSetup block={block}>
+      <label className="label-name">
+        <div>{t("Options")}</div>
+        <textarea name="options" style={{ width: "100%" }}></textarea>
+      </label>
+    </BlockSetup>
+    <BlockLabel block={block}>
+      <select name="text" data-mt-block-editor-focus>
+        {block.optionElements()}
+      </select>
+    </BlockLabel>
+  </div>
+);
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
   return React.createElement(
@@ -108,7 +105,7 @@ class Select extends Block {
   }
 
   public metadata(): Metadata | null {
-    const data = this.metadataByOwnKeys();
+    const data = this.metadataByOwnKeys() as Metadata;
     data.text = data.text || this.defaultText();
     return data;
   }

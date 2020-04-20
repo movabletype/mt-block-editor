@@ -22,35 +22,30 @@ interface HtmlProps {
   block: Input;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
-  return (
-    <div>
-      <BlockSetupCommon block={block} />
-      <BlockSetup block={block}>
-        <label
-          className="label-name"
-          style={{ display: "inline-block", width: "100%" }}
-        >
-          <div>{t("Block Element")}</div>
-          <select name="blockElement">
-            <option value="">{t("None")}</option>
-            <option value="p">P</option>
-            <option value="h1">H1</option>
-            <option value="h2">H2</option>
-            <option value="h3">H3</option>
-            <option value="h4">H4</option>
-            <option value="h5">H5</option>
-            <option value="h6">H6</option>
-            <option value="pre">PRE</option>
-          </select>
-        </label>
-      </BlockSetup>
-      <BlockLabel block={block}>
-        <input type="text" name="text" style={{ width: "100%" }} />
-      </BlockLabel>
-    </div>
-  );
-};
+const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
+  <div>
+    <BlockSetupCommon block={block} />
+    <BlockSetup block={block}>
+      <label className="label-name">
+        <div>{t("Block Element")}</div>
+        <select name="blockElement">
+          <option value="">{t("None")}</option>
+          <option value="p">P</option>
+          <option value="h1">H1</option>
+          <option value="h2">H2</option>
+          <option value="h3">H3</option>
+          <option value="h4">H4</option>
+          <option value="h5">H5</option>
+          <option value="h6">H6</option>
+          <option value="pre">PRE</option>
+        </select>
+      </label>
+    </BlockSetup>
+    <BlockLabel block={block}>
+      <input type="text" name="text" data-mt-block-editor-focus />
+    </BlockLabel>
+  </div>
+);
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
   return React.createElement(
