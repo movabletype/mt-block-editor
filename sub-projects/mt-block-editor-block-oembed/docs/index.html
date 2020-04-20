@@ -47,17 +47,21 @@
         id: "body",
         stylesheets: [],
         i18n: {
-          lng: 'ja',
+          lng: "ja",
         },
         block: {
           "sixapart-oembed": {
-            resolver: async (url) => {
-              const res = await fetch("https://noembed.com/embed?url=" + url);
+            resolver: async ({ url, maxwidth, maxheight }) => {
+              const res = await fetch(
+                `https://noembed.com/embed?url=${url}&maxwidth=${
+                  maxwidth || ""
+                }&maxheight=${maxheight || ""}`
+              );
               return await res.json();
             },
           },
         },
-      }).then(ed => {
+      }).then((ed) => {
         ed.on("onInitializeBlocks", ({ blocks }) => {
           console.log(blocks);
         });
@@ -65,9 +69,9 @@
 
       document
         .getElementById("submit")
-        .form.addEventListener("submit", function(ev) {
+        .form.addEventListener("submit", function (ev) {
           ev.preventDefault();
-          MTBlockEditor.serialize().then(function() {
+          MTBlockEditor.serialize().then(function () {
             console.log("serialized");
             sessionStorage.setItem(
               "MTBlockEditorBody",
@@ -76,20 +80,22 @@
           });
         });
 
-      document.getElementById("reset").addEventListener("click", function(ev) {
+      document.getElementById("reset").addEventListener("click", function (ev) {
         ev.preventDefault();
         sessionStorage.setItem("MTBlockEditorBody", "");
         location.reload();
       });
 
-      document.getElementById("unload").addEventListener("click", function(ev) {
-        ev.preventDefault();
-        MTBlockEditor.unload({ id: "body" });
-      });
+      document
+        .getElementById("unload")
+        .addEventListener("click", function (ev) {
+          ev.preventDefault();
+          MTBlockEditor.unload({ id: "body" });
+        });
 
       document
         .getElementById("toggle-mode")
-        .addEventListener("click", function(ev) {
+        .addEventListener("click", function (ev) {
           ev.preventDefault();
 
           const cur =

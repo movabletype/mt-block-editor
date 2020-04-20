@@ -42,30 +42,31 @@ interface OembedData {
   provider_url: string;
 }
 
-type Resolver = (url: string) => Promise<OembedData>;
+type Resolver = (params: {
+  url: string;
+  maxwidth: number | null;
+  maxheight: number | null;
+}) => Promise<OembedData>;
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
-  block.compiledHtml = "";
-
-  const inputElRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputElRef.current) {
-      inputElRef.current.focus();
-    }
-  });
-
-  return (
-    <div className={css.Oembed}>
-      <BlockSetupCommon block={block} keys={["label", "helpText"]} />
-      <BlockLabel block={block}>
-        <p>
-          <input type="url" name="url" ref={inputElRef} />
-        </p>
-      </BlockLabel>
-    </div>
-  );
-};
+const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
+  <div className={css.Oembed}>
+    <BlockSetupCommon block={block} keys={["label", "helpText"]} />
+    <BlockLabel block={block}>
+      <label className="label-name">
+        <div>{t("URL")}</div>
+        <input type="url" name="url" data-mt-block-editor-focus-default />
+      </label>
+      <label className="label-name">
+        <div>{t("Max Width (optional)")}</div>
+        <input type="number" name="maxwidth" />
+      </label>
+      <label className="label-name">
+        <div>{t("Max Height (optional)")}</div>
+        <input type="number" name="maxheight" />
+      </label>
+    </BlockLabel>
+  </div>
+);
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
   const { editor } = useEditorContext();
@@ -106,6 +107,8 @@ class Oembed extends Block {
   }
 
   public url = "";
+  public maxwidth: number | null = null;
+  public maxheight: number | null = null;
 
   public constructor(init?: Partial<Oembed>) {
     super();
@@ -119,7 +122,12 @@ class Oembed extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? <EditorUtil key={this.id} block={this} /> : this.html();
+    if (focus) {
+      this.compiledHtml = "";
+      return <EditorUtil key={this.id} block={this} />;
+    } else {
+      return this.html();
+    }
   }
 
   public html(): JSX.Element {
@@ -141,7 +149,11 @@ class Oembed extends Block {
       throw "Requires resolver function for sixapart-oembed.";
     }
     const resolver = opts.resolver as Resolver;
-    const res = await resolver(this.url);
+    const res = await resolver({
+      url: this.url,
+      maxwidth: this.maxwidth || null,
+      maxheight: this.maxheight || null,
+    });
 
     this.compiledHtml = res.html;
   }
