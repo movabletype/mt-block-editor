@@ -15,6 +15,17 @@ export function getElementById(id: string): HTMLElement {
   return e;
 }
 
+export function querySelector(
+  elm: HTMLElement | Document,
+  selector: string
+): HTMLElement {
+  const e = elm.querySelector(selector) as HTMLElement;
+  if (!e) {
+    throw Error(`${selector} is not found`);
+  }
+  return e;
+}
+
 export function getNodeValue(e: Element): string {
   return (e && e.childNodes[0] ? e.childNodes[0].nodeValue : "") || "";
 }

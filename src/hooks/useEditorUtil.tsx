@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Block from "../Block";
+import { querySelector } from "../util";
 import { useEditorContext } from "../Context";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,6 +41,25 @@ export default function useEditorUtil(
   const [, setBlock] = useState(Object.assign({}, block));
   const children = editor(props);
   const { setFocusedId } = useEditorContext();
+
+  useEffect(() => {
+    const blockEl = querySelector(
+      document,
+      `[data-mt-block-editor-block-id="${block.id}"]`
+    );
+    const focusEl = querySelector(
+      blockEl,
+      `[data-mt-block-editor-focus-default]`
+    );
+    const activeEl = document.activeElement;
+    if (
+      activeEl &&
+      activeEl.closest(`[data-mt-block-editor-block-id="${block.id}"]`)
+    ) {
+      return;
+    }
+    focusEl.focus();
+  });
 
   return recursiveMap(children, (child: JSX.Element) => {
     if (
