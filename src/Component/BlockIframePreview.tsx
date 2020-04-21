@@ -274,6 +274,16 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             size.width !== ev.data.arguments.width ||
             size.height !== ev.data.arguments.height
           ) {
+            const oldHeight = parseInt(size.height);
+            const newHeight = parseInt(ev.data.arguments.height);
+            if (
+              oldHeight &&
+              newHeight &&
+              oldHeight > newHeight &&
+              Math.abs(oldHeight - newHeight) < 10
+            ) {
+              return;
+            }
             setSize(ev.data.arguments);
           }
           break;
