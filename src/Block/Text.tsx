@@ -127,7 +127,13 @@ const Editor: React.FC<EditorProps> = ({
 
         for (let i = 0; i < 10; i++) {
           setTimeout(() => {
-            const toolbar = getElementById(`${block.tinymceId()}toolbar`);
+            const toolbar = document.getElementById(
+              `${block.tinymceId()}toolbar`
+            );
+            if (!toolbar) {
+              return;
+            }
+
             toolbar.style.top = `-${toolbar.offsetHeight}px`;
 
             if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
