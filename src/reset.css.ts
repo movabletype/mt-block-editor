@@ -12,6 +12,7 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup, 
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
+	word-break: break-all;
 	margin-top: 0;
 	margin-bottom: 0;
 	padding-top: 0;
