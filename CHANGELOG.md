@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.16] - 2020-04-23
+
+### Changed
+
+* Fallback to core-html if got raw html data.
+
 ## [0.0.12] - 2020-04-16
 
 ### Fixed
