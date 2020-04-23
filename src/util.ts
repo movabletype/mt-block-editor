@@ -87,7 +87,13 @@ export async function parseContent(
     return [];
   }
 
-  const children = doc.children[0].children;
+  let children = [...doc.children[0].children];
+  if (children.length === 0) {
+    const fallback = document.createElement("DIV");
+    fallback.setAttribute("t", "core-html");
+    fallback.innerHTML = value;
+    children = [fallback];
+  }
 
   // TODO: verify
   const blocks = [];
