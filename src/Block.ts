@@ -3,9 +3,9 @@ import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
 import { UndoHistory } from "./UndoManager";
-import { escapeSingleQuoteAttribute } from "./util";
+import { escapeSingleQuoteAttribute } from "./util/dom";
 import icon from "./img/icon/default-block.svg";
-import { Size, defaultSize } from "./Component/BlockIframePreview";
+import { Size, defaultSize } from "./Component/BlockIframePreview/size";
 
 export interface HasBlocks {
   blocks: Block[];

@@ -3,13 +3,8 @@ import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import { UndoHistoryHandlers } from "../UndoManager";
+import { Size } from "./BlockIframePreview/size";
 
-export interface Size {
-  width: string;
-  height: string;
-}
-
-export const defaultSize = { width: "100%", height: "100px" };
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "1000px";
 
