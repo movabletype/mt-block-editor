@@ -124,7 +124,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
   });
 }
 
-function onClickFunc(): void {
+function eventDelegationFunc(): void {
   document.addEventListener(
     "click",
     function () {
@@ -132,6 +132,25 @@ function onClickFunc(): void {
         {
           method: "MTBlockEditorOnClick",
           blockId: document.body.dataset.blockId,
+        },
+        "*"
+      );
+    },
+    { capture: true }
+  );
+
+  document.addEventListener(
+    "keydown",
+    function (ev) {
+      parent.postMessage(
+        {
+          method: "MTBlockEditorOnKeydown",
+          blockId: document.body.dataset.blockId,
+          arguments: {
+            key: ev.key,
+            ctrlKey: ev.ctrlKey || ev.metaKey,
+            shiftKey: ev.shiftKey,
+          },
         },
         "*"
       );
@@ -213,7 +232,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             return ${addDroppableFunc.toString()};
           })();
           (function() {
-            (${onClickFunc.toString()})();
+            (${eventDelegationFunc.toString()})();
           })();
         </script>
         <style type="text/css">
@@ -290,6 +309,13 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         case "MTBlockEditorOnClick":
           if (containerEl) {
             (containerEl as HTMLElement).click();
+          }
+          break;
+        case "MTBlockEditorOnKeydown":
+          if (containerEl) {
+            window.dispatchEvent(
+              new KeyboardEvent("keydown", ev.data.arguments)
+            );
           }
           break;
         case "MTBlockEditorSetCompiledHtml":

@@ -84,37 +84,80 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     },
   };
 
-  window.addEventListener(
-    "click",
-    (ev) => {
-      if (editorElRef.current === null) {
+  const onWindowClick = (ev: Event): void => {
+    const editorEl = editorElRef.current;
+    if (editorEl === null) {
+      return;
+    }
+
+    if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      return;
+    }
+
+    let target = ev.target as HTMLElement;
+    while (target.parentNode && target.parentNode !== target) {
+      if (target.classList.contains("mce-container")) {
         return;
       }
-
-      const editorEl = (editorElRef.current as unknown) as HTMLElement;
-
-      if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      if (target === editorEl) {
         return;
       }
+      target = target.parentNode as HTMLElement;
+    }
 
-      let target = ev.target as HTMLElement;
-      while (target.parentNode && target.parentNode !== target) {
-        if (target.classList.contains("mce-container")) {
-          return;
-        }
-        if (target === editorEl) {
-          return;
-        }
-        target = target.parentNode as HTMLElement;
-      }
+    setFocusedId(null);
+  };
 
-      setFocusedId(null);
-    },
-    {
+  const onWindowKeydown = (ev: KeyboardEvent): void => {
+    const editorEl = editorElRef.current;
+    if (editorEl === null) {
+      return;
+    }
+
+    if (!focusedId) {
+      return;
+    }
+
+    // stay focused but not edit
+    if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      return;
+    }
+
+    if (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
+      ev.preventDefault();
+      editor.undoManager.undo({
+        editor,
+        getFocusedId: () => focusedId,
+        setFocusedId,
+      });
+    } else if (
+      (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
+      (ev.key === "y" && (ev.ctrlKey || ev.metaKey))
+    ) {
+      ev.preventDefault();
+      editor.undoManager.redo({
+        editor,
+        getFocusedId: () => focusedId,
+        setFocusedId,
+      });
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", onWindowClick, {
       capture: true,
       passive: true,
-    }
-  );
+    });
+
+    window.addEventListener("keydown", onWindowKeydown);
+
+    return () => {
+      window.removeEventListener("click", onWindowClick, {
+        capture: true,
+      });
+      window.removeEventListener("keydown", onWindowKeydown);
+    };
+  });
 
   return (
     <EditorContext.Provider value={editorContext}>
