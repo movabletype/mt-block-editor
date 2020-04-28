@@ -2,6 +2,7 @@ import { RefObject } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
+import { UndoHistory } from "./UndoManager";
 import { escapeSingleQuoteAttribute } from "./util";
 import icon from "./img/icon/default-block.svg";
 import { Size, defaultSize } from "./Component/BlockIframePreview";
@@ -88,6 +89,16 @@ class Block {
     this.id =
       new Date().getTime().toString(36) +
       Math.floor(Math.random() * 100).toString(36);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public canMerge(block: Block): boolean {
+    return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public merge(block: Block): UndoHistory {
+    throw "Should be implemented for each concrete class";
   }
 
   public contentLabel(): string {

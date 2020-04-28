@@ -141,6 +141,31 @@ class Editor extends EventEmitter implements HasBlocks {
     });
   }
 
+  public mergeBlock(parent: HasBlocks, block: Block): boolean {
+    const blocks = parent.blocks;
+
+    const index = blocks.indexOf(block);
+    if (index === -1) {
+      return false;
+    }
+    const before = blocks[index - 1];
+    if (!before) {
+      return false;
+    }
+    if (!before.canMerge(block)) {
+      return false;
+    }
+
+    this.undoManager.beginGrouping();
+
+    this.undoManager.add(before.merge(block));
+    this.removeBlock(parent, block);
+
+    this.undoManager.endGrouping();
+
+    return true;
+  }
+
   public removeBlock(parent: HasBlocks, block: Block): void {
     const blocks = parent.blocks;
 

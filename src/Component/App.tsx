@@ -44,6 +44,12 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       editor.addBlock(editor, b, index);
       setFocusedId(b.id);
     },
+    mergeBlock: (b: Block) => {
+      const index = editor.blocks.indexOf(b);
+      if (editor.mergeBlock(editor, b)) {
+        setFocusedId(editor.blocks[index - 1].id);
+      }
+    },
     removeBlock: (b: Block) => {
       const index = editor.blocks.indexOf(b);
       editor.removeBlock(editor, b);

@@ -19,6 +19,7 @@ import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
 
+import { UndoHistory } from "../UndoManager";
 import { undoHandlers } from "./Text/undo";
 
 declare const tinymce: EditorManager;
@@ -36,7 +37,7 @@ const Editor: React.FC<EditorProps> = ({
   canRemove,
 }: EditorProps) => {
   const { editor, setFocusedId } = useEditorContext();
-  const { addBlock, removeBlock } = useBlocksContext();
+  const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -181,11 +182,24 @@ const Editor: React.FC<EditorProps> = ({
             // ignore
           }
 
-          if ((e.keyCode === 8 || e.keyCode === 46) && editorIsBlank) {
-            if (canRemove) {
-              removeBlock(block);
+          if (e.keyCode === 8 || e.keyCode === 46) {
+            if (editorIsBlank) {
+              if (canRemove) {
+                removeBlock(block);
+              }
+              e.preventDefault();
+            } else {
+              const start = ed.selection.getStart();
+              const rng = ed.selection.getRng(false);
+              if (
+                rng.startOffset === 0 &&
+                rng.endOffset === 0 &&
+                start === root.firstChild
+              ) {
+                e.preventDefault();
+                mergeBlock(block);
+              }
             }
-            e.preventDefault();
           }
         });
 
@@ -361,6 +375,30 @@ class Text extends Block {
     } else {
       return <p>{"\u00A0"}</p>;
     }
+  }
+
+  public canMerge(block: Block): boolean {
+    return block instanceof (this.constructor as typeof Block);
+  }
+
+  public merge(block: Block): UndoHistory {
+    const history = {
+      block: this,
+      data: {
+        last: this.html(),
+      },
+      handlers: undoHandlers,
+    };
+
+    this.text = this.html().replace(/(<\/[^>]*>)$/, (all, closeTag) => {
+      return (
+        CARET +
+        (block.html() as string).replace(/^<[^>]*>|<\/[^>]*>$/g, "") +
+        closeTag
+      );
+    });
+
+    return history;
   }
 
   public html(): string {
