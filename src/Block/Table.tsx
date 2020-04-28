@@ -12,6 +12,7 @@ import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import { undoHandlers } from "./Text/undo";
 
 declare const tinymce: EditorManager;
 
@@ -44,8 +45,40 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
         const root = ed.dom.getRoot();
 
+        // XXX: disable undo feature focefully
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ed.undoManager.add = (): any => {
+          // XXX: improve performance
+          ed.fire("Change");
+          return null;
+        };
+
+        let last = block.text;
+        ed.on("MTBlockEditorUndo", (ev) => {
+          ed.dom.setHTML(ed.getBody(), ev.html);
+          last = ev.html;
+        });
+
+        const addUndo = (): void => {
+          const cur = ed.getContent();
+          if (last === cur) {
+            return;
+          }
+
+          editor.undoManager.add({
+            block,
+            data: {
+              last,
+            },
+            handlers: undoHandlers,
+          });
+
+          last = cur;
+        };
+
         ed.on("NodeChange Change", () => {
           if (root.childNodes.length <= 1) {
+            addUndo();
             return;
           }
 
@@ -63,6 +96,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             .filter((c) => c) as HTMLElement[];
 
           if (children.length === 1) {
+            addUndo();
             return;
           }
 
@@ -71,10 +105,17 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           children.forEach((c) => {
             ed.dom.remove(c);
           });
+
+          editor.undoManager.beginGrouping();
+
+          addUndo();
+
           children.forEach((c) => {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             addBlock(new Table({ text: c.outerHTML }), block);
           });
+
+          editor.undoManager.endGrouping();
         });
       },
     };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Block from "../Block";
 import { useEditorContext } from "../Context";
+import { UndoHistoryHandlers } from "../UndoManager";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveMap(children: any, fn: (child: JSX.Element) => void): any {
@@ -22,6 +23,25 @@ function recursiveMap(children: any, fn: (child: JSX.Element) => void): any {
   });
 }
 
+const undoHandlers: UndoHistoryHandlers = {
+  id: Symbol("edit"),
+  merge(a, b) {
+    a.data.cur = b.data.cur;
+    return a;
+  },
+  undo(hist, { editor, setFocusedId }) {
+    hist.data.cur = hist.data.cur || (hist.block as MapObject)[hist.data.name];
+    (hist.block as MapObject)[hist.data.name] = hist.data.last;
+    setFocusedId(hist.block.id);
+    editor.render();
+  },
+  redo(hist, { editor, setFocusedId }) {
+    (hist.block as MapObject)[hist.data.name] = hist.data.cur;
+    setFocusedId(hist.block.id);
+    editor.render();
+  },
+};
+
 interface EditorProps {
   block: Block;
 }
@@ -38,8 +58,11 @@ export default function useEditorUtil(
 ): JSX.Element {
   const block: MapObject = props.block as MapObject;
   const [, setBlock] = useState(Object.assign({}, block));
+  const [undoGroups, setUndoGroups] = useState<MapObject>({});
   const children = editor(props);
-  const { setFocusedId } = useEditorContext();
+  const editorContext = useEditorContext();
+  const setFocusedId = editorContext.setFocusedId;
+  const blockEditor = editorContext.editor;
 
   useEffect(() => {
     const blockEl = document.querySelector(
@@ -94,9 +117,25 @@ export default function useEditorUtil(
           if (!ev.target) {
             return;
           }
+
           const target = ev.target as HTMLElement;
+          const lastValue = block[n];
           const value = (target as HTMLInputElement).value;
           block[n] = value;
+
+          if (!undoGroups[n]) {
+            undoGroups[n] = blockEditor.undoManager.generateGroup();
+            setUndoGroups(undoGroups);
+          }
+          blockEditor.undoManager.add({
+            group: undoGroups[n],
+            block: props.block,
+            data: {
+              name: n,
+              last: lastValue,
+            },
+            handlers: undoHandlers,
+          });
 
           (target as HTMLTextAreaElement).rows = Math.max(
             parseInt(target.dataset.defaultRows || "0", 10),

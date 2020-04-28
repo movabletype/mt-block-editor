@@ -9,6 +9,11 @@ import Block, { HasBlocks } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 import UndoManager from "./UndoManager";
+import {
+  add as undoHandlersAdd,
+  remove as undoHandlersRemove,
+  swap as undoHandlersSwap,
+} from "./Editor/undo";
 
 import "./import-default-blocks";
 
@@ -121,6 +126,15 @@ class Editor extends EventEmitter implements HasBlocks {
     // XXX: Skip render by default
     // this.render();
 
+    this.undoManager.add({
+      block: block,
+      data: {
+        parent: parent instanceof Editor ? null : parent,
+        index,
+      },
+      handlers: undoHandlersAdd,
+    });
+
     this.emit("onChangeBlocks", {
       editor: this,
       blocks: blocks,
@@ -140,8 +154,18 @@ class Editor extends EventEmitter implements HasBlocks {
     if (index === -1) {
       return;
     }
+
     blocks.splice(index, 1);
     this.render();
+
+    this.undoManager.add({
+      block: block,
+      data: {
+        parent: parent instanceof Editor ? null : parent,
+        index,
+      },
+      handlers: undoHandlersRemove,
+    });
 
     this.emit("onChangeBlocks", {
       editor: this,
@@ -154,6 +178,16 @@ class Editor extends EventEmitter implements HasBlocks {
 
     [blocks[a], blocks[b]] = [blocks[b], blocks[a]];
     this.render();
+
+    this.undoManager.add({
+      block: blocks[a],
+      data: {
+        parent: parent instanceof Editor ? null : parent,
+        a,
+        b,
+      },
+      handlers: undoHandlersSwap,
+    });
 
     this.emit("onChangeBlocks", {
       editor: this,

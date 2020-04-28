@@ -19,11 +19,16 @@ import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
 
+import { undoHandlers } from "./Text/undo";
+
 declare const tinymce: EditorManager;
 
 interface EditorProps extends EditorOptions {
   block: Text;
 }
+
+const CARET_CLASS = "mt-block-editor-caret";
+const CARET = `<span class="${CARET_CLASS}"></span>`;
 
 const Editor: React.FC<EditorProps> = ({
   block,
@@ -58,11 +63,51 @@ const Editor: React.FC<EditorProps> = ({
         ed.setContent(block.text);
         if (focus) {
           ed.focus(false);
-          ed.selection.select(ed.getBody(), true);
-          ed.selection.collapse(false);
+          if (ed.selection) {
+            const body = ed.getBody();
+            const caret = body.querySelector(`.${CARET_CLASS}`);
+            if (caret) {
+              ed.selection.select(caret, true);
+              ed.dom.remove(caret);
+            } else {
+              ed.selection.select(body, true);
+              ed.selection.collapse(false);
+            }
+          }
         }
 
         const root = ed.dom.getRoot();
+
+        // XXX: disable undo feature focefully
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ed.undoManager.add = (): any => {
+          // XXX: improve performance
+          ed.fire("Change");
+          return null;
+        };
+
+        let last = block.text.replace(CARET, "");
+        ed.on("MTBlockEditorUndo", (ev) => {
+          ed.dom.setHTML(ed.getBody(), ev.html);
+          last = ev.html;
+        });
+
+        const addUndo = (): void => {
+          const cur = editorIsBlank ? "" : ed.getContent();
+          if (last === cur) {
+            return;
+          }
+
+          editor.undoManager.add({
+            block,
+            data: {
+              last,
+            },
+            handlers: undoHandlers,
+          });
+
+          last = cur;
+        };
 
         ed.on("NodeChange Change", () => {
           if (
@@ -72,12 +117,14 @@ const Editor: React.FC<EditorProps> = ({
             if (root.childNodes.length === 1) {
               editorIsBlank = root.childNodes[0].textContent === "";
             }
+            addUndo();
             return;
           }
 
           const children = [...root.childNodes] as HTMLElement[];
           const firstChild = children.shift();
           if (!firstChild) {
+            addUndo();
             return;
           }
 
@@ -85,6 +132,11 @@ const Editor: React.FC<EditorProps> = ({
           children.forEach((c) => {
             ed.dom.remove(c);
           });
+
+          editor.undoManager.beginGrouping();
+
+          addUndo();
+
           if (canRemove) {
             children.forEach((c, i) => {
               if (i === 0 && isIos()) {
@@ -100,12 +152,24 @@ const Editor: React.FC<EditorProps> = ({
                 }, 5 * 1000);
               }
 
+              [...c.querySelectorAll(`br[data-mce-bogus="1"]`)].forEach((e) =>
+                e.remove()
+              );
+              if (c.childNodes.length !== 0 && i === children.length - 1) {
+                const caret = document.createElement("SPAN");
+                caret.classList.add(CARET_CLASS);
+                c.insertBefore(caret, c.firstChild);
+              }
+              const text = c.childNodes.length === 0 ? "" : c.outerHTML;
+
               // eslint-disable-next-line @typescript-eslint/no-use-before-define
-              addBlock(new Text({ text: c.outerHTML }), block);
+              addBlock(new Text({ text, toolbarDefaultVisible: false }), block);
             });
           } else {
             setFocusedId(null);
           }
+
+          editor.undoManager.endGrouping();
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
@@ -230,7 +294,9 @@ const Editor: React.FC<EditorProps> = ({
         id={`${block.tinymceId()}toolbar`}
         rows={2}
         hasBorder={false}
-        className={`block-toolbar--tinymce ${html !== "" ? "invisible" : ""}`}
+        className={`block-toolbar--tinymce ${
+          html !== "" || !block.toolbarDefaultVisible ? "invisible" : ""
+        }`}
       ></BlockToolbar>
     </div>
   );
@@ -246,6 +312,7 @@ class Text extends Block {
 
   public text = "";
   public tinymce: TinyMCE | null = null;
+  public toolbarDefaultVisible = true;
 
   public constructor(init?: Partial<Text>) {
     super();

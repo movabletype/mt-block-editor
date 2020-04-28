@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
+import { UndoHistoryHandlers } from "../UndoManager";
 
 export interface Size {
   width: string;
@@ -19,6 +20,25 @@ interface EditorProps {
   onSetCompiledHtml?: (error?: Error) => void;
   border?: string;
 }
+
+interface SetCompiledHtmlOptions {
+  addUndoHistory: boolean;
+}
+
+const undoHandlers: UndoHistoryHandlers = {
+  id: Symbol("edit"),
+  merge(a, b) {
+    return a.data.last === b.data.last ? a : undefined;
+  },
+  undo(hist, { setFocusedId }) {
+    hist.block.compiledHtml = hist.data.last;
+    setFocusedId(hist.block.id, { forceUpdate: true });
+  },
+  redo(hist, { setFocusedId }) {
+    hist.block.compiledHtml = hist.data.cur;
+    setFocusedId(hist.block.id, { forceUpdate: true });
+  },
+};
 
 function postMessageFunc(): void {
   const body = document.body;
@@ -50,12 +70,15 @@ function postMessageFunc(): void {
   );
 }
 
-function setCompiledHtmlFunc(html: string): void {
+function setCompiledHtmlFunc(html: string, opts: SetCompiledHtmlOptions): void {
   parent.postMessage(
     {
       method: "MTBlockEditorSetCompiledHtml",
       blockId: document.body.dataset.blockId,
       html,
+      arguments: {
+        addUndoHistory: opts && opts.addUndoHistory,
+      },
     },
     "*"
   );
@@ -174,16 +197,21 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const containerElRef = useRef(null);
   const [src, setSrc] = useState("");
-  const [rawHtmlText, _setHtmlText] = useState(
+  const [_rawHtmlText, _setHtmlText] = useState(
     typeof html === "string" ? html : ""
   );
+  const rawHtmlText = _rawHtmlText || (typeof html === "string" ? html : "");
+
   const [size, _setSize] = useState(block.iframePreviewSize);
   const setSize = (size: Size): void => {
     block.iframePreviewSize = size;
     _setSize(size);
   };
 
-  const setCompiledHtml = (res: string | Error): void => {
+  const setCompiledHtml = (
+    res: string | Error,
+    opts: SetCompiledHtmlOptions
+  ): void => {
     if (res instanceof Error) {
       if (onSetCompiledHtml) {
         onSetCompiledHtml(res);
@@ -193,7 +221,19 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       return;
     }
 
+    const lastValue = block.compiledHtml;
     block.compiledHtml = res;
+
+    if (opts && opts.addUndoHistory) {
+      editor.undoManager.add({
+        block,
+        data: {
+          last: lastValue,
+          cur: res,
+        },
+        handlers: undoHandlers,
+      });
+    }
 
     editor.emit("onSetCompiledHtmlIframePreview", {
       editor,
@@ -319,7 +359,10 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           }
           break;
         case "MTBlockEditorSetCompiledHtml":
-          setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"));
+          setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"), {
+            addUndoHistory:
+              ev.data.arguments && ev.data.arguments.addUndoHistory,
+          });
           break;
       }
     };
