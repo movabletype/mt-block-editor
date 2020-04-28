@@ -1,12 +1,12 @@
 import { t } from "../i18n";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { DndBackend } from "./DndBackend";
 
 import Editor from "../Editor";
 import Block from "../Block";
 import BlockItem from "./BlockItem";
-import { EditorContext, BlocksContext } from "../Context";
+import { EditorContext, BlocksContext, SetFocusedId } from "../Context";
 import AddButton from "./AddButton";
 
 interface AppProps {
@@ -14,9 +14,22 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
-  const editorElRef = useRef(null);
-  const [focusedId, setFocusedId] = useState<string | null>(null);
-  const [blocks, updateBlocks] = useState(editor.blocks);
+  const editorElRef = useRef<HTMLDivElement>(null);
+
+  const [_focusedId, _setFocusedId] = useState<string | null>(null);
+  const focusedId = _focusedId ? _focusedId.replace(/:.*/, "") : null;
+  const setFocusedId: SetFocusedId = (id, opts?) => {
+    if (!id) {
+      _setFocusedId(id);
+      return;
+    }
+
+    _setFocusedId(
+      id + (opts && opts.forceUpdate ? ":" + new Date().getTime() : "")
+    );
+  };
+
+  const blocks = editor.blocks;
   const editorContext = {
     editor: editor,
     setFocusedId: setFocusedId,
@@ -28,17 +41,15 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       if (index instanceof Block) {
         index = editor.blocks.indexOf(index) + 1;
       }
-      editor.addBlock(editor.blocks, b, index);
+      editor.addBlock(editor, b, index);
       setFocusedId(b.id);
-      updateBlocks(([] as Block[]).concat(editor.blocks));
     },
     removeBlock: (b: Block) => {
       const index = editor.blocks.indexOf(b);
-      editor.removeBlock(editor.blocks, b);
+      editor.removeBlock(editor, b);
       if (index > 0) {
         setFocusedId(editor.blocks[index - 1].id);
       }
-      updateBlocks(([] as Block[]).concat(editor.blocks));
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
@@ -69,8 +80,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         });
       }
 
-      editor.swapBlocks(editor.blocks, dragIndex, hoverIndex);
-      updateBlocks(([] as Block[]).concat(editor.blocks));
+      editor.swapBlocks(editor, dragIndex, hoverIndex);
     },
   };
 

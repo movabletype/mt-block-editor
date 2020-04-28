@@ -5,7 +5,7 @@ import { InitOptions as InitOptionsI18n } from "i18next";
 
 import resetCss from "./reset.css";
 import { getElementById, preParseContent, parseContent } from "./util";
-import Block from "./Block";
+import Block, { HasBlocks } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 
@@ -36,7 +36,7 @@ export interface EditorOptions {
   i18n: InitOptionsI18n;
 }
 
-class Editor extends EventEmitter {
+class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
@@ -80,7 +80,7 @@ class Editor extends EventEmitter {
       this.blocks = blocks;
       this.emit("onInitializeBlocks", { editor: this, blocks });
 
-      render(React.createElement(App, { editor: this }), this.editorElement);
+      this.render();
     }, 0);
   }
 
@@ -108,16 +108,23 @@ class Editor extends EventEmitter {
       .filter((t) => t) as Array<typeof Block>;
   }
 
-  public addBlock(blocks: Block[], b: Block, index: number): void {
-    blocks.splice(index, 0, b);
+  public addBlock(parent: HasBlocks, block: Block, index: number): void {
+    const blocks = parent.blocks;
+
+    blocks.splice(index, 0, block);
+
+    // XXX: Skip render by default
+    // this.render();
 
     this.emit("onChangeBlocks", {
       editor: this,
-      blocks,
+      blocks: blocks,
     });
   }
 
-  public removeBlock(blocks: Block[], block: Block): void {
+  public removeBlock(parent: HasBlocks, block: Block): void {
+    const blocks = parent.blocks;
+
     this.emit("onRemoveBlock", {
       editor: this,
       blocks,
@@ -129,6 +136,7 @@ class Editor extends EventEmitter {
       return;
     }
     blocks.splice(index, 1);
+    this.render();
 
     this.emit("onChangeBlocks", {
       editor: this,
@@ -136,8 +144,11 @@ class Editor extends EventEmitter {
     });
   }
 
-  public swapBlocks(blocks: Block[], a: number, b: number): void {
+  public swapBlocks(parent: HasBlocks, a: number, b: number): void {
+    const blocks = parent.blocks;
+
     [blocks[a], blocks[b]] = [blocks[b], blocks[a]];
+    this.render();
 
     this.emit("onChangeBlocks", {
       editor: this,
@@ -167,6 +178,10 @@ class Editor extends EventEmitter {
     this.emit("onUnload", {
       editor: this,
     });
+  }
+
+  public render(): void {
+    render(React.createElement(App, { editor: this }), this.editorElement);
   }
 
   private buildStylesheets(): Array<Stylesheet | Promise<Stylesheet>> {

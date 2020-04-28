@@ -6,6 +6,10 @@ import { escapeSingleQuoteAttribute } from "./util";
 import icon from "./img/icon/default-block.svg";
 import { Size, defaultSize } from "./Component/BlockIframePreview";
 
+export interface HasBlocks {
+  blocks: Block[];
+}
+
 export interface Metadata {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;

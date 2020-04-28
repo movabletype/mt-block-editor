@@ -1,11 +1,12 @@
 import { t } from "../i18n";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { render } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
   SerializeOptions,
+  HasBlocks,
 } from "../Block";
 import AddButton from "../Component/AddButton";
 import BlockItem from "../Component/BlockItem";
@@ -35,20 +36,18 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
 
   const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
-  const [blocks, updateBlocks] = useState(block.blocks);
+  const blocks = block.blocks;
   const blocksContext = {
     addableBlockTypes: block.addableBlockTypes,
     addBlock: (b: Block, index: number | Block) => {
       if (index instanceof Block) {
         index = block.blocks.indexOf(index) + 1;
       }
-      editor.addBlock(block.blocks, b, index);
+      editor.addBlock(block, b, index);
       setFocusedId(b.id);
-      updateBlocks(([] as Block[]).concat(block.blocks));
     },
     removeBlock: (b: Block) => {
-      editor.removeBlock(block.blocks, b);
-      updateBlocks(([] as Block[]).concat(block.blocks));
+      editor.removeBlock(block, b);
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
@@ -79,8 +78,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         });
       }
 
-      editor.swapBlocks(block.blocks, dragIndex, hoverIndex);
-      updateBlocks(([] as Block[]).concat(block.blocks));
+      editor.swapBlocks(block, dragIndex, hoverIndex);
     },
   };
 
@@ -96,7 +94,6 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         if (blocks[0]) {
           setFocusedId(blocks[0].id);
         }
-        updateBlocks(([] as Block[]).concat(block.blocks));
       }
     );
   });
@@ -145,7 +142,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   }
 };
 
-class Column extends Block {
+class Column extends Block implements HasBlocks {
   public static typeId = "core-column";
   public static className = "mt-block-editor-column";
   public static rootBlock: string | null = "div";
