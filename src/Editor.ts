@@ -8,6 +8,7 @@ import { getElementById, preParseContent, parseContent } from "./util";
 import Block, { HasBlocks } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
+import UndoManager from "./UndoManager";
 
 import "./import-default-blocks";
 
@@ -15,6 +16,7 @@ export enum StylesheetType {
   url,
   css,
 }
+
 interface Stylesheet {
   type: StylesheetType;
   data: string;
@@ -32,6 +34,7 @@ export interface EditorOptions {
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   addButtons: Map;
+  undoManager?: Partial<UndoManager>;
   block: Map;
   i18n: InitOptionsI18n;
 }
@@ -40,6 +43,7 @@ class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
+  public undoManager: UndoManager;
   public blocks: Block[] = [];
   public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
@@ -56,6 +60,7 @@ class Editor extends EventEmitter implements HasBlocks {
     opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
+    this.undoManager = new UndoManager(opts.undoManager);
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
