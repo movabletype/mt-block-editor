@@ -74,6 +74,7 @@ class Editor extends EventEmitter implements HasBlocks {
     }
 
     this.editorElement = document.createElement("DIV");
+    this.editorElement.setAttribute("data-mt-be-id", this.id);
     this.editorElement.classList.add("mt-block-editor");
 
     this.inputElement.parentNode.insertBefore(
