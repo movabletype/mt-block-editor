@@ -245,26 +245,26 @@ const BlockItem: React.FC<Props> = ({
       ref={ref}
     >
       {showButton && (
-        <div className="btn-move-wrapper">
-          <button
-            type="button"
-            className="btn-up"
-            onClick={() => swapBlocks(index, index - 1, true)}
-          ></button>
-          <button type="button" className="btn-move" ref={drag}></button>
-          <button
-            type="button"
-            className="btn-down"
-            onClick={() => swapBlocks(index, index + 1, true)}
-          ></button>
-        </div>
-      )}
-      {showButton && (
-        <div className="btn-add-left">
-          <div style={{ position: "relative" }}>
-            <AddButton index={i} />
+        <>
+          <div className="btn-move-wrapper">
+            <button
+              type="button"
+              className="btn-up"
+              onClick={() => swapBlocks(index, index - 1, true)}
+            ></button>
+            <button type="button" className="btn-move" ref={drag}></button>
+            <button
+              type="button"
+              className="btn-down"
+              onClick={() => swapBlocks(index, index + 1, true)}
+            ></button>
           </div>
-        </div>
+          <div className="btn-add-wrapper">
+            <div style={{ position: "relative" }}>
+              <AddButton index={i} />
+            </div>
+          </div>
+        </>
       )}
       <div className="block">
         {!focus && !(b instanceof Columns) && (

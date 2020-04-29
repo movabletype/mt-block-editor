@@ -57,15 +57,7 @@ const AddButton: React.FC<AddButtonProps> = ({
     setShowList(ListStatus.Hidden);
   };
 
-  editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
-    if (showList === ListStatus.Visible) {
-      editor.editorElement.setAttribute(
-        "data-mt-block-editor-add-button",
-        "visible"
-      );
-    }
-
     document.addEventListener("drop", onDrop, {
       capture: true,
       passive: true,
@@ -98,7 +90,6 @@ const AddButton: React.FC<AddButtonProps> = ({
         className={`btn-wrap ${
           onlyShortcuts ? "btn-wrap--only-shortcuts" : ""
         }`}
-        style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={(ev) => {
           if (!ev.dataTransfer.types.find((t) => t === "Files")) {

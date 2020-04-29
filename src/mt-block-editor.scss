@@ -7,13 +7,6 @@
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre {
     margin: 0;
   }
-  
-  .start-writing {
-    font-size: 0.75rem;
-    color: #666;
-    border: none;
-    outline: none;
-  }
 
   .btn-add {
     width: 100%;
@@ -34,73 +27,81 @@
     }
   }
 
-  .btn-add-bottom .btn-wrap {
-    &::after {
-      content: "";
-      z-index: 999;
-      background-image: linear-gradient(
-          to right,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        ),
-        linear-gradient(
-          to right,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        ),
-        linear-gradient(
-          to bottom,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        ),
-        linear-gradient(
-          to bottom,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        );
-      background-size: 5px 1px, 5px 1px, 1px 5px, 1.1px 5px;
-      background-position: left top, left bottom, left top, right top;
-      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      pointer-events: none;
-    }
-  }
-
   .btn-add-bottom {
-    .btn-wrap.btn-wrap--only-shortcuts {
-      .btn-add {
-        display: none;
-      }
+    width: 100%;
+    position: relative;
 
-      @media (min-width: 991.5px) {
-        width: auto;
-        display: inline-block;
+    .btn-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: row-reverse;
+      position: relative;
 
-        .shortcut-block-list {
-          &:after {
-            width: 0;
+      &.btn-wrap--only-shortcuts {
+        .btn-add {
+          display: none;
+        }
+
+        @media (min-width: 991.5px) {
+          width: auto;
+          display: inline-block;
+
+          .shortcut-block-list {
+            &:after {
+              width: 0;
+            }
+          }
+        }
+
+        @media (max-width: 991.5px) {
+          .shortcut-block-list {
+            &:after {
+              height: 0;
+            }
           }
         }
       }
 
-      @media (max-width: 991.5px) {
-        .shortcut-block-list {
-          &:after {
-            height: 0;
-          }
-        }
+      &::after {
+        content: "";
+        z-index: 999;
+        background-image: linear-gradient(
+            to right,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          ),
+          linear-gradient(
+            to right,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          ),
+          linear-gradient(
+            to bottom,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          ),
+          linear-gradient(
+            to bottom,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          );
+        background-size: 5px 1px, 5px 1px, 1px 5px, 1.1px 5px;
+        background-position: left top, left bottom, left top, right top;
+        background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        pointer-events: none;
       }
     }
   }
@@ -179,18 +180,6 @@
       transition: 0.1s;
     }
 
-    .btn-add-wrapper {
-      position: absolute;
-      z-index: 999;
-      width: 100%;
-      top: -20px;
-      text-align: center;
-    }
-
-    .btn-add-wrapper:hover .btn-add {
-      opacity: 1;
-    }
-
     .btn-remove-wrapper {
       position: absolute;
       right: -30px;
@@ -231,7 +220,7 @@
       visibility: visible;
     }
 
-    .btn-add-left {
+    .btn-add-wrapper {
       width: 100%;
       height: 40px;
       top: -20px;
@@ -276,10 +265,6 @@
         }
       }
     }
-  }
-
-  &[data-mt-block-editor-add-button="visible"] .block-wrapper .btn-add-wrapper {
-    z-index: initial;
   }
 
   .block {
@@ -333,16 +318,6 @@
   .block-wrapper .block {
     .btn-move-wrapper {
       left: -40px;
-    }
-  }
-
-  .btn-add-bottom {
-    width: 100%;
-    position: relative;
-    .btn-wrap {
-      width: 100%;
-      display: flex;
-      flex-direction: row-reverse;
     }
   }
 
@@ -803,7 +778,7 @@
 
       .btn-move-wrapper,
       .btn-remove-wrapper,
-      .btn-add-left {
+      .btn-add-wrapper {
         display: none;
       }
     }
