@@ -161,6 +161,7 @@ const AddButton: React.FC<AddButtonProps> = ({
               .map((t: typeof Block) => (
                 <li key={t.typeId}>
                   <a
+                    data-mt-be-type={t.typeId}
                     href="#"
                     onClick={async (ev) => {
                       ev.preventDefault();
@@ -208,6 +209,7 @@ const AddButton: React.FC<AddButtonProps> = ({
               .map((t: typeof Block) => (
                 <li key={t.typeId}>
                   <a
+                    data-mt-be-type={t.typeId}
                     href="#"
                     onClick={async (ev) => {
                       ev.preventDefault();
