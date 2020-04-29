@@ -64,31 +64,31 @@ const Toolbar: React.FC<ToolbarPropsInternal> = ({
     setCommandPanel(!showCommandPanel);
   }
 
-  const className = props.className || "block-toolbar--default";
+  const className = props.className || "mt-be-block-toolbar--default";
   return (
     <>
-      <div id={props.id} className={`block-toolbar ${className}`}>
+      <div id={props.id} className={`mt-be-block-toolbar ${className}`}>
         {props.children}
-        <div className="block-toolbar-default-items">
+        <div className="mt-be-block-toolbar-default-items">
           <button
             type="button"
-            className="btn-up"
+            className="mt-be-btn-up"
             onClick={() => swapBlocks(index, index - 1, true)}
           ></button>
           <button
             type="button"
-            className="btn-down"
+            className="mt-be-btn-down"
             onClick={() => swapBlocks(index, index + 1, true)}
           ></button>
           <button
             type="button"
-            className="btn-command"
+            className="mt-be-btn-command"
             onClick={toggleCommandPanel}
           ></button>
         </div>
       </div>
       <BlockCommandPanel in={showCommandPanel}>
-        <ul className="command-list">
+        <ul className="mt-be-command-list">
           <li>
             <AddButton index={index} label={t("Insert before")} />
           </li>
@@ -240,35 +240,39 @@ const BlockItem: React.FC<Props> = ({
           setFocusedId(b.id);
         }
       }}
-      className={`block-wrapper ${focus ? "focus" : ""}`}
+      className={`mt-be-block-wrapper ${focus ? "focus" : ""}`}
       style={style}
       ref={ref}
     >
       {showButton && (
         <>
-          <div className="btn-move-wrapper">
+          <div className="mt-be-btn-move-wrapper">
             <button
               type="button"
-              className="btn-up"
+              className="mt-be-btn-up"
               onClick={() => swapBlocks(index, index - 1, true)}
             ></button>
-            <button type="button" className="btn-move" ref={drag}></button>
             <button
               type="button"
-              className="btn-down"
+              className="mt-be-btn-move"
+              ref={drag}
+            ></button>
+            <button
+              type="button"
+              className="mt-be-btn-down"
               onClick={() => swapBlocks(index, index + 1, true)}
             ></button>
           </div>
-          <div className="btn-add-wrapper">
+          <div className="mt-be-btn-add-wrapper">
             <div style={{ position: "relative" }}>
               <AddButton index={i} />
             </div>
           </div>
         </>
       )}
-      <div className="block">
+      <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
-          <div className="content-label">{b.contentLabel()}</div>
+          <div className="mt-be-content-label">{b.contentLabel()}</div>
         )}
         {focus ||
         focusDescendant ||
@@ -300,7 +304,7 @@ const BlockItem: React.FC<Props> = ({
         )}
       </div>
       {showButton && (
-        <div className="btn-remove-wrapper">
+        <div className="mt-be-btn-remove-wrapper">
           <RemoveButton block={b} />
         </div>
       )}

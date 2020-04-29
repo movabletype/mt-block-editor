@@ -185,9 +185,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
               );
             })}
             {editor.opts.addButtons["bottom"] && (
-              <div className="btn-add-bottom">
+              <div className="mt-be-btn-add-bottom">
                 <AddButton
-                  className="block-list-wrapper--bottom"
+                  className="mt-be-block-list-wrapper--bottom"
                   index={blocks.length}
                   showShortcuts={true}
                   label={t("+ addBlock")}

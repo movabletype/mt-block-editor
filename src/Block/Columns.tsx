@@ -65,7 +65,7 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <>
       <BlockSetupCommon block={block} keys={["className"]} />
-      <div className="columns" style={{ display: "flex" }}>
+      <div className="mt-be-columns" style={{ display: "flex" }}>
         {block.blocks.map((c) => c.editor({ focus, canRemove }))}
       </div>
       {focus && (
@@ -148,7 +148,7 @@ class Columns extends Block implements HasBlocks {
   }
 
   public html(): string {
-    return `<div class="columns${
+    return `<div class="mt-be-columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${this.blocks
       .map((c) => c.htmlString())
@@ -162,7 +162,7 @@ class Columns extends Block implements HasBlocks {
     );
     return `<!-- mt-beb t="${(this.constructor as typeof Block).typeId}"${
       m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
-    } --><div class="mt-block-editor-columns${
+    } --><div class="mt-be-columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${serializedColumns.join(
       ""

@@ -125,7 +125,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         );
       })}
       {canRemove && (
-        <div className="btn-add-bottom">
+        <div className="mt-be-btn-add-bottom">
           <AddButton index={blocks.length} label={t("+ addBlock")} />
         </div>
       )}
@@ -136,7 +136,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     return React.createElement(
       block.rootBlock,
       {
-        className: "column",
+        className: "mt-be-column",
         style: {
           width: "100%",
         },
@@ -150,7 +150,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
 
 class Column extends Block implements HasBlocks {
   public static typeId = "core-column";
-  public static className = "mt-block-editor-column";
+  public static className = "mt-be-column";
   public static rootBlock: string | null = "div";
   public static selectable = false;
   public static get label(): string {
@@ -201,7 +201,7 @@ class Column extends Block implements HasBlocks {
         return React.createElement(
           this.rootBlock,
           {
-            className: "column",
+            className: "mt-be-column",
             style: {
               width: "100%",
             },

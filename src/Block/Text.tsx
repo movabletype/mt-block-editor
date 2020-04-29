@@ -144,7 +144,7 @@ const Editor: React.FC<EditorProps> = ({
                 const editorRect = editor.editorElement.getBoundingClientRect();
                 const rootRect = root.getBoundingClientRect();
                 const input = document.createElement("INPUT");
-                input.classList.add("input--hidden");
+                input.classList.add("mt-be-input--hidden");
                 input.style.top = rootRect.top - editorRect.top + "px";
                 editor.editorElement.appendChild(input);
                 input.focus();
@@ -308,7 +308,7 @@ const Editor: React.FC<EditorProps> = ({
         id={`${block.tinymceId()}toolbar`}
         rows={2}
         hasBorder={false}
-        className={`block-toolbar--tinymce ${
+        className={`mt-be-block-toolbar--tinymce ${
           html !== "" || !block.toolbarDefaultVisible ? "invisible" : ""
         }`}
       ></BlockToolbar>

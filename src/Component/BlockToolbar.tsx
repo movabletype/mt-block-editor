@@ -15,15 +15,15 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
 ) => {
   const { setToolbarProps } = useBlockContext();
 
-  let className = "block-toolbar--block";
+  let className = "mt-be-block-toolbar--block";
   if (props.className) {
     className += ` ${props.className}`;
   }
   if (props.rows && props.rows >= 2) {
-    className += ` block-toolbar--x${props.rows}`;
+    className += ` mt-be-block-toolbar--x${props.rows}`;
   }
   if (props.hasBorder === false) {
-    className += " block-toolbar--no-border";
+    className += " mt-be-block-toolbar--no-border";
   }
 
   setToolbarProps({

@@ -146,7 +146,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         id={`${block.tinymceId()}toolbar`}
         fullWidth={true}
         hasBorder={false}
-        className="block-toolbar--tinymce"
+        className="mt-be-block-toolbar--tinymce"
       ></BlockToolbar>
     </div>
   );

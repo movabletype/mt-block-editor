@@ -24,7 +24,7 @@ const BlockSetupCommonInternal: React.FC<EditorProps> = ({
       {keys.map((k) => (
         <BlockSetup block={block} key={k}>
           <label
-            className="label-name"
+            className="mt-be-label-name"
             style={{ display: "inline-block", width: "100%" }}
           >
             <div>{t(labelMap[k])}</div>

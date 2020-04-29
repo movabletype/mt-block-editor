@@ -82,7 +82,7 @@ function setCompiledHtmlFunc(html: string, opts: SetCompiledHtmlOptions): void {
 function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
   return new Promise<void>((resolve) => {
     function addEventListeners(elm: HTMLElement): void {
-      elm.classList.add("mt-block-editor-droppable-area");
+      elm.classList.add("mt-block-editor-mt-be-droppable-area");
 
       elm.addEventListener("click", (ev) => {
         if (ev.target instanceof HTMLInputElement) {
@@ -108,7 +108,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
         if (ev.dataTransfer) {
           ev.dataTransfer.dropEffect = "copy";
         }
-        elm.classList.add("mt-block-editor-droppable");
+        elm.classList.add("mt-block-editor-mt-be-droppable");
       });
 
       elm.addEventListener("dragenter", (ev) => {
@@ -117,7 +117,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
       });
 
       elm.addEventListener("dragleave", () => {
-        elm.classList.remove("mt-block-editor-droppable");
+        elm.classList.remove("mt-block-editor-mt-be-droppable");
       });
 
       elm.addEventListener("drop", (ev) => {
@@ -271,7 +271,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           })();
         </script>
         <style type="text/css">
-        .mt-block-editor-droppable:before {
+        .mt-block-editor-mt-be-droppable:before {
           display: block;
           position: absolute;
           z-index: 200;

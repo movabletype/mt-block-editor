@@ -15,9 +15,9 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({
   confirm,
 }: RemoveButtonProps) => {
   const { removeBlock } = useBlocksContext();
-  let className = "btn-remove";
+  let className = "mt-be-btn-remove";
   if (label) {
-    className += " btn-remove--label-only";
+    className += " mt-be-btn-remove--label-only";
   }
 
   return (

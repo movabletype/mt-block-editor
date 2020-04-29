@@ -20,7 +20,7 @@ const BlockToolbarButton: React.FC<BlockToolbarButtonProps> = ({
       type="button"
       title={label}
       aria-label={label}
-      className={`block-toolbar-button ${isActive ? "active" : ""}`}
+      className={`mt-be-block-toolbar-button ${isActive ? "active" : ""}`}
       onClick={onClick}
     >
       <img src={icon} />
