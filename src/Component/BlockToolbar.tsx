@@ -1,5 +1,9 @@
-import React, { ReactNode } from "react";
-import { useBlockContext } from "../Context";
+import React, { useState, ReactNode } from "react";
+import { t } from "../i18n";
+import { useBlocksContext, useBlockContext } from "../Context";
+import BlockCommandPanel from "./BlockCommandPanel";
+import AddButton from "./AddButton";
+import RemoveButton from "./RemoveButton";
 
 interface BlockToolbarProps {
   children?: ReactNode;
@@ -13,7 +17,15 @@ interface BlockToolbarProps {
 const BlockToolbar: React.FC<BlockToolbarProps> = (
   props: BlockToolbarProps
 ) => {
-  const { setToolbarProps } = useBlockContext();
+  const { swapBlocks } = useBlocksContext();
+  const [showCommandPanel, setCommandPanel] = useState(false);
+  function toggleCommandPanel(): void {
+    setCommandPanel(!showCommandPanel);
+  }
+
+  const blockContext = useBlockContext();
+  blockContext.rendered = true;
+  const { block, index } = blockContext;
 
   let className = "mt-be-block-toolbar--block";
   if (props.className) {
@@ -26,13 +38,47 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
     className += " mt-be-block-toolbar--no-border";
   }
 
-  setToolbarProps({
-    id: props.id || "",
-    className: className,
-    children: props.children,
-  });
-
-  return null;
+  return (
+    <>
+      <div id={props.id || ""} className={`mt-be-block-toolbar ${className}`}>
+        {props.children}
+        <div className="mt-be-block-toolbar-default-items">
+          <button
+            type="button"
+            className="mt-be-btn-up"
+            onClick={() => swapBlocks(index, index - 1, true)}
+          ></button>
+          <button
+            type="button"
+            className="mt-be-btn-down"
+            onClick={() => swapBlocks(index, index + 1, true)}
+          ></button>
+          <button
+            type="button"
+            className="mt-be-btn-command"
+            onClick={toggleCommandPanel}
+          ></button>
+        </div>
+      </div>
+      <BlockCommandPanel in={showCommandPanel}>
+        <ul className="mt-be-command-list">
+          <li>
+            <AddButton index={index} label={t("Insert before")} />
+          </li>
+          <li>
+            <AddButton index={index + 1} label={t("Insert after")} />
+          </li>
+          <li>
+            <RemoveButton
+              block={block}
+              confirm={true}
+              label={t("Remove block")}
+            />
+          </li>
+        </ul>
+      </BlockCommandPanel>
+    </>
+  );
 };
 
 export default BlockToolbar;

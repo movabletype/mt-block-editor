@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext } from "react";
 import Editor from "./Editor";
 import Block from "./Block";
 
@@ -41,13 +41,10 @@ export function useBlocksContext(): BlocksContextProps {
   return c;
 }
 
-export interface ToolbarProps {
-  id: string;
-  className: string;
-  children: ReactNode;
-}
 interface BlockContextProps {
-  setToolbarProps: (props: ToolbarProps) => void;
+  block: Block;
+  index: number;
+  rendered: boolean;
 }
 export const BlockContext = createContext<BlockContextProps | null>(null);
 export function useBlockContext(): BlockContextProps {
