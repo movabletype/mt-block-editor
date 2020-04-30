@@ -52,15 +52,15 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
   <div className={css.Oembed}>
     <BlockSetupCommon block={block} keys={["label", "helpText"]} />
     <BlockLabel block={block}>
-      <label className="label-name">
+      <label className="mt-be-label-name">
         <div>{t("URL")}</div>
         <input type="url" name="url" data-mt-block-editor-focus-default />
       </label>
-      <label className="label-name">
+      <label className="mt-be-label-name">
         <div>{t("Max Width (optional)")}</div>
         <input type="number" name="maxwidth" />
       </label>
-      <label className="label-name">
+      <label className="mt-be-label-name">
         <div>{t("Max Height (optional)")}</div>
         <input type="number" name="maxheight" />
       </label>

@@ -26,7 +26,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
   <div>
     <BlockSetupCommon block={block} />
     <BlockSetup block={block}>
-      <label className="label-name">
+      <label className="mt-be-label-name">
         <div>{t("Block Element")}</div>
         <select name="blockElement">
           <option value="">{t("None")}</option>
@@ -42,7 +42,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
       </label>
     </BlockSetup>
     <BlockSetup block={block}>
-      <label className="label-name">
+      <label className="mt-be-label-name">
         <div>{t("Options")}</div>
         <textarea name="options" style={{ width: "100%" }}></textarea>
       </label>
