@@ -1,5 +1,6 @@
 module.exports = {
   plugins: [
+    require("postcss-simple-vars"),
     require("postcss-mixins"),
     require("postcss-import"),
     require("postcss-flexbugs-fixes"),

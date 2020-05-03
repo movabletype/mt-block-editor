@@ -1,5 +1,8 @@
+$root-font-size: 16px;
+
 @define-mixin input {
-  font-size: 1rem;
+  font-size: $root-font-size;
+  font-weight: normal;
   padding: 6px;
   margin-top: 4px;
   &:focus {
@@ -281,7 +284,7 @@
     width: 100%;
     position: relative;
     padding: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: $root-font-size;
     transition: 0.1s;
     &:hover,
     &:focus,
@@ -293,15 +296,22 @@
       @mixin input;
     }
 
+    .mt-be-input--static {
+      @mixin input;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
     .mt-be-label-name {
       display: inline-block;
       width: 100%;
       margin-bottom: 20px;
-      font-size: 0.75rem;
+      font-size: calc($root-font-size * 0.75);
+      font-weight: normal;
       color: #666;
-      > input {
-        width: calc(100% - 15px) !important;
+      > input, > textarea {
         @mixin input;
+        width: calc(100% - 15px) !important;
       }
     }
 
@@ -310,7 +320,7 @@
       position: absolute;
       top: 4px;
       left: 4px;
-      font-size: 0.75rem;
+      font-size: calc($root-font-size * 0.75);
       color: #666;
       transition: 0.1s;
       opacity: 0;
@@ -377,7 +387,7 @@
           height: 100%;
           padding: 8px;
           text-decoration: none;
-          font-size: 0.5rem;
+          font-size: calc($root-font-size * 0.5);
           color: #333333;
           transition: 0.1s;
 
@@ -542,7 +552,7 @@
   }
 
   .mt-be-block-config-panel {
-    font-size: 0.75rem;
+    font-size: calc($root-font-size * 0.75);
     position: absolute;
     width: auto;
     height: auto;
@@ -584,7 +594,7 @@
   }
 
   .mt-be-block-command-panel {
-    font-size: 0.75rem;
+    font-size: calc($root-font-size * 0.75);
     position: absolute;
     width: auto;
     height: auto;
