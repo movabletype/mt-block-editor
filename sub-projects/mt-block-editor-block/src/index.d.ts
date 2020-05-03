@@ -43,8 +43,8 @@ export class EditorUtil {
   public static version: string;
   public static i18n: i18n;
   public static Component: Map;
-  public static hooks: Map;
-  public static icons: Map;
+  public static decorator: Map;
+  public static icon: Map;
   public static util: Map;
   public static React: Map;
   public static Context: Map;
