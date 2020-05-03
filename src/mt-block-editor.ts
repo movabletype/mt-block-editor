@@ -19,7 +19,7 @@ import BlockLabel from "./Component/BlockLabel";
 import EditorMode from "./Component/EditorMode";
 
 import * as Context from "./Context";
-import * as icons from "./icons";
+import * as icon from "./icon";
 import * as util from "./util";
 import * as decorator from "./decorator";
 
@@ -65,7 +65,7 @@ class EditorUtil {
   public static React = React;
   public static Block = Block;
   public static Context = Context;
-  public static icons = icons;
+  public static icon = icon;
   public static util = util;
 
   public static async apply(opts: EditorOptions): Promise<Editor> {
