@@ -2,7 +2,7 @@ import React from "react";
 import { t } from "../i18n";
 import Block from "../Block";
 import BlockSetup from "./BlockSetup";
-import { useEditorUtil } from "../hooks";
+import { blockProperty } from "../decorator";
 
 interface EditorProps {
   block: Block;
@@ -15,11 +15,8 @@ const labelMap: { [key: string]: string } = {
   className: "Class Name",
 };
 
-const BlockSetupCommonInternal: React.FC<EditorProps> = ({
-  block,
-  keys = ["label", "helpText", "className"],
-}: EditorProps) => {
-  return (
+const BlockSetupCommon: React.FC<EditorProps> = blockProperty(
+  ({ block, keys = ["label", "helpText", "className"] }: EditorProps) => (
     <>
       {keys.map((k) => (
         <BlockSetup block={block} key={k}>
@@ -33,10 +30,7 @@ const BlockSetupCommonInternal: React.FC<EditorProps> = ({
         </BlockSetup>
       ))}
     </>
-  );
-};
-
-const BlockSetupCommon: React.FC<EditorProps> = (props: EditorProps) =>
-  useEditorUtil(BlockSetupCommonInternal, props);
+  )
+);
 
 export default BlockSetupCommon;
