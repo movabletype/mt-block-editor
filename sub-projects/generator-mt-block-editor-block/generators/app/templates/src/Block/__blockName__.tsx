@@ -1,6 +1,6 @@
 import { t } from "../i18n";
 import React, { useState, useEffect } from "mt-block-editor-block/React";
-import { useEditorUtil } from "mt-block-editor-block/hooks";
+import { blockProperty } from "mt-block-editor-block/decorator";
 import {
   BlockIframePreview,
   BlockSetupCommon,
@@ -23,21 +23,20 @@ interface HtmlProps {
   block: <%= blockName %>;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
-  <div className={css.<%= blockName %>}>
-    <BlockSetupCommon block={block} />
-    <BlockLabel block={block}>
-      <input type="text" name="text" data-mt-block-editor-focus-default />
-    </BlockLabel>
-  </div>
+const Editor: React.FC<EditorProps> = blockProperty(
+  ({ block }: EditorProps) => (
+    <div className={css.<%= blockName %>}>
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        <input type="text" name="text" data-mt-block-editor-focus-default />
+      </BlockLabel>
+    </div>
+  )
 );
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => (
   <div>{block.text}</div>
 );
-
-const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
-  useEditorUtil(Editor, props);
 
 class <%= blockName %> extends Block {
   public static typeId = "<%= vendorId %>-<%= blockName.toLowerCase() %>";
@@ -61,7 +60,7 @@ class <%= blockName %> extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? <EditorUtil key={this.id} block={this} /> : this.html();
+    return focus ? <Editor key={this.id} block={this} /> : this.html();
   }
 
   public html(): JSX.Element {

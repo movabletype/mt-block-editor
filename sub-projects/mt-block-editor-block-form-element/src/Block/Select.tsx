@@ -1,6 +1,6 @@
 import { t } from "../i18n";
 import React from "mt-block-editor-block/React";
-import { useEditorUtil } from "mt-block-editor-block/hooks";
+import { blockProperty } from "mt-block-editor-block/decorator";
 import {
   BlockSetupCommon,
   BlockSetup,
@@ -22,37 +22,39 @@ interface HtmlProps {
   block: Select;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
-  <div>
-    <BlockSetupCommon block={block} />
-    <BlockSetup block={block}>
-      <label className="mt-be-label-name">
-        <div>{t("Block Element")}</div>
-        <select name="blockElement">
-          <option value="">{t("None")}</option>
-          <option value="p">P</option>
-          <option value="h1">H1</option>
-          <option value="h2">H2</option>
-          <option value="h3">H3</option>
-          <option value="h4">H4</option>
-          <option value="h5">H5</option>
-          <option value="h6">H6</option>
-          <option value="pre">PRE</option>
+const Editor: React.FC<EditorProps> = blockProperty(
+  ({ block }: EditorProps) => (
+    <div>
+      <BlockSetupCommon block={block} />
+      <BlockSetup block={block}>
+        <label className="mt-be-label-name">
+          <div>{t("Block Element")}</div>
+          <select name="blockElement">
+            <option value="">{t("None")}</option>
+            <option value="p">P</option>
+            <option value="h1">H1</option>
+            <option value="h2">H2</option>
+            <option value="h3">H3</option>
+            <option value="h4">H4</option>
+            <option value="h5">H5</option>
+            <option value="h6">H6</option>
+            <option value="pre">PRE</option>
+          </select>
+        </label>
+      </BlockSetup>
+      <BlockSetup block={block}>
+        <label className="mt-be-label-name">
+          <div>{t("Options")}</div>
+          <textarea name="options" style={{ width: "100%" }}></textarea>
+        </label>
+      </BlockSetup>
+      <BlockLabel block={block}>
+        <select name="text" data-mt-block-editor-focus-default>
+          {block.optionElements()}
         </select>
-      </label>
-    </BlockSetup>
-    <BlockSetup block={block}>
-      <label className="mt-be-label-name">
-        <div>{t("Options")}</div>
-        <textarea name="options" style={{ width: "100%" }}></textarea>
-      </label>
-    </BlockSetup>
-    <BlockLabel block={block}>
-      <select name="text" data-mt-block-editor-focus-default>
-        {block.optionElements()}
-      </select>
-    </BlockLabel>
-  </div>
+      </BlockLabel>
+    </div>
+  )
 );
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
@@ -62,9 +64,6 @@ const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
     block.text || block.defaultText()
   );
 };
-
-const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
-  useEditorUtil(Editor, props);
 
 class Select extends Block {
   public static typeId = "sixapart-select";
@@ -120,7 +119,7 @@ class Select extends Block {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? <EditorUtil key={this.id} block={this} /> : this.html();
+    return focus ? <Editor key={this.id} block={this} /> : this.html();
   }
 
   public html(): JSX.Element {
