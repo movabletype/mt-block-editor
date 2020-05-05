@@ -1,0 +1,9 @@
+.mt-block-editor-text-muted {
+  color: gray;
+}
+
+iframe {
+  border: none !important;
+  display: block;
+  margin: auto;
+}

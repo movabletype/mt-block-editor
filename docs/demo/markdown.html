@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"
+      integrity="sha256-OFRAJNoaD8L3Br5lglV7VyLRf0itmoBzWUoM+Sji4/8="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="/tinymce/js/tinymce/tinymce.min.js"
+      referrerpolicy="origin"
+      defer
+    ></script>
+    <script type="module" src="/demo/apply.js" defer></script>
+    <script type="application/json" id="mt-block-editor-options">
+      {
+        "shortcutBlockTypes": ["custom-markdown"],
+        "panelBlockTypes": [
+          "core-text",
+          "core-image",
+          "core-file",
+          "core-html",
+          "sixapart-oembed",
+          "core-horizontalrule",
+          "core-table",
+          "core-columns",
+          "custom-markdown"
+        ],
+        "stylesheets": ["./editor-content-markdown.css"]
+      }
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha256-aAr2Zpq8MZ+YA/D6JtRD3xtrwpEz2IqOS+pWD/7XKIw="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"
+      integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o="
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/demo/index.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <!--
+        <a class="navbar-brand" href="/demo/">Movable Type Block Editor</a>
+      -->
+      <div class="control-buttons">
+        <button type="button" id="undo" disabled>
+          <i class="fas fa-undo" aria-hidden="true"></i>
+        </button>
+        <button type="button" id="redo" disabled>
+          <i class="fas fa-redo" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <!--
+          <li class="nav-item active">
+            <a class="nav-link" href="/demo/"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          -->
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              カスタマイズ
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-right"
+              aria-labelledby="navbarDropdown"
+            >
+              <a class="dropdown-item text-right" href="/demo/">標準</a>
+              <a class="dropdown-item text-right" href="/demo/custom-block.html"
+                >カスタムブロック</a
+              >
+              <a class="dropdown-item text-right" href="/demo/strict.html"
+                >定形入力</a
+              >
+              <a
+                class="dropdown-item text-right active"
+                href="/demo/markdown.html"
+                >Markdownエディタ</a
+              >
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="mt-5">
+          <textarea id="body" class="d-none">
+&lt;!-- mt-beb t=&quot;custom-markdown&quot; h=&#039;&amp;lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&amp;#x27;{&quot;blockElement&quot;:&quot;p&quot;,&quot;formatter&quot;:&quot;none&quot;,&quot;text&quot;:&quot;# Markdownエディタ\n\nMarkdownの編集に特化した設定です。\n\n## 特徴\n\n* GitHub Flavored Markdownを利用できます。\n* Tag + Space で後ろにブロックを追加していくことができます。\n&quot;,&quot;className&quot;:&quot;source&quot;}&amp;#x27; --&amp;gt;&amp;lt;p class=&quot;source&quot;&amp;gt;# Markdownエディタ&amp;#x0A;&amp;#x0A;Markdownの編集に特化した設定です。&amp;#x0A;&amp;#x0A;## 特徴&amp;#x0A;&amp;#x0A;* GitHub Flavored Markdownを利用できます。&amp;#x0A;* Tag + Space で後ろにブロックを追加していくことができます。&amp;#x0A;&amp;lt;/p&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&#039; --&gt;&lt;h1 id=&quot;markdownエディタ&quot;&gt;Markdownエディタ&lt;/h1&gt;
+&lt;p&gt;Markdownの編集に特化した設定です。&lt;/p&gt;
+&lt;h2 id=&quot;特徴&quot;&gt;特徴&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;GitHub Flavored Markdownを利用できます。&lt;/li&gt;
+&lt;li&gt;Tag + Space で後ろにブロックを追加していくことができます。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;core-html&quot; --&gt;&lt;script src=&quot;https://gist.github.com/usualoma/856474447bebd0b59a09dd341b7199f3.js&quot;&gt;&lt;/script&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-markdown&quot; h=&#039;&amp;lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&amp;#x27;{&quot;blockElement&quot;:&quot;p&quot;,&quot;formatter&quot;:&quot;none&quot;,&quot;text&quot;:&quot;ブロックとして追加できるので、このようにMarkdownで処理されたくないHTMLを挿入することもできます。&quot;,&quot;className&quot;:&quot;source&quot;}&amp;#x27; --&amp;gt;&amp;lt;p class=&quot;source&quot;&amp;gt;ブロックとして追加できるので、このようにMarkdownで処理されたくないHTMLを挿入することもできます。&amp;lt;/p&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&#039; --&gt;&lt;p&gt;ブロックとして追加できるので、このようにMarkdownで処理されたくないHTMLを挿入することもできます。&lt;/p&gt;
+&lt;!-- /mt-beb --&gt;
+          </textarea
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

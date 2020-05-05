@@ -1,0 +1,14 @@
+.control-buttons button {
+  border: 1px solid;
+  border-radius: 2px;
+  margin-left: 5px;
+}
+.control-buttons button:first-child {
+  margin-left: 0;
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 770px;
+  }
+}
