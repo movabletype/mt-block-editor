@@ -32,6 +32,12 @@ export function apply(opts) {
         ].join(",");
         settings.valid_children = "+a[div]";
       });
+
+      ed.on("change", ({editor}) => {
+        let count = textarea.dataset.mtBlockEditorChangeCount || 0;
+        count++;
+        textarea.dataset.mtBlockEditorChangeCount = count;
+      });
     });
   });
 }

@@ -18,14 +18,27 @@ context("Undo", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      serializedTextarea(textareaId).should(
-        "have.value",
-        "<!-- mt-beb --><!-- /mt-beb -->"
-      );
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><!-- /mt-beb -->")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("1")
+        );
 
       type("{ctrl}z");
 
-      serializedTextarea(textareaId).should("have.value", "");
+      serializedTextarea(textareaId)
+        .should("have.value", "")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("2")
+        );
+
+      type("{ctrl}y");
+
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><!-- /mt-beb -->")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("3")
+        );
     });
 
     it("Remove", () => {
@@ -43,14 +56,27 @@ context("Undo", () => {
 
       cy.get(".mt-be-btn-remove").click();
 
-      serializedTextarea(textareaId).should("have.value", "");
+      serializedTextarea(textareaId)
+        .should("have.value", "")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("4")
+        );
 
       type("{ctrl}z");
 
-      serializedTextarea(textareaId).should(
-        "have.value",
-        "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
-      );
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("5")
+        );
+
+      type("{ctrl}y");
+
+      serializedTextarea(textareaId)
+        .should("have.value", "")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("6")
+        );
     });
 
     it("Swap", () => {
@@ -257,7 +283,7 @@ context("Undo", () => {
       type("2");
 
       cy.get(`.mt-be-block`).first().click();
-      cy.get(`.mt-be-block-toolbar-button`).click({force: true});
+      cy.get(`.mt-be-block-toolbar-button`).click({ force: true });
       cy.get(`input[value="4"]`).click();
 
       cy.get(`.mt-be-block .mt-be-column:nth-child(3) .mt-be-btn-add-bottom`)

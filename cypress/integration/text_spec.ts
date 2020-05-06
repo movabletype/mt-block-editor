@@ -17,7 +17,7 @@ context("Text", () => {
 
     cy.wait(100);
     type("Hello!\n");
-    cy.wait(100)
+    cy.wait(100);
     type("Block Editor!");
 
     serializedTextarea(textareaId).should(
@@ -31,19 +31,21 @@ context("Text", () => {
 
     cy.wait(100);
     type("a\n");
-    cy.wait(100)
+    cy.wait(100);
     type("b{leftarrow}{backspace}");
 
-    serializedTextarea(textareaId).should(
-      "have.value",
-      "<!-- mt-beb --><p>ab</p><!-- /mt-beb -->"
-    );
+    serializedTextarea(textareaId)
+      .should("have.value", "<!-- mt-beb --><p>ab</p><!-- /mt-beb -->")
+      .should(($e) =>
+        expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("5")
+      );
 
     type("{backspace}");
 
-    serializedTextarea(textareaId).should(
-      "have.value",
-      "<!-- mt-beb --><p>b</p><!-- /mt-beb -->"
-    );
+    serializedTextarea(textareaId)
+      .should("have.value", "<!-- mt-beb --><p>b</p><!-- /mt-beb -->")
+      .should(($e) =>
+        expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("6")
+      );
   });
 });
