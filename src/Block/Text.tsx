@@ -28,8 +28,8 @@ interface EditorProps extends EditorOptions {
   block: Text;
 }
 
-const CARET_CLASS = "mt-block-editor-caret";
-const CARET = `<span class="${CARET_CLASS}"></span>`;
+const CARET_ATTR = "data-mt-block-editor-caret";
+const CARET = `<br ${CARET_ATTR}="1">`;
 
 const Editor: React.FC<EditorProps> = ({
   block,
@@ -66,7 +66,7 @@ const Editor: React.FC<EditorProps> = ({
           ed.focus(false);
           if (ed.selection) {
             const body = ed.getBody();
-            const caret = body.querySelector(`.${CARET_CLASS}`);
+            const caret = body.querySelector(`[${CARET_ATTR}="1"]`);
             if (caret) {
               ed.selection.select(caret, true);
               ed.dom.remove(caret);
@@ -157,8 +157,8 @@ const Editor: React.FC<EditorProps> = ({
                 e.remove()
               );
               if (c.childNodes.length !== 0 && i === children.length - 1) {
-                const caret = document.createElement("SPAN");
-                caret.classList.add(CARET_CLASS);
+                const caret = document.createElement("BR");
+                caret.dataset[CARET_ATTR] = "1";
                 c.insertBefore(caret, c.firstChild);
               }
               const text = c.childNodes.length === 0 ? "" : c.outerHTML;
