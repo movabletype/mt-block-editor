@@ -12,7 +12,7 @@ import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
-import { undoHandlers } from "./Text/undo";
+import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
 
@@ -54,23 +54,23 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         };
 
         let last = block.text;
-        ed.on("MTBlockEditorUndo", (ev) => {
+        ed.on("MTBlockEditorEdit", (ev) => {
           ed.dom.setHTML(ed.getBody(), ev.html);
           last = ev.html;
         });
 
-        const addUndo = (): void => {
+        const addEdit = (): void => {
           const cur = ed.getContent();
           if (last === cur) {
             return;
           }
 
-          editor.undoManager.add({
+          editor.editManager.add({
             block,
             data: {
               last,
             },
-            handlers: undoHandlers,
+            handlers: editHandlers,
           });
 
           last = cur;
@@ -78,7 +78,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
         ed.on("NodeChange Change", () => {
           if (root.childNodes.length <= 1) {
-            addUndo();
+            addEdit();
             return;
           }
 
@@ -96,7 +96,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             .filter((c) => c) as HTMLElement[];
 
           if (children.length === 1) {
-            addUndo();
+            addEdit();
             return;
           }
 
@@ -106,16 +106,16 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             ed.dom.remove(c);
           });
 
-          editor.undoManager.beginGrouping();
+          editor.editManager.beginGrouping();
 
-          addUndo();
+          addEdit();
 
           children.forEach((c) => {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             addBlock(new Table({ text: c.outerHTML }), block);
           });
 
-          editor.undoManager.endGrouping();
+          editor.editManager.endGrouping();
         });
       },
     };

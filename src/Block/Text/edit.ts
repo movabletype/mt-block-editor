@@ -1,10 +1,10 @@
 import { EditorManager } from "tinymce";
-import { UndoHistoryHandlers } from "../../UndoManager";
+import { EditHistoryHandlers } from "../../EditManager";
 import Text from "../Text";
 
 declare const tinymce: EditorManager;
 
-export const undoHandlers: UndoHistoryHandlers = {
+export const editHandlers: EditHistoryHandlers = {
   id: Symbol("edit"),
   merge(a, b): undefined {
     a.data.cur = b.data.last;
@@ -17,7 +17,7 @@ export const undoHandlers: UndoHistoryHandlers = {
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
       data.cur = data.cur || ed.getContent();
-      ed.fire("MTBlockEditorUndo", { html: data.last });
+      ed.fire("MTBlockEditorEdit", { html: data.last });
     } else {
       data.cur = data.cur || block.text;
       block.text = data.last;
@@ -30,7 +30,7 @@ export const undoHandlers: UndoHistoryHandlers = {
 
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
-      ed.fire("MTBlockEditorUndo", { html: data.cur });
+      ed.fire("MTBlockEditorEdit", { html: data.cur });
     } else {
       block.text = data.cur;
       setFocusedId(block.id);

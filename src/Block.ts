@@ -2,7 +2,7 @@ import { RefObject } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
-import { UndoHistory } from "./UndoManager";
+import { EditHistory } from "./EditManager";
 import { escapeSingleQuoteAttribute } from "./util/dom";
 import icon from "./img/icon/default-block.svg";
 import { Size, defaultSize } from "./Component/BlockIframePreview/size";
@@ -97,7 +97,7 @@ class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public merge(block: Block): UndoHistory {
+  public merge(block: Block): EditHistory {
     throw "Should be implemented for each concrete class";
   }
 

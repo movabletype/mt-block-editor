@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
-import { UndoHistoryHandlers } from "../UndoManager";
+import { EditHistoryHandlers } from "../EditManager";
 import { Size } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
@@ -17,10 +17,10 @@ interface EditorProps {
 }
 
 interface SetCompiledHtmlOptions {
-  addUndoHistory: boolean;
+  addEditHistory: boolean;
 }
 
-const undoHandlers: UndoHistoryHandlers = {
+const editHandlers: EditHistoryHandlers = {
   id: Symbol("edit"),
   merge(a, b) {
     return a.data.last === b.data.last ? a : undefined;
@@ -72,7 +72,7 @@ function setCompiledHtmlFunc(html: string, opts: SetCompiledHtmlOptions): void {
       blockId: document.body.dataset.blockId,
       html,
       arguments: {
-        addUndoHistory: opts && opts.addUndoHistory,
+        addEditHistory: opts && opts.addEditHistory,
       },
     },
     "*"
@@ -219,14 +219,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     const lastValue = block.compiledHtml;
     block.compiledHtml = res;
 
-    if (opts && opts.addUndoHistory) {
-      editor.undoManager.add({
+    if (opts && opts.addEditHistory) {
+      editor.editManager.add({
         block,
         data: {
           last: lastValue,
           cur: res,
         },
-        handlers: undoHandlers,
+        handlers: editHandlers,
       });
     }
 
@@ -355,8 +355,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           break;
         case "MTBlockEditorSetCompiledHtml":
           setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"), {
-            addUndoHistory:
-              ev.data.arguments && ev.data.arguments.addUndoHistory,
+            addEditHistory:
+              ev.data.arguments && ev.data.arguments.addEditHistory,
           });
           break;
       }

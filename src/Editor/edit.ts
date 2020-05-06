@@ -1,6 +1,6 @@
-import { UndoHistoryHandlers } from "../UndoManager";
+import { EditHistoryHandlers } from "../EditManager";
 
-export const add: UndoHistoryHandlers = {
+export const add: EditHistoryHandlers = {
   id: Symbol("add"),
   undo(hist, { editor, setFocusedId }) {
     const parent = hist.data.parent || editor;
@@ -22,7 +22,7 @@ export const add: UndoHistoryHandlers = {
   },
 };
 
-export const remove: UndoHistoryHandlers = {
+export const remove: EditHistoryHandlers = {
   id: Symbol("remove"),
   undo(hist, { editor, setFocusedId }) {
     editor.addBlock(hist.data.parent || editor, hist.block, hist.data.index);
@@ -38,7 +38,7 @@ export const remove: UndoHistoryHandlers = {
   },
 };
 
-export const swap: UndoHistoryHandlers = {
+export const swap: EditHistoryHandlers = {
   id: Symbol("swap"),
   undo(hist, { editor }) {
     editor.swapBlocks(hist.data.parent || editor, hist.data.a, hist.data.b);

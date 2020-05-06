@@ -4,29 +4,29 @@ import { EditorContextProps } from "./Context";
 const DEFAULT_LIMIT = 100;
 const NO_GROUP = undefined;
 
-export interface UndoHistoryHandlers {
+export interface EditHistoryHandlers {
   id: symbol;
-  merge?: (a: UndoHistory, b: UndoHistory) => UndoHistory | undefined | null;
-  undo: (history: UndoHistory, props: EditorContextProps) => void;
-  redo: (history: UndoHistory, props: EditorContextProps) => void;
+  merge?: (a: EditHistory, b: EditHistory) => EditHistory | undefined | null;
+  undo: (history: EditHistory, props: EditorContextProps) => void;
+  redo: (history: EditHistory, props: EditorContextProps) => void;
 }
 
-export interface UndoHistory {
+export interface EditHistory {
   block: Block;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   group?: number | undefined;
-  handlers: UndoHistoryHandlers;
+  handlers: EditHistoryHandlers;
 }
 
-class UndoManager {
+class EditManager {
   private limit = DEFAULT_LIMIT;
   private index = 0;
   private ignore = false;
-  private histories: UndoHistory[] = [];
+  private histories: EditHistory[] = [];
   private group: number | undefined = NO_GROUP;
 
-  public constructor(init?: Partial<UndoManager>) {
+  public constructor(init?: Partial<EditManager>) {
     if (init) {
       Object.assign(this, init);
     }
@@ -40,7 +40,7 @@ class UndoManager {
     return this.index !== 0;
   }
 
-  public add(history: UndoHistory): void {
+  public add(history: EditHistory): void {
     if (this.ignore) {
       return;
     }
@@ -123,4 +123,4 @@ class UndoManager {
   }
 }
 
-export default UndoManager;
+export default EditManager;

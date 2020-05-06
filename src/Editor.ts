@@ -8,12 +8,12 @@ import { getElementById, preParseContent, parseContent } from "./util";
 import Block, { HasBlocks } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
-import UndoManager from "./UndoManager";
+import EditManager from "./EditManager";
 import {
-  add as undoHandlersAdd,
-  remove as undoHandlersRemove,
-  swap as undoHandlersSwap,
-} from "./Editor/undo";
+  add as editHandlersAdd,
+  remove as editHandlersRemove,
+  swap as editHandlersSwap,
+} from "./Editor/edit";
 
 import "./import-default-blocks";
 
@@ -39,7 +39,7 @@ export interface EditorOptions {
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   addButtons: Map;
-  undoManager?: Partial<UndoManager>;
+  editManager?: Partial<EditManager>;
   block: Map;
   i18n: InitOptionsI18n;
 }
@@ -48,7 +48,7 @@ class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
-  public undoManager: UndoManager;
+  public editManager: EditManager;
   public blocks: Block[] = [];
   public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
@@ -65,7 +65,7 @@ class Editor extends EventEmitter implements HasBlocks {
     opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
-    this.undoManager = new UndoManager(opts.undoManager);
+    this.editManager = new EditManager(opts.editManager);
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
@@ -127,13 +127,13 @@ class Editor extends EventEmitter implements HasBlocks {
     // XXX: Skip render by default
     // this.render();
 
-    this.undoManager.add({
+    this.editManager.add({
       block: block,
       data: {
         parent: parent instanceof Editor ? null : parent,
         index,
       },
-      handlers: undoHandlersAdd,
+      handlers: editHandlersAdd,
     });
 
     this.emit("onChangeBlocks", {
@@ -157,12 +157,12 @@ class Editor extends EventEmitter implements HasBlocks {
       return false;
     }
 
-    this.undoManager.beginGrouping();
+    this.editManager.beginGrouping();
 
-    this.undoManager.add(before.merge(block));
+    this.editManager.add(before.merge(block));
     this.removeBlock(parent, block);
 
-    this.undoManager.endGrouping();
+    this.editManager.endGrouping();
 
     return true;
   }
@@ -184,13 +184,13 @@ class Editor extends EventEmitter implements HasBlocks {
     blocks.splice(index, 1);
     this.render();
 
-    this.undoManager.add({
+    this.editManager.add({
       block: block,
       data: {
         parent: parent instanceof Editor ? null : parent,
         index,
       },
-      handlers: undoHandlersRemove,
+      handlers: editHandlersRemove,
     });
 
     this.emit("onChangeBlocks", {
@@ -205,14 +205,14 @@ class Editor extends EventEmitter implements HasBlocks {
     [blocks[a], blocks[b]] = [blocks[b], blocks[a]];
     this.render();
 
-    this.undoManager.add({
+    this.editManager.add({
       block: blocks[a],
       data: {
         parent: parent instanceof Editor ? null : parent,
         a,
         b,
       },
-      handlers: undoHandlersSwap,
+      handlers: editHandlersSwap,
     });
 
     this.emit("onChangeBlocks", {

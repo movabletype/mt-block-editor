@@ -44,7 +44,7 @@ const Editor: React.FC<EditorProps> = ({
     const cols = parseInt(layout);
     const len = block.blocks.length;
 
-    editor.undoManager.beginGrouping();
+    editor.editManager.beginGrouping();
 
     if (len < cols) {
       for (let i = len; i < cols; i++) {
@@ -56,7 +56,7 @@ const Editor: React.FC<EditorProps> = ({
       }
     }
 
-    editor.undoManager.endGrouping();
+    editor.editManager.endGrouping();
 
     setConfigPanel(false);
   }

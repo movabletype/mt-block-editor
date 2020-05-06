@@ -1,6 +1,6 @@
 import Editor from "../src/Editor";
 import Text from "../src/Block/Text";
-import UndoManager from "../src/UndoManager";
+import EditManager from "../src/EditManager";
 
 const editorContextProps = {
   editor: {} as Editor,
@@ -9,13 +9,13 @@ const editorContextProps = {
 };
 
 test("constructor", () => {
-  const manager = new UndoManager();
-  expect(manager).toBeInstanceOf(UndoManager);
+  const manager = new EditManager();
+  expect(manager).toBeInstanceOf(EditManager);
 });
 
 describe("add/canUndo/canRedo", () => {
   describe("simple case", () => {
-    const manager = new UndoManager();
+    const manager = new EditManager();
 
     let count = 0;
     const history = {
@@ -62,7 +62,7 @@ describe("add/canUndo/canRedo", () => {
   });
 
   describe("merge", () => {
-    const manager = new UndoManager();
+    const manager = new EditManager();
 
     let count = 0;
     const history = {
@@ -96,7 +96,7 @@ describe("add/canUndo/canRedo", () => {
   });
 
   describe("dedup (by merge)", () => {
-    const manager = new UndoManager();
+    const manager = new EditManager();
 
     let count = 0;
     const history = {
@@ -132,7 +132,7 @@ describe("add/canUndo/canRedo", () => {
 
   describe("limit option", () => {
     test.each([50, 100])("limit: %i", (limit) => {
-      const manager = new UndoManager({ limit });
+      const manager = new EditManager({ limit });
 
       let count = 0;
       const history = {
@@ -162,7 +162,7 @@ describe("add/canUndo/canRedo", () => {
 
 describe("undo/redo", () => {
   test("simple case", () => {
-    const manager = new UndoManager();
+    const manager = new EditManager();
 
     let count = 0;
     const history = {
@@ -197,7 +197,7 @@ describe("undo/redo", () => {
   });
 
   test("add method is ignored while undo/redo", () => {
-    const manager = new UndoManager();
+    const manager = new EditManager();
 
     let count = 0;
     const errorHistory = {
@@ -248,7 +248,7 @@ describe("undo/redo", () => {
 });
 
 test("generateGroup", () => {
-  const manager = new UndoManager();
+  const manager = new EditManager();
   expect(typeof manager.generateGroup()).toBe("number");
 });
 
@@ -272,7 +272,7 @@ describe("group", () => {
   };
 
   beforeEach(() => {
-    manager = new UndoManager();
+    manager = new EditManager();
     group = manager.generateGroup();
     count = 0;
   });

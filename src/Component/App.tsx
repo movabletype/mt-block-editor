@@ -131,7 +131,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
     if (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
       ev.preventDefault();
-      editor.undoManager.undo({
+      editor.editManager.undo({
         editor,
         getFocusedId: () => focusedId,
         setFocusedId,
@@ -141,7 +141,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       (ev.key === "y" && (ev.ctrlKey || ev.metaKey))
     ) {
       ev.preventDefault();
-      editor.undoManager.redo({
+      editor.editManager.redo({
         editor,
         getFocusedId: () => focusedId,
         setFocusedId,

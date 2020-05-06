@@ -19,8 +19,8 @@ import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
 
-import { UndoHistory } from "../UndoManager";
-import { undoHandlers } from "./Text/undo";
+import { EditHistory } from "../EditManager";
+import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
 
@@ -88,23 +88,23 @@ const Editor: React.FC<EditorProps> = ({
         };
 
         let last = block.text.replace(CARET, "");
-        ed.on("MTBlockEditorUndo", (ev) => {
+        ed.on("MTBlockEditorEdit", (ev) => {
           ed.dom.setHTML(ed.getBody(), ev.html);
           last = ev.html;
         });
 
-        const addUndo = (): void => {
+        const addEdit = (): void => {
           const cur = editorIsBlank ? "" : ed.getContent();
           if (last === cur) {
             return;
           }
 
-          editor.undoManager.add({
+          editor.editManager.add({
             block,
             data: {
               last,
             },
-            handlers: undoHandlers,
+            handlers: editHandlers,
           });
 
           last = cur;
@@ -118,14 +118,14 @@ const Editor: React.FC<EditorProps> = ({
             if (root.childNodes.length === 1) {
               editorIsBlank = root.childNodes[0].textContent === "";
             }
-            addUndo();
+            addEdit();
             return;
           }
 
           const children = [...root.childNodes] as HTMLElement[];
           const firstChild = children.shift();
           if (!firstChild) {
-            addUndo();
+            addEdit();
             return;
           }
 
@@ -134,9 +134,9 @@ const Editor: React.FC<EditorProps> = ({
             ed.dom.remove(c);
           });
 
-          editor.undoManager.beginGrouping();
+          editor.editManager.beginGrouping();
 
-          addUndo();
+          addEdit();
 
           if (canRemove) {
             children.forEach((c, i) => {
@@ -170,7 +170,7 @@ const Editor: React.FC<EditorProps> = ({
             setFocusedId(null);
           }
 
-          editor.undoManager.endGrouping();
+          editor.editManager.endGrouping();
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
@@ -381,13 +381,13 @@ class Text extends Block {
     return block instanceof (this.constructor as typeof Block);
   }
 
-  public merge(block: Block): UndoHistory {
+  public merge(block: Block): EditHistory {
     const history = {
       block: this,
       data: {
         last: this.html(),
       },
-      handlers: undoHandlers,
+      handlers: editHandlers,
     };
 
     this.text = this.html().replace(/(<\/[^>]*>)$/, (all, closeTag) => {

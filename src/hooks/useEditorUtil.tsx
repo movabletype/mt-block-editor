@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Block from "../Block";
 import { useEditorContext } from "../Context";
-import { UndoHistoryHandlers } from "../UndoManager";
+import { EditHistoryHandlers } from "../EditManager";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveMap(children: any, fn: (child: JSX.Element) => void): any {
@@ -23,7 +23,7 @@ function recursiveMap(children: any, fn: (child: JSX.Element) => void): any {
   });
 }
 
-const undoHandlers: UndoHistoryHandlers = {
+const editHandlers: EditHistoryHandlers = {
   id: Symbol("edit"),
   merge(a, b) {
     a.data.cur = b.data.cur;
@@ -58,7 +58,7 @@ export default function useEditorUtil(
 ): JSX.Element {
   const block: MapObject = props.block as MapObject;
   const [, setBlock] = useState(Object.assign({}, block));
-  const [undoGroups, setUndoGroups] = useState<MapObject>({});
+  const [editGroups, setEditGroups] = useState<MapObject>({});
   const children = editor(props);
   const editorContext = useEditorContext();
   const setFocusedId = editorContext.setFocusedId;
@@ -123,18 +123,18 @@ export default function useEditorUtil(
           const value = (target as HTMLInputElement).value;
           block[n] = value;
 
-          if (!undoGroups[n]) {
-            undoGroups[n] = blockEditor.undoManager.generateGroup();
-            setUndoGroups(undoGroups);
+          if (!editGroups[n]) {
+            editGroups[n] = blockEditor.editManager.generateGroup();
+            setEditGroups(editGroups);
           }
-          blockEditor.undoManager.add({
-            group: undoGroups[n],
+          blockEditor.editManager.add({
+            group: editGroups[n],
             block: props.block,
             data: {
               name: n,
               last: lastValue,
             },
-            handlers: undoHandlers,
+            handlers: editHandlers,
           });
 
           (target as HTMLTextAreaElement).rows = Math.max(
