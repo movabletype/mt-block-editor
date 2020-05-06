@@ -65,7 +65,9 @@ class Editor extends EventEmitter implements HasBlocks {
     opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
-    this.editManager = new EditManager(opts.editManager);
+    this.editManager = new EditManager(
+      Object.assign({ editor: this }, opts.editManager || {})
+    );
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
@@ -238,6 +240,7 @@ class Editor extends EventEmitter implements HasBlocks {
     this.emit("beforeUnload", {
       editor: this,
     });
+    this.editManager.unload();
     this.editorElement.remove();
     this.inputElement.style.display = "";
     this.emit("unload", {

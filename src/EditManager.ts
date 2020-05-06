@@ -1,3 +1,4 @@
+import Editor from "./Editor";
 import Block from "./Block";
 import { EditorContextProps } from "./Context";
 
@@ -20,6 +21,7 @@ export interface EditHistory {
 }
 
 class EditManager {
+  private editor: Editor | null = null;
   private limit = DEFAULT_LIMIT;
   private index = 0;
   private ignore = false;
@@ -30,6 +32,11 @@ class EditManager {
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public unload(): void {
+    this.editor = null;
+    this.histories = [];
   }
 
   public canUndo(): boolean {
