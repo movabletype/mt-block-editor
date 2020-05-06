@@ -65,7 +65,7 @@ function excelToTable(file) {
       });
       html += "</tbody></table>";
 
-      MTBlockEditorSetCompiledHtml(html);
+      MTBlockEditorSetCompiledHtml(html, { addEditHistory: true });
     });
   };
 
