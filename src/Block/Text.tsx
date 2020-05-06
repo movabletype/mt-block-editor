@@ -245,7 +245,7 @@ const Editor: React.FC<EditorProps> = ({
       // inline: true,
     };
 
-    editor.emit("onBuildTinyMCESettings", {
+    editor.emit("buildTinyMCESettings", {
       editor,
       block,
       settings,

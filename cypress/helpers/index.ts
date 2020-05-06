@@ -18,7 +18,7 @@ export function apply(opts) {
       },
       shortcutBlockTypes: ["core-text", "core-image", "core-file"],
     }).then((ed) => {
-      ed.on("onBuildTinyMCESettings", ({ block, settings }) => {
+      ed.on("buildTinyMCESettings", ({ block, settings }) => {
         settings.plugins += " mt_security";
         settings.extended_valid_elements = [
           // we embed 'a[onclick]' by inserting image with popup

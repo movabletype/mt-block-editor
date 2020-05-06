@@ -120,7 +120,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       },
     };
 
-    editor.emit("onBuildTinyMCESettings", {
+    editor.emit("buildTinyMCESettings", {
       editor,
       block,
       settings,

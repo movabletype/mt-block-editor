@@ -230,7 +230,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       });
     }
 
-    editor.emit("onSetCompiledHtmlIframePreview", {
+    editor.emit("setCompiledHtmlIframePreview", {
       editor,
       block,
     });
@@ -245,12 +245,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     html.then(_setHtmlText);
   }
 
-  const onBeforeRenderIframePreviewOpt = {
+  const beforeRenderIframePreviewOpt = {
     editor,
     html: rawHtmlText,
   };
-  editor.emit("onBeforeRenderIframePreview", onBeforeRenderIframePreviewOpt);
-  const htmlText = onBeforeRenderIframePreviewOpt.html;
+  editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
+  const htmlText = beforeRenderIframePreviewOpt.html;
 
   const blob = new Blob(
     [
