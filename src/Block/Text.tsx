@@ -28,7 +28,7 @@ interface EditorProps extends EditorOptions {
   block: Text;
 }
 
-const CARET_CLASS = "mt-block-editor-caret";
+const CARET_CLASS = "mt-be-caret";
 const CARET = `<span class="${CARET_CLASS}"></span>`;
 
 const Editor: React.FC<EditorProps> = ({
