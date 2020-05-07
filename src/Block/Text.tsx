@@ -14,6 +14,9 @@ import {
   isIos,
   isTouchDevice,
   mediaBreakPoint,
+  selectorCmp,
+  getShadowDomSelectorSet,
+  getElementByNthOfTypeIndexes,
 } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -38,6 +41,8 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor, setFocusedId } = useEditorContext();
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
+
+  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -71,8 +76,38 @@ const Editor: React.FC<EditorProps> = ({
               ed.selection.select(caret, true);
               ed.dom.remove(caret);
             } else {
-              ed.selection.select(body, true);
-              ed.selection.collapse(false);
+              let caretMoved = false;
+
+              if (selectorSet) {
+                const [start, end] = [
+                  selectorSet.anchor,
+                  selectorSet.focus,
+                ].sort(selectorCmp);
+                const startNode = getElementByNthOfTypeIndexes(
+                  body,
+                  start.nthOfTypeIndexes
+                );
+                const endNode = getElementByNthOfTypeIndexes(
+                  body,
+                  end.nthOfTypeIndexes
+                );
+
+                if (startNode && endNode) {
+                  try {
+                    const rng = ed.selection.getRng(false);
+                    rng.setStart(startNode, start.offset);
+                    rng.setEnd(endNode, end.offset);
+                    caretMoved = true;
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }
+              }
+
+              if (!caretMoved) {
+                ed.selection.select(body, true);
+                ed.selection.collapse(false);
+              }
             }
           }
         }
@@ -370,6 +405,7 @@ class Text extends Block {
           dangerouslySetInnerHTML={{
             __html: sanitize(this.htmlString()),
           }}
+          contentEditable="true"
         ></div>
       );
     } else {

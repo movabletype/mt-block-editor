@@ -1,7 +1,12 @@
 import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { sanitize } from "../util";
+import {
+  sanitize,
+  selectorCmp,
+  getShadowDomSelectorSet,
+  getElementByNthOfTypeIndexes,
+} from "../util";
 import {
   Editor as TinyMCE,
   EditorManager,
@@ -24,6 +29,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const { editor } = useEditorContext();
   const { addBlock } = useBlocksContext();
 
+  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
+
   useEffect(() => {
     const settings: TinyMCESettings = {
       language: editor.opts.i18n.lng,
@@ -41,6 +48,40 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
         if (focus) {
           ed.focus(false);
+          if (ed.selection) {
+            const body = ed.getBody();
+            let caretMoved = false;
+
+            if (selectorSet) {
+              const [start, end] = [selectorSet.anchor, selectorSet.focus].sort(
+                selectorCmp
+              );
+              const startNode = getElementByNthOfTypeIndexes(
+                body,
+                start.nthOfTypeIndexes
+              );
+              const endNode = getElementByNthOfTypeIndexes(
+                body,
+                end.nthOfTypeIndexes
+              );
+
+              if (startNode && endNode) {
+                try {
+                  const rng = ed.selection.getRng(false);
+                  rng.setStart(startNode, start.offset);
+                  rng.setEnd(endNode, end.offset);
+                  caretMoved = true;
+                } catch (e) {
+                  console.log(e);
+                }
+              }
+            }
+
+            if (!caretMoved) {
+              ed.selection.select(body, true);
+              ed.selection.collapse(false);
+            }
+          }
         }
 
         const root = ed.dom.getRoot();
@@ -188,6 +229,7 @@ class Table extends Block {
     ) : (
       <div
         dangerouslySetInnerHTML={{ __html: sanitize(this.htmlString()) }}
+        contentEditable="true"
       ></div>
     );
   }
