@@ -17,6 +17,7 @@ import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
@@ -227,10 +228,7 @@ class Table extends Block {
     return focus ? (
       <Editor key={this.id} block={this} focus={focus} />
     ) : (
-      <div
-        dangerouslySetInnerHTML={{ __html: sanitize(this.htmlString()) }}
-        contentEditable="true"
-      ></div>
+      <BlockContentEditablePreview block={this} html={this.htmlString()} />
     );
   }
 

@@ -21,6 +21,7 @@ import {
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 
 import { EditHistory } from "../EditManager";
 import { editHandlers } from "./Text/edit";
@@ -401,12 +402,7 @@ class Text extends Block {
 
     if (this.htmlString()) {
       return (
-        <div
-          dangerouslySetInnerHTML={{
-            __html: sanitize(this.htmlString()),
-          }}
-          contentEditable="true"
-        ></div>
+        <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );
     } else {
       return <p>{"\u00A0"}</p>;
