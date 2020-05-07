@@ -36,6 +36,7 @@ export interface EditorOptions {
   id: string;
   mode: string;
   stylesheets: Array<string>;
+  rootClassName?: string;
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   addButtons: Map;

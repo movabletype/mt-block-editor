@@ -303,7 +303,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       </head>
       <body data-block-id="${block.id}"${
         block.compiledHtml && ` data-has-compiled-html="1"`
-      }>${htmlText}</body>
+      } class="${editor.opts.rootClassName || ""}">${htmlText}</body>
       </html>`,
     ],
     { type: "text/html" }
