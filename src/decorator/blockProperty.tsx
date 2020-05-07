@@ -97,7 +97,7 @@ export default function blockProperty<T extends EditorProps>(
         focusEl.focus();
       })();
 
-      // ajust height
+      // adjust height
       (() => {
         [
           ...document.querySelectorAll<HTMLTextAreaElement>(
