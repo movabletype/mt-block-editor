@@ -1,12 +1,7 @@
 import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import {
-  sanitize,
-  selectorCmp,
-  getShadowDomSelectorSet,
-  getElementByNthOfTypeIndexes,
-} from "../util";
+import { sanitize, getShadowDomSelectorSet } from "../util";
 import {
   Editor as TinyMCE,
   EditorManager,
@@ -19,6 +14,8 @@ import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
 import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
+
+import { tinymceFocus } from "./Text/util";
 
 declare const tinymce: EditorManager;
 
@@ -46,43 +43,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
-
         if (focus) {
-          ed.focus(false);
-          if (ed.selection) {
-            const body = ed.getBody();
-            let caretMoved = false;
-
-            if (selectorSet) {
-              const [start, end] = [selectorSet.anchor, selectorSet.focus].sort(
-                selectorCmp
-              );
-              const startNode = getElementByNthOfTypeIndexes(
-                body,
-                start.nthOfTypeIndexes
-              );
-              const endNode = getElementByNthOfTypeIndexes(
-                body,
-                end.nthOfTypeIndexes
-              );
-
-              if (startNode && endNode) {
-                try {
-                  const rng = ed.selection.getRng(false);
-                  rng.setStart(startNode, start.offset);
-                  rng.setEnd(endNode, end.offset);
-                  caretMoved = true;
-                } catch (e) {
-                  console.log(e);
-                }
-              }
-            }
-
-            if (!caretMoved) {
-              ed.selection.select(body, true);
-              ed.selection.collapse(false);
-            }
-          }
+          tinymceFocus(ed, selectorSet);
         }
 
         const root = ed.dom.getRoot();

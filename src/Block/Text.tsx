@@ -14,9 +14,7 @@ import {
   isIos,
   isTouchDevice,
   mediaBreakPoint,
-  selectorCmp,
   getShadowDomSelectorSet,
-  getElementByNthOfTypeIndexes,
 } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -24,6 +22,7 @@ import BlockLabel from "../Component/BlockLabel";
 import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 
 import { EditHistory } from "../EditManager";
+import { CARET, CARET_ATTR, tinymceFocus } from "./Text/util";
 import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
@@ -31,9 +30,6 @@ declare const tinymce: EditorManager;
 interface EditorProps extends EditorOptions {
   block: Text;
 }
-
-const CARET_ATTR = "data-mt-block-editor-caret";
-const CARET = `<br ${CARET_ATTR}="1">`;
 
 const Editor: React.FC<EditorProps> = ({
   block,
@@ -69,48 +65,7 @@ const Editor: React.FC<EditorProps> = ({
 
         ed.setContent(block.text);
         if (focus) {
-          ed.focus(false);
-          if (ed.selection) {
-            const body = ed.getBody();
-            const caret = body.querySelector(`[${CARET_ATTR}="1"]`);
-            if (caret) {
-              ed.selection.select(caret, true);
-              ed.dom.remove(caret);
-            } else {
-              let caretMoved = false;
-
-              if (selectorSet) {
-                const [start, end] = [
-                  selectorSet.anchor,
-                  selectorSet.focus,
-                ].sort(selectorCmp);
-                const startNode = getElementByNthOfTypeIndexes(
-                  body,
-                  start.nthOfTypeIndexes
-                );
-                const endNode = getElementByNthOfTypeIndexes(
-                  body,
-                  end.nthOfTypeIndexes
-                );
-
-                if (startNode && endNode) {
-                  try {
-                    const rng = ed.selection.getRng(false);
-                    rng.setStart(startNode, start.offset);
-                    rng.setEnd(endNode, end.offset);
-                    caretMoved = true;
-                  } catch (e) {
-                    console.log(e);
-                  }
-                }
-              }
-
-              if (!caretMoved) {
-                ed.selection.select(body, true);
-                ed.selection.collapse(false);
-              }
-            }
-          }
+          tinymceFocus(ed, selectorSet);
         }
 
         const root = ed.dom.getRoot();

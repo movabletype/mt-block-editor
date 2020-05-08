@@ -8,7 +8,7 @@ interface Selector {
   offset: number;
 }
 
-interface SelectorSet {
+export interface SelectorSet {
   anchor: Selector;
   focus: Selector;
 }
