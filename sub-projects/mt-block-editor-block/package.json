@@ -1,6 +1,6 @@
 {
   "name": "mt-block-editor-block",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "main": "index.js",
   "types": "index.d.ts",
@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "cpy": "^8.1.0",
-    "cpy-cli": "^3.1.0",
+    "cpy-cli": "^3.1.1",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
   },

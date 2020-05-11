@@ -8,17 +8,21 @@ export function apply(opts) {
     textarea.id = opts.id;
     w.document.body.appendChild(textarea);
 
-    return w.MTBlockEditor.apply({
-      mode: "composition",
-      id: opts.id,
-      stylesheets: [],
-      i18n: {
-        lng: "ja",
-        debug: true,
-      },
-      shortcutBlockTypes: ["core-text", "core-image", "core-file"],
-    }).then((ed) => {
-      ed.on("onBuildTinyMCESettings", ({ block, settings }) => {
+    return w.MTBlockEditor.apply(
+      Object.assign(
+        {
+          mode: "composition",
+          stylesheets: [],
+          i18n: {
+            lng: "ja",
+            debug: true,
+          },
+          shortcutBlockTypes: ["core-text", "core-image", "core-file"],
+        },
+        opts
+      )
+    ).then((ed) => {
+      ed.on("buildTinyMCESettings", ({ block, settings }) => {
         settings.plugins += " mt_security";
         settings.extended_valid_elements = [
           // we embed 'a[onclick]' by inserting image with popup
@@ -31,6 +35,12 @@ export function apply(opts) {
           "+span[*]",
         ].join(",");
         settings.valid_children = "+a[div]";
+      });
+
+      ed.on("change", ({ editor }) => {
+        let count = textarea.dataset.mtBlockEditorChangeCount || 0;
+        count++;
+        textarea.dataset.mtBlockEditorChangeCount = count;
       });
     });
   });

@@ -173,6 +173,10 @@ const BlockItem: React.FC<Props> = ({
       key={b.id}
       data-mt-block-editor-block-id={b.id}
       onClick={(ev) => {
+        if (getFocusedId() === b.id) {
+          return;
+        }
+
         ev.preventDefault();
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
@@ -228,7 +232,7 @@ const BlockItem: React.FC<Props> = ({
         ) : (
           <>
             <root.div>
-              <div className="entry">
+              <div className={editor.opts.rootClassName || ""}>
                 {editor.stylesheets.map((s, i) => {
                   if (s.type === StylesheetType.css) {
                     return (

@@ -36,6 +36,7 @@ export interface EditorOptions {
   id: string;
   mode: string;
   stylesheets: Array<string>;
+  rootClassName?: string;
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   addButtons: Map;
@@ -65,7 +66,9 @@ class Editor extends EventEmitter implements HasBlocks {
     opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
-    this.editManager = new EditManager(opts.editManager);
+    this.editManager = new EditManager(
+      Object.assign({ editor: this }, opts.editManager || {})
+    );
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
@@ -89,7 +92,7 @@ class Editor extends EventEmitter implements HasBlocks {
         this.factory
       );
       this.blocks = blocks;
-      this.emit("onInitializeBlocks", { editor: this, blocks });
+      this.emit("initializeBlocks", { editor: this, blocks });
 
       this.render();
     }, 0);
@@ -136,7 +139,7 @@ class Editor extends EventEmitter implements HasBlocks {
       handlers: editHandlersAdd,
     });
 
-    this.emit("onChangeBlocks", {
+    this.emit("changeBlocks", {
       editor: this,
       blocks: blocks,
     });
@@ -170,7 +173,7 @@ class Editor extends EventEmitter implements HasBlocks {
   public removeBlock(parent: HasBlocks, block: Block): void {
     const blocks = parent.blocks;
 
-    this.emit("onRemoveBlock", {
+    this.emit("removeBlock", {
       editor: this,
       blocks,
       block,
@@ -193,7 +196,7 @@ class Editor extends EventEmitter implements HasBlocks {
       handlers: editHandlersRemove,
     });
 
-    this.emit("onChangeBlocks", {
+    this.emit("changeBlocks", {
       editor: this,
       blocks,
     });
@@ -215,7 +218,7 @@ class Editor extends EventEmitter implements HasBlocks {
       handlers: editHandlersSwap,
     });
 
-    this.emit("onChangeBlocks", {
+    this.emit("changeBlocks", {
       editor: this,
       blocks,
     });
@@ -223,7 +226,7 @@ class Editor extends EventEmitter implements HasBlocks {
 
   public async serialize(): Promise<void> {
     const blocks = this.blocks.concat();
-    this.emit("onSerialize", {
+    this.emit("serialize", {
       editor: this,
       blocks,
     });
@@ -235,12 +238,13 @@ class Editor extends EventEmitter implements HasBlocks {
   }
 
   public unload(): void {
-    this.emit("onBeforeUnload", {
+    this.emit("beforeUnload", {
       editor: this,
     });
+    this.editManager.unload();
     this.editorElement.remove();
     this.inputElement.style.display = "";
-    this.emit("onUnload", {
+    this.emit("unload", {
       editor: this,
     });
   }

@@ -2,20 +2,31 @@ import Editor from "../src/Editor";
 import Text from "../src/Block/Text";
 import EditManager from "../src/EditManager";
 
+let events = [];
+let mockEditor = {
+  emit(name, args) {
+    events.push({ name, args });
+  },
+} as Editor;
+
 const editorContextProps = {
-  editor: {} as Editor,
+  editor: mockEditor,
   setFocusedId: (id, opts) => {},
   getFocusedId: () => null,
 };
 
+beforeEach(() => {
+  events = [];
+});
+
 test("constructor", () => {
-  const manager = new EditManager();
+  const manager = new EditManager({ editor: mockEditor });
   expect(manager).toBeInstanceOf(EditManager);
 });
 
 describe("add/canUndo/canRedo", () => {
   describe("simple case", () => {
-    const manager = new EditManager();
+    const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
     const history = {
@@ -39,6 +50,7 @@ describe("add/canUndo/canRedo", () => {
     manager.add(history);
     expect(manager.canUndo()).toBe(true);
     expect(manager.canRedo()).toBe(false);
+    expect(events).toHaveLength(2);
 
     manager.undo(editorContextProps);
     expect(manager.canUndo()).toBe(true);
@@ -62,7 +74,7 @@ describe("add/canUndo/canRedo", () => {
   });
 
   describe("merge", () => {
-    const manager = new EditManager();
+    const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
     const history = {
@@ -96,7 +108,7 @@ describe("add/canUndo/canRedo", () => {
   });
 
   describe("dedup (by merge)", () => {
-    const manager = new EditManager();
+    const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
     const history = {
@@ -132,7 +144,7 @@ describe("add/canUndo/canRedo", () => {
 
   describe("limit option", () => {
     test.each([50, 100])("limit: %i", (limit) => {
-      const manager = new EditManager({ limit });
+      const manager = new EditManager({ limit, editor: mockEditor });
 
       let count = 0;
       const history1 = {
@@ -178,7 +190,7 @@ describe("add/canUndo/canRedo", () => {
 
 describe("undo/redo", () => {
   test("simple case", () => {
-    const manager = new EditManager();
+    const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
     const history = {
@@ -213,7 +225,7 @@ describe("undo/redo", () => {
   });
 
   test("add method is ignored while undo/redo", () => {
-    const manager = new EditManager();
+    const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
     const errorHistory = {
@@ -264,7 +276,7 @@ describe("undo/redo", () => {
 });
 
 test("generateGroup", () => {
-  const manager = new EditManager();
+  const manager = new EditManager({ editor: mockEditor });
   expect(typeof manager.generateGroup()).toBe("number");
 });
 
@@ -288,7 +300,7 @@ describe("group", () => {
   };
 
   beforeEach(() => {
-    manager = new EditManager();
+    manager = new EditManager({ editor: mockEditor });
     group = manager.generateGroup();
     count = 0;
   });
@@ -330,12 +342,15 @@ describe("group", () => {
       manager.add(Object.assign({}, history));
       manager.add(Object.assign({}, history));
       manager.endGrouping();
+      expect(events).toHaveLength(1);
 
       manager.undo(editorContextProps);
       expect(count).toBe(2);
+      expect(events).toHaveLength(2);
 
       manager.redo(editorContextProps);
       expect(count).toBe(0);
+      expect(events).toHaveLength(3);
     });
 
     test("interrupted", () => {

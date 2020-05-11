@@ -116,10 +116,10 @@
               "custom-test",
             ],
           }).then((ed) => {
-            ed.on("onInitializeBlocks", ({ blocks }) => {
+            ed.on("initializeBlocks", ({ blocks }) => {
               console.log(blocks);
             });
-            ed.on("onBuildTinyMCESettings", ({ block, settings }) => {
+            ed.on("buildTinyMCESettings", ({ block, settings }) => {
               console.log(block.constructor.typeId);
               console.log(settings);
               settings.plugins += " mt_security";
