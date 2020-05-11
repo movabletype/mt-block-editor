@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { sanitize } from "../util";
+import { sanitize, getShadowDomSelectorSet } from "../util";
 import {
   Editor as TinyMCE,
   EditorManager,
@@ -12,7 +12,10 @@ import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
+
+import { tinymceFocus } from "./Text/util";
 
 declare const tinymce: EditorManager;
 
@@ -23,6 +26,8 @@ interface EditorProps extends EditorOptions {
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const { editor } = useEditorContext();
   const { addBlock } = useBlocksContext();
+
+  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -38,9 +43,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
-
         if (focus) {
-          ed.focus(false);
+          tinymceFocus(ed, selectorSet);
         }
 
         const root = ed.dom.getRoot();
@@ -186,9 +190,7 @@ class Table extends Block {
     return focus ? (
       <Editor key={this.id} block={this} focus={focus} />
     ) : (
-      <div
-        dangerouslySetInnerHTML={{ __html: sanitize(this.htmlString()) }}
-      ></div>
+      <BlockContentEditablePreview block={this} html={this.htmlString()} />
     );
   }
 

@@ -118,15 +118,23 @@ class Block {
 
     if (this.className) {
       if (/^<[^>]+class="/.test(html)) {
-        html = html.replace(/^<[^>]+class="([^"]+)/, (m, classNames) => {
-          if (
-            classNames.split(/\s+/).find((c: string) => c === this.className)
-          ) {
-            return m;
-          } else {
-            return `${m} ${this.className}`;
+        html = html.replace(
+          /^(<[^>]+class=")([^"]+)/,
+          (m, prefix, classNames) => {
+            return (
+              prefix +
+              this.className
+                .split(/\s+/)
+                .reduce((list, c) => {
+                  if (list.indexOf(c) === -1) {
+                    list.push(c);
+                  }
+                  return list;
+                }, classNames.split(/\s+/))
+                .join(" ")
+            );
           }
-        });
+        );
       } else {
         html = html.replace(
           /^<([^>]+)>/,
