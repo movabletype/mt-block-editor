@@ -2,13 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
+import { EditHistoryHandlers } from "../EditManager";
+import { Size } from "./BlockIframePreview/size";
 
-export interface Size {
-  width: string;
-  height: string;
-}
-
-export const defaultSize = { width: "100%", height: "100px" };
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "1000px";
 
@@ -19,6 +15,25 @@ interface EditorProps {
   onSetCompiledHtml?: (error?: Error) => void;
   border?: string;
 }
+
+interface SetCompiledHtmlOptions {
+  addEditHistory: boolean;
+}
+
+const editHandlers: EditHistoryHandlers = {
+  id: Symbol("edit"),
+  merge(a, b) {
+    return a.data.last === b.data.last ? a : undefined;
+  },
+  undo(hist, { setFocusedId }) {
+    hist.block.compiledHtml = hist.data.last;
+    setFocusedId(hist.block.id, { forceUpdate: true });
+  },
+  redo(hist, { setFocusedId }) {
+    hist.block.compiledHtml = hist.data.cur;
+    setFocusedId(hist.block.id, { forceUpdate: true });
+  },
+};
 
 function postMessageFunc(): void {
   const body = document.body;
@@ -50,12 +65,15 @@ function postMessageFunc(): void {
   );
 }
 
-function setCompiledHtmlFunc(html: string): void {
+function setCompiledHtmlFunc(html: string, opts: SetCompiledHtmlOptions): void {
   parent.postMessage(
     {
       method: "MTBlockEditorSetCompiledHtml",
       blockId: document.body.dataset.blockId,
       html,
+      arguments: {
+        addEditHistory: opts && opts.addEditHistory,
+      },
     },
     "*"
   );
@@ -64,7 +82,7 @@ function setCompiledHtmlFunc(html: string): void {
 function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
   return new Promise<void>((resolve) => {
     function addEventListeners(elm: HTMLElement): void {
-      elm.classList.add("mt-block-editor-droppable-area");
+      elm.classList.add("mt-block-editor-mt-be-droppable-area");
 
       elm.addEventListener("click", (ev) => {
         if (ev.target instanceof HTMLInputElement) {
@@ -90,7 +108,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
         if (ev.dataTransfer) {
           ev.dataTransfer.dropEffect = "copy";
         }
-        elm.classList.add("mt-block-editor-droppable");
+        elm.classList.add("mt-block-editor-mt-be-droppable");
       });
 
       elm.addEventListener("dragenter", (ev) => {
@@ -99,7 +117,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
       });
 
       elm.addEventListener("dragleave", () => {
-        elm.classList.remove("mt-block-editor-droppable");
+        elm.classList.remove("mt-block-editor-mt-be-droppable");
       });
 
       elm.addEventListener("drop", (ev) => {
@@ -124,7 +142,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
   });
 }
 
-function onClickFunc(): void {
+function eventDelegationFunc(): void {
   document.addEventListener(
     "click",
     function () {
@@ -132,6 +150,25 @@ function onClickFunc(): void {
         {
           method: "MTBlockEditorOnClick",
           blockId: document.body.dataset.blockId,
+        },
+        "*"
+      );
+    },
+    { capture: true }
+  );
+
+  document.addEventListener(
+    "keydown",
+    function (ev) {
+      parent.postMessage(
+        {
+          method: "MTBlockEditorOnKeydown",
+          blockId: document.body.dataset.blockId,
+          arguments: {
+            key: ev.key,
+            ctrlKey: ev.ctrlKey || ev.metaKey,
+            shiftKey: ev.shiftKey,
+          },
         },
         "*"
       );
@@ -155,16 +192,21 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const containerElRef = useRef(null);
   const [src, setSrc] = useState("");
-  const [rawHtmlText, _setHtmlText] = useState(
+  const [_rawHtmlText, _setHtmlText] = useState(
     typeof html === "string" ? html : ""
   );
+  const rawHtmlText = _rawHtmlText || (typeof html === "string" ? html : "");
+
   const [size, _setSize] = useState(block.iframePreviewSize);
   const setSize = (size: Size): void => {
     block.iframePreviewSize = size;
     _setSize(size);
   };
 
-  const setCompiledHtml = (res: string | Error): void => {
+  const setCompiledHtml = (
+    res: string | Error,
+    opts: SetCompiledHtmlOptions
+  ): void => {
     if (res instanceof Error) {
       if (onSetCompiledHtml) {
         onSetCompiledHtml(res);
@@ -174,9 +216,21 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       return;
     }
 
+    const lastValue = block.compiledHtml;
     block.compiledHtml = res;
 
-    editor.emit("onSetCompiledHtmlIframePreview", {
+    if (opts && opts.addEditHistory) {
+      editor.editManager.add({
+        block,
+        data: {
+          last: lastValue,
+          cur: res,
+        },
+        handlers: editHandlers,
+      });
+    }
+
+    editor.emit("setCompiledHtmlIframePreview", {
       editor,
       block,
     });
@@ -191,12 +245,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     html.then(_setHtmlText);
   }
 
-  const onBeforeRenderIframePreviewOpt = {
+  const beforeRenderIframePreviewOpt = {
     editor,
     html: rawHtmlText,
   };
-  editor.emit("onBeforeRenderIframePreview", onBeforeRenderIframePreviewOpt);
-  const htmlText = onBeforeRenderIframePreviewOpt.html;
+  editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
+  const htmlText = beforeRenderIframePreviewOpt.html;
 
   const blob = new Blob(
     [
@@ -213,11 +267,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             return ${addDroppableFunc.toString()};
           })();
           (function() {
-            (${onClickFunc.toString()})();
+            (${eventDelegationFunc.toString()})();
           })();
         </script>
         <style type="text/css">
-        .mt-block-editor-droppable:before {
+        .mt-block-editor-mt-be-droppable:before {
           display: block;
           position: absolute;
           z-index: 200;
@@ -249,7 +303,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       </head>
       <body data-block-id="${block.id}"${
         block.compiledHtml && ` data-has-compiled-html="1"`
-      }>${htmlText}</body>
+      } class="${editor.opts.rootClassName || ""}">${htmlText}</body>
       </html>`,
     ],
     { type: "text/html" }
@@ -292,8 +346,18 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             (containerEl as HTMLElement).click();
           }
           break;
+        case "MTBlockEditorOnKeydown":
+          if (containerEl) {
+            window.dispatchEvent(
+              new KeyboardEvent("keydown", ev.data.arguments)
+            );
+          }
+          break;
         case "MTBlockEditorSetCompiledHtml":
-          setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"));
+          setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"), {
+            addEditHistory:
+              ev.data.arguments && ev.data.arguments.addEditHistory,
+          });
           break;
       }
     };

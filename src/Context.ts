@@ -1,10 +1,19 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext } from "react";
 import Editor from "./Editor";
 import Block from "./Block";
 
-interface EditorContextProps {
+interface SetFocusedIdOptions {
+  forceUpdate: boolean;
+}
+
+export type SetFocusedId = (
+  id: string | null,
+  opts?: SetFocusedIdOptions
+) => void;
+
+export interface EditorContextProps {
   editor: Editor;
-  setFocusedId: (id: string | null) => void;
+  setFocusedId: SetFocusedId;
   getFocusedId: () => string | null;
 }
 export const EditorContext = createContext<EditorContextProps | null>(null);
@@ -19,6 +28,7 @@ export function useEditorContext(): EditorContextProps {
 interface BlocksContextProps {
   addableBlockTypes: string[] | null;
   addBlock: (b: Block, index: number | Block) => void;
+  mergeBlock: (b: Block) => void;
   removeBlock: (b: Block) => void;
   swapBlocks: (a: number, b: number, scroll?: boolean) => void;
 }
@@ -31,13 +41,10 @@ export function useBlocksContext(): BlocksContextProps {
   return c;
 }
 
-export interface ToolbarProps {
-  id: string;
-  className: string;
-  children: ReactNode;
-}
 interface BlockContextProps {
-  setToolbarProps: (props: ToolbarProps) => void;
+  block: Block;
+  index: number;
+  rendered: boolean;
 }
 export const BlockContext = createContext<BlockContextProps | null>(null);
 export function useBlockContext(): BlockContextProps {

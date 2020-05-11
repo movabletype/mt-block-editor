@@ -2,9 +2,14 @@ import { RefObject } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
-import { escapeSingleQuoteAttribute } from "./util";
+import { EditHistory } from "./EditManager";
+import { escapeSingleQuoteAttribute } from "./util/dom";
 import icon from "./img/icon/default-block.svg";
-import { Size, defaultSize } from "./Component/BlockIframePreview";
+import { Size, defaultSize } from "./Component/BlockIframePreview/size";
+
+export interface HasBlocks {
+  blocks: Block[];
+}
 
 export interface Metadata {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,6 +91,16 @@ class Block {
       Math.floor(Math.random() * 100).toString(36);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public canMerge(block: Block): boolean {
+    return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public merge(block: Block): EditHistory {
+    throw "Should be implemented for each concrete class";
+  }
+
   public contentLabel(): string {
     return (this.constructor as typeof Block).label;
   }
@@ -103,15 +118,23 @@ class Block {
 
     if (this.className) {
       if (/^<[^>]+class="/.test(html)) {
-        html = html.replace(/^<[^>]+class="([^"]+)/, (m, classNames) => {
-          if (
-            classNames.split(/\s+/).find((c: string) => c === this.className)
-          ) {
-            return m;
-          } else {
-            return `${m} ${this.className}`;
+        html = html.replace(
+          /^(<[^>]+class=")([^"]+)/,
+          (m, prefix, classNames) => {
+            return (
+              prefix +
+              this.className
+                .split(/\s+/)
+                .reduce((list, c) => {
+                  if (list.indexOf(c) === -1) {
+                    list.push(c);
+                  }
+                  return list;
+                }, classNames.split(/\s+/))
+                .join(" ")
+            );
           }
-        });
+        );
       } else {
         html = html.replace(
           /^<([^>]+)>/,

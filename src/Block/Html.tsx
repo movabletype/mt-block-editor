@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { useEditorUtil } from "../hooks";
+import { blockProperty } from "../decorator";
 import BlockIframePreview from "../Component/BlockIframePreview";
 import icon from "../img/icon/html.svg";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -11,21 +11,21 @@ interface EditorProps {
   block: Html;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
-  <div>
-    <BlockSetupCommon block={block} keys={["label", "helpText"]} />
-    <BlockLabel block={block}>
-      <textarea
-        name="text"
-        style={{ width: "100%" }}
-        data-mt-block-editor-focus-default
-      />
-    </BlockLabel>
-  </div>
+const Editor: React.FC<EditorProps> = blockProperty(
+  ({ block }: EditorProps) => (
+    <div>
+      <BlockSetupCommon block={block} keys={["label", "helpText"]} />
+      <BlockLabel block={block}>
+        <textarea
+          name="text"
+          className="mt-be-input"
+          style={{ width: "100%" }}
+          data-mt-block-editor-focus-default
+        />
+      </BlockLabel>
+    </div>
+  )
 );
-
-const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
-  useEditorUtil(Editor, props);
 
 class Html extends Block {
   public static typeId = "core-html";
@@ -46,7 +46,7 @@ class Html extends Block {
 
   public editor({ focus }: EditorOptions): JSX.Element {
     return focus ? (
-      <EditorUtil key={this.id} block={this} />
+      <Editor key={this.id} block={this} />
     ) : (
       <BlockIframePreview key={this.id} block={this} />
     );

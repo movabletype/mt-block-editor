@@ -8,7 +8,7 @@ interface BlockConfigPanelProps {
   className?: string;
 }
 
-const PANEL_CLASS_NAME = "block-config-panel";
+const PANEL_CLASS_NAME = "mt-be-block-config-panel";
 
 const BlockConfigPanel: React.FC<BlockConfigPanelProps> = (
   props: BlockConfigPanelProps

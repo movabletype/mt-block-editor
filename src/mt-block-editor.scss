@@ -1,3 +1,16 @@
+$root-font-size: 16px;
+
+@define-mixin input {
+  font-size: $root-font-size;
+  font-weight: normal;
+  padding: 6px;
+  margin-top: 4px;
+  &:focus {
+    outline-offset: -2px;
+    outline: #ddd auto 3px;
+  }
+}
+
 .mt-block-editor {
   padding: 0 40px 0 40px;
   border-radius: 4px;
@@ -7,15 +20,8 @@
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre {
     margin: 0;
   }
-  
-  .start-writing {
-    font-size: 0.75rem;
-    color: #666;
-    border: none;
-    outline: none;
-  }
 
-  .btn-add {
+  .mt-be-btn-add {
     width: 100%;
     display: block;
     padding: 8px 0;
@@ -34,78 +40,86 @@
     }
   }
 
-  .btn-add-bottom .btn-wrap {
-    &::after {
-      content: "";
-      z-index: 999;
-      background-image: linear-gradient(
-          to right,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        ),
-        linear-gradient(
-          to right,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        ),
-        linear-gradient(
-          to bottom,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        ),
-        linear-gradient(
-          to bottom,
-          #999,
-          #999 2px,
-          transparent 2px,
-          transparent 5px
-        );
-      background-size: 5px 1px, 5px 1px, 1px 5px, 1.1px 5px;
-      background-position: left top, left bottom, left top, right top;
-      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      pointer-events: none;
-    }
-  }
+  .mt-be-btn-add-bottom {
+    width: 100%;
+    position: relative;
 
-  .btn-add-bottom {
-    .btn-wrap.btn-wrap--only-shortcuts {
-      .btn-add {
-        display: none;
-      }
+    .mt-be-btn-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: row-reverse;
+      position: relative;
 
-      @media (min-width: 991.5px) {
-        width: auto;
-        display: inline-block;
+      &.mt-be-btn-wrap--only-shortcuts {
+        .mt-be-btn-add {
+          display: none;
+        }
 
-        .shortcut-block-list {
-          &:after {
-            width: 0;
+        @media (min-width: 991.5px) {
+          width: auto;
+          display: inline-block;
+
+          .mt-be-shortcut-block-list {
+            &:after {
+              width: 0;
+            }
+          }
+        }
+
+        @media (max-width: 991.5px) {
+          .mt-be-shortcut-block-list {
+            &:after {
+              height: 0;
+            }
           }
         }
       }
 
-      @media (max-width: 991.5px) {
-        .shortcut-block-list {
-          &:after {
-            height: 0;
-          }
-        }
+      &::after {
+        content: "";
+        z-index: 999;
+        background-image: linear-gradient(
+            to right,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          ),
+          linear-gradient(
+            to right,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          ),
+          linear-gradient(
+            to bottom,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          ),
+          linear-gradient(
+            to bottom,
+            #999,
+            #999 2px,
+            transparent 2px,
+            transparent 5px
+          );
+        background-size: 5px 1px, 5px 1px, 1px 5px, 1.1px 5px;
+        background-position: left top, left bottom, left top, right top;
+        background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        pointer-events: none;
       }
     }
   }
 
-  .btn-remove {
+  .mt-be-btn-remove {
     background: none;
     border: none;
     cursor: pointer;
@@ -118,7 +132,7 @@
     font-size: 11px;
   }
 
-  .btn-remove--label-only {
+  .mt-be-btn-remove--label-only {
     width: auto;
     background: none;
     width: auto;
@@ -129,7 +143,7 @@
     font-size: 12px;
   }
 
-  .btn-move {
+  .mt-be-btn-move {
     background: none;
     border: none;
     cursor: move;
@@ -139,7 +153,7 @@
     background-size: 18px;
   }
 
-  .btn-up {
+  .mt-be-btn-up {
     background: none;
     border: none;
     cursor: pointer;
@@ -149,7 +163,7 @@
     background-size: 18px;
   }
 
-  .btn-command {
+  .mt-be-btn-command {
     background: none;
     border: none;
     cursor: pointer;
@@ -160,7 +174,7 @@
     }
   }
 
-  .btn-down {
+  .mt-be-btn-down {
     background: none;
     border: none;
     cursor: pointer;
@@ -170,28 +184,16 @@
     background-size: 18px;
   }
 
-  .block-wrapper {
+  .mt-be-block-wrapper {
     position: relative;
     display: flex;
     align-items: flex-start;
 
-    .btn-add {
+    .mt-be-btn-add {
       transition: 0.1s;
     }
 
-    .btn-add-wrapper {
-      position: absolute;
-      z-index: 999;
-      width: 100%;
-      top: -20px;
-      text-align: center;
-    }
-
-    .btn-add-wrapper:hover .btn-add {
-      opacity: 1;
-    }
-
-    .btn-remove-wrapper {
+    .mt-be-btn-remove-wrapper {
       position: absolute;
       right: -30px;
       display: flex;
@@ -205,12 +207,12 @@
         }
       }
     }
-    &.focus > .btn-remove-wrapper {
+    &.focus > .mt-be-btn-remove-wrapper {
       visibility: visible;
       z-index: 50;
     }
 
-    .btn-move-wrapper {
+    .mt-be-btn-move-wrapper {
       position: absolute;
       left: -30px;
       height: 50px;
@@ -227,11 +229,11 @@
       }
     }
 
-    &.focus > .btn-move-wrapper {
+    &.focus > .mt-be-btn-move-wrapper {
       visibility: visible;
     }
 
-    .btn-add-left {
+    .mt-be-btn-add-wrapper {
       width: 100%;
       height: 40px;
       top: -20px;
@@ -239,7 +241,7 @@
       position: absolute;
       cursor: pointer;
 
-      .btn-add {
+      .mt-be-btn-add {
         width: 100%;
         transition: 0.1s;
         position: relative;
@@ -278,15 +280,11 @@
     }
   }
 
-  &[data-mt-block-editor-add-button="visible"] .block-wrapper .btn-add-wrapper {
-    z-index: initial;
-  }
-
-  .block {
+  .mt-be-block {
     width: 100%;
     position: relative;
     padding: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: $root-font-size;
     transition: 0.1s;
     &:hover,
     &:focus,
@@ -294,35 +292,40 @@
       box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.4);
     }
 
-    .label-name {
+    .mt-be-input {
+      @mixin input;
+    }
+
+    .mt-be-input--static {
+      @mixin input;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .mt-be-label-name {
       display: inline-block;
       width: 100%;
       margin-bottom: 20px;
-      font-size: 0.75rem;
+      font-size: calc($root-font-size * 0.75);
+      font-weight: normal;
       color: #666;
-      > input {
+      > input, > textarea {
+        @mixin input;
         width: calc(100% - 15px) !important;
-        font-size: 1rem;
-        padding: 6px;
-        margin-top: 4px;
-        &:focus {
-          outline-offset: -2px;
-          outline: #ddd auto 3px;
-        }
       }
     }
 
-    .content-label {
+    .mt-be-content-label {
       pointer-events: none;
       position: absolute;
       top: 4px;
       left: 4px;
-      font-size: 0.75rem;
+      font-size: calc($root-font-size * 0.75);
       color: #666;
       transition: 0.1s;
       opacity: 0;
     }
-    &:hover > .content-label {
+    &:hover > .mt-be-content-label {
       opacity: 1;
     }
     hr {
@@ -330,23 +333,13 @@
     }
   }
 
-  .block-wrapper .block {
-    .btn-move-wrapper {
+  .mt-be-block-wrapper .mt-be-block {
+    .mt-be-btn-move-wrapper {
       left: -40px;
     }
   }
 
-  .btn-add-bottom {
-    width: 100%;
-    position: relative;
-    .btn-wrap {
-      width: 100%;
-      display: flex;
-      flex-direction: row-reverse;
-    }
-  }
-
-  .block-list-wrapper {
+  .mt-be-block-list-wrapper {
     display: flex;
     justify-content: center;
     position: absolute;
@@ -355,22 +348,22 @@
     left: calc(50% - 144px);
     transition: 0.1s ease-in-out;
 
-    &.block-list-wrapper-none {
+    &.mt-be-block-list-wrapper-none {
       display: none;
     }
 
-    &.block-list-wrapper-enter,
-    &.block-list-wrapper-exit {
+    &.mt-be-block-list-wrapper-enter,
+    &.mt-be-block-list-wrapper-exit {
       opacity: 0;
     }
 
-    &.block-list-wrapper-enter-active,
-    &.block-list-wrapper-enter-done {
+    &.mt-be-block-list-wrapper-enter-active,
+    &.mt-be-block-list-wrapper-enter-done {
       opacity: 1;
       top: 32px;
     }
 
-    .block-list {
+    .mt-be-block-list {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-gap: 1px;
@@ -394,7 +387,7 @@
           height: 100%;
           padding: 8px;
           text-decoration: none;
-          font-size: 0.5rem;
+          font-size: calc($root-font-size * 0.5);
           color: #333333;
           transition: 0.1s;
 
@@ -416,7 +409,7 @@
     }
   }
 
-  .shortcut-block-list {
+  .mt-be-shortcut-block-list {
     display: flex;
     margin: 0;
     padding: 0;
@@ -455,13 +448,13 @@
     }
   }
 
-  .focus .block {
-    .block {
+  .focus .mt-be-block {
+    .mt-be-block {
       outline: none;
     }
   }
 
-  .droppable:before {
+  .mt-be-droppable:before {
     display: block;
     position: absolute;
     z-index: 200;
@@ -478,17 +471,17 @@
 
   /* setup */
 
-  .mt-block-editor-label-block {
+  .mt-be-label-block {
     font-weight: bold;
   }
 
-  .mt-block-editor-help-block {
+  .mt-be-help-block {
     font-weight: normal;
     color: #737373;
   }
 
-  /* columns */
-  .column {
+  /* mt-be-columns */
+  .mt-be-column {
     position: relative;
     flex-basis: 50%;
     padding: 0 15px;
@@ -500,12 +493,12 @@
     &:last-child {
       padding-right: 0;
     }
-    .btn-add {
+    .mt-be-btn-add {
       opacity: 1;
     }
   }
 
-  .block-toolbar {
+  .mt-be-block-toolbar {
     position: absolute;
     left: -8px;
     background: white;
@@ -513,11 +506,11 @@
     top: -39px;
     border: 1px solid #ddd;
 
-    &.block-toolbar--no-border {
+    &.mt-be-block-toolbar--no-border {
       border: none;
     }
 
-    .block-toolbar-button {
+    .mt-be-block-toolbar-button {
       height: 32px;
       width: 32px;
       padding: 0;
@@ -544,22 +537,22 @@
       box-shadow: none;
     }
 
-    &.block-toolbar--x2 {
+    &.mt-be-block-toolbar--x2 {
       top: -70px;
       left: -1px;
     }
 
-    &.block-toolbar--default {
+    &.mt-be-block-toolbar--default {
       display: none;
     }
   }
 
-  .block-toolbar-default-items {
+  .mt-be-block-toolbar-default-items {
     display: none;
   }
 
-  .block-config-panel {
-    font-size: 0.75rem;
+  .mt-be-block-config-panel {
+    font-size: calc($root-font-size * 0.75);
     position: absolute;
     width: auto;
     height: auto;
@@ -574,13 +567,13 @@
 
     transition: 0.1s ease-in-out;
 
-    &.block-config-panel-enter,
-    &.block-config-panel-exit {
+    &.mt-be-block-config-panel-enter,
+    &.mt-be-block-config-panel-exit {
       opacity: 0;
     }
 
-    &.block-config-panel-enter-active,
-    &.block-config-panel-enter-done {
+    &.mt-be-block-config-panel-enter-active,
+    &.mt-be-block-config-panel-enter-done {
       opacity: 1;
     }
 
@@ -600,8 +593,8 @@
     }
   }
 
-  .block-command-panel {
-    font-size: 0.75rem;
+  .mt-be-block-command-panel {
+    font-size: calc($root-font-size * 0.75);
     position: absolute;
     width: auto;
     height: auto;
@@ -616,23 +609,23 @@
 
     transition: 0.1s ease-in-out;
 
-    &.block-command-panel-enter,
-    &.block-command-panel-exit {
+    &.mt-be-block-command-panel-enter,
+    &.mt-be-block-command-panel-exit {
       opacity: 0;
     }
 
-    &.block-command-panel-enter-active,
-    &.block-command-panel-enter-done {
+    &.mt-be-block-command-panel-enter-active,
+    &.mt-be-block-command-panel-enter-done {
       opacity: 1;
     }
 
-    .command-list {
+    .mt-be-command-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
-    .btn-add {
+    .mt-be-btn-add {
       text-align: left;
     }
   }
@@ -650,7 +643,7 @@
     outline: 0px !important;
   }
 
-  .input--hidden {
+  .mt-be-input--hidden {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -664,7 +657,7 @@
   .mt-block-editor {
     padding: 0 0;
     margin: 0 16px;
-    .btn-command {
+    .mt-be-btn-command {
       width: 32px;
       height: 34px;
       position: relative;
@@ -677,13 +670,13 @@
       }
     }
 
-    .btn-move {
+    .mt-be-btn-move {
       height: 28px;
       background-position: center center;
     }
 
-    .btn-up,
-    .btn-down {
+    .mt-be-btn-up,
+    .mt-be-btn-down {
       width: 34px;
       height: 35px;
       border-right: 1px solid #dddddd;
@@ -692,7 +685,7 @@
       background-position: center center;
     }
 
-    .btn-add {
+    .mt-be-btn-add {
       height: 40px;
       line-height: 40px;
       padding: 0;
@@ -703,10 +696,10 @@
         font-size: 12px;
       }
     }
-    .btn-add-bottom .btn-wrap {
+    .mt-be-btn-add-bottom .mt-be-btn-wrap {
       display: block;
     }
-    .shortcut-block-list {
+    .mt-be-shortcut-block-list {
       justify-content: center;
       li {
         a {
@@ -726,23 +719,23 @@
       }
     }
 
-    .block {
-      .content-label {
+    .mt-be-block {
+      .mt-be-content-label {
         font-size: 12px;
       }
     }
 
-    .block-toolbar {
+    .mt-be-block-toolbar {
       width: 100% !important;
       left: 0;
       border: 0;
 
-      &.block-toolbar--default {
+      &.mt-be-block-toolbar--default {
         display: block;
         height: 32px;
       }
 
-      &.block-toolbar--tinymce {
+      &.mt-be-block-toolbar--tinymce {
         width: 100% !important;
         .mce-tinymce,
         .mce-container-body {
@@ -756,12 +749,12 @@
         flex-direction: row;
       }
 
-      .block-toolbar-button {
+      .mt-be-block-toolbar-button {
         border: 1px solid #dddddd;
       }
     }
 
-    .columns .block-toolbar.block-toolbar--tinymce {
+    .mt-be-columns .mt-be-block-toolbar.mt-be-block-toolbar--tinymce {
       max-width: calc(100vw - 15px) !important;
 
       .mce-tinymce,
@@ -770,7 +763,7 @@
       }
     }
 
-    .block-toolbar-default-items {
+    .mt-be-block-toolbar-default-items {
       display: inline;
       position: absolute;
       height: 36px;
@@ -781,35 +774,35 @@
       background-color: #ffffff;
     }
 
-    .block-toolbar--tinymce {
+    .mt-be-block-toolbar--tinymce {
       .mce-btn-group:not(:first-child) {
         border-left: 0px;
       }
-      .block-toolbar-default-items {
+      .mt-be-block-toolbar-default-items {
         bottom: 0px;
         right: 0px;
         border: 0;
         background-color: transparent;
-        .btn-up,
-        .btn-down {
+        .mt-be-btn-up,
+        .mt-be-btn-down {
           border-right: 0px;
           width: 26px;
         }
       }
     }
 
-    .block-wrapper {
+    .mt-be-block-wrapper {
       margin: 10px 0;
 
-      .btn-move-wrapper,
-      .btn-remove-wrapper,
-      .btn-add-left {
+      .mt-be-btn-move-wrapper,
+      .mt-be-btn-remove-wrapper,
+      .mt-be-btn-add-wrapper {
         display: none;
       }
     }
 
-    .block-list-wrapper {
-      .block-list {
+    .mt-be-block-list-wrapper {
+      .mt-be-block-list {
         li {
           a {
             font-size: 12px;
@@ -823,10 +816,10 @@
         }
       }
     }
-    .block-list-wrapper:not(.block-list-wrapper--bottom) {
+    .mt-be-block-list-wrapper:not(.mt-be-block-list-wrapper--bottom) {
       position: fixed;
     }
-    .block-command-panel {
+    .mt-be-block-command-panel {
       padding: 4px 12px;
     }
   }

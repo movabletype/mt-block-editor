@@ -4,7 +4,7 @@
  */
 
 import CSS from "csstype";
-import React, { useRef, createRef, useState } from "react";
+import React, { useRef, createRef } from "react";
 import root from "react-shadow";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
@@ -12,12 +12,11 @@ import { featurePreview } from "./DndBackend";
 import { XYCoord } from "dnd-core";
 import { DragObjectWithType } from "react-dnd/lib/interfaces";
 
-import { t } from "../i18n";
 import {
   useEditorContext,
   useBlocksContext,
   BlockContext,
-  ToolbarProps,
+  useBlockContext,
 } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
@@ -25,17 +24,11 @@ import Columns from "../Block/Columns";
 import Column from "../Block/Column";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
-import BlockCommandPanel from "./BlockCommandPanel";
+import BlockToolbar from "./BlockToolbar";
 import { findDescendantBlock } from "../util";
 
 interface DragObject extends DragObjectWithType {
   index: number;
-}
-
-interface ToolbarPropsInternal {
-  props: ToolbarProps;
-  index: number;
-  block: Block;
 }
 
 interface Props {
@@ -53,59 +46,14 @@ interface BlockInstance {
   getNode(): HTMLDivElement | null;
 }
 
-const Toolbar: React.FC<ToolbarPropsInternal> = ({
-  props,
-  index,
-  block,
-}: ToolbarPropsInternal) => {
-  const { swapBlocks } = useBlocksContext();
-  const [showCommandPanel, setCommandPanel] = useState(false);
-  function toggleCommandPanel(): void {
-    setCommandPanel(!showCommandPanel);
+const DefaultToolbar: React.FC = () => {
+  const { rendered } = useBlockContext();
+
+  if (rendered) {
+    return null;
   }
 
-  const className = props.className || "block-toolbar--default";
-  return (
-    <>
-      <div id={props.id} className={`block-toolbar ${className}`}>
-        {props.children}
-        <div className="block-toolbar-default-items">
-          <button
-            type="button"
-            className="btn-up"
-            onClick={() => swapBlocks(index, index - 1, true)}
-          ></button>
-          <button
-            type="button"
-            className="btn-down"
-            onClick={() => swapBlocks(index, index + 1, true)}
-          ></button>
-          <button
-            type="button"
-            className="btn-command"
-            onClick={toggleCommandPanel}
-          ></button>
-        </div>
-      </div>
-      <BlockCommandPanel in={showCommandPanel}>
-        <ul className="command-list">
-          <li>
-            <AddButton index={index} label={t("Insert before")} />
-          </li>
-          <li>
-            <AddButton index={index + 1} label={t("Insert after")} />
-          </li>
-          <li>
-            <RemoveButton
-              block={block}
-              confirm={true}
-              label={t("Remove block")}
-            />
-          </li>
-        </ul>
-      </BlockCommandPanel>
-    </>
-  );
+  return <BlockToolbar className="mt-be-block-toolbar--default" />;
 };
 
 const BlockItem: React.FC<Props> = ({
@@ -214,15 +162,10 @@ const BlockItem: React.FC<Props> = ({
     clickBlockTargetRef,
   });
 
-  const toolbarProps: ToolbarProps = {
-    id: "",
-    className: "",
-    children: [],
-  };
   const blockContext = {
-    setToolbarProps(props: ToolbarProps) {
-      Object.assign(toolbarProps, props);
-    },
+    block: b,
+    index: i,
+    rendered: false,
   };
 
   return (
@@ -230,6 +173,10 @@ const BlockItem: React.FC<Props> = ({
       key={b.id}
       data-mt-block-editor-block-id={b.id}
       onClick={(ev) => {
+        if (getFocusedId() === b.id) {
+          return;
+        }
+
         ev.preventDefault();
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
@@ -240,35 +187,39 @@ const BlockItem: React.FC<Props> = ({
           setFocusedId(b.id);
         }
       }}
-      className={`block-wrapper ${focus ? "focus" : ""}`}
+      className={`mt-be-block-wrapper ${focus ? "focus" : ""}`}
       style={style}
       ref={ref}
     >
       {showButton && (
-        <div className="btn-move-wrapper">
-          <button
-            type="button"
-            className="btn-up"
-            onClick={() => swapBlocks(index, index - 1, true)}
-          ></button>
-          <button type="button" className="btn-move" ref={drag}></button>
-          <button
-            type="button"
-            className="btn-down"
-            onClick={() => swapBlocks(index, index + 1, true)}
-          ></button>
-        </div>
-      )}
-      {showButton && (
-        <div className="btn-add-left">
-          <div style={{ position: "relative" }}>
-            <AddButton index={i} />
+        <>
+          <div className="mt-be-btn-move-wrapper">
+            <button
+              type="button"
+              className="mt-be-btn-up"
+              onClick={() => swapBlocks(index, index - 1, true)}
+            ></button>
+            <button
+              type="button"
+              className="mt-be-btn-move"
+              ref={drag}
+            ></button>
+            <button
+              type="button"
+              className="mt-be-btn-down"
+              onClick={() => swapBlocks(index, index + 1, true)}
+            ></button>
           </div>
-        </div>
+          <div className="mt-be-btn-add-wrapper">
+            <div style={{ position: "relative" }}>
+              <AddButton index={i} />
+            </div>
+          </div>
+        </>
       )}
-      <div className="block">
+      <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
-          <div className="content-label">{b.contentLabel()}</div>
+          <div className="mt-be-content-label">{b.contentLabel()}</div>
         )}
         {focus ||
         focusDescendant ||
@@ -276,12 +227,12 @@ const BlockItem: React.FC<Props> = ({
         b instanceof Columns ? (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && <Toolbar props={toolbarProps} block={b} index={i} />}
+            {focus && <DefaultToolbar />}
           </BlockContext.Provider>
         ) : (
           <>
             <root.div>
-              <div className="entry">
+              <div className={editor.opts.rootClassName || ""}>
                 {editor.stylesheets.map((s, i) => {
                   if (s.type === StylesheetType.css) {
                     return (
@@ -300,7 +251,7 @@ const BlockItem: React.FC<Props> = ({
         )}
       </div>
       {showButton && (
-        <div className="btn-remove-wrapper">
+        <div className="mt-be-btn-remove-wrapper">
           <RemoveButton block={b} />
         </div>
       )}

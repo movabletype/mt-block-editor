@@ -14,10 +14,16 @@ import {
   isIos,
   isTouchDevice,
   mediaBreakPoint,
+  getShadowDomSelectorSet,
 } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
+
+import { EditHistory } from "../EditManager";
+import { CARET, CARET_ATTR, tinymceFocus } from "./Text/util";
+import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
 
@@ -31,7 +37,9 @@ const Editor: React.FC<EditorProps> = ({
   canRemove,
 }: EditorProps) => {
   const { editor, setFocusedId } = useEditorContext();
-  const { addBlock, removeBlock } = useBlocksContext();
+  const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
+
+  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -57,12 +65,41 @@ const Editor: React.FC<EditorProps> = ({
 
         ed.setContent(block.text);
         if (focus) {
-          ed.focus(false);
-          ed.selection.select(ed.getBody(), true);
-          ed.selection.collapse(false);
+          tinymceFocus(ed, selectorSet);
         }
 
         const root = ed.dom.getRoot();
+
+        // XXX: disable undo feature focefully
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ed.undoManager.add = (): any => {
+          // XXX: improve performance
+          ed.fire("Change");
+          return null;
+        };
+
+        let last = block.text.replace(CARET, "");
+        ed.on("MTBlockEditorEdit", (ev) => {
+          ed.dom.setHTML(ed.getBody(), ev.html);
+          last = ev.html;
+        });
+
+        const addEdit = (): void => {
+          const cur = editorIsBlank ? "" : ed.getContent();
+          if (last === cur) {
+            return;
+          }
+
+          editor.editManager.add({
+            block,
+            data: {
+              last,
+            },
+            handlers: editHandlers,
+          });
+
+          last = cur;
+        };
 
         ed.on("NodeChange Change", () => {
           if (
@@ -72,12 +109,14 @@ const Editor: React.FC<EditorProps> = ({
             if (root.childNodes.length === 1) {
               editorIsBlank = root.childNodes[0].textContent === "";
             }
+            addEdit();
             return;
           }
 
           const children = [...root.childNodes] as HTMLElement[];
           const firstChild = children.shift();
           if (!firstChild) {
+            addEdit();
             return;
           }
 
@@ -85,13 +124,18 @@ const Editor: React.FC<EditorProps> = ({
           children.forEach((c) => {
             ed.dom.remove(c);
           });
+
+          editor.editManager.beginGrouping();
+
+          addEdit();
+
           if (canRemove) {
             children.forEach((c, i) => {
               if (i === 0 && isIos()) {
                 const editorRect = editor.editorElement.getBoundingClientRect();
                 const rootRect = root.getBoundingClientRect();
                 const input = document.createElement("INPUT");
-                input.classList.add("input--hidden");
+                input.classList.add("mt-be-input--hidden");
                 input.style.top = rootRect.top - editorRect.top + "px";
                 editor.editorElement.appendChild(input);
                 input.focus();
@@ -100,12 +144,24 @@ const Editor: React.FC<EditorProps> = ({
                 }, 5 * 1000);
               }
 
+              [...c.querySelectorAll(`br[data-mce-bogus="1"]`)].forEach((e) =>
+                e.remove()
+              );
+              if (c.childNodes.length !== 0 && i === children.length - 1) {
+                const caret = document.createElement("BR");
+                caret.setAttribute(CARET_ATTR, "1");
+                c.insertBefore(caret, c.firstChild);
+              }
+              const text = c.childNodes.length === 0 ? "" : c.outerHTML;
+
               // eslint-disable-next-line @typescript-eslint/no-use-before-define
-              addBlock(new Text({ text: c.outerHTML }), block);
+              addBlock(new Text({ text, toolbarDefaultVisible: false }), block);
             });
           } else {
             setFocusedId(null);
           }
+
+          editor.editManager.endGrouping();
         });
 
         ed.on("keydown", (e: KeyboardEvent) => {
@@ -117,11 +173,24 @@ const Editor: React.FC<EditorProps> = ({
             // ignore
           }
 
-          if ((e.keyCode === 8 || e.keyCode === 46) && editorIsBlank) {
-            if (canRemove) {
-              removeBlock(block);
+          if (e.keyCode === 8 || e.keyCode === 46) {
+            if (editorIsBlank) {
+              if (canRemove) {
+                removeBlock(block);
+              }
+              e.preventDefault();
+            } else {
+              const start = ed.selection.getStart();
+              const rng = ed.selection.getRng(false);
+              if (
+                rng.startOffset === 0 &&
+                rng.endOffset === 0 &&
+                start === root.firstChild
+              ) {
+                e.preventDefault();
+                mergeBlock(block);
+              }
             }
-            e.preventDefault();
           }
         });
 
@@ -167,7 +236,7 @@ const Editor: React.FC<EditorProps> = ({
       // inline: true,
     };
 
-    editor.emit("onBuildTinyMCESettings", {
+    editor.emit("buildTinyMCESettings", {
       editor,
       block,
       settings,
@@ -230,7 +299,9 @@ const Editor: React.FC<EditorProps> = ({
         id={`${block.tinymceId()}toolbar`}
         rows={2}
         hasBorder={false}
-        className={`block-toolbar--tinymce ${html !== "" ? "invisible" : ""}`}
+        className={`mt-be-block-toolbar--tinymce ${
+          html !== "" || !block.toolbarDefaultVisible ? "invisible" : ""
+        }`}
       ></BlockToolbar>
     </div>
   );
@@ -246,6 +317,7 @@ class Text extends Block {
 
   public text = "";
   public tinymce: TinyMCE | null = null;
+  public toolbarDefaultVisible = true;
 
   public constructor(init?: Partial<Text>) {
     super();
@@ -285,15 +357,35 @@ class Text extends Block {
 
     if (this.htmlString()) {
       return (
-        <div
-          dangerouslySetInnerHTML={{
-            __html: sanitize(this.htmlString()),
-          }}
-        ></div>
+        <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );
     } else {
       return <p>{"\u00A0"}</p>;
     }
+  }
+
+  public canMerge(block: Block): boolean {
+    return block instanceof (this.constructor as typeof Block);
+  }
+
+  public merge(block: Block): EditHistory {
+    const history = {
+      block: this,
+      data: {
+        last: this.html(),
+      },
+      handlers: editHandlers,
+    };
+
+    this.text = this.html().replace(/(<\/[^>]*>)$/, (all, closeTag) => {
+      return (
+        CARET +
+        (block.html() as string).replace(/^<[^>]*>|<\/[^>]*>$/g, "") +
+        closeTag
+      );
+    });
+
+    return history;
   }
 
   public html(): string {

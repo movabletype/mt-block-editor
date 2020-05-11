@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import React, { useEffect } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { sanitize } from "../util";
+import { sanitize, getShadowDomSelectorSet } from "../util";
 import {
   Editor as TinyMCE,
   EditorManager,
@@ -12,6 +12,10 @@ import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
+import { editHandlers } from "./Text/edit";
+
+import { tinymceFocus } from "./Text/util";
 
 declare const tinymce: EditorManager;
 
@@ -22,6 +26,8 @@ interface EditorProps extends EditorOptions {
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const { editor } = useEditorContext();
   const { addBlock } = useBlocksContext();
+
+  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -37,15 +43,46 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
-
         if (focus) {
-          ed.focus(false);
+          tinymceFocus(ed, selectorSet);
         }
 
         const root = ed.dom.getRoot();
 
+        // XXX: disable undo feature focefully
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ed.undoManager.add = (): any => {
+          // XXX: improve performance
+          ed.fire("Change");
+          return null;
+        };
+
+        let last = block.text;
+        ed.on("MTBlockEditorEdit", (ev) => {
+          ed.dom.setHTML(ed.getBody(), ev.html);
+          last = ev.html;
+        });
+
+        const addEdit = (): void => {
+          const cur = ed.getContent();
+          if (last === cur) {
+            return;
+          }
+
+          editor.editManager.add({
+            block,
+            data: {
+              last,
+            },
+            handlers: editHandlers,
+          });
+
+          last = cur;
+        };
+
         ed.on("NodeChange Change", () => {
           if (root.childNodes.length <= 1) {
+            addEdit();
             return;
           }
 
@@ -63,6 +100,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
             .filter((c) => c) as HTMLElement[];
 
           if (children.length === 1) {
+            addEdit();
             return;
           }
 
@@ -71,15 +109,22 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           children.forEach((c) => {
             ed.dom.remove(c);
           });
+
+          editor.editManager.beginGrouping();
+
+          addEdit();
+
           children.forEach((c) => {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             addBlock(new Table({ text: c.outerHTML }), block);
           });
+
+          editor.editManager.endGrouping();
         });
       },
     };
 
-    editor.emit("onBuildTinyMCESettings", {
+    editor.emit("buildTinyMCESettings", {
       editor,
       block,
       settings,
@@ -105,7 +150,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         id={`${block.tinymceId()}toolbar`}
         fullWidth={true}
         hasBorder={false}
-        className="block-toolbar--tinymce"
+        className="mt-be-block-toolbar--tinymce"
       ></BlockToolbar>
     </div>
   );
@@ -145,9 +190,7 @@ class Table extends Block {
     return focus ? (
       <Editor key={this.id} block={this} focus={focus} />
     ) : (
-      <div
-        dangerouslySetInnerHTML={{ __html: sanitize(this.htmlString()) }}
-      ></div>
+      <BlockContentEditablePreview block={this} html={this.htmlString()} />
     );
   }
 

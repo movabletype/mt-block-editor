@@ -2,7 +2,7 @@ import { t } from "../i18n";
 import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { sanitize } from "../util";
-import { useEditorUtil } from "../hooks";
+import { blockProperty } from "../decorator";
 import icon from "../img/icon/file.svg";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -15,14 +15,16 @@ interface EditorProps extends EditorOptions {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => (
-  <div>
-    <BlockSetupCommon block={block} />
-    <BlockLabel block={block}>
-      <input type="text" name="text" />
-      <input type="url" name="url" data-mt-block-editor-focus-default />
-    </BlockLabel>
-  </div>
+const Editor: React.FC<EditorProps> = blockProperty(
+  ({ block }: EditorProps) => (
+    <div>
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        <input type="text" name="text" />
+        <input type="url" name="url" data-mt-block-editor-focus-default />
+      </BlockLabel>
+    </div>
+  )
 );
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => (
@@ -30,9 +32,6 @@ const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => (
     <a href={block.url}>{block.text}</a>
   </>
 );
-
-const EditorUtil: React.FC<EditorProps> = (props: EditorProps) =>
-  useEditorUtil(Editor, props);
 
 class File extends Block {
   public static typeId = "core-file";
@@ -55,7 +54,7 @@ class File extends Block {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public editor({ focus }: EditorOptions): JSX.Element {
     return focus ? (
-      <EditorUtil key={this.id} block={this} focus={focus} />
+      <Editor key={this.id} block={this} focus={focus} />
     ) : (
       <div
         dangerouslySetInnerHTML={{

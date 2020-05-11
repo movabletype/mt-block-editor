@@ -1,11 +1,12 @@
 import { t } from "../i18n";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { render } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
   SerializeOptions,
+  HasBlocks,
 } from "../Block";
 import AddButton from "../Component/AddButton";
 import BlockItem from "../Component/BlockItem";
@@ -35,20 +36,24 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
 
   const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
-  const [blocks, updateBlocks] = useState(block.blocks);
+  const blocks = block.blocks;
   const blocksContext = {
     addableBlockTypes: block.addableBlockTypes,
     addBlock: (b: Block, index: number | Block) => {
       if (index instanceof Block) {
         index = block.blocks.indexOf(index) + 1;
       }
-      editor.addBlock(block.blocks, b, index);
+      editor.addBlock(block, b, index);
       setFocusedId(b.id);
-      updateBlocks(([] as Block[]).concat(block.blocks));
+    },
+    mergeBlock: (b: Block) => {
+      const index = block.blocks.indexOf(b);
+      if (editor.mergeBlock(block, b)) {
+        setFocusedId(block.blocks[index - 1].id);
+      }
     },
     removeBlock: (b: Block) => {
-      editor.removeBlock(block.blocks, b);
-      updateBlocks(([] as Block[]).concat(block.blocks));
+      editor.removeBlock(block, b);
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
@@ -79,8 +84,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         });
       }
 
-      editor.swapBlocks(block.blocks, dragIndex, hoverIndex);
-      updateBlocks(([] as Block[]).concat(block.blocks));
+      editor.swapBlocks(block, dragIndex, hoverIndex);
     },
   };
 
@@ -96,7 +100,6 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         if (blocks[0]) {
           setFocusedId(blocks[0].id);
         }
-        updateBlocks(([] as Block[]).concat(block.blocks));
       }
     );
   });
@@ -122,7 +125,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         );
       })}
       {canRemove && (
-        <div className="btn-add-bottom">
+        <div className="mt-be-btn-add-bottom">
           <AddButton index={blocks.length} label={t("+ addBlock")} />
         </div>
       )}
@@ -133,7 +136,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     return React.createElement(
       block.rootBlock,
       {
-        className: "column",
+        className: "mt-be-column",
         style: {
           width: "100%",
         },
@@ -145,9 +148,9 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   }
 };
 
-class Column extends Block {
+class Column extends Block implements HasBlocks {
   public static typeId = "core-column";
-  public static className = "mt-block-editor-column";
+  public static className = "mt-be-column";
   public static rootBlock: string | null = "div";
   public static selectable = false;
   public static get label(): string {
@@ -198,7 +201,7 @@ class Column extends Block {
         return React.createElement(
           this.rootBlock,
           {
-            className: "column",
+            className: "mt-be-column",
             style: {
               width: "100%",
             },

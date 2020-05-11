@@ -5,9 +5,15 @@ import { InitOptions as InitOptionsI18n } from "i18next";
 
 import resetCss from "./reset.css";
 import { getElementById, preParseContent, parseContent } from "./util";
-import Block from "./Block";
+import Block, { HasBlocks } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
+import EditManager from "./EditManager";
+import {
+  add as editHandlersAdd,
+  remove as editHandlersRemove,
+  swap as editHandlersSwap,
+} from "./Editor/edit";
 
 import "./import-default-blocks";
 
@@ -15,6 +21,7 @@ export enum StylesheetType {
   url,
   css,
 }
+
 interface Stylesheet {
   type: StylesheetType;
   data: string;
@@ -29,17 +36,20 @@ export interface EditorOptions {
   id: string;
   mode: string;
   stylesheets: Array<string>;
+  rootClassName?: string;
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   addButtons: Map;
+  editManager?: Partial<EditManager>;
   block: Map;
   i18n: InitOptionsI18n;
 }
 
-class Editor extends EventEmitter {
+class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
+  public editManager: EditManager;
   public blocks: Block[] = [];
   public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
@@ -56,6 +66,9 @@ class Editor extends EventEmitter {
     opts.addButtons = opts.addButtons || { bottom: true };
 
     this.factory = new BlockFactory();
+    this.editManager = new EditManager(
+      Object.assign({ editor: this }, opts.editManager || {})
+    );
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
@@ -64,6 +77,7 @@ class Editor extends EventEmitter {
     }
 
     this.editorElement = document.createElement("DIV");
+    this.editorElement.setAttribute("data-mt-be-id", this.id);
     this.editorElement.classList.add("mt-block-editor");
 
     this.inputElement.parentNode.insertBefore(
@@ -78,9 +92,9 @@ class Editor extends EventEmitter {
         this.factory
       );
       this.blocks = blocks;
-      this.emit("onInitializeBlocks", { editor: this, blocks });
+      this.emit("initializeBlocks", { editor: this, blocks });
 
-      render(React.createElement(App, { editor: this }), this.editorElement);
+      this.render();
     }, 0);
   }
 
@@ -108,17 +122,58 @@ class Editor extends EventEmitter {
       .filter((t) => t) as Array<typeof Block>;
   }
 
-  public addBlock(blocks: Block[], b: Block, index: number): void {
-    blocks.splice(index, 0, b);
+  public addBlock(parent: HasBlocks, block: Block, index: number): void {
+    const blocks = parent.blocks;
 
-    this.emit("onChangeBlocks", {
+    blocks.splice(index, 0, block);
+
+    // XXX: Skip render by default
+    // this.render();
+
+    this.editManager.add({
+      block: block,
+      data: {
+        parent: parent instanceof Editor ? null : parent,
+        index,
+      },
+      handlers: editHandlersAdd,
+    });
+
+    this.emit("changeBlocks", {
       editor: this,
-      blocks,
+      blocks: blocks,
     });
   }
 
-  public removeBlock(blocks: Block[], block: Block): void {
-    this.emit("onRemoveBlock", {
+  public mergeBlock(parent: HasBlocks, block: Block): boolean {
+    const blocks = parent.blocks;
+
+    const index = blocks.indexOf(block);
+    if (index === -1) {
+      return false;
+    }
+    const before = blocks[index - 1];
+    if (!before) {
+      return false;
+    }
+    if (!before.canMerge(block)) {
+      return false;
+    }
+
+    this.editManager.beginGrouping();
+
+    this.editManager.add(before.merge(block));
+    this.removeBlock(parent, block);
+
+    this.editManager.endGrouping();
+
+    return true;
+  }
+
+  public removeBlock(parent: HasBlocks, block: Block): void {
+    const blocks = parent.blocks;
+
+    this.emit("removeBlock", {
       editor: this,
       blocks,
       block,
@@ -128,18 +183,42 @@ class Editor extends EventEmitter {
     if (index === -1) {
       return;
     }
-    blocks.splice(index, 1);
 
-    this.emit("onChangeBlocks", {
+    blocks.splice(index, 1);
+    this.render();
+
+    this.editManager.add({
+      block: block,
+      data: {
+        parent: parent instanceof Editor ? null : parent,
+        index,
+      },
+      handlers: editHandlersRemove,
+    });
+
+    this.emit("changeBlocks", {
       editor: this,
       blocks,
     });
   }
 
-  public swapBlocks(blocks: Block[], a: number, b: number): void {
-    [blocks[a], blocks[b]] = [blocks[b], blocks[a]];
+  public swapBlocks(parent: HasBlocks, a: number, b: number): void {
+    const blocks = parent.blocks;
 
-    this.emit("onChangeBlocks", {
+    [blocks[a], blocks[b]] = [blocks[b], blocks[a]];
+    this.render();
+
+    this.editManager.add({
+      block: blocks[a],
+      data: {
+        parent: parent instanceof Editor ? null : parent,
+        a,
+        b,
+      },
+      handlers: editHandlersSwap,
+    });
+
+    this.emit("changeBlocks", {
       editor: this,
       blocks,
     });
@@ -147,7 +226,7 @@ class Editor extends EventEmitter {
 
   public async serialize(): Promise<void> {
     const blocks = this.blocks.concat();
-    this.emit("onSerialize", {
+    this.emit("serialize", {
       editor: this,
       blocks,
     });
@@ -159,14 +238,19 @@ class Editor extends EventEmitter {
   }
 
   public unload(): void {
-    this.emit("onBeforeUnload", {
+    this.emit("beforeUnload", {
       editor: this,
     });
+    this.editManager.unload();
     this.editorElement.remove();
     this.inputElement.style.display = "";
-    this.emit("onUnload", {
+    this.emit("unload", {
       editor: this,
     });
+  }
+
+  public render(): void {
+    render(React.createElement(App, { editor: this }), this.editorElement);
   }
 
   private buildStylesheets(): Array<Stylesheet | Promise<Stylesheet>> {

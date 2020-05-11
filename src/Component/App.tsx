@@ -1,12 +1,12 @@
 import { t } from "../i18n";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { DndBackend } from "./DndBackend";
 
 import Editor from "../Editor";
 import Block from "../Block";
 import BlockItem from "./BlockItem";
-import { EditorContext, BlocksContext } from "../Context";
+import { EditorContext, BlocksContext, SetFocusedId } from "../Context";
 import AddButton from "./AddButton";
 
 interface AppProps {
@@ -14,9 +14,22 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
-  const editorElRef = useRef(null);
-  const [focusedId, setFocusedId] = useState<string | null>(null);
-  const [blocks, updateBlocks] = useState(editor.blocks);
+  const editorElRef = useRef<HTMLDivElement>(null);
+
+  const [_focusedId, _setFocusedId] = useState<string | null>(null);
+  const focusedId = _focusedId ? _focusedId.replace(/:.*/, "") : null;
+  const setFocusedId: SetFocusedId = (id, opts?) => {
+    if (!id) {
+      _setFocusedId(id);
+      return;
+    }
+
+    _setFocusedId(
+      id + (opts && opts.forceUpdate ? ":" + new Date().getTime() : "")
+    );
+  };
+
+  const blocks = editor.blocks;
   const editorContext = {
     editor: editor,
     setFocusedId: setFocusedId,
@@ -28,17 +41,21 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       if (index instanceof Block) {
         index = editor.blocks.indexOf(index) + 1;
       }
-      editor.addBlock(editor.blocks, b, index);
+      editor.addBlock(editor, b, index);
       setFocusedId(b.id);
-      updateBlocks(([] as Block[]).concat(editor.blocks));
+    },
+    mergeBlock: (b: Block) => {
+      const index = editor.blocks.indexOf(b);
+      if (editor.mergeBlock(editor, b)) {
+        setFocusedId(editor.blocks[index - 1].id);
+      }
     },
     removeBlock: (b: Block) => {
       const index = editor.blocks.indexOf(b);
-      editor.removeBlock(editor.blocks, b);
+      editor.removeBlock(editor, b);
       if (index > 0) {
         setFocusedId(editor.blocks[index - 1].id);
       }
-      updateBlocks(([] as Block[]).concat(editor.blocks));
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
@@ -69,42 +86,84 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         });
       }
 
-      editor.swapBlocks(editor.blocks, dragIndex, hoverIndex);
-      updateBlocks(([] as Block[]).concat(editor.blocks));
+      editor.swapBlocks(editor, dragIndex, hoverIndex);
     },
   };
 
-  window.addEventListener(
-    "click",
-    (ev) => {
-      if (editorElRef.current === null) {
+  const onWindowClick = (ev: Event): void => {
+    const editorEl = editorElRef.current;
+    if (editorEl === null) {
+      return;
+    }
+
+    if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      return;
+    }
+
+    let target = ev.target as HTMLElement;
+    while (target.parentNode && target.parentNode !== target) {
+      if (target.classList.contains("mce-container")) {
         return;
       }
-
-      const editorEl = (editorElRef.current as unknown) as HTMLElement;
-
-      if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      if (target === editorEl) {
         return;
       }
+      target = target.parentNode as HTMLElement;
+    }
 
-      let target = ev.target as HTMLElement;
-      while (target.parentNode && target.parentNode !== target) {
-        if (target.classList.contains("mce-container")) {
-          return;
-        }
-        if (target === editorEl) {
-          return;
-        }
-        target = target.parentNode as HTMLElement;
-      }
+    setFocusedId(null);
+  };
 
-      setFocusedId(null);
-    },
-    {
+  const onWindowKeydown = (ev: KeyboardEvent): void => {
+    const editorEl = editorElRef.current;
+    if (editorEl === null) {
+      return;
+    }
+
+    if (!focusedId) {
+      return;
+    }
+
+    // stay focused but not edit
+    if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      return;
+    }
+
+    if (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
+      ev.preventDefault();
+      editor.editManager.undo({
+        editor,
+        getFocusedId: () => focusedId,
+        setFocusedId,
+      });
+    } else if (
+      (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
+      (ev.key === "y" && (ev.ctrlKey || ev.metaKey))
+    ) {
+      ev.preventDefault();
+      editor.editManager.redo({
+        editor,
+        getFocusedId: () => focusedId,
+        setFocusedId,
+      });
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", onWindowClick, {
       capture: true,
       passive: true,
-    }
-  );
+    });
+
+    window.addEventListener("keydown", onWindowKeydown);
+
+    return () => {
+      window.removeEventListener("click", onWindowClick, {
+        capture: true,
+      });
+      window.removeEventListener("keydown", onWindowKeydown);
+    };
+  });
 
   return (
     <EditorContext.Provider value={editorContext}>
@@ -126,9 +185,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
               );
             })}
             {editor.opts.addButtons["bottom"] && (
-              <div className="btn-add-bottom">
+              <div className="mt-be-btn-add-bottom">
                 <AddButton
-                  className="block-list-wrapper--bottom"
+                  className="mt-be-block-list-wrapper--bottom"
                   index={blocks.length}
                   showShortcuts={true}
                   label={t("+ addBlock")}

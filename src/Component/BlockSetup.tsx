@@ -1,24 +1,19 @@
 import React, { ReactNode } from "react";
 import Block from "../Block";
 import EditorMode from "./EditorMode";
-import { useEditorUtil } from "../hooks";
+import { blockProperty } from "../decorator";
 
 interface EditorProps {
   children: ReactNode;
   block: Block;
 }
 
-const BlockSetupInternal: React.FC<EditorProps> = ({
-  children,
-}: EditorProps) => {
-  return (
+const BlockSetup: React.FC<EditorProps> = blockProperty(
+  ({ children }: EditorProps) => (
     <EditorMode mode="setup">
       <div>{children}</div>
     </EditorMode>
-  );
-};
-
-const BlockSetup: React.FC<EditorProps> = (props: EditorProps) =>
-  useEditorUtil(BlockSetupInternal, props);
+  )
+);
 
 export default BlockSetup;

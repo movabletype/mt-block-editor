@@ -1,56 +1,7 @@
-import React, { RefObject } from "react";
-import createDOMPurify from "dompurify";
-import Block from "./Block";
-import BlockFactory from "./BlockFactory";
-import Text from "./Block/Text";
-import Column from "./Block/Column";
-
-export const mediaBreakPoint = 991.5;
-
-export function getElementById(id: string): HTMLElement {
-  const e = document.getElementById(id);
-  if (!e) {
-    throw Error(`${id} is not found`);
-  }
-  return e;
-}
-
-export function querySelector(
-  elm: HTMLElement | Document,
-  selector: string
-): HTMLElement {
-  const e = elm.querySelector(selector) as HTMLElement;
-  if (!e) {
-    throw Error(`${selector} is not found`);
-  }
-  return e;
-}
-
-export function getNodeValue(e: Element): string {
-  return (e && e.childNodes[0] ? e.childNodes[0].nodeValue : "") || "";
-}
-
-export function getNodeValueByTagName(e: Element, name: string): string {
-  return [...e.getElementsByTagName(name)].map((e) => getNodeValue(e)).join("");
-}
-
-const _entityMap = {
-  "\t": "&#x08;",
-  "\n": "&#x0A;",
-  "\r": "&#x0D;",
-  "&": "&amp;",
-  "'": "&#x27;",
-  "`": "&#x60;",
-  '"': "&quot;",
-  "<": "&lt;",
-  ">": "&gt;",
-} as { [key: string]: string };
-export function escapeSingleQuoteAttribute(string: string): string {
-  if (typeof string !== "string") {
-    return string;
-  }
-  return string.replace(/[&<>'\t\n\r]/g, (match) => _entityMap[match]);
-}
+import Block from "../Block";
+import BlockFactory from "../BlockFactory";
+import Text from "../Block/Text";
+import Column from "../Block/Column";
 
 export function preParseContent(value: string): string {
   return value
@@ -143,23 +94,6 @@ export async function parseContent(
   return blocks;
 }
 
-export const nl2br = (() => {
-  const regex = /(\r\n|\r|\n)/g;
-
-  return function nl2br(str: string): Array<string | JSX.Element> {
-    if (typeof str !== "string") {
-      return str;
-    }
-
-    return str.split(regex).map((line, index) => {
-      if (line.match(regex)) {
-        return React.createElement("br", { key: index });
-      }
-      return line;
-    });
-  };
-})();
-
 export function findDescendantBlock(
   block: Block,
   id: string | null
@@ -182,35 +116,4 @@ export function findDescendantBlock(
   }
 
   return null;
-}
-
-const DOMPurify = createDOMPurify(window);
-export function sanitize(str: string): string {
-  return DOMPurify.sanitize(str);
-}
-
-const _isIos = /ip(hone|(o|a)d)/i.test(navigator.userAgent);
-export function isIos(): boolean {
-  return _isIos;
-}
-
-// FIXME
-let _isTouchDevice = /ip(hone|(o|a)d)|android/i.test(navigator.userAgent);
-document.addEventListener("touchstart", () => {
-  _isTouchDevice = true;
-});
-export function isTouchDevice(): boolean {
-  return _isTouchDevice;
-}
-
-export function focusIfIos(ref: RefObject<HTMLElement>): void {
-  if (!isIos()) {
-    return;
-  }
-
-  if (ref.current === null) {
-    return;
-  }
-
-  ref.current.focus();
 }

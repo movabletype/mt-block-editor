@@ -4,8 +4,10 @@ import Block, {
   NewFromHtmlOptions,
   EditorOptions,
   SerializeOptions,
+  HasBlocks,
 } from "../Block";
 import Column from "./Column";
+import { useEditorContext } from "../Context";
 import { parseContent, escapeSingleQuoteAttribute } from "../util";
 import icon from "../img/icon/columns.svg";
 import BlockToolbar from "../Component/BlockToolbar";
@@ -22,6 +24,7 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
+  const { editor } = useEditorContext();
   const [showConfigPanel, setConfigPanel] = useState(false);
   function toggleConfigPanel(): void {
     setConfigPanel(!showConfigPanel);
@@ -32,7 +35,29 @@ const Editor: React.FC<EditorProps> = ({
     if (!inputEl) {
       throw "error";
     }
-    block.setColumnLayout(inputEl.value);
+
+    const layout = inputEl.value;
+    if (layout === block.getColumnLayout()) {
+      return;
+    }
+
+    const cols = parseInt(layout);
+    const len = block.blocks.length;
+
+    editor.editManager.beginGrouping();
+
+    if (len < cols) {
+      for (let i = len; i < cols; i++) {
+        editor.addBlock(block, new Column(), i);
+      }
+    } else {
+      for (let i = len - cols; i > 0; i--) {
+        editor.removeBlock(block, block.blocks[block.blocks.length - 1]);
+      }
+    }
+
+    editor.editManager.endGrouping();
+
     setConfigPanel(false);
   }
 
@@ -40,8 +65,8 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <>
       <BlockSetupCommon block={block} keys={["className"]} />
-      <div className="columns" style={{ display: "flex" }}>
-        {block.columns.map((c) => c.editor({ focus, canRemove }))}
+      <div className="mt-be-columns" style={{ display: "flex" }}>
+        {block.blocks.map((c) => c.editor({ focus, canRemove }))}
       </div>
       {focus && (
         <BlockToolbar>
@@ -90,7 +115,7 @@ const Editor: React.FC<EditorProps> = ({
   );
 };
 
-class Columns extends Block {
+class Columns extends Block implements HasBlocks {
   public static typeId = "core-columns";
   public static selectable = true;
   public static icon = icon;
@@ -98,39 +123,22 @@ class Columns extends Block {
     return t("Columns");
   }
 
-  public columns: Column[];
+  public blocks: Column[];
 
   public constructor(init?: Partial<Columns>) {
     super();
-    this.columns = [new Column(), new Column()];
+    this.blocks = [new Column(), new Column()];
     if (init) {
       Object.assign(this, init);
     }
   }
 
   public getColumnLayout(): string {
-    return `${this.columns.length}`;
-  }
-
-  public setColumnLayout(layout: string): void {
-    if (layout === this.getColumnLayout()) {
-      return;
-    }
-
-    const cols = parseInt(layout);
-    const len = this.columns.length;
-
-    if (len < cols) {
-      for (let i = cols - len; i > 0; i--) {
-        this.columns.push(new Column());
-      }
-    } else {
-      this.columns.splice(cols, len - cols);
-    }
+    return `${this.blocks.length}`;
   }
 
   public childBlocks(): Block[] {
-    return this.columns;
+    return this.blocks;
   }
 
   public editor({ focus, canRemove }: EditorOptions): JSX.Element {
@@ -140,9 +148,9 @@ class Columns extends Block {
   }
 
   public html(): string {
-    return `<div class="columns${
+    return `<div class="mt-be-columns${
       this.className ? ` ${this.className}` : ""
-    }" style="display: flex">${this.columns
+    }" style="display: flex">${this.blocks
       .map((c) => c.htmlString())
       .join("")}</div>`;
   }
@@ -150,11 +158,11 @@ class Columns extends Block {
   public async serialize(opts: SerializeOptions): Promise<string> {
     const m = this.metadata();
     const serializedColumns = await Promise.all(
-      this.columns.map((c) => c.serialize(opts))
+      this.blocks.map((c) => c.serialize(opts))
     );
     return `<!-- mt-beb t="${(this.constructor as typeof Block).typeId}"${
       m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
-    } --><div class="mt-block-editor-columns${
+    } --><div class="mt-be-columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${serializedColumns.join(
       ""
@@ -166,13 +174,13 @@ class Columns extends Block {
     factory,
     meta,
   }: NewFromHtmlOptions): Promise<Block> {
-    const columns = (await parseContent(
+    const blocks = (await parseContent(
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, ""),
       factory
     )) as Column[];
-    return new Columns(Object.assign({ columns }, meta));
+    return new Columns(Object.assign({ blocks }, meta));
   }
 }
 

@@ -36,7 +36,7 @@ const AddButton: React.FC<AddButtonProps> = ({
     }
 
     const buttonEl = (buttonElRef.current as unknown) as HTMLElement;
-    buttonEl.classList.remove("droppable");
+    buttonEl.classList.remove("mt-be-droppable");
   };
 
   const onWindowClick = (ev: MouseEvent): void => {
@@ -57,15 +57,7 @@ const AddButton: React.FC<AddButtonProps> = ({
     setShowList(ListStatus.Hidden);
   };
 
-  editor.editorElement.removeAttribute("data-mt-block-editor-add-button");
   useEffect(() => {
-    if (showList === ListStatus.Visible) {
-      editor.editorElement.setAttribute(
-        "data-mt-block-editor-add-button",
-        "visible"
-      );
-    }
-
     document.addEventListener("drop", onDrop, {
       capture: true,
       passive: true,
@@ -93,12 +85,15 @@ const AddButton: React.FC<AddButtonProps> = ({
 
   return (
     <>
-      <input ref={dummyInputElRef} className="input--hidden" tabIndex={-1} />
+      <input
+        ref={dummyInputElRef}
+        className="mt-be-input--hidden"
+        tabIndex={-1}
+      />
       <div
-        className={`btn-wrap ${
-          onlyShortcuts ? "btn-wrap--only-shortcuts" : ""
+        className={`mt-be-btn-wrap ${
+          onlyShortcuts ? "mt-be-btn-wrap--only-shortcuts" : ""
         }`}
-        style={{ position: "relative" }}
         ref={buttonElRef}
         onDragOver={(ev) => {
           if (!ev.dataTransfer.types.find((t) => t === "Files")) {
@@ -108,14 +103,14 @@ const AddButton: React.FC<AddButtonProps> = ({
           ev.preventDefault();
           ev.stopPropagation();
           ev.dataTransfer.dropEffect = "copy";
-          ev.currentTarget.classList.add("droppable");
+          ev.currentTarget.classList.add("mt-be-droppable");
         }}
         onDragEnter={(ev) => {
           ev.preventDefault();
           ev.stopPropagation();
         }}
         onDragLeave={(ev) => {
-          ev.currentTarget.classList.remove("droppable");
+          ev.currentTarget.classList.remove("mt-be-droppable");
         }}
         onDrop={async (ev) => {
           ev.preventDefault();
@@ -139,7 +134,7 @@ const AddButton: React.FC<AddButtonProps> = ({
       >
         <button
           type="button"
-          className="btn-add"
+          className="mt-be-btn-add"
           onClick={(ev) => {
             ev.stopPropagation();
             setShowList(
@@ -152,7 +147,7 @@ const AddButton: React.FC<AddButtonProps> = ({
           {label || ""}
         </button>
         {showShortcuts && (
-          <ul className="shortcut-block-list">
+          <ul className="mt-be-shortcut-block-list">
             {editor
               .shortcutTypes()
               .filter((t) => {
@@ -166,6 +161,7 @@ const AddButton: React.FC<AddButtonProps> = ({
               .map((t: typeof Block) => (
                 <li key={t.typeId}>
                   <a
+                    data-mt-be-type={t.typeId}
                     href="#"
                     onClick={async (ev) => {
                       ev.preventDefault();
@@ -192,15 +188,15 @@ const AddButton: React.FC<AddButtonProps> = ({
         timeout={100}
         in={showList === ListStatus.Visible}
         unmountOnExit
-        classNames="block-list-wrapper"
+        classNames="mt-be-block-list-wrapper"
       >
         <div
-          className={`block-list-wrapper ${className || ""} ${
-            showList === ListStatus.None ? "block-list-wrapper-none" : ""
+          className={`mt-be-block-list-wrapper ${className || ""} ${
+            showList === ListStatus.None ? "mt-be-block-list-wrapper-none" : ""
           }`}
           ref={blockListElRef}
         >
-          <ul className="block-list">
+          <ul className="mt-be-block-list">
             {(showShortcuts ? editor.panelTypes() : editor.selectableTypes())
               .filter((t) => {
                 if (!addableBlockTypes) {
@@ -213,6 +209,7 @@ const AddButton: React.FC<AddButtonProps> = ({
               .map((t: typeof Block) => (
                 <li key={t.typeId}>
                   <a
+                    data-mt-be-type={t.typeId}
                     href="#"
                     onClick={async (ev) => {
                       ev.preventDefault();
