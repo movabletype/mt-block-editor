@@ -62,7 +62,7 @@
           },
         },
       }).then((ed) => {
-        ed.on("onInitializeBlocks", ({ blocks }) => {
+        ed.on("initializeBlocks", ({ blocks }) => {
           console.log(blocks);
         });
       });

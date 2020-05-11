@@ -14,12 +14,15 @@ import {
   isIos,
   isTouchDevice,
   mediaBreakPoint,
+  getShadowDomSelectorSet,
 } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 
 import { EditHistory } from "../EditManager";
+import { CARET, CARET_ATTR, tinymceFocus } from "./Text/util";
 import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
@@ -28,9 +31,6 @@ interface EditorProps extends EditorOptions {
   block: Text;
 }
 
-const CARET_CLASS = "mt-block-editor-caret";
-const CARET = `<span class="${CARET_CLASS}"></span>`;
-
 const Editor: React.FC<EditorProps> = ({
   block,
   focus,
@@ -38,6 +38,8 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor, setFocusedId } = useEditorContext();
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
+
+  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
@@ -63,18 +65,7 @@ const Editor: React.FC<EditorProps> = ({
 
         ed.setContent(block.text);
         if (focus) {
-          ed.focus(false);
-          if (ed.selection) {
-            const body = ed.getBody();
-            const caret = body.querySelector(`.${CARET_CLASS}`);
-            if (caret) {
-              ed.selection.select(caret, true);
-              ed.dom.remove(caret);
-            } else {
-              ed.selection.select(body, true);
-              ed.selection.collapse(false);
-            }
-          }
+          tinymceFocus(ed, selectorSet);
         }
 
         const root = ed.dom.getRoot();
@@ -157,8 +148,8 @@ const Editor: React.FC<EditorProps> = ({
                 e.remove()
               );
               if (c.childNodes.length !== 0 && i === children.length - 1) {
-                const caret = document.createElement("SPAN");
-                caret.classList.add(CARET_CLASS);
+                const caret = document.createElement("BR");
+                caret.setAttribute(CARET_ATTR, "1");
                 c.insertBefore(caret, c.firstChild);
               }
               const text = c.childNodes.length === 0 ? "" : c.outerHTML;
@@ -245,7 +236,7 @@ const Editor: React.FC<EditorProps> = ({
       // inline: true,
     };
 
-    editor.emit("onBuildTinyMCESettings", {
+    editor.emit("buildTinyMCESettings", {
       editor,
       block,
       settings,
@@ -366,11 +357,7 @@ class Text extends Block {
 
     if (this.htmlString()) {
       return (
-        <div
-          dangerouslySetInnerHTML={{
-            __html: sanitize(this.htmlString()),
-          }}
-        ></div>
+        <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );
     } else {
       return <p>{"\u00A0"}</p>;

@@ -1,3 +1,4 @@
+import Editor from "./Editor";
 import Block from "./Block";
 import { EditorContextProps } from "./Context";
 
@@ -20,6 +21,7 @@ export interface EditHistory {
 }
 
 class EditManager {
+  private editor: Editor | null = null;
   private limit = DEFAULT_LIMIT;
   private index = 0;
   private ignore = false;
@@ -30,6 +32,11 @@ class EditManager {
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public unload(): void {
+    this.editor = null;
+    this.histories = [];
   }
 
   public canUndo(): boolean {
@@ -43,6 +50,10 @@ class EditManager {
   public add(history: EditHistory): void {
     if (this.ignore) {
       return;
+    }
+
+    if (this.group === NO_GROUP) {
+      this.emitChange();
     }
 
     if (this.index !== 0) {
@@ -80,6 +91,9 @@ class EditManager {
   public undo(props: EditorContextProps, group?: number): void {
     const history = this.histories[this.histories.length - this.index - 1];
     if (!history || (group !== undefined && group !== history.group)) {
+      if (group !== undefined) {
+        this.emitChange();
+      }
       return;
     }
 
@@ -89,7 +103,9 @@ class EditManager {
     history.handlers.undo.call(undefined, history, props);
     this.ignore = false;
 
-    if (history.group !== NO_GROUP) {
+    if (history.group === NO_GROUP) {
+      this.emitChange();
+    } else {
       this.undo(props, history.group);
     }
   }
@@ -97,6 +113,9 @@ class EditManager {
   public redo(props: EditorContextProps, group?: number): void {
     const history = this.histories[this.histories.length - this.index];
     if (!history || (group !== undefined && group !== history.group)) {
+      if (group !== undefined) {
+        this.emitChange();
+      }
       return;
     }
 
@@ -105,7 +124,9 @@ class EditManager {
     history.handlers.redo.call(undefined, history, props);
     this.ignore = false;
 
-    if (history.group !== NO_GROUP) {
+    if (history.group === NO_GROUP) {
+      this.emitChange();
+    } else {
       this.redo(props, history.group);
     }
   }
@@ -119,7 +140,22 @@ class EditManager {
   }
 
   public endGrouping(): void {
+    if (this.group === NO_GROUP) {
+      return;
+    }
+
+    const last = this.histories[this.histories.length - 1];
+    if (last && last.group === this.group) {
+      this.emitChange();
+    }
+
     this.group = NO_GROUP;
+  }
+
+  private emitChange(): void {
+    if (this.editor) {
+      this.editor.emit("change", { editor: this.editor });
+    }
   }
 }
 
