@@ -147,7 +147,7 @@ describe("add/canUndo/canRedo", () => {
       const manager = new EditManager({ limit, editor: mockEditor });
 
       let count = 0;
-      const history = {
+      const history1 = {
         block: new Text(),
         data: {},
         handlers: {
@@ -160,14 +160,30 @@ describe("add/canUndo/canRedo", () => {
           },
         },
       };
-      for (let i = 0; i < 200; i++) {
-        manager.add(history);
+      const history2 = {
+        block: new Text(),
+        data: {},
+        handlers: {
+          id: Symbol("test"),
+          undo() {
+            count += 2;
+          },
+          redo() {
+            count += 2;
+          },
+        },
+      };
+      for (let i = 0; i < limit; i++) {
+        manager.add(history1);
       }
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < limit; i++) {
+        manager.add(history2);
+      }
+      for (let i = 0; i < limit*2; i++) {
         manager.undo(editorContextProps);
       }
 
-      expect(count).toBe(limit);
+      expect(count).toBe(limit * 2);
     });
   });
 });

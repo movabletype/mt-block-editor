@@ -84,7 +84,7 @@ class EditManager {
 
     if (this.histories.length > this.limit) {
       const count = this.histories.length - this.limit;
-      this.histories.splice(-count, count);
+      this.histories.splice(0, count);
     }
   }
 
