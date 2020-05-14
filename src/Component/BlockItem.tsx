@@ -173,13 +173,14 @@ const BlockItem: React.FC<Props> = ({
       key={b.id}
       data-mt-block-editor-block-id={b.id}
       onClick={(ev) => {
+        ev.stopPropagation();
+        ev.nativeEvent.stopImmediatePropagation();
+
         if (getFocusedId() === b.id) {
           return;
         }
 
         ev.preventDefault();
-        ev.stopPropagation();
-        ev.nativeEvent.stopImmediatePropagation();
 
         if (clickBlockTargetRef.current) {
           clickBlockTargetRef.current.click();
