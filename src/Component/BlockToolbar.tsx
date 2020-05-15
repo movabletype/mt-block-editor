@@ -17,15 +17,16 @@ interface BlockToolbarProps {
 const BlockToolbar: React.FC<BlockToolbarProps> = (
   props: BlockToolbarProps
 ) => {
+  const blockContext = useBlockContext();
+  blockContext.rendered = true;
+  const { block, index } = blockContext;
+
   const { swapBlocks } = useBlocksContext();
   const [showCommandPanel, setCommandPanel] = useState(false);
   function toggleCommandPanel(): void {
     setCommandPanel(!showCommandPanel);
+    block.focusEditor();
   }
-
-  const blockContext = useBlockContext();
-  blockContext.rendered = true;
-  const { block, index } = blockContext;
 
   let className = "mt-be-block-toolbar--block";
   if (props.className) {

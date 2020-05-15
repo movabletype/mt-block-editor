@@ -182,6 +182,13 @@ class Table extends Block {
     }
   }
 
+  public focusEditor(): void {
+    const ed: TinyMCE = tinymce.get(this.tinymceId());
+    if (ed) {
+      ed.focus(false);
+    }
+  }
+
   public tinymceId(): string {
     return `textarea-${this.id}`;
   }
