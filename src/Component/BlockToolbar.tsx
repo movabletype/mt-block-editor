@@ -41,7 +41,13 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
 
   return (
     <>
-      <div id={props.id || ""} className={`mt-be-block-toolbar ${className}`}>
+      <div
+        id={props.id || ""}
+        className={`mt-be-block-toolbar ${className}`}
+        onMouseDown={(ev) => {
+          ev.preventDefault();
+        }}
+      >
         {props.children}
         <div className="mt-be-block-toolbar-default-items">
           <button
