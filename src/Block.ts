@@ -101,6 +101,10 @@ class Block {
     throw "Should be implemented for each concrete class";
   }
 
+  public focusEditor(): void {
+    return;
+  }
+
   public contentLabel(): string {
     return (this.constructor as typeof Block).label;
   }
