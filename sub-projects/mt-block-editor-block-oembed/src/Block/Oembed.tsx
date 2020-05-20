@@ -102,8 +102,11 @@ class Oembed extends Block {
   }
 
   public url = "";
+  public width: number | null = null;
+  public height: number | null = null;
   public maxwidth: number | null = null;
   public maxheight: number | null = null;
+  public providerName: string | null = null;
 
   public constructor(init?: Partial<Oembed>) {
     super();
@@ -118,7 +121,7 @@ class Oembed extends Block {
 
   public editor({ focus }: EditorOptions): JSX.Element {
     if (focus) {
-      this.compiledHtml = "";
+      this.reset();
       return <Editor key={this.id} block={this} />;
     } else {
       return this.html();
@@ -135,7 +138,7 @@ class Oembed extends Block {
 
   public async compile({ editor }: SerializeOptions): Promise<void> {
     if (!this.url) {
-      this.compiledHtml = "";
+      this.reset();
       return;
     }
 
@@ -151,12 +154,22 @@ class Oembed extends Block {
     });
 
     this.compiledHtml = res.html;
+    this.width = res.width;
+    this.height = res.height;
+    this.providerName = res.provider_name;
   }
 
   public static async newFromHtml({
     meta,
   }: NewFromHtmlOptions): Promise<Oembed> {
     return new Oembed(meta);
+  }
+
+  private reset(): void {
+    this.compiledHtml = "";
+    this.width = null;
+    this.height = null;
+    this.providerName = null;
   }
 }
 
