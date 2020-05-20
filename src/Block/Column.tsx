@@ -328,7 +328,12 @@ class Column extends Block implements HasBlocks {
       throw Error("This content is not for this block");
     }
 
-    return new this(Object.assign({ blocks, compiledHtml, _html: "" }, meta));
+    return new this(
+      Object.assign(
+        { blocks, compiledHtml, _html: "" },
+        meta as Partial<Column>
+      )
+    );
   }
 }
 
