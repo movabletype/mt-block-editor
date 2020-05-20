@@ -167,7 +167,11 @@ class Block {
       ) as string[];
     }
 
-    keys.forEach((k) => (data[k] = src[k]));
+    keys.forEach((k) => {
+      if (src[k] !== null && src[k] !== undefined) {
+        data[k] = src[k];
+      }
+    });
 
     ["label", "helpText", "className"].forEach((k) => {
       if (src[k]) {
