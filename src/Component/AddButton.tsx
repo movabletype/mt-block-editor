@@ -82,6 +82,27 @@ const AddButton: React.FC<AddButtonProps> = ({
   }
 
   const onlyShortcuts = showShortcuts && editor.panelTypes().length === 0;
+  const shortcutTypes = showShortcuts
+    ? editor.shortcutTypes().filter((t) => {
+        if (!addableBlockTypes) {
+          return true;
+        }
+        return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
+      })
+    : [];
+  const panelTypes = (showShortcuts
+    ? editor.panelTypes()
+    : editor.selectableTypes()
+  ).filter((t) => {
+    if (!addableBlockTypes) {
+      return true;
+    }
+    return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
+  });
+
+  if (shortcutTypes.length === 0 && panelTypes.length === 0) {
+    return <></>;
+  }
 
   return (
     <>
@@ -148,39 +169,29 @@ const AddButton: React.FC<AddButtonProps> = ({
         </button>
         {showShortcuts && (
           <ul className="mt-be-shortcut-block-list">
-            {editor
-              .shortcutTypes()
-              .filter((t) => {
-                if (!addableBlockTypes) {
-                  return true;
-                }
-                return (
-                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
-                );
-              })
-              .map((t: typeof Block) => (
-                <li key={t.typeId}>
-                  <a
-                    data-mt-be-type={t.typeId}
-                    href="#"
-                    onClick={async (ev) => {
-                      ev.preventDefault();
-                      ev.stopPropagation();
-                      ev.nativeEvent.stopImmediatePropagation();
-                      focusIfIos(dummyInputElRef);
-                      addBlock(
-                        await t.new({
-                          editor: editor,
-                          event: new Event("addButton"),
-                        }),
-                        index
-                      );
-                    }}
-                  >
-                    <img src={t.icon} />
-                  </a>
-                </li>
-              ))}
+            {shortcutTypes.map((t: typeof Block) => (
+              <li key={t.typeId}>
+                <a
+                  data-mt-be-type={t.typeId}
+                  href="#"
+                  onClick={async (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    focusIfIos(dummyInputElRef);
+                    addBlock(
+                      await t.new({
+                        editor: editor,
+                        event: new Event("addButton"),
+                      }),
+                      index
+                    );
+                  }}
+                >
+                  <img src={t.icon} />
+                </a>
+              </li>
+            ))}
           </ul>
         )}
       </div>
@@ -197,42 +208,33 @@ const AddButton: React.FC<AddButtonProps> = ({
           ref={blockListElRef}
         >
           <ul className="mt-be-block-list">
-            {(showShortcuts ? editor.panelTypes() : editor.selectableTypes())
-              .filter((t) => {
-                if (!addableBlockTypes) {
-                  return true;
-                }
-                return (
-                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
-                );
-              })
-              .map((t: typeof Block) => (
-                <li key={t.typeId}>
-                  <a
-                    data-mt-be-type={t.typeId}
-                    href="#"
-                    onClick={async (ev) => {
-                      ev.preventDefault();
-                      ev.stopPropagation();
-                      ev.nativeEvent.stopImmediatePropagation();
-                      setShowList(ListStatus.None);
-                      focusIfIos(dummyInputElRef);
-                      addBlock(
-                        await t.new({
-                          editor: editor,
-                          event: new Event("addButton"),
-                        }),
-                        index
-                      );
-                    }}
-                  >
-                    <div>
-                      <img src={t.icon} />
-                      <span>{t.label}</span>
-                    </div>
-                  </a>
-                </li>
-              ))}
+            {panelTypes.map((t: typeof Block) => (
+              <li key={t.typeId}>
+                <a
+                  data-mt-be-type={t.typeId}
+                  href="#"
+                  onClick={async (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    setShowList(ListStatus.None);
+                    focusIfIos(dummyInputElRef);
+                    addBlock(
+                      await t.new({
+                        editor: editor,
+                        event: new Event("addButton"),
+                      }),
+                      index
+                    );
+                  }}
+                >
+                  <div>
+                    <img src={t.icon} />
+                    <span>{t.label}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </CSSTransition>
