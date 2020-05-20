@@ -317,7 +317,7 @@ class Column extends Block implements HasBlocks {
           .replace(/&lt;\/div&gt;(<!--\s+\/mt-beb\s+--)>$/, "$1")
           .replace(
             new RegExp(
-              `^&lt;div\\s+class="${this.className}[^"]*"&gt;&lt;/div&gt;$`
+              `^&lt;div\\s+class=["']${this.className}[^"']*["']&gt;&lt;/div&gt;$`
             ),
             ""
           );
