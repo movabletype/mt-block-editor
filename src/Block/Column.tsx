@@ -186,7 +186,9 @@ class Column extends Block implements HasBlocks {
   }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
-      ((this._html === "" && this.blocks.length === 0) ||
+      ((this._html === "" &&
+        this.blocks.length === 0 &&
+        this.effectiveAddableBlockTypes().length === 0) ||
         (!focus && !focusDescendant))
     ) {
       const res = (
@@ -334,6 +336,13 @@ class Column extends Block implements HasBlocks {
         meta as Partial<Column>
       )
     );
+  }
+
+  private effectiveAddableBlockTypes(): string[] {
+    if (!this.canRemoveBlock) {
+      return [];
+    }
+    return this.addableBlockTypes || [];
   }
 }
 
