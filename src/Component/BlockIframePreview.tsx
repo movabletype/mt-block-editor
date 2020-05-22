@@ -286,7 +286,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         }
 
         /* FIXME */
-        .mt-block-editor-column {
+        .mt-be-column {
           width: 100%;
         }
         </style>
