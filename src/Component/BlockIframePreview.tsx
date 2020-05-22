@@ -328,16 +328,18 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             size.width !== ev.data.arguments.width ||
             size.height !== ev.data.arguments.height
           ) {
-            const oldHeight = parseInt(size.height);
-            const newHeight = parseInt(ev.data.arguments.height);
-            if (
-              oldHeight &&
-              newHeight &&
-              oldHeight > newHeight &&
-              Math.abs(oldHeight - newHeight) < 10
-            ) {
-              return;
-            }
+            (Object.keys(size) as Array<keyof Size>).forEach((k) => {
+              const oldValue = parseInt(size[k]);
+              const newValue = parseInt(ev.data.arguments[k]);
+              if (
+                oldValue &&
+                newValue &&
+                oldValue > newValue &&
+                Math.abs(oldValue - newValue) < 10
+              ) {
+                ev.data.arguments[k] = size[k];
+              }
+            });
             setSize(ev.data.arguments);
           }
           break;
