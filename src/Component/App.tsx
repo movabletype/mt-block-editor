@@ -190,7 +190,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                   className="mt-be-block-list-wrapper--bottom"
                   index={blocks.length}
                   showShortcuts={true}
-                  label={t("+ addBlock")}
+                  label={t("+ add new block")}
+                  labelDirect={t("+ add new {{label}} block", {
+                    label: "{{label}}",
+                  })}
                 />
               </div>
             )}

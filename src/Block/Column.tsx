@@ -126,7 +126,13 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       })}
       {canRemove && (
         <div className="mt-be-btn-add-bottom">
-          <AddButton index={blocks.length} label={t("+ addBlock")} />
+          <AddButton
+            index={blocks.length}
+            label={t("+ add new block")}
+            labelDirect={t("+ add new {{label}} block", {
+              label: "{{label}}",
+            })}
+          />
         </div>
       )}
     </BlocksContext.Provider>

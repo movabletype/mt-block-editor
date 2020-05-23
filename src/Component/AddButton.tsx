@@ -13,6 +13,7 @@ enum ListStatus {
 interface AddButtonProps {
   index: number;
   label?: string;
+  labelDirect?: string;
   className?: string;
   showShortcuts?: boolean;
 }
@@ -20,6 +21,7 @@ interface AddButtonProps {
 const AddButton: React.FC<AddButtonProps> = ({
   index,
   label,
+  labelDirect,
   className,
   showShortcuts,
 }: AddButtonProps) => {
@@ -104,6 +106,17 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
+  const add = async (type: typeof Block): Promise<void> => {
+    focusIfIos(dummyInputElRef);
+    addBlock(
+      await type.new({
+        editor: editor,
+        event: new Event("addButton"),
+      }),
+      index
+    );
+  };
+
   return (
     <>
       <input
@@ -153,20 +166,35 @@ const AddButton: React.FC<AddButtonProps> = ({
           }
         }}
       >
-        <button
-          type="button"
-          className="mt-be-btn-add"
-          onClick={(ev) => {
-            ev.stopPropagation();
-            setShowList(
-              showList === ListStatus.Visible
-                ? ListStatus.Hidden
-                : ListStatus.Visible
-            );
-          }}
-        >
-          {label || ""}
-        </button>
+        {panelTypes.length === 1 ? (
+          <button
+            type="button"
+            className="mt-be-btn-add"
+            onClick={async (ev) => {
+              ev.stopPropagation();
+              add(panelTypes[0]);
+            }}
+          >
+            {labelDirect
+              ? labelDirect.replace(/{{label}}/, panelTypes[0].label)
+              : label || ""}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="mt-be-btn-add"
+            onClick={async (ev) => {
+              ev.stopPropagation();
+              setShowList(
+                showList === ListStatus.Visible
+                  ? ListStatus.Hidden
+                  : ListStatus.Visible
+              );
+            }}
+          >
+            {label || ""}
+          </button>
+        )}
         {showShortcuts && (
           <ul className="mt-be-shortcut-block-list">
             {shortcutTypes.map((t: typeof Block) => (
@@ -179,14 +207,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                     ev.preventDefault();
                     ev.stopPropagation();
                     ev.nativeEvent.stopImmediatePropagation();
-                    focusIfIos(dummyInputElRef);
-                    addBlock(
-                      await t.new({
-                        editor: editor,
-                        event: new Event("addButton"),
-                      }),
-                      index
-                    );
+                    add(t);
                   }}
                 >
                   <img src={t.icon} />
@@ -219,14 +240,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                     ev.stopPropagation();
                     ev.nativeEvent.stopImmediatePropagation();
                     setShowList(ListStatus.None);
-                    focusIfIos(dummyInputElRef);
-                    addBlock(
-                      await t.new({
-                        editor: editor,
-                        event: new Event("addButton"),
-                      }),
-                      index
-                    );
+                    add(t);
                   }}
                 >
                   <div>
