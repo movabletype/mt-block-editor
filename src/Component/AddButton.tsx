@@ -174,6 +174,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                 <a
                   data-mt-be-type={t.typeId}
                   href="#"
+                  title={t.label}
                   onClick={async (ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
