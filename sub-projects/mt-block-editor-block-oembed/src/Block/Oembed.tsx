@@ -147,16 +147,30 @@ class Oembed extends Block {
       throw "Requires resolver function for sixapart-oembed.";
     }
     const resolver = opts.resolver as Resolver;
-    const res = await resolver({
-      url: this.url,
-      maxwidth: this.maxwidth || null,
-      maxheight: this.maxheight || null,
-    });
+    try {
+      const res = await resolver({
+        url: this.url,
+        maxwidth: this.maxwidth || null,
+        maxheight: this.maxheight || null,
+      });
 
-    this.compiledHtml = res.html;
-    this.width = res.width;
-    this.height = res.height;
-    this.providerName = res.provider_name;
+      if (!res.html) {
+        throw res;
+      }
+
+      this.compiledHtml = res.html;
+      this.width = res.width;
+      this.height = res.height;
+      this.providerName = res.provider_name;
+    } catch (e) {
+      this.reset();
+      this.compiledHtml = t(
+        "Could not retrieve HTML for embedding from {{URL}}",
+        {
+          URL: this.url,
+        }
+      );
+    }
   }
 
   public static async newFromHtml({
