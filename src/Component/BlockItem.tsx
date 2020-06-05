@@ -218,6 +218,11 @@ const BlockItem: React.FC<Props> = ({
           </div>
         </>
       )}
+      {showButton && (
+        <div className="mt-be-btn-remove-wrapper">
+          <RemoveButton block={b} />
+        </div>
+      )}
       <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
           <div className="mt-be-content-label">{b.contentLabel()}</div>
@@ -251,11 +256,6 @@ const BlockItem: React.FC<Props> = ({
           </>
         )}
       </div>
-      {showButton && (
-        <div className="mt-be-btn-remove-wrapper">
-          <RemoveButton block={b} />
-        </div>
-      )}
     </div>
   );
 };

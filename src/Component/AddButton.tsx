@@ -166,6 +166,27 @@ const AddButton: React.FC<AddButtonProps> = ({
           }
         }}
       >
+        {showShortcuts && (
+          <ul className="mt-be-shortcut-block-list">
+            {shortcutTypes.map((t: typeof Block) => (
+              <li key={t.typeId}>
+                <button
+                  type="button"
+                  data-mt-be-type={t.typeId}
+                  title={t.label}
+                  onClick={async (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    add(t);
+                  }}
+                >
+                  <img src={t.icon} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         {panelTypes.length === 1 ? (
           <button
             type="button"
@@ -195,27 +216,6 @@ const AddButton: React.FC<AddButtonProps> = ({
             {label || ""}
           </button>
         )}
-        {showShortcuts && (
-          <ul className="mt-be-shortcut-block-list">
-            {shortcutTypes.map((t: typeof Block) => (
-              <li key={t.typeId}>
-                <a
-                  data-mt-be-type={t.typeId}
-                  href="#"
-                  title={t.label}
-                  onClick={async (ev) => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    ev.nativeEvent.stopImmediatePropagation();
-                    add(t);
-                  }}
-                >
-                  <img src={t.icon} />
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
       <CSSTransition
         timeout={100}
@@ -232,9 +232,9 @@ const AddButton: React.FC<AddButtonProps> = ({
           <ul className="mt-be-block-list">
             {panelTypes.map((t: typeof Block) => (
               <li key={t.typeId}>
-                <a
+                <button
+                  type="button"
                   data-mt-be-type={t.typeId}
-                  href="#"
                   onClick={async (ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
@@ -247,7 +247,7 @@ const AddButton: React.FC<AddButtonProps> = ({
                     <img src={t.icon} />
                     <span>{t.label}</span>
                   </div>
-                </a>
+                </button>
               </li>
             ))}
           </ul>
