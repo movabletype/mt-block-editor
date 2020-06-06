@@ -33,13 +33,17 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     const settings: TinyMCESettings = {
       language: editor.opts.i18n.lng,
       selector: `#${block.tinymceId()}`,
-      //toolbar: false,
       menubar: false,
       plugins: "table code paste media",
       toolbar: "table,code",
-      // eslint-disable-next-line @typescript-eslint/camelcase
+
+      /* eslint-disable @typescript-eslint/camelcase */
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
+      relative_urls: false,
+      remove_script_host: true,
+      /* eslint-enable @typescript-eslint/camelcase */
+
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
