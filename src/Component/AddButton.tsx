@@ -83,24 +83,13 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
-  const onlyShortcuts = showShortcuts && editor.panelTypes().length === 0;
-  const shortcutTypes = showShortcuts
-    ? editor.shortcutTypes().filter((t) => {
-        if (!addableBlockTypes) {
-          return true;
-        }
-        return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
-      })
-    : [];
-  const panelTypes = (showShortcuts
+  const shortcutTypes = showShortcuts ? editor.shortcutTypes() : [];
+  const panelTypes = addableBlockTypes
+    ? editor.selectableTypes(addableBlockTypes)
+    : showShortcuts
     ? editor.panelTypes()
-    : editor.selectableTypes()
-  ).filter((t) => {
-    if (!addableBlockTypes) {
-      return true;
-    }
-    return addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1;
-  });
+    : [...new Set(editor.shortcutTypes().concat(editor.panelTypes()))];
+  const onlyShortcuts = showShortcuts && panelTypes.length === 0;
 
   if (shortcutTypes.length === 0 && panelTypes.length === 0) {
     return <></>;
@@ -149,10 +138,11 @@ const AddButton: React.FC<AddButtonProps> = ({
         onDrop={async (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
+          const selectableTypes = shortcutTypes.concat(panelTypes);
           const files = ev.dataTransfer.files;
           for (let i = 0; i < files.length; i++) {
             const f = files[i];
-            const t = editor.selectableTypes().find((t: typeof Block) => {
+            const t = selectableTypes.find((t: typeof Block) => {
               try {
                 return t.canNewFromFile({ file: f });
               } catch (e) {
