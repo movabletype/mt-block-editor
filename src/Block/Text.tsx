@@ -22,7 +22,13 @@ import BlockLabel from "../Component/BlockLabel";
 import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
 
 import { EditHistory } from "../EditManager";
-import { CARET, CARET_ATTR, tinymceFocus } from "./Text/util";
+import {
+  HasTinyMCE,
+  CARET,
+  CARET_ATTR,
+  tinymceFocus,
+  removeTinyMCEFromBlock,
+} from "./Text/util";
 import { editHandlers } from "./Text/edit";
 
 declare const tinymce: EditorManager;
@@ -269,10 +275,8 @@ const Editor: React.FC<EditorProps> = ({
           capture: true,
         });
       }
-      block.text = tinymce.get(block.tinymceId()).getContent();
 
-      block.tinymce = null;
-      tinymce.get(block.tinymceId()).remove();
+      removeTinyMCEFromBlock(block);
     };
   });
 
@@ -310,7 +314,7 @@ const Editor: React.FC<EditorProps> = ({
   );
 };
 
-class Text extends Block {
+class Text extends Block implements HasTinyMCE {
   public static typeId = "core-text";
   public static selectable = true;
   public static icon = icon;
@@ -339,13 +343,12 @@ class Text extends Block {
   }
 
   public isBlank(): boolean {
-    return (this.tinymce ? this.tinymce.getContent() : this.text) === "";
+    return this.html() === "";
   }
 
   public focusEditor(): void {
-    const ed: TinyMCE = tinymce.get(this.tinymceId());
-    if (ed) {
-      ed.focus(false);
+    if (this.tinymce) {
+      this.tinymce.focus(false);
     }
   }
 
@@ -399,12 +402,14 @@ class Text extends Block {
   }
 
   public html(): string {
-    const ed: TinyMCE = tinymce.get(this.tinymceId());
-    if (ed) {
-      return ed.getContent();
-    } else {
-      return this.text;
+    if (this.tinymce) {
+      try {
+        return this.tinymce.getContent();
+      } catch (e) {
+        console.log(e);
+      }
     }
+    return this.text;
   }
 
   public static async newFromHtml({

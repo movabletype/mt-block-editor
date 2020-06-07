@@ -1,17 +1,22 @@
-import { Editor as TinyMCE } from "tinymce";
+import { Editor as TinyMCE, EditorManager } from "tinymce";
 import {
   SelectorSet,
   selectorCmp,
   getElementByNthOfTypeIndexes,
 } from "../../util";
 
+declare const tinymce: EditorManager;
+
+export interface HasTinyMCE {
+  text: string;
+  tinymce: TinyMCE | null;
+  tinymceId(): string;
+}
+
 export const CARET_ATTR = "data-mt-block-editor-caret";
 export const CARET = `<br ${CARET_ATTR}="1">`;
 
-export function tinymceFocus(
-  ed: TinyMCE,
-  selectorSet: SelectorSet | null
-): void {
+function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
   ed.focus(false);
 
   if (!ed.selection) {
@@ -52,4 +57,37 @@ export function tinymceFocus(
   // fallback
   ed.selection.select(body, true);
   ed.selection.collapse(false);
+}
+
+export function tinymceFocus(
+  ed: TinyMCE,
+  selectorSet: SelectorSet | null
+): void {
+  try {
+    _tinymceFocus(ed, selectorSet);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export function removeTinyMCEFromBlock(block: HasTinyMCE): void {
+  if (block.tinymce) {
+    try {
+      block.text = block.tinymce.getContent();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const ed = block.tinymce || tinymce.get(block.tinymceId());
+  block.tinymce = null;
+  if (!ed) {
+    return;
+  }
+
+  try {
+    ed.remove();
+  } catch (e) {
+    console.log(e);
+  }
 }
