@@ -106,6 +106,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         return;
       }
       if (target === editorEl) {
+        if (!focusedId) {
+          setFocusedId("editor");
+        }
         return;
       }
       target = target.parentNode as HTMLElement;
