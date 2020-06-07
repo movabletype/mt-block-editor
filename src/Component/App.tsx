@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { DndBackend } from "./DndBackend";
 
@@ -14,8 +14,6 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
-  const editorElRef = useRef<HTMLDivElement>(null);
-
   const [_focusedId, _setFocusedId] = useState<string | null>(null);
   const focusedId = _focusedId ? _focusedId.replace(/:.*/, "") : null;
   const setFocusedId: SetFocusedId = (id, opts?) => {
@@ -91,16 +89,14 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   };
 
   const onWindowClick = (ev: Event): void => {
-    const editorEl = editorElRef.current;
-    if (editorEl === null) {
-      return;
-    }
+    const editorEl = editor.editorElement;
 
     if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
       return;
     }
 
     let target = ev.target as HTMLElement;
+
     while (target.parentNode && target.parentNode !== target) {
       if (target.classList.contains("mce-container")) {
         return;
@@ -118,10 +114,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   };
 
   const onWindowKeydown = (ev: KeyboardEvent): void => {
-    const editorEl = editorElRef.current;
-    if (editorEl === null) {
-      return;
-    }
+    const editorEl = editor.editorElement;
 
     if (!focusedId) {
       return;
@@ -172,7 +165,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
         <DndProvider backend={DndBackend}>
-          <div ref={editorElRef}>
+          <div>
             {blocks.map((b, i) => {
               const focus = b.id === focusedId;
               return (
