@@ -3,6 +3,7 @@
   border-radius: 2px;
   margin-left: 5px;
 }
+
 .control-buttons button:first-child {
   margin-left: 0;
 }
@@ -11,4 +12,8 @@
   .container {
     max-width: 770px;
   }
+}
+
+footer {
+  margin-top: 150px;
 }
