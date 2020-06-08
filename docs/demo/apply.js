@@ -1,3 +1,22 @@
+const GLOBAL_ATTRIBUTES = [
+  "id",
+  "class",
+  "style",
+  "title",
+  "accesskey",
+  "tabindex",
+  "lang",
+  "dir",
+  "draggable",
+  "dropzone",
+  "contextmenu",
+  "hidden",
+].join("|");
+
+const ALLOWED_EVENT_ATTRIBUTES = [
+  "onclick",
+].join("|");
+
 const isDev = /^localhost(?::|$)/.test(location.host);
 
 function keydown(ed, key) {
@@ -21,7 +40,7 @@ function apply(opts) {
       ? "../dist/mt-block-editor.js"
       : "/mt-block-editor/dist/mt-block-editor.js",
     "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/0.0.10/mt-block-editor-block-oembed.js",
-    "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/0.0.8/mt-block-editor-block-form-element.js",
+    "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/0.0.9/mt-block-editor-block-form-element.js",
     isDev ? "./register-block.js" : "/mt-block-editor/demo/register-block.js",
   ].reduce(
     (chain, m) => chain.then(() => import(`${m}?ts=${ts}`)),
@@ -108,17 +127,16 @@ function apply(opts) {
           opts
         )
       ).then((ed) => {
+
         ed.on("buildTinyMCESettings", ({ block, settings }) => {
           settings.plugins += " mt_security";
           settings.extended_valid_elements = [
             // we embed 'a[onclick]' by inserting image with popup
-            "a[href|title|target|name|id|class|onclick]",
-            // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
-            "+p[style|class]",
+            `a[${GLOBAL_ATTRIBUTES}|${ALLOWED_EVENT_ATTRIBUTES}|href|target|name]`,
+            // allow SPAN element without attributes
+            `span[${GLOBAL_ATTRIBUTES}|${ALLOWED_EVENT_ATTRIBUTES}]`,
             // allow SCRIPT element
             "script[id|name|type|src]",
-            // allow SPAN element without attributes
-            "+span[*]",
           ].join(",");
           settings.valid_children = "+a[div]";
         });

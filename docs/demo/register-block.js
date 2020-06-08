@@ -46,7 +46,6 @@ window.MTBlockEditor.registerBlockType(
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     if (document.body.dataset.hasCompiledHtml) {
-    console.log(document.querySelector(".swiper-container"));
       new Swiper(".swiper-container", {
         loop: true,
         pagination: {
