@@ -28,6 +28,19 @@
       defer
     ></script>
     <script type="module" src="/demo/apply.js" defer></script>
+    <script type="application/json" id="mt-block-editor-options">
+      {
+        "shortcutBlockTypes": [ ],
+        "panelBlockTypes": [
+          "custom-1header",
+          "custom-2header",
+          "custom-3header",
+          "custom-paragraph",
+          "custom-image_text",
+          "custom-gallery"
+        ]
+      }
+    </script>
 
     <link
       rel="stylesheet"
@@ -108,10 +121,9 @@
       <div class="col">
         <div class="mt-5">
           <textarea id="body" class="hidden">
-<!-- mt-beb --><h1>定形入力</h1><!-- /mt-beb --><!-- mt-beb --><p>新しいブロックエディタ</p><!-- /mt-beb --><!-- mt-beb t="sixapart-oembed" m='{"url":"https://www.youtube.com/watch?v=-UuvmB3KupU","width":612,"height":344,"maxwidth":"640","maxheight":"","providerName":"YouTube"}' h='' -->
-<iframe width=" 612" height="344" src="https://www.youtube.com/embed/-UuvmB3KupU?feature=oembed" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
-<!-- /mt-beb -->
-          </textarea>
+            &lt;!-- mt-beb t=&quot;custom-1header&quot; --&gt;&lt;!-- mt-beb t=&quot;sixapart-input&quot; m=&#039;{&quot;blockElement&quot;:&quot;h1&quot;,&quot;text&quot;:&quot;定形入力&quot;,&quot;label&quot;:&quot;大見出し&quot;,&quot;helpText&quot;:&quot;H1で出力されます&quot;}&#039; --&gt;&lt;h1&gt;定形入力&lt;/h1&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-paragraph&quot; --&gt;&lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&#039;{&quot;blockElement&quot;:&quot;p&quot;,&quot;formatter&quot;:&quot;nl2br&quot;,&quot;text&quot;:&quot;定形入力のカスタムブロックのみで構成することもできます。&quot;,&quot;label&quot;:&quot;段落&quot;,&quot;helpText&quot;:&quot;Pで出力されます&quot;}&#039; --&gt;&lt;p&gt;テキストの入力のみで装飾を受け付けない、定形入力のフォーマットのみで構成することもできます。&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-image_text&quot; --&gt;&lt;!-- mt-beb t=&quot;core-columns&quot; m=&#039;{&quot;className&quot;:&quot;row&quot;}&#039; --&gt;&lt;div class=&quot;mt-be-columns row&quot; style=&quot;display: flex&quot;&gt;&lt;!-- mt-beb t=&quot;core-column&quot; m=&#039;{&quot;className&quot;:&quot;col-sm-6&quot;}&#039; --&gt;&lt;div class=&#039;mt-be-column col-sm-6&#039;&gt;&lt;!-- mt-beb t=&quot;core-image&quot; --&gt;&lt;figure&gt;&lt;img src=&quot;https://movabletype.net/blog/.assets/thumbnail/header01-600wri.jpg&quot; style=&quot;max-width:100%;height:auto&quot;/&gt;&lt;figcaption&gt;画像のキャプションです&lt;/figcaption&gt;&lt;/figure&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;core-column&quot; m=&#039;{&quot;className&quot;:&quot;col-sm-6&quot;}&#039; --&gt;&lt;div class=&#039;mt-be-column col-sm-6&#039;&gt;&lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&#039;{&quot;blockElement&quot;:&quot;p&quot;,&quot;formatter&quot;:&quot;nl2br&quot;,&quot;text&quot;:&quot;画像の説明テキストです。\n幅576px以上の画面では2列で、それより小さい幅の画面では1列で表示されます。&quot;}&#039; --&gt;&lt;p&gt;画像の説明テキストです。&lt;br/&gt;幅576px以上の画面では2列で、それより小さい幅の画面では1列で表示されます。&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;
+
+</textarea>
         </div>
       </div>
     </div>
