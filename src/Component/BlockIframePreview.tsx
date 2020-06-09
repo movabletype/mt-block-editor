@@ -197,11 +197,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   );
   const rawHtmlText = _rawHtmlText || (typeof html === "string" ? html : "");
 
-  const [size, _setSize] = useState(block.iframePreviewSize);
+  const [, _setSize] = useState<Size | null>(null);
   const setSize = (size: Size): void => {
-    block.iframePreviewSize = size;
+    block.setIframePreviewSize(size);
     _setSize(size);
   };
+  const size = block.getIframePreviewSize(rawHtmlText);
 
   const setCompiledHtml = (
     res: string | Error,
@@ -324,22 +325,23 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
       switch (ev.data.method) {
         case "MTBlockEditorSetSize":
+          (Object.keys(size) as Array<keyof Size>).forEach((k) => {
+            const oldValue = parseInt(size[k]);
+            const newValue = parseInt(ev.data.arguments[k]);
+            if (
+              oldValue &&
+              newValue &&
+              oldValue > newValue &&
+              Math.abs(oldValue - newValue) < 10
+            ) {
+              ev.data.arguments[k] = size[k];
+            }
+          });
+
           if (
             size.width !== ev.data.arguments.width ||
             size.height !== ev.data.arguments.height
           ) {
-            (Object.keys(size) as Array<keyof Size>).forEach((k) => {
-              const oldValue = parseInt(size[k]);
-              const newValue = parseInt(ev.data.arguments[k]);
-              if (
-                oldValue &&
-                newValue &&
-                oldValue > newValue &&
-                Math.abs(oldValue - newValue) < 10
-              ) {
-                ev.data.arguments[k] = size[k];
-              }
-            });
             setSize(ev.data.arguments);
           }
           break;

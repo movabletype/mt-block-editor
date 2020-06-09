@@ -5,7 +5,11 @@ import BlockFactory from "./BlockFactory";
 import { EditHistory } from "./EditManager";
 import { escapeSingleQuoteAttribute } from "./util/dom";
 import icon from "./img/icon/default-block.svg";
-import { Size, defaultSize } from "./Component/BlockIframePreview/size";
+import {
+  Size,
+  defaultSize,
+  defaultInlineSize,
+} from "./Component/BlockIframePreview/size";
 
 export interface HasBlocks {
   blocks: Block[];
@@ -50,7 +54,7 @@ class Block {
   public label = "";
   public helpText = "";
   public className = "";
-  public iframePreviewSize: Size = defaultSize;
+  public iframePreviewSize: Size | null = null;
 
   public static get icon(): string {
     const str = this.iconString;
@@ -63,6 +67,27 @@ class Block {
   public static get iconString(): string {
     const m = this.typeId.match(/-(.)/);
     return m ? m[1].toUpperCase() : "";
+  }
+
+  public getIframePreviewSize(content: string): Size {
+    if (this.iframePreviewSize) {
+      return this.iframePreviewSize;
+    }
+
+    if (!content) {
+      return defaultInlineSize;
+    }
+
+    const stripped = content.replace(/<!--.*?-->/g, "");
+    if (/^\s*<(?:h[1-6]|p)>[^<]+<\/(?:h[1-6]|p)>\s*$/.test(stripped)) {
+      return defaultInlineSize;
+    }
+
+    return defaultSize;
+  }
+
+  public setIframePreviewSize(size: Size): void {
+    this.iframePreviewSize = size;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
