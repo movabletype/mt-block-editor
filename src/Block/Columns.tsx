@@ -68,7 +68,7 @@ const Editor: React.FC<EditorProps> = ({
       <div className="mt-be-columns" style={{ display: "flex" }}>
         {block.blocks.map((c) => c.editor({ focus, canRemove }))}
       </div>
-      {focus && (
+      {focus && canRemove && (
         <BlockToolbar>
           <BlockToolbarButton
             icon={icon}
