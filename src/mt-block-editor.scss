@@ -11,6 +11,10 @@ $root-font-size: 16px;
   }
 }
 
+@define-mixin full-width {
+  width: calc(100% - 2px) !important;
+}
+
 .mt-block-editor {
   padding: 0 40px 0 40px;
   border-radius: 4px;
@@ -301,6 +305,10 @@ $root-font-size: 16px;
       margin-top: 10px;
     }
 
+    .mt-be-input--full-width {
+      @mixin full-width;
+    }
+
     .mt-be-label-name {
       display: inline-block;
       width: 100%;
@@ -308,9 +316,10 @@ $root-font-size: 16px;
       font-size: calc($root-font-size * 0.75);
       font-weight: normal;
       color: #666;
-      > input, > textarea {
+      > input,
+      > textarea {
         @mixin input;
-        width: calc(100% - 15px) !important;
+        @mixin full-width;
       }
     }
 
