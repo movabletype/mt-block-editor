@@ -13,9 +13,7 @@ const GLOBAL_ATTRIBUTES = [
   "hidden",
 ].join("|");
 
-const ALLOWED_EVENT_ATTRIBUTES = [
-  "onclick",
-].join("|");
+const ALLOWED_EVENT_ATTRIBUTES = ["onclick"].join("|");
 
 const isDev = /^localhost(?::|$)/.test(location.host);
 
@@ -127,7 +125,6 @@ function apply(opts) {
           opts
         )
       ).then((ed) => {
-
         ed.on("buildTinyMCESettings", ({ block, settings }) => {
           settings.plugins += " mt_security";
           settings.extended_valid_elements = [
@@ -156,6 +153,29 @@ function apply(opts) {
       });
     });
 }
+
+document.getElementById("export").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  MTBlockEditor.serialize().then(function () {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(
+      new Blob(
+        [
+          document
+            .querySelector("#body")
+            .value.replace(/<!--\s+\/?mt-beb.*?-->/g, ""),
+        ],
+        {
+          type: "text/plain",
+        }
+      )
+    );
+    a.setAttribute("download", "export.html");
+    a.dispatchEvent(new MouseEvent("click"));
+  });
+});
+
+window.jQuery('[data-toggle="tooltip"]').tooltip();
 
 const opts = {};
 const optsEl = document.getElementById("mt-block-editor-options");
