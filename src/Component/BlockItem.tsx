@@ -233,7 +233,7 @@ const BlockItem: React.FC<Props> = ({
         b instanceof Columns ? (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && <DefaultToolbar />}
+            {focus && showButton && <DefaultToolbar />}
           </BlockContext.Provider>
         ) : (
           <>
