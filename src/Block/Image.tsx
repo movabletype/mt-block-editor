@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React from "react";
+import React, { useState } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { nl2br } from "../util";
 import { blockProperty } from "../decorator";
@@ -12,25 +12,68 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = blockProperty(
-  ({ block }: EditorProps) => (
-    <div>
-      <BlockSetupCommon block={block} />
-      <BlockLabel block={block}>
-        <label className="mt-be-label-name">
-          <div>{t("Image URL")}</div>
-          <input type="url" name="url" data-mt-block-editor-focus-default />
-        </label>
-        <label className="mt-be-label-name">
-          <div>{t("Caption")}</div>
-          <textarea
-            name="caption"
-            data-min-rows="1"
-            style={{ width: "100%" }}
-          ></textarea>
-        </label>
-      </BlockLabel>
-    </div>
-  )
+  ({ block }: EditorProps) => {
+    const [, setBlobUrl] = useState("");
+
+    return (
+      <div>
+        <BlockSetupCommon block={block} />
+        <BlockLabel block={block}>
+          <label className="mt-be-label-name">
+            <div>{t("Image URL")}</div>
+            <div style={{ position: "relative" }}>
+              <button
+                type="button"
+                onClick={(ev) =>
+                  (ev.currentTarget.nextSibling as HTMLInputElement).click()
+                }
+                style={{
+                  position: "absolute",
+                  right: "5px",
+                  top: "12px",
+                  fontSize: "15px",
+                  border: "none",
+                  background: "transparent",
+                }}
+              >
+                <i className="fas fa-image"></i>
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(ev) => {
+                  const inputElm = ev.currentTarget as HTMLInputElement;
+                  if (!inputElm.files) {
+                    return;
+                  }
+
+                  if (!inputElm.files[0]) {
+                    return;
+                  }
+
+                  block.url = URL.createObjectURL(inputElm.files[0]);
+                  setBlobUrl(block.url);
+                }}
+              />
+            </div>
+            <input type="url" name="url" data-mt-block-editor-focus-default />
+            {block.url && /^blob:|\.(jpe?g|gif|png|webp)$/.test(block.url) && (
+              <img src={block.url} style={{ maxWidth: "100%" }} />
+            )}
+          </label>
+          <label className="mt-be-label-name">
+            <div>{t("Caption")}</div>
+            <textarea
+              name="caption"
+              data-min-rows="1"
+              style={{ width: "100%" }}
+            ></textarea>
+          </label>
+        </BlockLabel>
+      </div>
+    );
+  }
 );
 
 const Html: React.FC<EditorProps> = ({ block }: EditorProps) => {
