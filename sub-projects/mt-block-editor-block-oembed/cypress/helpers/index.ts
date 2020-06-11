@@ -17,7 +17,35 @@ export function apply(opts) {
             lng: "ja",
             debug: true,
           },
-          shortcutBlockTypes: ["core-text", "core-image", "core-file"],
+          shortcutBlockTypes: ["sixapart-oembed"],
+          block: {
+            "sixapart-oembed": {
+              resolver: async ({url, maxWidth, maxHeight}) => {
+                if (/youtube/.test(url)) {
+                  return {
+                    height: 270,
+                    provider_name: "YouTube",
+                    html:
+                      '<iframe width="480" height="270" src="https://www.youtube.com/embed/h9yxBcbw0bw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+                    author_name: "ドクター・キャピタルDr. Capital",
+                    title:
+                      "スピッツ (Spitz) の チェリー (Cherry) - Dr. Capital",
+                    author_url: "https://www.youtube.com/user/capitalguitar",
+                    width: 480,
+                    version: "1.0",
+                    thumbnail_width: 480,
+                    provider_url: "https://www.youtube.com/",
+                    thumbnail_url:
+                      "https://i.ytimg.com/vi/h9yxBcbw0bw/hqdefault.jpg",
+                    type: "video",
+                    thumbnail_height: 360,
+                  };
+                } else {
+                  throw "error";
+                }
+              },
+            },
+          },
         },
         opts
       )
