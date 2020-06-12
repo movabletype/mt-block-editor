@@ -4,4 +4,4 @@ export interface Size {
 }
 
 export const defaultSize = { width: "100%", height: "100px" };
-export const defaultInlineSize = { width: "100%", height: "16px" };
+export const defaultSinglelineSize = { width: "100%", height: "16px" };

@@ -8,7 +8,7 @@ import icon from "./img/icon/default-block.svg";
 import {
   Size,
   defaultSize,
-  defaultInlineSize,
+  defaultSinglelineSize,
 } from "./Component/BlockIframePreview/size";
 
 export interface HasBlocks {
@@ -75,12 +75,13 @@ class Block {
     }
 
     if (!content) {
-      return defaultInlineSize;
+      return defaultSinglelineSize;
     }
 
     const stripped = content.replace(/<!--.*?-->/g, "");
     if (/^\s*<(?:h[1-6]|p)>[^<]+<\/(?:h[1-6]|p)>\s*$/.test(stripped)) {
-      return defaultInlineSize;
+      // Probably a single line content
+      return defaultSinglelineSize;
     }
 
     return defaultSize;
