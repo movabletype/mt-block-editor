@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>Markdownエディタ - Movable Type Block Editor</title>
-    <meta name="description" content="" />
+    <meta
+      name="description"
+      content="MovableType.net で新しくリリースされた記述形式「ブロックエディタ」をこのページでお試しいただけます。"
+    />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -12,6 +15,22 @@
     <!--
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; script-src 'self' https://cdnjs.cloudflare.com https://cdn.movabletype.net https://gist.github.com; connect-src 'self' https://noembed.com;img-src * data: blob: 'unsafe-inline'; frame-src * data: blob:; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline'">
     -->
+
+    <!-- 共通設定 -->
+    <meta property="og:title" content="Movable Type Block Editor" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="表示したいページのURL（絶対パス）" />
+    <meta property="og:image" content="表示したい画像のURL（絶対パス）" />
+    <meta property="og:site_name" content="Movable Type Block Editor" />
+    <meta
+      property="og:description"
+      content="MovableType.net で新しくリリースされた記述形式「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta property="og:locale" content="ja_JP" />
+    <!-- Facebookの設定 -->
+    <meta property="fb:app_id" content="App-IDがここに入ります。" />
+    <!-- Twitterの設定 -->
+    <meta name="twitter:card" content="summary" />
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
@@ -45,10 +64,7 @@
           "core-columns",
           "custom-markdown"
         ],
-        "stylesheets": [
-          "./editor-content.css",
-          "./editor-content-markdown.css"
-        ]
+        "stylesheets": ["./editor-content.css", "./editor-content-markdown.css"]
       }
     </script>
 
@@ -63,6 +79,17 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"
       integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o="
       crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/demo/index.css" />
+    <link rel="shortcut icon" href="/demo/images/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      href="/demo/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/demo/images/favicon/android-chrome-256x256.png"
     />
     <link rel="stylesheet" href="/demo/index.css" />
   </head>
@@ -82,7 +109,7 @@
           title="取り消す"
           disabled
         >
-          <i class="fas fa-undo" aria-hidden="true"></i>
+          <i class="undo" aria-hidden="true"></i>
         </button>
         <button
           type="button"
@@ -92,7 +119,7 @@
           title="やり直す"
           disabled
         >
-          <i class="fas fa-redo" aria-hidden="true"></i>
+          <i class="redo" aria-hidden="true"></i>
         </button>
         <button
           type="button"
@@ -101,42 +128,37 @@
           data-placement="bottom"
           title="出力HTMLをダウンロード"
         >
-          <i class="fas fa-file-export" aria-hidden="true"></i>
+          <i class="file-export" aria-hidden="true"></i>
         </button>
       </div>
-
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            カスタマイズ
-          </a>
-          <div
-            class="dropdown-menu dropdown-menu-right position-absolute"
-            aria-labelledby="navbarDropdown"
-          >
-            <a class="dropdown-item text-right" href="/demo/">標準</a>
-            <a class="dropdown-item text-right" href="/demo/custom-block.html"
-              >カスタムブロック</a
-            >
-            <a class="dropdown-item text-right" href="/demo/strict.html"
-              >定形入力</a
-            >
-            <a
-              class="dropdown-item text-right active"
-              href="/demo/markdown.html"
-              >Markdownエディタ</a
-            >
-          </div>
-        </li>
-      </ul>
+      <p class="blockeditorlogo">
+        <img
+          src="images/blockeditorlogo.png"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_pc"
+        />
+        <img
+          src="images/logo.png"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_sp"
+        />
+      </p>
+      <div class="customize-buttons">
+        <ul>
+          <li>
+            <a href="/demo/">標準</a>
+          </li>
+          <li>
+            <a href="/demo/custom-block.html">カスタムブロック</a>
+          </li>
+          <li>
+            <a href="/demo/strict.html">定形入力</a>
+          </li>
+          <li>
+            <a class="active" href="/demo/markdown.html">Markdownエディタ</a>
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <div class="container">
