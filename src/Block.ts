@@ -7,6 +7,8 @@ import { escapeSingleQuoteAttribute } from "./util/dom";
 import icon from "./img/icon/default-block.svg";
 import { Size, defaultSize } from "./Component/BlockIframePreview/size";
 
+let idSequence = 1;
+
 export interface HasBlocks {
   blocks: Block[];
 }
@@ -86,9 +88,10 @@ class Block {
   }
 
   public constructor() {
-    this.id =
-      new Date().getTime().toString(36) +
-      Math.floor(Math.random() * 100).toString(36);
+    this.id = this.id =
+      Math.round(Math.random() * 46656)
+        .toString(36)
+        .padStart(3, "0") + (idSequence++).toString(36).padStart(3, "0");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
