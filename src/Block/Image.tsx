@@ -59,8 +59,18 @@ const Editor: React.FC<EditorProps> = blockProperty(
             </div>
             <input type="url" name="url" data-mt-block-editor-focus-default />
             {block.url && /^blob:|\.(jpe?g|gif|png|webp)$/.test(block.url) && (
-              <img src={block.url} style={{ maxWidth: "100%" }} />
+              <div style={{ marginTop: "10px", textAlign: "center" }}>
+                <img src={block.url} style={{ maxWidth: "100%" }} />
+              </div>
             )}
+          </label>
+          <label className="mt-be-label-name">
+            <div>{t("Class Name")}</div>
+            <input name="className" />
+          </label>
+          <label className="mt-be-label-name">
+            <div>{t("Alternative Text")}</div>
+            <input name="alt" />
           </label>
           <label className="mt-be-label-name">
             <div>{t("Caption")}</div>
@@ -78,7 +88,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
 
 const Html: React.FC<EditorProps> = ({ block }: EditorProps) => {
   const img = (
-    <img src={block.url} style={{ maxWidth: "100%", height: "auto" }} />
+    <img src={block.url} className={block.className} alt={block.alt} />
   );
 
   return block.caption ? (
@@ -100,6 +110,7 @@ class Image extends Block {
   }
 
   public url = "";
+  public alt = "";
   public caption = "";
 
   public constructor(init?: Partial<Image>) {
@@ -138,6 +149,9 @@ class Image extends Block {
       Object.assign(
         {
           url: (doc.querySelector("IMG") as HTMLImageElement).src || "",
+          className:
+            (doc.querySelector("IMG") as HTMLImageElement).className || "",
+          alt: (doc.querySelector("IMG") as HTMLImageElement).alt || "",
           caption:
             (doc.querySelector("FIGCAPTION") &&
               (doc.querySelector(
