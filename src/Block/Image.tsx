@@ -6,6 +6,7 @@ import { blockProperty } from "../decorator";
 import icon from "../img/icon/image.svg";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
+import { useEditorContext } from "../Context";
 
 interface EditorProps {
   block: Image;
@@ -13,6 +14,7 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = blockProperty(
   ({ block }: EditorProps) => {
+    const { editor } = useEditorContext();
     const [, setBlobUrl] = useState("");
 
     return (
@@ -24,9 +26,38 @@ const Editor: React.FC<EditorProps> = blockProperty(
             <div style={{ position: "relative" }}>
               <button
                 type="button"
-                onClick={(ev) =>
-                  (ev.currentTarget.nextSibling as HTMLInputElement).click()
-                }
+                onClick={(ev) => {
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                  ev.nativeEvent.stopImmediatePropagation();
+
+                  const input = document.createElement("input");
+                  input.accept = "image/*";
+                  input.type = "file";
+                  input.style.display = "none";
+                  input.onchange = (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.stopImmediatePropagation();
+
+                    const inputElm = ev.currentTarget as HTMLInputElement;
+                    if (!inputElm.files) {
+                      return;
+                    }
+
+                    if (!inputElm.files[0]) {
+                      return;
+                    }
+
+                    block.url = URL.createObjectURL(inputElm.files[0]);
+                    setBlobUrl(block.url);
+
+                    input.remove();
+                  };
+
+                  editor.editorElement.appendChild(input);
+                  input.click();
+                }}
                 style={{
                   position: "absolute",
                   right: "5px",
@@ -38,24 +69,6 @@ const Editor: React.FC<EditorProps> = blockProperty(
               >
                 <i className="fas fa-image"></i>
               </button>
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(ev) => {
-                  const inputElm = ev.currentTarget as HTMLInputElement;
-                  if (!inputElm.files) {
-                    return;
-                  }
-
-                  if (!inputElm.files[0]) {
-                    return;
-                  }
-
-                  block.url = URL.createObjectURL(inputElm.files[0]);
-                  setBlobUrl(block.url);
-                }}
-              />
             </div>
             <input type="url" name="url" data-mt-block-editor-focus-default />
             {block.url && /^blob:|\.(jpe?g|gif|png|webp)$/.test(block.url) && (
