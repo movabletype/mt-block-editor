@@ -6,7 +6,6 @@ import { blockProperty } from "../decorator";
 import icon from "../img/icon/image.svg";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
-import { useEditorContext } from "../Context";
 
 interface EditorProps {
   block: Image;
@@ -14,7 +13,6 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = blockProperty(
   ({ block }: EditorProps) => {
-    const { editor } = useEditorContext();
     const [, setBlobUrl] = useState("");
 
     return (
@@ -23,59 +21,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
         <BlockLabel block={block}>
           <label className="mt-be-label-name">
             <div>{t("Image URL")}</div>
-            <div style={{ position: "relative" }}>
-              <button
-                type="button"
-                onClick={(ev) => {
-                  ev.preventDefault();
-                  ev.stopPropagation();
-                  ev.nativeEvent.stopImmediatePropagation();
-
-                  const input = document.createElement("input");
-                  input.accept = "image/*";
-                  input.type = "file";
-                  input.style.display = "none";
-                  input.onchange = (ev) => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    ev.stopImmediatePropagation();
-
-                    const inputElm = ev.currentTarget as HTMLInputElement;
-                    if (!inputElm.files) {
-                      return;
-                    }
-
-                    if (!inputElm.files[0]) {
-                      return;
-                    }
-
-                    block.url = URL.createObjectURL(inputElm.files[0]);
-                    setBlobUrl(block.url);
-
-                    input.remove();
-                  };
-
-                  editor.editorElement.appendChild(input);
-                  input.click();
-                }}
-                style={{
-                  position: "absolute",
-                  right: "5px",
-                  top: "12px",
-                  fontSize: "15px",
-                  border: "none",
-                  background: "transparent",
-                }}
-              >
-                <i className="fas fa-image"></i>
-              </button>
-            </div>
             <input type="url" name="url" data-mt-block-editor-focus-default />
-            {block.url && /^blob:|\.(jpe?g|gif|png|webp)$/.test(block.url) && (
-              <div style={{ marginTop: "10px", textAlign: "center" }}>
-                <img src={block.url} style={{ maxWidth: "100%" }} />
-              </div>
-            )}
           </label>
           <label className="mt-be-label-name">
             <div>{t("Class Name")}</div>
