@@ -1,3 +1,5 @@
+window._loadMTBlockEditor = true;
+
 const GLOBAL_ATTRIBUTES = [
   "id",
   "class",
