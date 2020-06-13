@@ -18,16 +18,22 @@ const ALLOWED_EVENT_ATTRIBUTES = ["onclick"].join("|");
 const isDev = /^localhost(?::|$)/.test(location.host);
 
 function keydown(ed, key) {
-  return () => {
+  return (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    ev.stopImmediatePropagation();
+
     const click = new MouseEvent("click");
     ed.editorElement.dispatchEvent(click);
 
-    const keydown = new KeyboardEvent("keydown", {
-      key: key,
-      ctrlKey: true,
-      metaKey: true,
-    });
-    window.dispatchEvent(keydown);
+    setTimeout(() => {
+      const keydown = new KeyboardEvent("keydown", {
+        key: key,
+        ctrlKey: true,
+        metaKey: true,
+      });
+      window.dispatchEvent(keydown);
+    }, 100);
   };
 }
 
