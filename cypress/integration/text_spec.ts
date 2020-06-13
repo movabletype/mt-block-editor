@@ -49,6 +49,41 @@ context("Text", () => {
       );
   });
 
+  context("style", () => {
+    ["20px", "30px"].forEach(fs => {
+      it(fs, () => {
+        cy.visit("./cypress/resources/editor.html");
+        apply({
+          id: textareaId,
+          stylesheets: [`
+  p { font-size: ${fs}; line-height: ${fs} }
+          `],
+        });
+
+        cy.get(
+          `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
+        cy.wait(100);
+        type("Hello!");
+
+        blur();
+        cy.wait(100);
+
+        cy.get(`.mt-be-block`).click();
+        cy.get(`.mt-be-block .mce-content-body`).should(
+          "have.css",
+          "font-size",
+          fs,
+        );
+        cy.get(`.mt-be-block .mce-content-body`).should(
+          "have.css",
+          "line-height",
+          fs,
+        );
+      });
+    });
+  });
+
   context("focus", () => {
     it("block", () => {
       cy.get(
