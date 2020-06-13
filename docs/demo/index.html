@@ -3,26 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <title>Movable Type Block Editor</title>
-    <meta name="description" content="MovableType.net で新しくリリースされた記述形式「ブロックエディタ」をこのページでお試しいただけます。" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta
+      name="description"
+      content="MovableType.net で新しくリリースされた記述形式「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!--
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; script-src 'self' https://cdnjs.cloudflare.com https://cdn.movabletype.net https://gist.github.com; connect-src 'self' https://noembed.com;img-src * data: blob: 'unsafe-inline'; frame-src * data: blob:; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline'">
     -->
 
     <!-- 共通設定 -->
-    <meta property="og:title" content="Movable Type Block Editor">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="表示したいページのURL（絶対パス）">
-    <meta property="og:image" content="表示したい画像のURL（絶対パス）">
-    <meta property="og:site_name" content="Movable Type Block Editor">
-    <meta property="og:description" content="MovableType.net で新しくリリースされた記述形式「ブロックエディタ」をこのページでお試しいただけます。">
-    <meta property="og:locale" content="ja_JP">
+    <meta property="og:title" content="Movable Type Block Editor" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="表示したいページのURL（絶対パス）" />
+    <meta property="og:image" content="表示したい画像のURL（絶対パス）" />
+    <meta property="og:site_name" content="Movable Type Block Editor" />
+    <meta
+      property="og:description"
+      content="MovableType.net で新しくリリースされた記述形式「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta property="og:locale" content="ja_JP" />
     <!-- Facebookの設定 -->
-    <meta property="fb:app_id" content="App-IDがここに入ります。">
+    <meta property="fb:app_id" content="App-IDがここに入ります。" />
     <!-- Twitterの設定 -->
-    <meta name="twitter:card" content="summary">
-    
+    <meta name="twitter:card" content="summary" />
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
       integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
@@ -33,7 +42,8 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"
       integrity="sha256-Xt8pc4G0CdcRvI0nZ2lRpZ4VHng0EoUDMlGcBSQ9HiQ="
       crossorigin="anonymous"
-      defer></script>
+      defer
+    ></script>
     <script
       src="/tinymce/js/tinymce/tinymce.min.js"
       referrerpolicy="origin"
@@ -53,9 +63,16 @@
       integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o="
       crossorigin="anonymous"
     />
-    <link rel="shortcut icon" href="/demo/images/favicon/favicon.ico">
-    <link rel="apple-touch-icon" href="/demo/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="/demo/images/favicon/android-chrome-256x256.png">
+    <link rel="shortcut icon" href="/demo/images/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      href="/demo/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/demo/images/favicon/android-chrome-256x256.png"
+    />
     <link rel="stylesheet" href="/demo/index.css" />
   </head>
   <body>
@@ -97,8 +114,16 @@
         </button>
       </div>
       <p class="blockeditorlogo">
-        <img src="images/blockeditorlogo.png" alt="Movable Type Block Editor" class="blockeditorlogo_pc">
-        <img src="images/logo.png" alt="Movable Type Block Editor" class="blockeditorlogo_sp">
+        <img
+          src="/demo/images/blockeditorlogo.png"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_pc"
+        />
+        <img
+          src="/demo/images/logo.png"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_sp"
+        />
       </p>
       <div class="customize-buttons">
         <ul>
@@ -123,7 +148,7 @@
         <div class="col">
           <div class="mt-5">
             <textarea id="body" class="d-none">
-              &lt;!-- mt-beb t=&quot;core-image&quot; --&gt;&lt;img src=&quot;images/logo.png&quot; alt=&quot;&quot; class=&quot;body_logo&quot;&gt;&lt;!-- /mt-beb --&gt;
+              &lt;!-- mt-beb t=&quot;core-image&quot; --&gt;&lt;img src=&quot;/demo/images/logo.png&quot; alt=&quot;&quot; class=&quot;body_logo&quot;&gt;&lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb --&gt;&lt;h1 class=&quot;margin-0&quot;&gt;Movable Type Block Editor&lt;/h1&gt;&lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb --&gt;&lt;p class=&quot;center&quot;&gt;&lt;strong&gt;新しいエディタ形式をこのページでお試しいただけます！&lt;/strong&gt;&lt;/p&gt;&lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb --&gt;&lt;hr&gt;&lt;!-- /mt-beb --&gt;
@@ -165,7 +190,7 @@
 &lt;/table&gt;
 &lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb t=&quot;core-image&quot; --&gt;
-&lt;img src=&quot;images/gif_dummy.png&quot; /&gt;
+&lt;img src=&quot;/demo/images/gif_dummy.png&quot; /&gt;
 &lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb --&gt;&lt;hr&gt;&lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb --&gt;&lt;h2&gt;マルチカラム&lt;/h2&gt;&lt;!-- /mt-beb --&gt;
@@ -183,13 +208,13 @@
   &lt;div class=&quot;mt-be-column&quot;&gt;
     &lt;!-- mt-beb --&gt;&lt;h3&gt;マルチカラムを使ってレイアウト&lt;/h3&gt;&lt;!-- /mt-beb --&gt;
     &lt;!-- mt-beb --&gt;&lt;p&gt;画像も挿入できます。&lt;/p&gt;&lt;!-- /mt-beb --&gt;
-    &lt;!-- mt-beb t=&quot;core-image&quot; --&gt;&lt;img src=&quot;images/img_dummy.png&quot; /&gt;&lt;!-- /mt-beb --&gt;
+    &lt;!-- mt-beb t=&quot;core-image&quot; --&gt;&lt;img src=&quot;/demo/images/img_dummy.png&quot; /&gt;&lt;!-- /mt-beb --&gt;
   &lt;/div&gt;
 &lt;!-- /mt-beb --&gt;
 &lt;/div&gt;
 &lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb t=&quot;core-image&quot; --&gt;
-&lt;img src=&quot;images/gif_dummy.png&quot; /&gt;
+&lt;img src=&quot;/demo/images/gif_dummy.png&quot; /&gt;
 &lt;!-- /mt-beb --&gt;
 &lt;!-- mt-beb t=&quot;core-horizontalrule&quot; --&gt;&lt;hr&gt;&lt;!-- /mt-beb --&gt;
 
@@ -215,7 +240,8 @@
     &lt;li&gt;&lt;a href=&quot;https://movabletype.net/blog/&quot; target=&quot;_blank&quot;&gt;活用ブログ&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;!-- /mt-beb --&gt;
-          </textarea>
+          </textarea
+            >
           </div>
         </div>
       </div>
