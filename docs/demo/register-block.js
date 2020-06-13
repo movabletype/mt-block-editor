@@ -30,18 +30,21 @@ window.MTBlockEditor.registerBlockType(
     html: "",
     shouldBeCompiled: 1,
     previewHeader: `
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/5.4.1/css/swiper.min.css" integrity="sha256-urV1luZ8JPIzBb+88vMT8qwbF8jBbHIrwQ8wTghtCOw=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/5.4.1/js/swiper.min.js" integrity="sha256-xKd8O6CvawXs3b8ZCrfuwN9A0ISCM8bUhJC86L6A8OY=" crossorigin="anonymous" defer></script>
+
 <style type="text/css">
   .swiper-container {
     display: flex;
+  }
+  .swiper-wrapper, .swiper-slide {
+    height: auto;
   }
   img {
     max-width: 100%;
     height: auto;
   }
 </style>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/5.4.1/css/swiper.min.css" integrity="sha256-urV1luZ8JPIzBb+88vMT8qwbF8jBbHIrwQ8wTghtCOw=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/5.4.1/js/swiper.min.js" integrity="sha256-xKd8O6CvawXs3b8ZCrfuwN9A0ISCM8bUhJC86L6A8OY=" crossorigin="anonymous" defer></script>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
