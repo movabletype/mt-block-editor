@@ -88,7 +88,7 @@ class Block {
   }
 
   public constructor() {
-    this.id = this.id =
+    this.id =
       Math.round(Math.random() * 46656)
         .toString(36)
         .padStart(3, "0") + (idSequence++).toString(36).padStart(3, "0");
