@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useState } from "react";
+import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { nl2br } from "../util";
 import { blockProperty } from "../decorator";
@@ -12,37 +12,33 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = blockProperty(
-  ({ block }: EditorProps) => {
-    const [, setBlobUrl] = useState("");
-
-    return (
-      <div>
-        <BlockSetupCommon block={block} />
-        <BlockLabel block={block}>
-          <label className="mt-be-label-name">
-            <div>{t("Image URL")}</div>
-            <input type="url" name="url" data-mt-block-editor-focus-default />
-          </label>
-          <label className="mt-be-label-name">
-            <div>{t("Class Name")}</div>
-            <input name="className" />
-          </label>
-          <label className="mt-be-label-name">
-            <div>{t("Alternative Text")}</div>
-            <input name="alt" />
-          </label>
-          <label className="mt-be-label-name">
-            <div>{t("Caption")}</div>
-            <textarea
-              name="caption"
-              data-min-rows="1"
-              style={{ width: "100%" }}
-            ></textarea>
-          </label>
-        </BlockLabel>
-      </div>
-    );
-  }
+  ({ block }: EditorProps) => (
+    <div>
+      <BlockSetupCommon block={block} />
+      <BlockLabel block={block}>
+        <label className="mt-be-label-name">
+          <div>{t("Image URL")}</div>
+          <input type="url" name="url" data-mt-block-editor-focus-default />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Class Name")}</div>
+          <input name="className" />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Alternative Text")}</div>
+          <input name="alt" />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Caption")}</div>
+          <textarea
+            name="caption"
+            data-min-rows="1"
+            style={{ width: "100%" }}
+          ></textarea>
+        </label>
+      </BlockLabel>
+    </div>
+  )
 );
 
 const Html: React.FC<EditorProps> = ({ block }: EditorProps) => {
