@@ -25,9 +25,10 @@ document.addEventListener("DOMContentLoaded", function() {
 "<ul>",
 "<li>Google Chrome</li>",
 "<li>Firefox</li>",
+"<li>Microsoft Edge（Chromium版）</li>",
 "<li>Safari</li>",
 "</ul>",
-'<iframe width="621" height="344" src="https://www.youtube.com/embed/-UuvmB3KupU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+'<iframe width="621" height="344" src="https://www.youtube.com/embed/3hX5MsyatS0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
 "</div>",
   ].join("");
 });
