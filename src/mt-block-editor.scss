@@ -650,11 +650,6 @@ $root-font-size: 16px;
     visibility: hidden;
   }
 
-  /* tinymce */
-  .mce-edit-focus {
-    outline: 0px !important;
-  }
-
   .mt-be-input--hidden {
     position: absolute;
     width: 1px;
@@ -662,6 +657,16 @@ $root-font-size: 16px;
     border: none;
     margin: 0;
     padding: 0;
+  }
+
+  /* tinymce */
+  .mce-edit-focus {
+    outline: 0px !important;
+  }
+
+  .mce-content-body {
+    font-family: inherit;
+    line-height: inherit;
   }
 }
 

@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect } from "react";
+import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import {
   Editor as TinyMCE,
@@ -19,7 +19,9 @@ import {
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
-import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
+import BlockContentEditablePreview, {
+  HasEditorStyle,
+} from "../Component/BlockContentEditablePreview";
 
 import { EditHistory } from "../EditManager";
 import {
@@ -291,6 +293,7 @@ const Editor: React.FC<EditorProps> = ({
           "invisible"
         );
       }}
+      style={block.editorStyle}
     >
       <BlockSetupCommon block={block} />
       <BlockLabel block={block}>
@@ -311,7 +314,7 @@ const Editor: React.FC<EditorProps> = ({
   );
 };
 
-class Text extends Block implements HasTinyMCE {
+class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public static typeId = "core-text";
   public static selectable = true;
   public static icon = icon;
@@ -320,6 +323,7 @@ class Text extends Block implements HasTinyMCE {
   }
 
   public text = "";
+  public editorStyle: CSSProperties = {};
   public tinymce: TinyMCE | null = null;
   public toolbarDefaultVisible = true;
 
