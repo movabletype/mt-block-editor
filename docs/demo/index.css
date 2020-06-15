@@ -248,3 +248,11 @@ footer {
   }
   
 }
+
+.mt-block-editor .mt-be-block p {
+  margin: 0 0 16px 0;
+}
+
+.mt-block-editor .mt-be-block ul {
+  margin: 0 0 16px 0;
+}
