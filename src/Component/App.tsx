@@ -67,7 +67,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
       if (scroll) {
         const destEl = document.querySelector(
-          `[data-mt-block-editor-block-id="${editor.blocks[dragIndex].id}"]`
+          `[data-mt-block-editor-block-id="${editor.blocks[hoverIndex].id}"]`
         );
         if (!destEl) {
           return;
@@ -76,7 +76,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         const rect = destEl.getBoundingClientRect();
         const scrollTop =
           window.pageYOffset || document.documentElement.scrollTop;
-        const offsetTop = rect.height + 22;
+        const offsetTop = rect.height;
 
         window.scrollTo({
           top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),

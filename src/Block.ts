@@ -8,7 +8,7 @@ import icon from "./img/icon/default-block.svg";
 import {
   Size,
   defaultSize,
-  defaultInlineSize,
+  defaultSinglelineSize,
 } from "./Component/BlockIframePreview/size";
 
 let idSequence = 1;
@@ -77,12 +77,13 @@ class Block {
     }
 
     if (!content) {
-      return defaultInlineSize;
+      return defaultSinglelineSize;
     }
 
     const stripped = content.replace(/<!--.*?-->/g, "");
     if (/^\s*<(?:h[1-6]|p)>[^<]+<\/(?:h[1-6]|p)>\s*$/.test(stripped)) {
-      return defaultInlineSize;
+      // Probably a single line content
+      return defaultSinglelineSize;
     }
 
     return defaultSize;
@@ -113,7 +114,7 @@ class Block {
   }
 
   public constructor() {
-    this.id = this.id =
+    this.id =
       Math.round(Math.random() * 46656)
         .toString(36)
         .padStart(3, "0") + (idSequence++).toString(36).padStart(3, "0");

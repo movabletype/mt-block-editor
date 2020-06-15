@@ -1,3 +1,4 @@
+import Editor from "../Editor";
 import Block from "../Block";
 import BlockFactory from "../BlockFactory";
 import Text from "../Block/Text";
@@ -95,14 +96,15 @@ export async function parseContent(
 }
 
 export function findDescendantBlock(
-  block: Block,
-  id: string | null
+  ancestor: Block | Editor,
+  id: string | null | undefined
 ): Block | null {
   if (!id) {
     return null;
   }
 
-  const childBlocks = block.childBlocks();
+  const childBlocks =
+    ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
   for (let i = 0; i < childBlocks.length; i++) {
     const b = childBlocks[i];
     if (b.id === id) {
