@@ -11,6 +11,6 @@ gh-pages:
 	mv demo/index.html .
 	echo '<html><head><meta http-equiv="refresh" content="0;URL=https://movabletype.github.io/mt-block-editor/" /></head></html>' > demo/index.html
 	perl -i -pe 's{"/(tinymce)}{"/mt-block-editor/$$1}g; s{"/demo/"}{"/mt-block-editor/"}g; s{(&quot;|")/demo}{$$1/mt-block-editor/demo}g;' index.html demo/*.html
-	perl -i -pe 's/\$$\{ts\}/${hash}/;' demo/apply.js
+	perl -i -pe 's/\$$\{ts\}/${hash}/;' demo/apply.js index.html demo/*.html
 	git add .
 	git commit -m 'Build gh-pages'
