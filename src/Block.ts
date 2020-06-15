@@ -5,7 +5,13 @@ import BlockFactory from "./BlockFactory";
 import { EditHistory } from "./EditManager";
 import { escapeSingleQuoteAttribute } from "./util/dom";
 import icon from "./img/icon/default-block.svg";
-import { Size, defaultSize } from "./Component/BlockIframePreview/size";
+import {
+  Size,
+  defaultSize,
+  defaultSinglelineSize,
+} from "./Component/BlockIframePreview/size";
+
+let idSequence = 1;
 
 export interface HasBlocks {
   blocks: Block[];
@@ -50,7 +56,7 @@ class Block {
   public label = "";
   public helpText = "";
   public className = "";
-  public iframePreviewSize: Size = defaultSize;
+  public iframePreviewSize: Size | null = null;
 
   public static get icon(): string {
     const str = this.iconString;
@@ -63,6 +69,28 @@ class Block {
   public static get iconString(): string {
     const m = this.typeId.match(/-(.)/);
     return m ? m[1].toUpperCase() : "";
+  }
+
+  public getIframePreviewSize(content: string): Size {
+    if (this.iframePreviewSize) {
+      return this.iframePreviewSize;
+    }
+
+    if (!content) {
+      return defaultSinglelineSize;
+    }
+
+    const stripped = content.replace(/<!--.*?-->/g, "");
+    if (/^\s*<(?:h[1-6]|p)>[^<]+<\/(?:h[1-6]|p)>\s*$/.test(stripped)) {
+      // Probably a single line content
+      return defaultSinglelineSize;
+    }
+
+    return defaultSize;
+  }
+
+  public setIframePreviewSize(size: Size): void {
+    this.iframePreviewSize = size;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -87,8 +115,9 @@ class Block {
 
   public constructor() {
     this.id =
-      new Date().getTime().toString(36) +
-      Math.floor(Math.random() * 100).toString(36);
+      Math.round(Math.random() * 46656)
+        .toString(36)
+        .padStart(3, "0") + (idSequence++).toString(36).padStart(3, "0");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -167,7 +196,11 @@ class Block {
       ) as string[];
     }
 
-    keys.forEach((k) => (data[k] = src[k]));
+    keys.forEach((k) => {
+      if (src[k] !== null && src[k] !== undefined) {
+        data[k] = src[k];
+      }
+    });
 
     ["label", "helpText", "className"].forEach((k) => {
       if (src[k]) {

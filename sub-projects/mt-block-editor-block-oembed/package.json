@@ -1,6 +1,6 @@
 {
   "name": "mt-block-editor-block-oembed",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,9 @@
     "start": "webpack-dev-server --hot --inline",
     "test": "jest",
     "check-types": "tsc",
-    "lint": "eslint --fix --ext .ts --ext .tsx ./src"
+    "lint": "eslint --fix --ext .ts --ext .tsx ./src",
+    "cypress:open": "npm run build && cypress open",
+    "cypress:run": "npm run build && cypress run"
   },
   "husky": {
     "hooks": {
@@ -29,6 +31,7 @@
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.5.3",
+    "cypress": "^4.5.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",

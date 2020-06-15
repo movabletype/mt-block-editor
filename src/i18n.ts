@@ -51,6 +51,10 @@ export async function init(opts: InitOptions): Promise<TFunction> {
   return initPromise;
 }
 
-export function t(args: string | string[]): string {
-  return i18n.t(args);
+export function t(
+  args: string | string[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params?: Record<string, any>
+): string {
+  return i18n.t(args, params);
 }

@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect } from "react";
+import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { sanitize, getShadowDomSelectorSet } from "../util";
 import {
@@ -12,10 +12,12 @@ import icon from "../img/icon/table.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
-import BlockContentEditablePreview from "../Component/BlockContentEditablePreview";
+import BlockContentEditablePreview, {
+  HasEditorStyle,
+} from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
 
-import { tinymceFocus } from "./Text/util";
+import { HasTinyMCE, tinymceFocus, removeTinyMCEFromBlock } from "./Text/util";
 
 declare const tinymce: EditorManager;
 
@@ -33,15 +35,18 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     const settings: TinyMCESettings = {
       language: editor.opts.i18n.lng,
       selector: `#${block.tinymceId()}`,
-      //toolbar: false,
       menubar: false,
       plugins: "table code paste media",
       toolbar: "table,code",
+
       // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
+
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
+        block.tinymce = ed;
+
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);
@@ -132,13 +137,12 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     tinymce.init(settings);
 
     return () => {
-      block.text = tinymce.get(block.tinymceId()).getContent();
-      tinymce.get(block.tinymceId()).remove();
+      removeTinyMCEFromBlock(block);
     };
   });
 
   return (
-    <div>
+    <div style={block.editorStyle}>
       <BlockSetupCommon block={block} />
       <BlockLabel block={block}>
         <div
@@ -156,7 +160,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   );
 };
 
-class Table extends Block {
+class Table extends Block implements HasTinyMCE, HasEditorStyle {
   public static typeId = "core-table";
   public static selectable = true;
   public static icon = icon;
@@ -165,6 +169,8 @@ class Table extends Block {
   }
 
   public text = "";
+  public tinymce: TinyMCE | null = null;
+  public editorStyle: CSSProperties = {};
 
   public constructor(init?: Partial<Table>) {
     super();
@@ -183,9 +189,8 @@ class Table extends Block {
   }
 
   public focusEditor(): void {
-    const ed: TinyMCE = tinymce.get(this.tinymceId());
-    if (ed) {
-      ed.focus(false);
+    if (this.tinymce) {
+      this.tinymce.focus(false);
     }
   }
 
@@ -202,12 +207,14 @@ class Table extends Block {
   }
 
   public html(): string {
-    const ed: TinyMCE = tinymce.get(this.tinymceId());
-    if (ed) {
-      return ed.getContent();
-    } else {
-      return this.text;
+    if (this.tinymce) {
+      try {
+        return this.tinymce.getContent();
+      } catch (e) {
+        console.log(e);
+      }
     }
+    return this.text;
   }
 
   public static async newFromHtml({

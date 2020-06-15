@@ -52,10 +52,14 @@ class EditManager {
       return;
     }
 
+    this._add(history);
+
     if (this.group === NO_GROUP) {
       this.emitChange();
     }
+  }
 
+  private _add(history: EditHistory): void {
     if (this.index !== 0) {
       this.histories.splice(-this.index, this.index);
     }

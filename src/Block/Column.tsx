@@ -126,7 +126,13 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       })}
       {canRemove && (
         <div className="mt-be-btn-add-bottom">
-          <AddButton index={blocks.length} label={t("+ addBlock")} />
+          <AddButton
+            index={blocks.length}
+            label={t("+ add new block")}
+            labelDirect={t("+ add new {{label}} block", {
+              label: "{{label}}",
+            })}
+          />
         </div>
       )}
     </BlocksContext.Provider>
@@ -186,7 +192,9 @@ class Column extends Block implements HasBlocks {
   }: EditorOptions): JSX.Element {
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
-      ((this._html === "" && this.blocks.length === 0) ||
+      ((this._html === "" &&
+        this.blocks.length === 0 &&
+        this.effectiveAddableBlockTypes().length === 0) ||
         (!focus && !focusDescendant))
     ) {
       const res = (
@@ -317,7 +325,7 @@ class Column extends Block implements HasBlocks {
           .replace(/&lt;\/div&gt;(<!--\s+\/mt-beb\s+--)>$/, "$1")
           .replace(
             new RegExp(
-              `^&lt;div\\s+class="${this.className}[^"]*"&gt;&lt;/div&gt;$`
+              `^&lt;div\\s+class=["']${this.className}[^"']*["']&gt;&lt;/div&gt;$`
             ),
             ""
           );
@@ -328,7 +336,19 @@ class Column extends Block implements HasBlocks {
       throw Error("This content is not for this block");
     }
 
-    return new this(Object.assign({ blocks, compiledHtml, _html: "" }, meta));
+    return new this(
+      Object.assign(
+        { blocks, compiledHtml, _html: "" },
+        meta as Partial<Column>
+      )
+    );
+  }
+
+  private effectiveAddableBlockTypes(): string[] {
+    if (!this.canRemoveBlock) {
+      return [];
+    }
+    return this.addableBlockTypes || [];
   }
 }
 

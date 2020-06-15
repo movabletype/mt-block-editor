@@ -17,6 +17,16 @@ test("constructor", () => {
   const b = new TestBlock();
   expect(b).toBeInstanceOf(Block);
   expect(b).toBeInstanceOf(TestBlock);
+  expect(b.id).toMatch(/^[0-9a-z]{6}$/);
+});
+
+test("id collision", () => {
+  const count = 1024;
+  const ids = {};
+  for (let i = 0; i < count; i++) {
+    ids[new TestBlock().id]++;
+  }
+  expect(Object.keys(ids).length).toBe(count);
 });
 
 describe("htmlString()", () => {

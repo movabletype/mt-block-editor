@@ -102,8 +102,11 @@ class Oembed extends Block {
   }
 
   public url = "";
+  public width: number | null = null;
+  public height: number | null = null;
   public maxwidth: number | null = null;
   public maxheight: number | null = null;
+  public providerName: string | null = null;
 
   public constructor(init?: Partial<Oembed>) {
     super();
@@ -118,7 +121,7 @@ class Oembed extends Block {
 
   public editor({ focus }: EditorOptions): JSX.Element {
     if (focus) {
-      this.compiledHtml = "";
+      this.reset();
       return <Editor key={this.id} block={this} />;
     } else {
       return this.html();
@@ -135,7 +138,7 @@ class Oembed extends Block {
 
   public async compile({ editor }: SerializeOptions): Promise<void> {
     if (!this.url) {
-      this.compiledHtml = "";
+      this.reset();
       return;
     }
 
@@ -144,19 +147,43 @@ class Oembed extends Block {
       throw "Requires resolver function for sixapart-oembed.";
     }
     const resolver = opts.resolver as Resolver;
-    const res = await resolver({
-      url: this.url,
-      maxwidth: this.maxwidth || null,
-      maxheight: this.maxheight || null,
-    });
+    try {
+      const res = await resolver({
+        url: this.url,
+        maxwidth: this.maxwidth || null,
+        maxheight: this.maxheight || null,
+      });
 
-    this.compiledHtml = res.html;
+      if (!res.html) {
+        throw res;
+      }
+
+      this.compiledHtml = res.html;
+      this.width = res.width;
+      this.height = res.height;
+      this.providerName = res.provider_name;
+    } catch (e) {
+      this.reset();
+      this.compiledHtml = t(
+        "Could not retrieve HTML for embedding from {{URL}}",
+        {
+          URL: this.url,
+        }
+      );
+    }
   }
 
   public static async newFromHtml({
     meta,
   }: NewFromHtmlOptions): Promise<Oembed> {
     return new Oembed(meta);
+  }
+
+  private reset(): void {
+    this.compiledHtml = "";
+    this.width = null;
+    this.height = null;
+    this.providerName = null;
   }
 }
 

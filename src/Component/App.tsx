@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { DndBackend } from "./DndBackend";
 
@@ -14,8 +14,6 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
-  const editorElRef = useRef<HTMLDivElement>(null);
-
   const [_focusedId, _setFocusedId] = useState<string | null>(null);
   const focusedId = _focusedId ? _focusedId.replace(/:.*/, "") : null;
   const setFocusedId: SetFocusedId = (id, opts?) => {
@@ -69,7 +67,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
       if (scroll) {
         const destEl = document.querySelector(
-          `[data-mt-block-editor-block-id="${editor.blocks[dragIndex].id}"]`
+          `[data-mt-block-editor-block-id="${editor.blocks[hoverIndex].id}"]`
         );
         if (!destEl) {
           return;
@@ -78,7 +76,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         const rect = destEl.getBoundingClientRect();
         const scrollTop =
           window.pageYOffset || document.documentElement.scrollTop;
-        const offsetTop = rect.height + 22;
+        const offsetTop = rect.height;
 
         window.scrollTo({
           top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
@@ -91,21 +89,22 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   };
 
   const onWindowClick = (ev: Event): void => {
-    const editorEl = editorElRef.current;
-    if (editorEl === null) {
-      return;
-    }
+    const editorEl = editor.editorElement;
 
     if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
       return;
     }
 
     let target = ev.target as HTMLElement;
+
     while (target.parentNode && target.parentNode !== target) {
       if (target.classList.contains("mce-container")) {
         return;
       }
       if (target === editorEl) {
+        if (!focusedId) {
+          setFocusedId("editor");
+        }
         return;
       }
       target = target.parentNode as HTMLElement;
@@ -115,10 +114,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   };
 
   const onWindowKeydown = (ev: KeyboardEvent): void => {
-    const editorEl = editorElRef.current;
-    if (editorEl === null) {
-      return;
-    }
+    const editorEl = editor.editorElement;
 
     if (!focusedId) {
       return;
@@ -169,7 +165,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
         <DndProvider backend={DndBackend}>
-          <div ref={editorElRef}>
+          <div>
             {blocks.map((b, i) => {
               const focus = b.id === focusedId;
               return (
@@ -190,7 +186,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
                   className="mt-be-block-list-wrapper--bottom"
                   index={blocks.length}
                   showShortcuts={true}
-                  label={t("+ addBlock")}
+                  label={t("+ add new block")}
+                  labelDirect={t("+ add new {{label}} block", {
+                    label: "{{label}}",
+                  })}
                 />
               </div>
             )}

@@ -188,6 +188,48 @@ const BlockItem: React.FC<Props> = ({
           setFocusedId(b.id);
         }
       }}
+      onCopy={(ev) => {
+        const s = document.getSelection();
+
+        if (!s || s.rangeCount < 1) {
+          return;
+        }
+
+        const range = s.getRangeAt(0);
+        const clonedSelection = range.cloneContents();
+
+        const div = document.createElement("div");
+        div.appendChild(clonedSelection);
+
+        const blockElms = div.querySelectorAll(".mt-be-block");
+
+        if (blockElms.length === 0) {
+          return;
+        }
+
+        const blocks = [...blockElms]
+          .map((e): Block | null => {
+            if (e.parentElement && e.parentElement.closest(".mt-be-block")) {
+              // has parent
+              return null;
+            }
+
+            const w = e.closest(".mt-be-block-wrapper") as HTMLElement | null;
+            return w
+              ? findDescendantBlock(editor, w.dataset.mtBlockEditorBlockId)
+              : b;
+          })
+          .filter((b) => b) as Block[];
+
+        if (blocks.length === 0) {
+          return;
+        }
+
+        const html = blocks.map((b) => b.htmlString()).join("");
+
+        ev.clipboardData.setData("text/html", html);
+        ev.preventDefault();
+      }}
       className={`mt-be-block-wrapper ${focus ? "focus" : ""}`}
       style={style}
       ref={ref}
@@ -218,6 +260,11 @@ const BlockItem: React.FC<Props> = ({
           </div>
         </>
       )}
+      {showButton && (
+        <div className="mt-be-btn-remove-wrapper">
+          <RemoveButton block={b} />
+        </div>
+      )}
       <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
           <div className="mt-be-content-label">{b.contentLabel()}</div>
@@ -228,7 +275,7 @@ const BlockItem: React.FC<Props> = ({
         b instanceof Columns ? (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && <DefaultToolbar />}
+            {focus && showButton && <DefaultToolbar />}
           </BlockContext.Provider>
         ) : (
           <>
@@ -251,11 +298,6 @@ const BlockItem: React.FC<Props> = ({
           </>
         )}
       </div>
-      {showButton && (
-        <div className="mt-be-btn-remove-wrapper">
-          <RemoveButton block={b} />
-        </div>
-      )}
     </div>
   );
 };

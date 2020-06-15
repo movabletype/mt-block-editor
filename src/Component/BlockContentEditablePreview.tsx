@@ -1,7 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, CSSProperties } from "react";
 import Block from "../Block";
 import { sanitize, getShadowDomSelectorSet } from "../util";
 import { useEditorContext } from "../Context";
+
+export interface HasEditorStyle extends Block {
+  editorStyle: CSSProperties;
+}
 
 interface EditorProps {
   block: Block;
@@ -21,6 +25,20 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
     if (!divEl) {
       return;
     }
+
+    setTimeout(() => {
+      const style = window.getComputedStyle(
+        divEl.childNodes.length > 0 &&
+          divEl.childNodes[0] instanceof HTMLElement
+          ? (divEl.childNodes[0] as HTMLElement)
+          : divEl
+      );
+      (block as HasEditorStyle).editorStyle = {
+        lineHeight: style.lineHeight,
+        fontSize: style.fontSize,
+        fontFamily: style.fontFamily,
+      };
+    }, 10);
 
     divEl.addEventListener(
       "mousedown",

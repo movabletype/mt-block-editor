@@ -98,28 +98,23 @@ class Editor extends EventEmitter implements HasBlocks {
     }, 0);
   }
 
-  public selectableTypes(): Array<typeof Block> {
-    return [...new Set(this.shortcutTypes().concat(this.panelTypes()))];
+  public selectableTypes(typeIds: string[]): Array<typeof Block> {
+    const types = this.factory.selectableTypes();
+    return typeIds
+      .map((typeId) => types.find((t) => t.typeId === typeId))
+      .filter((t) => t) as Array<typeof Block>;
   }
 
   public panelTypes(): Array<typeof Block> {
-    const types = this.factory.selectableTypes();
-    if (!this.opts.panelBlockTypes) {
-      return types;
-    }
     return this.opts.panelBlockTypes
-      .map((typeId) => types.find((t) => t.typeId === typeId))
-      .filter((t) => t) as Array<typeof Block>;
+      ? this.selectableTypes(this.opts.panelBlockTypes)
+      : this.factory.selectableTypes();
   }
 
   public shortcutTypes(): Array<typeof Block> {
-    const types = this.factory.selectableTypes();
-    if (!this.opts.shortcutBlockTypes) {
-      return [];
-    }
     return this.opts.shortcutBlockTypes
-      .map((typeId) => types.find((t) => t.typeId === typeId))
-      .filter((t) => t) as Array<typeof Block>;
+      ? this.selectableTypes(this.opts.shortcutBlockTypes)
+      : [];
   }
 
   public addBlock(parent: HasBlocks, block: Block, index: number): void {

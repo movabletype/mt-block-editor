@@ -13,6 +13,7 @@ enum ListStatus {
 interface AddButtonProps {
   index: number;
   label?: string;
+  labelDirect?: string;
   className?: string;
   showShortcuts?: boolean;
 }
@@ -20,6 +21,7 @@ interface AddButtonProps {
 const AddButton: React.FC<AddButtonProps> = ({
   index,
   label,
+  labelDirect,
   className,
   showShortcuts,
 }: AddButtonProps) => {
@@ -81,7 +83,28 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
-  const onlyShortcuts = showShortcuts && editor.panelTypes().length === 0;
+  const shortcutTypes = showShortcuts ? editor.shortcutTypes() : [];
+  const panelTypes = addableBlockTypes
+    ? editor.selectableTypes(addableBlockTypes)
+    : showShortcuts
+    ? editor.panelTypes()
+    : [...new Set(editor.shortcutTypes().concat(editor.panelTypes()))];
+  const onlyShortcuts = showShortcuts && panelTypes.length === 0;
+
+  if (shortcutTypes.length === 0 && panelTypes.length === 0) {
+    return <></>;
+  }
+
+  const add = async (type: typeof Block): Promise<void> => {
+    focusIfIos(dummyInputElRef);
+    addBlock(
+      await type.new({
+        editor: editor,
+        event: new Event("addButton"),
+      }),
+      index
+    );
+  };
 
   return (
     <>
@@ -115,10 +138,11 @@ const AddButton: React.FC<AddButtonProps> = ({
         onDrop={async (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
+          const selectableTypes = shortcutTypes.concat(panelTypes);
           const files = ev.dataTransfer.files;
           for (let i = 0; i < files.length; i++) {
             const f = files[i];
-            const t = editor.selectableTypes().find((t: typeof Block) => {
+            const t = selectableTypes.find((t: typeof Block) => {
               try {
                 return t.canNewFromFile({ file: f });
               } catch (e) {
@@ -132,56 +156,55 @@ const AddButton: React.FC<AddButtonProps> = ({
           }
         }}
       >
-        <button
-          type="button"
-          className="mt-be-btn-add"
-          onClick={(ev) => {
-            ev.stopPropagation();
-            setShowList(
-              showList === ListStatus.Visible
-                ? ListStatus.Hidden
-                : ListStatus.Visible
-            );
-          }}
-        >
-          {label || ""}
-        </button>
         {showShortcuts && (
           <ul className="mt-be-shortcut-block-list">
-            {editor
-              .shortcutTypes()
-              .filter((t) => {
-                if (!addableBlockTypes) {
-                  return true;
-                }
-                return (
-                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
-                );
-              })
-              .map((t: typeof Block) => (
-                <li key={t.typeId}>
-                  <a
-                    data-mt-be-type={t.typeId}
-                    href="#"
-                    onClick={async (ev) => {
-                      ev.preventDefault();
-                      ev.stopPropagation();
-                      ev.nativeEvent.stopImmediatePropagation();
-                      focusIfIos(dummyInputElRef);
-                      addBlock(
-                        await t.new({
-                          editor: editor,
-                          event: new Event("addButton"),
-                        }),
-                        index
-                      );
-                    }}
-                  >
-                    <img src={t.icon} />
-                  </a>
-                </li>
-              ))}
+            {shortcutTypes.map((t: typeof Block) => (
+              <li key={t.typeId}>
+                <button
+                  type="button"
+                  data-mt-be-type={t.typeId}
+                  title={t.label}
+                  onClick={async (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    add(t);
+                  }}
+                >
+                  <img src={t.icon} />
+                </button>
+              </li>
+            ))}
           </ul>
+        )}
+        {panelTypes.length === 1 ? (
+          <button
+            type="button"
+            className="mt-be-btn-add"
+            onClick={async (ev) => {
+              ev.stopPropagation();
+              add(panelTypes[0]);
+            }}
+          >
+            {labelDirect
+              ? labelDirect.replace(/{{label}}/, panelTypes[0].label)
+              : label || ""}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="mt-be-btn-add"
+            onClick={async (ev) => {
+              ev.stopPropagation();
+              setShowList(
+                showList === ListStatus.Visible
+                  ? ListStatus.Hidden
+                  : ListStatus.Visible
+              );
+            }}
+          >
+            {label || ""}
+          </button>
         )}
       </div>
       <CSSTransition
@@ -197,42 +220,26 @@ const AddButton: React.FC<AddButtonProps> = ({
           ref={blockListElRef}
         >
           <ul className="mt-be-block-list">
-            {(showShortcuts ? editor.panelTypes() : editor.selectableTypes())
-              .filter((t) => {
-                if (!addableBlockTypes) {
-                  return true;
-                }
-                return (
-                  addableBlockTypes.indexOf((t as typeof Block).typeId) !== -1
-                );
-              })
-              .map((t: typeof Block) => (
-                <li key={t.typeId}>
-                  <a
-                    data-mt-be-type={t.typeId}
-                    href="#"
-                    onClick={async (ev) => {
-                      ev.preventDefault();
-                      ev.stopPropagation();
-                      ev.nativeEvent.stopImmediatePropagation();
-                      setShowList(ListStatus.None);
-                      focusIfIos(dummyInputElRef);
-                      addBlock(
-                        await t.new({
-                          editor: editor,
-                          event: new Event("addButton"),
-                        }),
-                        index
-                      );
-                    }}
-                  >
-                    <div>
-                      <img src={t.icon} />
-                      <span>{t.label}</span>
-                    </div>
-                  </a>
-                </li>
-              ))}
+            {panelTypes.map((t: typeof Block) => (
+              <li key={t.typeId}>
+                <button
+                  type="button"
+                  data-mt-be-type={t.typeId}
+                  onClick={async (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    setShowList(ListStatus.None);
+                    add(t);
+                  }}
+                >
+                  <div>
+                    <img src={t.icon} />
+                    <span>{t.label}</span>
+                  </div>
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       </CSSTransition>

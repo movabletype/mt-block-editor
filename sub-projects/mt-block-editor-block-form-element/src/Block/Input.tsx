@@ -43,7 +43,12 @@ const Editor: React.FC<EditorProps> = blockProperty(
         </label>
       </BlockSetup>
       <BlockLabel block={block}>
-        <input type="text" name="text" data-mt-block-editor-focus-default />
+        <input
+          type="text"
+          name="text"
+          className="mt-be-input mt-be-input--full-width"
+          data-mt-block-editor-focus-default
+        />
       </BlockLabel>
     </div>
   )

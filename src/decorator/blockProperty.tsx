@@ -130,7 +130,7 @@ export default function blockProperty<T extends EditorProps>(
         return child;
       }
 
-      const value = block[n];
+      const value = block[n] === null ? "" : block[n];
       const minRows =
         parseInt(child.props["data-min-rows"], 10) || DEFAULT_MIN_ROWS;
 

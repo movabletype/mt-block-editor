@@ -55,7 +55,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
       <BlockLabel block={block}>
         <textarea
           name="text"
-          style={{ width: "100%" }}
+          className="mt-be-input mt-be-input--full-width"
           data-mt-block-editor-focus-default
         />
       </BlockLabel>
