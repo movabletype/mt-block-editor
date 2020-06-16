@@ -20,8 +20,14 @@ const Editor: React.FC<EditorProps> = blockProperty(
     <div>
       <BlockSetupCommon block={block} />
       <BlockLabel block={block}>
-        <input type="text" name="text" />
-        <input type="url" name="url" data-mt-block-editor-focus-default />
+        <label className="mt-be-label-name">
+          <div>{t("Link URL")}</div>
+          <input type="url" name="url" data-mt-block-editor-focus-default />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Text to display")}</div>
+          <input name="text" />
+        </label>
       </BlockLabel>
     </div>
   )

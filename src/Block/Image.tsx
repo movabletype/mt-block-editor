@@ -1,6 +1,8 @@
 import { t } from "../i18n";
-import React, { useState } from "react";
+import React from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import { nl2br } from "../util";
+import { blockProperty } from "../decorator";
 import icon from "../img/icon/image.svg";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -9,29 +11,48 @@ interface EditorProps {
   block: Image;
 }
 
-const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
-  const [url, setUrl] = useState(block.url);
-
-  return (
+const Editor: React.FC<EditorProps> = blockProperty(
+  ({ block }: EditorProps) => (
     <div>
       <BlockSetupCommon block={block} />
       <BlockLabel block={block}>
-        {url && <img src={url} style={{ maxWidth: "100%" }} />}
-        <input
-          type="url"
-          onKeyDown={(ev) => {
-            if (ev.key === "Enter") {
-              ev.preventDefault();
-            }
-          }}
-          onChange={(ev) => {
-            block.url = ev.target.value;
-            setUrl(ev.target.value);
-          }}
-          value={url}
-        />
+        <label className="mt-be-label-name">
+          <div>{t("Image URL")}</div>
+          <input type="url" name="url" data-mt-block-editor-focus-default />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Class Name")}</div>
+          <input name="className" />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Alternative Text")}</div>
+          <input name="alt" />
+        </label>
+        <label className="mt-be-label-name">
+          <div>{t("Caption")}</div>
+          <textarea
+            name="caption"
+            data-min-rows="1"
+            style={{ width: "100%" }}
+          ></textarea>
+        </label>
       </BlockLabel>
     </div>
+  )
+);
+
+const Html: React.FC<EditorProps> = ({ block }: EditorProps) => {
+  const img = (
+    <img src={block.url} className={block.className} alt={block.alt} />
+  );
+
+  return block.caption ? (
+    <figure>
+      {img}
+      <figcaption>{nl2br(block.caption)}</figcaption>
+    </figure>
+  ) : (
+    <p>{img}</p>
   );
 };
 
@@ -44,6 +65,8 @@ class Image extends Block {
   }
 
   public url = "";
+  public alt = "";
+  public caption = "";
 
   public constructor(init?: Partial<Image>) {
     super();
@@ -57,7 +80,7 @@ class Image extends Block {
   }
 
   public html(): JSX.Element {
-    return <img src={this.url} style={{ maxWidth: "100%" }} />;
+    return <Html block={this} />;
   }
 
   public static canNewFromFile(): boolean {
@@ -81,6 +104,15 @@ class Image extends Block {
       Object.assign(
         {
           url: (doc.querySelector("IMG") as HTMLImageElement).src || "",
+          className:
+            (doc.querySelector("IMG") as HTMLImageElement).className || "",
+          alt: (doc.querySelector("IMG") as HTMLImageElement).alt || "",
+          caption:
+            (doc.querySelector("FIGCAPTION") &&
+              (doc.querySelector(
+                "FIGCAPTION"
+              ) as HTMLElement).innerHTML.replace(/<br[^>]*>/g, "\n")) ||
+            "",
         },
         meta
       )

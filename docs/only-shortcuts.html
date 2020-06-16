@@ -96,13 +96,11 @@
               settings.plugins += " mt_security";
               settings.extended_valid_elements = [
                 // we embed 'a[onclick]' by inserting image with popup
-                "a[href|title|target|name|id|class|onclick]",
-                // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
-                "+p[style|class]",
+                `a[id|class|style|title|accesskey|tabindex|lang|dir|draggable|dropzone|contextmenu|hidden|onclick|href|target|name]`,
+                // allow SPAN element without attributes
+                `span[id|class|style|title|accesskey|tabindex|lang|dir|draggable|dropzone|contextmenu|hidden|onclick]`,
                 // allow SCRIPT element
                 "script[id|name|type|src]",
-                // allow SPAN element without attributes
-                "+span[*]",
               ].join(",");
               settings.valid_children = "+a[div]";
             });

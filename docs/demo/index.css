@@ -1,0 +1,260 @@
+body {
+  font-size: 16px;
+  background-image: url(images/bgdot.gif);
+  color: #222222;
+  line-height: 1.75;
+}
+.navbar {
+  width: 100%;
+  border-bottom: 4px solid #29a78b;
+  height: 60px;
+  background-color: #ffffff !important;
+  padding: 0px !important;
+  position: fixed;
+  z-index: 100;
+}
+
+.container {
+  max-width: 770px;
+  min-height: 100vh;
+  margin: 0 auto 0 auto;
+  background-color: #fff;
+  border-right: 1px solid #e6e6e6;
+  border-left: 1px solid #e6e6e6;
+  padding: 60px 40px 80px 40px;
+}
+
+.mt-block-editor .mt-be-block {
+  padding: 2px;
+  margin-bottom: 4px !important;
+}
+.mt-block-editor .mt-be-btn-add-bottom {
+  margin-top: 40px;
+}
+.blockeditorlogo {
+  margin: 0;
+}
+
+.blockeditorlogo_pc {
+  width: 288px;
+  height: auto;
+  display: block;
+}
+.blockeditorlogo_sp {
+  width: 20px;
+  height: auto;
+  display: none;
+}
+
+.control-buttons {
+  position: relative;
+}
+
+.control-buttons button {
+  width: 49px;
+  height: 60px;
+  border: 0;
+  padding: 0px;
+  border-right: 1px solid #eeeeee;
+  border-left: 1px solid #eeeeee;
+  margin: 0 0 0 -5px;
+  position: relative;
+  top: 2px;
+  background-color: #fff;
+  text-align: center;
+  transition: .3s;
+}
+
+.control-buttons button:hover, .control-buttons button:focus {
+  background-color: #f6f6f6;
+  outline: 0;
+}
+.control-buttons button:first-child {
+  margin: 0 0 0 0;
+  border-right: 0px solid #eeeeee;
+}
+
+.control-buttons button i {
+  content: "";
+  display: block;
+  width: 49px;
+  height: 60px;
+  line-height: 60px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.control-buttons button i.undo {
+  background-image: url(images/icon_undo.png);
+  background-size: 16px auto;
+}
+.control-buttons button i.redo {
+  background-image: url(images/icon_redo.png);
+  background-size: 16px auto;
+}
+.control-buttons button:disabled i.undo {
+  background-image: url(images/icon_undo-gray.png);
+  background-size: 16px auto;
+}
+.control-buttons button:disabled i.redo {
+  background-image: url(images/icon_redo-gray.png);
+  background-size: 16px auto;
+}
+.control-buttons button i.file-export {
+  background-image: url(images/icon_file-export.png);
+  background-size: 14px auto;
+}
+
+.blockeditorlogo {
+  position: absolute;
+  left: calc(50% - 144px);
+}
+
+.customize-buttons ul {
+  display: flex;
+  margin: 0;
+  padding-inline-start: 0;
+  margin-block-end: 0;
+}
+.customize-buttons ul li {
+    list-style: none;
+}
+.customize-buttons ul li a {
+  font-size: 12px;
+  line-height: 60px;
+  height: 60px;
+  display: block;
+  margin-right: 24px;
+  color: #222222;
+  position: relative;
+  transition: .3s;
+}
+
+.customize-buttons ul li a:hover {
+  text-decoration: none;
+  color: #29a78b;
+}
+
+.customize-buttons ul li a.active {
+  font-family: HiraginoSans-W8;
+  font-weight: bold;
+  color: #29a78b;
+}
+.customize-buttons ul li a.active:before {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 5.5px 6px 5.5px;
+  border-color: transparent transparent #29a78c transparent;
+  position: absolute;
+  bottom: 2px;
+  left: calc(50% - 5.5px) 
+}
+
+footer {
+  margin-top: 0;
+  font-size: 12px;
+}
+
+/* tooltip */
+
+.tooltip-inner {
+  border-radius: 0;
+}
+.bs-tooltip-auto[x-placement^=bottom] .arrow::before, .bs-tooltip-bottom .arrow::before {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    width: 100%;
+    display: block;
+    height: auto;
+  }
+  
+  .control-buttons {
+    height: 40px;
+  }
+  
+  .control-buttons button {
+    width: 40px;
+    height: 40px;
+    border: 0px;
+    top: 0;
+  }
+  .control-buttons button i {
+    width: 40px;
+    height: 40px;
+    border: 0px;
+    top: 0;
+  }
+  
+  .container {
+    width: 100%;
+    border-right: 0px solid #e6e6e6;
+    border-left: 0px solid #e6e6e6;
+    padding: 60px 0 80px 0;
+  }
+  
+  .row {
+    margin: 0;
+  }
+  
+  .mt-block-editor {
+    width: 100%;
+    margin: 0 !important;
+  }
+  
+  
+  .blockeditorlogo {
+    width: 20px;
+    height: 20px;
+    left: auto;
+    right: 20px;
+    top: 10px;
+  }
+  
+  .blockeditorlogo_pc {
+    display: none;
+  }
+  .blockeditorlogo_sp {
+    display: block;
+  }
+  
+  
+  .customize-buttons ul {
+    width: 100%;
+    margin: 0 auto;
+    justify-content: space-around;
+    border-top: 1px solid #eeeeee;
+  }
+  
+  .customize-buttons ul li {
+    margin-right: 12px;
+  }
+  .customize-buttons ul li:first-child {
+    margin-left: 20px;
+  }
+  .customize-buttons ul li:last-child {
+    margin-right: 20px;
+  }
+  .customize-buttons ul li a {
+    margin: 0 0;
+    height: 40px;
+    line-height: 40px;
+  }
+  .customize-buttons ul li a.active:before {
+    bottom: 0;
+  }
+  
+}
+
+.mt-block-editor .mt-be-block p {
+  margin: 0 0 16px 0;
+}
+
+.mt-block-editor .mt-be-block ul {
+  margin: 0 0 16px 0;
+}
