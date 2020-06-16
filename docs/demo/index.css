@@ -36,6 +36,8 @@ body {
 }
 
 .blockeditorlogo_pc {
+  width: 288px;
+  height: auto;
   display: block;
 }
 .blockeditorlogo_sp {
