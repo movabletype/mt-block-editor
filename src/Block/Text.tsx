@@ -67,8 +67,6 @@ const Editor: React.FC<EditorProps> = ({
 
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
-        let editorIsBlank = !block.text;
-
         block.tinymce = ed;
 
         ed.setContent(block.text);
@@ -93,7 +91,7 @@ const Editor: React.FC<EditorProps> = ({
         });
 
         const addEdit = (): void => {
-          const cur = editorIsBlank ? "" : ed.getContent();
+          const cur = ed.getContent();
           if (last === cur) {
             return;
           }
@@ -114,9 +112,6 @@ const Editor: React.FC<EditorProps> = ({
             root.childNodes.length <= 1 ||
             root.querySelector(".mce-pastebin")
           ) {
-            if (root.childNodes.length === 1) {
-              editorIsBlank = root.childNodes[0].textContent === "";
-            }
             addEdit();
             return;
           }
@@ -182,7 +177,7 @@ const Editor: React.FC<EditorProps> = ({
           }
 
           if (e.keyCode === 8 || e.keyCode === 46) {
-            if (editorIsBlank) {
+            if (root.textContent === "" && ed.getContent() === "") {
               if (canRemove) {
                 removeBlock(block);
               }
