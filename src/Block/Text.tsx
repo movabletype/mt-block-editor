@@ -153,7 +153,16 @@ const Editor: React.FC<EditorProps> = ({
               if (c.childNodes.length !== 0 && i === children.length - 1) {
                 const caret = document.createElement("BR");
                 caret.setAttribute(CARET_ATTR, "1");
-                c.insertBefore(caret, c.firstChild);
+
+                let target: HTMLElement | null;
+                if (["UL", "OL"].find((tn) => c.tagName === tn)) {
+                  target = c.querySelector("LI");
+                } else {
+                  target = c;
+                }
+                if (target) {
+                  target.insertBefore(caret, target.firstChild);
+                }
               }
               const text = c.childNodes.length === 0 ? "" : c.outerHTML;
 
