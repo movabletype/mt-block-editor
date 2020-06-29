@@ -7,6 +7,7 @@ import { Size } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "1000px";
+const SHRINK_THRESHOLD = 50;
 
 interface EditorProps {
   block: Block;
@@ -332,7 +333,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
               oldValue &&
               newValue &&
               oldValue > newValue &&
-              Math.abs(oldValue - newValue) < 10
+              Math.abs(oldValue - newValue) < SHRINK_THRESHOLD
             ) {
               ev.data.arguments[k] = size[k];
             }
