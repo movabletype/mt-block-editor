@@ -5,6 +5,10 @@ import { type, apply, serializedTextarea, blur } from "../helpers";
 context("Text", () => {
   const textareaId = "text";
 
+  function ignoreErrorHandler() {
+    return false;
+  }
+
   beforeEach(() => {
     cy.visit("./cypress/resources/editor.html");
     apply({
@@ -12,17 +16,31 @@ context("Text", () => {
     });
   });
 
-  it("create new block from new line", () => {
+  afterEach(() => {
+    Cypress.off('uncaught:exception', ignoreErrorHandler);
+  });
+
+  it("hello", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
     cy.wait(100);
-    type("Hello!\n");
-    cy.wait(100);
-    type("Block Editor!");
+    type("Hello!");
 
     serializedTextarea(textareaId).should(
       "have.value",
-      "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb -->"
+      "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+    );
+  });
+
+  it("typo", () => {
+    cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+
+    cy.wait(100);
+    type("Hell0{backspace}o!");
+
+    serializedTextarea(textareaId).should(
+      "have.value",
+      "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
     );
   });
 
@@ -200,6 +218,55 @@ context("Text", () => {
       serializedTextarea(textareaId).should(
         "have.value",
         "<!-- mt-beb --><p>aa<strong>b</strong><strong>d</strong></p><!-- /mt-beb -->"
+      );
+    });
+  });
+
+  context("devide blocks", () => {
+    it("two paragraphs", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      cy.wait(100);
+      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.wait(50);
+      cy.get(".mce-window textarea").invoke(
+        "val",
+        "<p>a</p><p>b</p>"
+      );
+
+      Cypress.on('uncaught:exception', ignoreErrorHandler);
+      cy.get(".mce-window .mce-primary button:first-child").click();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->"
+      );
+    });
+
+    it("remove first list item", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      cy.wait(100);
+      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.wait(50);
+      cy.get(".mce-window textarea").invoke(
+        "val",
+        "<ul><li></li><li>a</li><li>b</li></ul>"
+      );
+
+      Cypress.on('uncaught:exception', ignoreErrorHandler);
+      cy.get(".mce-window .mce-primary button:first-child").click();
+
+      cy.wait(100);
+      type("{backspace}");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><!-- /mt-beb --><!-- mt-beb --><ul>\n<li>a</li>\n<li>b</li>\n</ul><!-- /mt-beb -->"
       );
     });
   });
