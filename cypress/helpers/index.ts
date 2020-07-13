@@ -46,6 +46,20 @@ export function apply(opts) {
   });
 }
 
+export function registerCustomBlock(block) {
+  cy.window().then((w) => {
+    return w.MTBlockEditor.registerBlockType(
+      w.MTBlockEditor.createBoilerplateBlock(block)
+    );
+  });
+}
+
+export function registerBlockType(block) {
+  cy.window().then((w) => {
+    return w.MTBlockEditor.registerBlockType(block);
+  });
+}
+
 export function serializedTextarea(id) {
   cy.window().then((w) => w.MTBlockEditor.serialize());
   return cy.get(`#${id}`);
