@@ -401,12 +401,15 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
       handlers: editHandlers,
     };
 
-    this.text = this.html().replace(/(<\/[^>]*>)$/, (all, closeTag) => {
-      return (
-        CARET +
-        (block.html() as string).replace(/^<[^>]*>|<\/[^>]*>$/g, "") +
-        closeTag
-      );
+    this.text = this.html().replace(/(<\/[^>]*>)?$/, (all, closeTag) => {
+      const h = block.html() as string;
+      if (closeTag) {
+        return CARET + h.replace(/^<[^>]*>|<\/[^>]*>$/g, "") + closeTag;
+      } else {
+        return h.replace(/^(<[^>]*>)/, (all, openTag) => {
+          return openTag + CARET;
+        });
+      }
     });
 
     return history;
