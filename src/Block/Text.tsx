@@ -192,12 +192,18 @@ const Editor: React.FC<EditorProps> = ({
               }
               e.preventDefault();
             } else {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const sel = (ed.selection.getSel() as any) as Selection;
               const start = ed.selection.getStart();
               const rng = ed.selection.getRng(false);
               if (
+                rng.collapsed &&
                 rng.startOffset === 0 &&
-                rng.endOffset === 0 &&
-                start === root.firstChild
+                (sel.anchorNode === root.firstChild ||
+                  start === root.firstChild) &&
+                !start.previousSibling &&
+                sel.anchorNode &&
+                !sel.anchorNode.previousSibling
               ) {
                 e.preventDefault();
                 mergeBlock(block);
