@@ -230,10 +230,25 @@ class Column extends Block implements HasBlocks {
   }
 
   public async serializedString(opts: SerializeOptions): Promise<string> {
+    const classNames = [
+      (this.constructor as typeof Column).className,
+      this.className,
+    ].filter((c) => c);
     const serializedBlocks = await Promise.all(
       this.blocks.map((c) => c.serialize(opts))
     );
-    return serializedBlocks.join("");
+
+    return [
+      this.rootBlock
+        ? `<${this.rootBlock}${
+            classNames.length
+              ? ` class='${escapeSingleQuoteAttribute(classNames.join(" "))}'`
+              : ""
+          }>`
+        : "",
+      serializedBlocks.join(""),
+      this.rootBlock ? `</${this.rootBlock}>` : "",
+    ].join("");
   }
 
   public async compile({ editor }: SerializeOptions): Promise<void> {
@@ -292,23 +307,11 @@ class Column extends Block implements HasBlocks {
 
     const m = this.metadata();
     const typeId = (this.constructor as typeof Column).typeId;
-    const classNames = [
-      (this.constructor as typeof Column).className,
-      this.className,
-    ].filter((c) => c);
     return [
       `<!-- mt-beb t="${typeId}"${
         m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
       } -->`,
-      this.rootBlock
-        ? `<${this.rootBlock}${
-            classNames.length
-              ? ` class='${escapeSingleQuoteAttribute(classNames.join(" "))}'`
-              : ""
-          }>`
-        : "",
       await this.serializedString(opts),
-      this.rootBlock ? `</${this.rootBlock}>` : "",
       `<!-- /mt-beb -->`,
     ].join("");
   }

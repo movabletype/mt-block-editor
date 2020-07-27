@@ -192,12 +192,18 @@ const Editor: React.FC<EditorProps> = ({
               }
               e.preventDefault();
             } else {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const sel = (ed.selection.getSel() as any) as Selection;
               const start = ed.selection.getStart();
               const rng = ed.selection.getRng(false);
               if (
+                rng.collapsed &&
                 rng.startOffset === 0 &&
-                rng.endOffset === 0 &&
-                start === root.firstChild
+                (sel.anchorNode === root.firstChild ||
+                  start === root.firstChild) &&
+                !start.previousSibling &&
+                sel.anchorNode &&
+                !sel.anchorNode.previousSibling
               ) {
                 e.preventDefault();
                 mergeBlock(block);
@@ -395,12 +401,15 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
       handlers: editHandlers,
     };
 
-    this.text = this.html().replace(/(<\/[^>]*>)$/, (all, closeTag) => {
-      return (
-        CARET +
-        (block.html() as string).replace(/^<[^>]*>|<\/[^>]*>$/g, "") +
-        closeTag
-      );
+    this.text = this.html().replace(/(<\/[^>]*>)?$/, (all, closeTag) => {
+      const h = block.html() as string;
+      if (closeTag) {
+        return CARET + h.replace(/^<[^>]*>|<\/[^>]*>$/g, "") + closeTag;
+      } else {
+        return h.replace(/^(<[^>]*>)/, (all, openTag) => {
+          return openTag + CARET;
+        });
+      }
     });
 
     return history;

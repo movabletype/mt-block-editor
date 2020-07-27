@@ -44,27 +44,71 @@ context("Text", () => {
     );
   });
 
-  it("merge blocks", () => {
-    cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+  context("merge blocks", () => {
+    it("merge", () => {
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
-    cy.wait(100);
-    type("a\n");
-    cy.wait(100);
-    type("b{leftarrow}{backspace}");
+      cy.wait(100);
+      type("a\n");
+      cy.wait(100);
+      type("b{leftarrow}{backspace}");
 
-    serializedTextarea(textareaId)
-      .should("have.value", "<!-- mt-beb --><p>ab</p><!-- /mt-beb -->")
-      .should(($e) =>
-        expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("5")
-      );
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>ab</p><!-- /mt-beb -->")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("5")
+        );
 
-    type("{backspace}");
+      type("{backspace}");
 
-    serializedTextarea(textareaId)
-      .should("have.value", "<!-- mt-beb --><p>b</p><!-- /mt-beb -->")
-      .should(($e) =>
-        expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("6")
-      );
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>b</p><!-- /mt-beb -->")
+        .should(($e) =>
+          expect($e.get(0).dataset.mtBlockEditorChangeCount).to.equal("6")
+        );
+    });
+
+    it("merge to blank text block", () => {
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+
+      cy.wait(100);
+      type("a\n\n\n");
+      cy.wait(100);
+      type("b{leftarrow}{backspace}");
+
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->");
+    });
+
+    it("merge with br", () => {
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+
+      cy.wait(100);
+      type("a\n{shift}\nb{leftarrow}{leftarrow}{backspace}");
+
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>a<br />b</p><!-- /mt-beb -->");
+    });
+
+    it("should not to merge in middle of content", () => {
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+
+      cy.wait(100);
+      type("a\nb{shift}\nc{leftarrow}{backspace}");
+
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->");
+    });
+
+    it("should not to merge in middle of content - 2", () => {
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+
+      cy.wait(100);
+      type("a\nbc{leftarrow}{shift}\n{backspace}");
+
+      serializedTextarea(textareaId)
+        .should("have.value", "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->");
+    });
   });
 
   context("style", () => {
