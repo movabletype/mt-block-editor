@@ -94,6 +94,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           let children = [...root.childNodes] as HTMLElement[];
 
           children = children
+            .filter((c) => !c.classList.contains("mce-pastebin"))
             .map((c) => {
               if (c.tagName === "TABLE") {
                 return c;
