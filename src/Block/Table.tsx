@@ -94,15 +94,28 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           let children = [...root.childNodes] as HTMLElement[];
 
           children = children
+            .filter((c) => !c.classList.contains("mce-pastebin"))
             .map((c) => {
               if (c.tagName === "TABLE") {
                 return c;
               } else {
+                const grandChildren: HTMLElement[] = [];
+
+                [...c.querySelectorAll("TABLE")].forEach((t) => {
+                  if ((t.parentElement as HTMLElement).closest("TABLE")) {
+                    // nest
+                    return;
+                  }
+
+                  root.insertBefore(t, c);
+                  grandChildren.push(t as HTMLElement);
+                });
                 ed.dom.remove(c);
-                return null;
+
+                return grandChildren;
               }
             })
-            .filter((c) => c) as HTMLElement[];
+            .flat() as HTMLElement[];
 
           if (children.length === 1) {
             addEdit();
