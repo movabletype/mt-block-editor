@@ -13,7 +13,6 @@ import {
   sanitize,
   isIos,
   isTouchDevice,
-  mediaBreakPoint,
   getShadowDomSelectorSet,
 } from "../util";
 import BlockToolbar from "../Component/BlockToolbar";
@@ -30,6 +29,7 @@ import {
   CARET_ATTR,
   tinymceFocus,
   removeTinyMCEFromBlock,
+  adjustToolbar,
 } from "./Text/util";
 import { editHandlers } from "./Text/edit";
 
@@ -212,39 +212,7 @@ const Editor: React.FC<EditorProps> = ({
           }
         });
 
-        for (let i = 0; i < 10; i++) {
-          setTimeout(() => {
-            const toolbar = document.getElementById(
-              `${block.tinymceId()}toolbar`
-            );
-            if (!toolbar) {
-              return;
-            }
-
-            toolbar.style.top = `-${toolbar.offsetHeight}px`;
-
-            if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
-              const blockEl = root.closest(".block");
-              if (!blockEl) {
-                return;
-              }
-
-              // Set width property only when this block in inside .column
-              if (!blockEl.closest(".column")) {
-                return;
-              }
-
-              const editorRect = editor.editorElement.getBoundingClientRect();
-              const blockRect = blockEl.getBoundingClientRect();
-              toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
-              toolbar.style.setProperty(
-                "width",
-                `calc(100vw - ${editorRect.left}px)`,
-                "important"
-              );
-            }
-          }, i * 100);
-        }
+        adjustToolbar(ed, block, editor.editorElement);
       },
 
       // TinyMCE 5 ?
