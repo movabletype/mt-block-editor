@@ -3,6 +3,7 @@ import {
   SelectorSet,
   selectorCmp,
   getElementByNthOfTypeIndexes,
+  mediaBreakPoint,
 } from "../../util";
 
 declare const tinymce: EditorManager;
@@ -89,5 +90,45 @@ export function removeTinyMCEFromBlock(block: HasTinyMCE): void {
     ed.remove();
   } catch (e) {
     console.log(e);
+  }
+}
+
+export function adjustToolbar(
+  ed: TinyMCE,
+  block: HasTinyMCE,
+  editorElement: HTMLElement
+): void {
+  const root = ed.dom.getRoot();
+
+  for (let i = 0; i < 10; i++) {
+    setTimeout(() => {
+      const toolbar = document.getElementById(`${block.tinymceId()}toolbar`);
+      if (!toolbar) {
+        return;
+      }
+
+      toolbar.style.top = `-${toolbar.offsetHeight}px`;
+
+      if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
+        const blockEl = root.closest(".block");
+        if (!blockEl) {
+          return;
+        }
+
+        // Set width property only when this block in inside .column
+        if (!blockEl.closest(".column")) {
+          return;
+        }
+
+        const editorRect = editorElement.getBoundingClientRect();
+        const blockRect = blockEl.getBoundingClientRect();
+        toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
+        toolbar.style.setProperty(
+          "width",
+          `calc(100vw - ${editorRect.left}px)`,
+          "important"
+        );
+      }
+    }, i * 100);
   }
 }

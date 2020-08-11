@@ -17,7 +17,12 @@ import BlockContentEditablePreview, {
 } from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
 
-import { HasTinyMCE, tinymceFocus, removeTinyMCEFromBlock } from "./Text/util";
+import {
+  HasTinyMCE,
+  tinymceFocus,
+  removeTinyMCEFromBlock,
+  adjustToolbar,
+} from "./Text/util";
 
 declare const tinymce: EditorManager;
 
@@ -36,8 +41,9 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       language: editor.opts.i18n.lng,
       selector: `#${block.tinymceId()}`,
       menubar: false,
-      plugins: "table code paste media",
-      toolbar: "table,code",
+      plugins: "table code paste media textcolor link",
+      toolbar:
+        "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
 
       // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
@@ -139,6 +145,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
           editor.editManager.endGrouping();
         });
+
+        adjustToolbar(ed, block, editor.editorElement);
       },
     };
 
