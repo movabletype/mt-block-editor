@@ -280,7 +280,10 @@ const BlockItem: React.FC<Props> = ({
         ) : (
           <>
             <root.div>
-              <div className={editor.opts.rootClassName || ""}>
+              <div
+                className={editor.opts.rootClassName || ""}
+                style={{ overflow: "auto" }}
+              >
                 {editor.stylesheets.map((s, i) => {
                   if (s.type === StylesheetType.css) {
                     return (
