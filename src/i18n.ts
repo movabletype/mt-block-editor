@@ -35,7 +35,9 @@ export async function init(opts: InitOptions): Promise<TFunction> {
           },
 
           backend: {
-            loadPath: "",
+            loadPath: URL.createObjectURL(
+              new Blob(["{}"], { type: "application/json" })
+            ),
             crossDomain: true,
           },
         },
