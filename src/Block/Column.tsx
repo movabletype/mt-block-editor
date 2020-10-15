@@ -57,7 +57,11 @@ const Editor: React.FC<EditorProps> = ({
       }
     },
     removeBlock: (b: Block) => {
+      const index = block.blocks.indexOf(b);
       editor.removeBlock(block, b);
+      if (index > 0) {
+        setFocusedId(block.blocks[index - 1].id);
+      }
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
