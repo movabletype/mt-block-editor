@@ -119,8 +119,8 @@ class Oembed extends Block {
     return this.metadataByOwnKeys();
   }
 
-  public editor({ focus }: EditorOptions): JSX.Element {
-    if (focus) {
+  public editor({ focus, focusBlock }: EditorOptions): JSX.Element {
+    if (focus || focusBlock) {
       this.reset();
       return <Editor key={this.id} block={this} />;
     } else {
