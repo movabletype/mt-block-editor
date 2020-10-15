@@ -57,7 +57,6 @@ class File extends Block {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public editor({ focus }: EditorOptions): JSX.Element {
     return focus ? (
       <Editor key={this.id} block={this} focus={focus} />

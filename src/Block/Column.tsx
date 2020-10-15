@@ -24,7 +24,11 @@ interface EditorProps extends EditorOptions {
 
 const COMPILE_TIMEOUT = 2000;
 
-const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({
+  block,
+  focus,
+  canRemove,
+}: EditorProps) => {
   block.compiledHtml = "";
 
   if (
@@ -109,13 +113,14 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       <BlockSetupCommon block={block} keys={["className"]} />
       {blocks.map((b, i) => {
         const focusFirstBlock = canRemove !== true && blocks.length === 1;
-        const focus = focusFirstBlock || getFocusedId() === b.id;
+        const focusItem = focusFirstBlock || getFocusedId() === b.id;
         return (
           <BlockItem
             key={b.id}
             id={b.id}
             block={b}
-            focus={focus}
+            focus={focusItem}
+            focusBlock={focus}
             ignoreClickEvent={focusFirstBlock}
             index={i}
             parentBlock={block}
@@ -187,6 +192,7 @@ class Column extends Block implements HasBlocks {
 
   public editor({
     focus,
+    focusBlock,
     focusDescendant,
     canRemove,
   }: EditorOptions): JSX.Element {
@@ -195,7 +201,7 @@ class Column extends Block implements HasBlocks {
       ((this._html === "" &&
         this.blocks.length === 0 &&
         this.effectiveAddableBlockTypes().length === 0) ||
-        (!focus && !focusDescendant))
+        (!focus && !focusDescendant && !focusBlock))
     ) {
       const res = (
         <BlockIframePreview
@@ -221,7 +227,12 @@ class Column extends Block implements HasBlocks {
       }
     }
     return (
-      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
+      <Editor
+        key={this.id}
+        block={this}
+        focus={!!(focus || focusDescendant || focusBlock)}
+        canRemove={canRemove}
+      />
     );
   }
 
