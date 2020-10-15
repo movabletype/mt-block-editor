@@ -37,8 +37,8 @@
       const ts = new Date().getTime();
       const loader = [
         "./dist/mt-block-editor.js",
-        "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/0.0.7/mt-block-editor-block-oembed.js",
-        "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/0.0.7/mt-block-editor-block-form-element.js",
+        "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.1/mt-block-editor-block-oembed.js",
+        "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/1.0.1/mt-block-editor-block-form-element.js",
         "./register-block-with-custom-blocks.js",
       ].reduce(
         (chain, m) => chain.then(() => import(`${m}?ts=${ts}`)),
@@ -50,7 +50,7 @@
       } else {
         [
           "./dist/mt-block-editor.css",
-          "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/0.0.7/mt-block-editor-block-oembed.css",
+          "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.1/mt-block-editor-block-oembed.css",
         ].forEach((url) => {
           const link = window.document.createElement("LINK");
           link.rel = "stylesheet";
@@ -114,6 +114,7 @@
               "custom-oembed",
               "custom-excel",
               "custom-test",
+              "custom-bgcolor_contents",
             ],
           }).then((ed) => {
             ed.on("initializeBlocks", ({ blocks }) => {
