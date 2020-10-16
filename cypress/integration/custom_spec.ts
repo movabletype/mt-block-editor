@@ -74,7 +74,7 @@ context("CustomBlock", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(100);
+      cy.wait(200);
       type("1");
 
       cy.get(
@@ -84,7 +84,7 @@ context("CustomBlock", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(100);
+      cy.wait(200);
       type("2");
 
       blur();
