@@ -133,6 +133,7 @@ const Editor: React.FC<EditorProps> = ({
         <div className="mt-be-btn-add-bottom">
           <AddButton
             index={blocks.length}
+            showShortcuts={block.showShortcuts}
             label={t("+ add new block")}
             labelDirect={t("+ add new {{label}} block", {
               label: "{{label}}",
@@ -170,6 +171,7 @@ class Column extends Block implements HasBlocks {
 
   public _html = "";
   public previewHeader = "";
+  public showShortcuts = true;
   public blocks: Block[] = [];
 
   public canRemoveBlock = true;

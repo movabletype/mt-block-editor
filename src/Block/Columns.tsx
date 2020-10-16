@@ -48,7 +48,7 @@ const Editor: React.FC<EditorProps> = ({
 
     if (len < cols) {
       for (let i = len; i < cols; i++) {
-        editor.addBlock(block, new Column(), i);
+        editor.addBlock(block, block.newColumn(), i);
       }
     } else {
       for (let i = len - cols; i > 0; i--) {
@@ -127,10 +127,14 @@ class Columns extends Block implements HasBlocks {
 
   public constructor(init?: Partial<Columns>) {
     super();
-    this.blocks = [new Column(), new Column()];
+    this.blocks = [this.newColumn(), this.newColumn()];
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public newColumn(): Column {
+    return new Column({ showShortcuts: false });
   }
 
   public getColumnLayout(): string {
@@ -180,6 +184,7 @@ class Columns extends Block implements HasBlocks {
         .replace(/&lt;\/div&gt;$/, ""),
       factory
     )) as Column[];
+    blocks.forEach((b) => (b.showShortcuts = false));
     return new Columns(Object.assign({ blocks }, meta));
   }
 }
