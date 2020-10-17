@@ -24,7 +24,11 @@ interface EditorProps extends EditorOptions {
 
 const COMPILE_TIMEOUT = 2000;
 
-const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({
+  block,
+  focus,
+  canRemove,
+}: EditorProps) => {
   block.compiledHtml = "";
 
   if (
@@ -36,7 +40,6 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
 
   const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
-  const blocks = block.blocks;
   const blocksContext = {
     addableBlockTypes: block.addableBlockTypes,
     addBlock: (b: Block, index: number | Block) => {
@@ -53,7 +56,11 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       }
     },
     removeBlock: (b: Block) => {
+      const index = block.blocks.indexOf(b);
       editor.removeBlock(block, b);
+      if (index > 0) {
+        setFocusedId(block.blocks[index - 1].id);
+      }
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
@@ -107,15 +114,16 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   const res = (
     <BlocksContext.Provider value={blocksContext}>
       <BlockSetupCommon block={block} keys={["className"]} />
-      {blocks.map((b, i) => {
-        const focusFirstBlock = canRemove !== true && blocks.length === 1;
-        const focus = focusFirstBlock || getFocusedId() === b.id;
+      {block.blocks.map((b, i) => {
+        const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
+        const focusItem = focusFirstBlock || getFocusedId() === b.id;
         return (
           <BlockItem
             key={b.id}
             id={b.id}
             block={b}
-            focus={focus}
+            focus={focusItem}
+            focusBlock={focus}
             ignoreClickEvent={focusFirstBlock}
             index={i}
             parentBlock={block}
@@ -127,7 +135,8 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       {canRemove && (
         <div className="mt-be-btn-add-bottom">
           <AddButton
-            index={blocks.length}
+            index={block.blocks.length}
+            showShortcuts={block.showShortcuts}
             label={t("+ add new block")}
             labelDirect={t("+ add new {{label}} block", {
               label: "{{label}}",
@@ -165,6 +174,7 @@ class Column extends Block implements HasBlocks {
 
   public _html = "";
   public previewHeader = "";
+  public showShortcuts = true;
   public blocks: Block[] = [];
 
   public canRemoveBlock = true;
@@ -187,6 +197,7 @@ class Column extends Block implements HasBlocks {
 
   public editor({
     focus,
+    focusBlock,
     focusDescendant,
     canRemove,
   }: EditorOptions): JSX.Element {
@@ -195,7 +206,7 @@ class Column extends Block implements HasBlocks {
       ((this._html === "" &&
         this.blocks.length === 0 &&
         this.effectiveAddableBlockTypes().length === 0) ||
-        (!focus && !focusDescendant))
+        (!focus && !focusDescendant && !focusBlock))
     ) {
       const res = (
         <BlockIframePreview
@@ -221,7 +232,12 @@ class Column extends Block implements HasBlocks {
       }
     }
     return (
-      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
+      <Editor
+        key={this.id}
+        block={this}
+        focus={!!(focus || focusDescendant || focusBlock)}
+        canRemove={canRemove}
+      />
     );
   }
 

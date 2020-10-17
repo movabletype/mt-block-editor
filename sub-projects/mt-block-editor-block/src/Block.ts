@@ -7,6 +7,7 @@ export interface Metadata {
 
 export interface EditorOptions {
   focus: boolean;
+  focusBlock?: boolean;
   canRemove?: boolean;
 }
 

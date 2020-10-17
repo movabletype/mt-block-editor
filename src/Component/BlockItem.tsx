@@ -34,6 +34,7 @@ interface DragObject extends DragObjectWithType {
 interface Props {
   block: Block;
   focus: boolean;
+  focusBlock?: boolean;
   ignoreClickEvent?: boolean;
   id: string;
   index: number;
@@ -60,6 +61,7 @@ const BlockItem: React.FC<Props> = ({
   id,
   block,
   focus,
+  focusBlock,
   ignoreClickEvent,
   index,
   canRemove,
@@ -156,6 +158,7 @@ const BlockItem: React.FC<Props> = ({
 
   const ed = b.editor({
     focus,
+    focusBlock,
     focusDescendant,
     canRemove: canRemove === true,
     parentBlock,
@@ -270,6 +273,7 @@ const BlockItem: React.FC<Props> = ({
           <div className="mt-be-content-label">{b.contentLabel()}</div>
         )}
         {focus ||
+        focusBlock ||
         focusDescendant ||
         b instanceof Column ||
         b instanceof Columns ? (
