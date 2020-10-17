@@ -40,7 +40,6 @@ const Editor: React.FC<EditorProps> = ({
 
   const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
-  const blocks = block.blocks;
   const blocksContext = {
     addableBlockTypes: block.addableBlockTypes,
     addBlock: (b: Block, index: number | Block) => {
@@ -57,7 +56,11 @@ const Editor: React.FC<EditorProps> = ({
       }
     },
     removeBlock: (b: Block) => {
+      const index = block.blocks.indexOf(b);
       editor.removeBlock(block, b);
+      if (index > 0) {
+        setFocusedId(block.blocks[index - 1].id);
+      }
     },
     swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
       if (
@@ -111,8 +114,8 @@ const Editor: React.FC<EditorProps> = ({
   const res = (
     <BlocksContext.Provider value={blocksContext}>
       <BlockSetupCommon block={block} keys={["className"]} />
-      {blocks.map((b, i) => {
-        const focusFirstBlock = canRemove !== true && blocks.length === 1;
+      {block.blocks.map((b, i) => {
+        const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
         const focusItem = focusFirstBlock || getFocusedId() === b.id;
         return (
           <BlockItem
@@ -132,7 +135,7 @@ const Editor: React.FC<EditorProps> = ({
       {canRemove && (
         <div className="mt-be-btn-add-bottom">
           <AddButton
-            index={blocks.length}
+            index={block.blocks.length}
             showShortcuts={block.showShortcuts}
             label={t("+ add new block")}
             labelDirect={t("+ add new {{label}} block", {
