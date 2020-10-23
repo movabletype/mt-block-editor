@@ -160,12 +160,12 @@ class Columns extends Block implements HasBlocks {
   }
 
   public async serialize(opts: SerializeOptions): Promise<string> {
-    const m = this.metadata();
+    const m = opts.editor.serializeMeta(this.metadata());
     const serializedColumns = await Promise.all(
       this.blocks.map((c) => c.serialize(opts))
     );
     return `<!-- mt-beb t="${(this.constructor as typeof Block).typeId}"${
-      m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
+      m ? ` m='${escapeSingleQuoteAttribute(m)}'` : ""
     } --><div class="mt-be-columns${
       this.className ? ` ${this.className}` : ""
     }" style="display: flex">${serializedColumns.join(
@@ -177,12 +177,14 @@ class Columns extends Block implements HasBlocks {
     node,
     factory,
     meta,
+    context,
   }: NewFromHtmlOptions): Promise<Block> {
     const blocks = (await parseContent(
       node.innerHTML
         .replace(/^&lt;div.*?&gt;/, "")
         .replace(/&lt;\/div&gt;$/, ""),
-      factory
+      factory,
+      context
     )) as Column[];
     blocks.forEach((b) => (b.showShortcuts = false));
     return new Columns(Object.assign({ blocks }, meta));

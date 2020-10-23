@@ -4,6 +4,7 @@ import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
 import { EditHistory } from "./EditManager";
 import { escapeSingleQuoteAttribute } from "./util/dom";
+import ParserContext from "./util/ParserContext";
 import icon from "./img/icon/default-block.svg";
 import {
   Size,
@@ -41,6 +42,7 @@ export interface NewFromHtmlOptions {
   node: Element;
   factory: BlockFactory;
   meta: Metadata;
+  context: ParserContext;
 }
 
 export interface SerializeOptions {
@@ -238,7 +240,7 @@ class Block {
       await this.compile(opts);
     }
 
-    const m = this.metadata();
+    const m = opts.editor.serializeMeta(this.metadata());
     const html = await this.serializedString(opts);
 
     let typeId = (this.constructor as typeof Block).typeId;
@@ -247,7 +249,7 @@ class Block {
       typeId = "";
     }
     return `<!-- mt-beb${typeId ? ` t="${typeId}"` : ""}${
-      m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
+      m ? ` m='${escapeSingleQuoteAttribute(m)}'` : ""
     }${
       this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""
     } -->${this.compiledHtml || html}<!-- /mt-beb -->`;

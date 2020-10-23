@@ -3,6 +3,7 @@ import Block from "../Block";
 import BlockFactory from "../BlockFactory";
 import Text from "../Block/Text";
 import Column from "../Block/Column";
+import ParserContext from "./ParserContext";
 
 export function preParseContent(value: string): string {
   return value
@@ -19,7 +20,8 @@ export function preParseContent(value: string): string {
 
 export async function parseContent(
   value: string,
-  factory: BlockFactory
+  factory: BlockFactory,
+  context: ParserContext
 ): Promise<Block[]> {
   if (!value) {
     return [];
@@ -52,7 +54,24 @@ export async function parseContent(
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
     const typeId = node.getAttribute("t") || "core-text";
-    const meta = JSON.parse(node.getAttribute("m") || "{}");
+
+    const metaRawValue = node.getAttribute("m") || "{}";
+    const metaArray = (metaRawValue.match(/\w+|,|.+/g) || [])
+      .filter((str) => str !== ",")
+      .map((str) =>
+        /^[^{]/.test(str) ? context.get(str) || {} : JSON.parse(str)
+      );
+    const meta =
+      metaArray.length === 1
+        ? metaArray[0]
+        : Object.assign.apply(null, [{}, ...metaArray]);
+
+    if (typeId === "core-context") {
+      for (const k in meta) {
+        context.set(k, meta[k]);
+      }
+      continue;
+    }
 
     let html = node.getAttribute("h") || "";
     if (!html && node.textContent) {
@@ -82,6 +101,7 @@ export async function parseContent(
       node,
       factory,
       meta,
+      context,
     };
 
     const t =

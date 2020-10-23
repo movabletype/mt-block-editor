@@ -37,7 +37,7 @@ context("Editor", () => {
 
     serializedTextarea(textareaId).should(
       "have.value",
-      `<!-- mt-beb t="core-columns" --><div class="mt-be-columns" style="display: flex"><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb m='{"className":"custom-class-name"}' --><p class="custom-class-name">1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'></div><!-- /mt-beb --></div><!-- /mt-beb -->`
+      `<!-- mt-beb t="core-context" m='{"1":{"className":"custom-class-name"}}' --><!-- /mt-beb --><!-- mt-beb t="core-columns" --><div class="mt-be-columns" style="display: flex"><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb m='1' --><p class="custom-class-name">1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'></div><!-- /mt-beb --></div><!-- /mt-beb -->`
     );
   });
 });
