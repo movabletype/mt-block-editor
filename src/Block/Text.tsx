@@ -62,7 +62,6 @@ const Editor: React.FC<EditorProps> = ({
 
       // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      skin: "lightgray",
       inline: true,
 
       // eslint-disable-next-line @typescript-eslint/camelcase
