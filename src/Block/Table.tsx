@@ -49,10 +49,12 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
 
+      setup: (ed: TinyMCE) => {
+        block.tinymce = ed;
+      },
+
       // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
-        block.tinymce = ed;
-
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);
