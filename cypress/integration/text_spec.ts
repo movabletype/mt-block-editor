@@ -72,7 +72,7 @@ context("Text", () => {
       cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
       cy.wait(100);
-      type("a\n\n\n");
+      type("a\n\n\n", {delay: 50});
       cy.wait(100);
       type("b{leftarrow}{backspace}");
 
@@ -234,13 +234,13 @@ context("Text", () => {
       ).click();
 
       cy.wait(100);
-      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.get(`button[aria-label="Source code"], button[aria-label="ソースコード"]`).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
+      cy.get(".tox-dialog textarea").invoke(
         "val",
         "aa<strong>bb</strong>cc<strong>dd</strong>"
       );
-      cy.get(".mce-window .mce-primary button:first-child").click();
+      cy.get(".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)").click();
 
       blur();
 
@@ -273,15 +273,15 @@ context("Text", () => {
       ).click();
 
       cy.wait(100);
-      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.get(`button[aria-label="Source code"], button[aria-label="ソースコード"]`).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
+      cy.get(".tox-dialog textarea").invoke(
         "val",
         "<p>a</p><p>b</p>"
       );
 
       Cypress.on('uncaught:exception', ignoreErrorHandler);
-      cy.get(".mce-window .mce-primary button:first-child").click();
+      cy.get(".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)").click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -295,15 +295,15 @@ context("Text", () => {
       ).click();
 
       cy.wait(100);
-      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.get(`button[aria-label="Source code"], button[aria-label="ソースコード"]`).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
+      cy.get(".tox-dialog textarea").invoke(
         "val",
         "<ul><li></li><li>a</li><li>b</li></ul>"
       );
 
       Cypress.on('uncaught:exception', ignoreErrorHandler);
-      cy.get(".mce-window .mce-primary button:first-child").click();
+      cy.get(".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)").click();
 
       cy.wait(100);
       type("{backspace}");
