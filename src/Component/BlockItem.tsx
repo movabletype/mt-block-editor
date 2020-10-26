@@ -3,8 +3,7 @@
  * http://react-dnd.github.io/react-dnd/examples
  */
 
-import CSS from "csstype";
-import React, { useRef, createRef } from "react";
+import React, { useRef, createRef, CSSProperties } from "react";
 import root from "react-shadow";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
@@ -142,7 +141,7 @@ const BlockItem: React.FC<Props> = ({
     }),
   });
 
-  const style: CSS.Properties = {};
+  const style: CSSProperties = {};
   style.opacity = isDragging ? (featurePreview ? 0 : 0.5) : 1;
   preview(drop(ref));
   const focusDescendant = !!findDescendantBlock(b, getFocusedId());
