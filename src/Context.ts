@@ -26,7 +26,8 @@ export function useEditorContext(): EditorContextProps {
 }
 
 interface BlocksContextProps {
-  addableBlockTypes: string[] | null;
+  panelBlockTypes: string[] | null;
+  shortcutBlockTypes: string[] | null;
   addBlock: (b: Block, index: number | Block) => void;
   mergeBlock: (b: Block) => void;
   removeBlock: (b: Block) => void;

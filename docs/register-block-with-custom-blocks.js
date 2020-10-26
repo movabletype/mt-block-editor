@@ -6,7 +6,8 @@ MTBlockEditor.registerBlockType(
     html:
       '<!-- mt-beb t="sixapart-input" m="{&quot;blockElement&quot;:&quot;pre&quot;,&quot;text&quot;:&quot;URLを入力してください&quot;,&quot;label&quot;:&quot;コンテンツのURL&quot;,&quot;helpText&quot;:&quot;https://noembed.comを使って、Flickrにも対応したバージョンです。&quot;,&quot;className&quot;:&quot;url&quot;}"--><pre class="url">URLを入力してください</pre><!-- /mt-beb --><!-- mt-beb t="sixapart-select" m="{&quot;options&quot;:&quot;640px\\n800px\\n指定しない&quot;,&quot;blockElement&quot;:&quot;p&quot;,&quot;text&quot;:&quot;640px&quot;,&quot;label&quot;:&quot;最大サイズ&quot;,&quot;className&quot;:&quot;size&quot;}"--><p class="size">640px</p><!-- /mt-beb -->',
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script>
@@ -28,7 +29,8 @@ MTBlockEditor.registerBlockType(
     label: "Table from Excel",
     html: ``,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.2/xlsx.full.min.js" integrity="sha256-SOeQ8yqDi+NlDLrc0HMhyEdsXn+Z/TPVSjhAukwBiyU=" crossorigin="anonymous"></script>
@@ -106,7 +108,8 @@ MTBlockEditor.registerBlockType(
     label: "Test",
     html: ``,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.2/xlsx.full.min.js" integrity="sha256-SOeQ8yqDi+NlDLrc0HMhyEdsXn+Z/TPVSjhAukwBiyU=" crossorigin="anonymous"></script>
@@ -182,7 +185,8 @@ MTBlockEditor.registerBlockType(
     icon: "",
     canRemoveBlock: 1,
     typeId: "custom-contents",
-    addableBlockTypes: ["core-text", "core-html", "core-columns"],
+    panelBlockTypes: ["core-text", "core-html", "core-columns"],
+    shortcutBlockTypes: [],
     className: "contents",
     html: "",
     shouldBeCompiled: "",
@@ -197,7 +201,8 @@ MTBlockEditor.registerBlockType(
     icon: "",
     canRemoveBlock: "",
     typeId: "custom-bgcolor_contents",
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     className: "",
     html:
       '<!-- mt-beb t="sixapart-select" m=\'{"options":"白（#ffffff）\\n赤（#ff0000）\\n緑（#00ff00）\\n青（#0000ff）","blockElement":"p","text":"白（#ffffff）","label":"背景色","className":"color"}\' --><p class="color">白（#ffffff）</p><!-- /mt-beb --><!-- mt-beb t="custom-contents" --><!-- /mt-beb -->',

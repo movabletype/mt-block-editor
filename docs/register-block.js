@@ -5,7 +5,8 @@ MTBlockEditor.registerBlockType(
     label: "oembed",
     html: `<!-- mt-beb --><p>http://</p><!-- /mt-beb -->`,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script>
@@ -27,7 +28,8 @@ MTBlockEditor.registerBlockType(
     label: "Table from Excel",
     html: ``,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.2/xlsx.full.min.js" integrity="sha256-SOeQ8yqDi+NlDLrc0HMhyEdsXn+Z/TPVSjhAukwBiyU=" crossorigin="anonymous"></script>
