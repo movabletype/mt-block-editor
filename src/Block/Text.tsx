@@ -215,12 +215,6 @@ const Editor: React.FC<EditorProps> = ({
 
         adjustToolbar(ed, block, editor.editorElement);
       },
-
-      // TinyMCE 5 ?
-      // plugins: [ 'quickbars' ],
-      // toolbar: false,
-      // menubar: false,
-      // inline: true,
     };
 
     editor.emit("buildTinyMCESettings", {
