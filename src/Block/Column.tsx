@@ -16,6 +16,7 @@ import {
   parseContent,
   preParseContent,
   escapeSingleQuoteAttribute,
+  ParserContext,
 } from "../util";
 
 interface EditorProps extends EditorOptions {
@@ -100,15 +101,17 @@ const Editor: React.FC<EditorProps> = ({
       return;
     }
 
-    parseContent(preParseContent(block._html), editor.factory).then(
-      (blocks) => {
-        block._html = "";
-        block.blocks = blocks;
-        if (blocks[0]) {
-          setFocusedId(blocks[0].id);
-        }
+    parseContent(
+      preParseContent(block._html),
+      editor.factory,
+      new ParserContext()
+    ).then((blocks) => {
+      block._html = "";
+      block.blocks = blocks;
+      if (blocks[0]) {
+        setFocusedId(blocks[0].id);
       }
-    );
+    });
   });
 
   const res = (
@@ -307,7 +310,9 @@ class Column extends Block implements HasBlocks {
 
       const opts = editor.opts.block["core-column"] || {};
       setTimeout(async () => {
-        this.compiledHtml = await this.serializedString({ editor });
+        this.compiledHtml = await this.serializedString({
+          editor,
+        });
         onSetCompiledHtml();
       }, opts["compile-timeout"] || COMPILE_TIMEOUT);
     });
@@ -321,11 +326,11 @@ class Column extends Block implements HasBlocks {
       return super.serialize(opts);
     }
 
-    const m = this.metadata();
+    const m = opts.editor.serializeMeta(this.metadata());
     const typeId = (this.constructor as typeof Column).typeId;
     return [
       `<!-- mt-beb t="${typeId}"${
-        m ? ` m='${escapeSingleQuoteAttribute(JSON.stringify(m))}'` : ""
+        m ? ` m='${escapeSingleQuoteAttribute(m)}'` : ""
       } -->`,
       await this.serializedString(opts),
       `<!-- /mt-beb -->`,
@@ -336,6 +341,7 @@ class Column extends Block implements HasBlocks {
     node,
     factory,
     meta,
+    context,
   }: NewFromHtmlOptions): Promise<Block> {
     const html = node.hasAttribute("h")
       ? preParseContent(node.getAttribute("h") || "")
@@ -348,7 +354,7 @@ class Column extends Block implements HasBlocks {
             ),
             ""
           );
-    const blocks = await parseContent(html, factory);
+    const blocks = await parseContent(html, factory, context);
     const compiledHtml = node.hasAttribute("h") ? node.textContent : "";
 
     if (html && blocks.length === 0) {

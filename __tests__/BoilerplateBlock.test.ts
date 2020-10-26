@@ -35,11 +35,17 @@ describe("htmlString()", () => {
       );
       const block = blocks[0];
 
-      return block.serializedString().then((str) => {
-        expect(str).toBe(
-          `<div class='wrap'><!-- mt-beb t="core-columns" m='{"className":"row"}' --><div class="mt-be-columns row" style="display: flex"><!-- mt-beb t="core-column" m='{"className":"col-left"}' --><div class='mt-be-column col-left'><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" m='{"className":"col-right"}' --><div class='mt-be-column col-right'><!-- mt-beb --><p>2</p><!-- /mt-beb --></div><!-- /mt-beb --></div><!-- /mt-beb --></div>`
-        );
-      });
+      return block
+        .serializedString({
+          editor: {
+            serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          },
+        })
+        .then((str) => {
+          expect(str).toBe(
+            `<div class='wrap'><!-- mt-beb t="core-columns" m='{"className":"row"}' --><div class="mt-be-columns row" style="display: flex"><!-- mt-beb t="core-column" m='{"className":"col-left"}' --><div class='mt-be-column col-left'><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" m='{"className":"col-right"}' --><div class='mt-be-column col-right'><!-- mt-beb --><p>2</p><!-- /mt-beb --></div><!-- /mt-beb --></div><!-- /mt-beb --></div>`
+          );
+        });
     });
   });
 });

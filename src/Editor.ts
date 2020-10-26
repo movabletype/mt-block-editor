@@ -4,7 +4,13 @@ import { render } from "react-dom";
 import { InitOptions as InitOptionsI18n } from "i18next";
 
 import resetCss from "./reset.css";
-import { getElementById, preParseContent, parseContent } from "./util";
+import {
+  getElementById,
+  preParseContent,
+  parseContent,
+  escapeSingleQuoteAttribute,
+  ParserContext,
+} from "./util";
 import Block, { HasBlocks } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
@@ -27,7 +33,7 @@ interface Stylesheet {
   data: string;
 }
 
-interface Map {
+interface Metadata {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
@@ -39,9 +45,9 @@ export interface EditorOptions {
   rootClassName?: string;
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
-  addButtons: Map;
+  addButtons: Metadata;
   editManager?: Partial<EditManager>;
-  block: Map;
+  block: Metadata;
   i18n: InitOptionsI18n;
 }
 
@@ -55,6 +61,7 @@ class Editor extends EventEmitter implements HasBlocks {
   public editorElement: HTMLElement;
 
   private inputElement: HTMLInputElement;
+  private metadataMap: Map<string, string> = new Map<string, string>();
 
   public constructor(opts: EditorOptions) {
     super();
@@ -89,7 +96,8 @@ class Editor extends EventEmitter implements HasBlocks {
       this.stylesheets = await Promise.all(this.buildStylesheets());
       const blocks = await parseContent(
         preParseContent(this.inputElement.value),
-        this.factory
+        this.factory,
+        new ParserContext()
       );
       this.blocks = blocks;
       this.emit("initializeBlocks", { editor: this, blocks });
@@ -229,7 +237,34 @@ class Editor extends EventEmitter implements HasBlocks {
     const values = await Promise.all(
       blocks.map((b) => b.serialize({ editor: this }))
     );
-    this.inputElement.value = values.join("");
+
+    const metadataReverseMap: Metadata = {};
+    this.metadataMap.forEach((k, v) => {
+      metadataReverseMap[k] = JSON.parse(v);
+    });
+
+    this.inputElement.value =
+      (this.metadataMap.size > 0
+        ? `<!-- mt-beb t="core-context" m='${escapeSingleQuoteAttribute(
+            JSON.stringify(metadataReverseMap)
+          )}' --><!-- /mt-beb -->`
+        : "") + values.join("");
+  }
+
+  public serializeMeta(meta: Metadata | null): string | null {
+    if (!meta) {
+      return null;
+    }
+
+    const str = JSON.stringify(meta);
+    return (
+      this.metadataMap.get(str) ||
+      ((): string => {
+        const id = (this.metadataMap.size + 1).toString(36);
+        this.metadataMap.set(str, id);
+        return id;
+      })()
+    );
   }
 
   public unload(): void {
