@@ -39,9 +39,9 @@ context("Editor", () => {
 
     blur();
     cy.get(".mt-block-editor .mt-be-block > div:last-child")
-      .should(($e) =>
+      .should(($e) => {
         const root = $e.get(0).shadowRoot.childNodes[0];
         expect(root.className).to.equal(rootClassName);
-      );
+      });
   });
 });
