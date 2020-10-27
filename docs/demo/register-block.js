@@ -5,7 +5,8 @@ MTBlockEditor.registerBlockType(
     label: "oembed",
     html: `<!-- mt-beb --><p>http://</p><!-- /mt-beb -->`,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script>
@@ -26,7 +27,8 @@ window.MTBlockEditor.registerBlockType(
     canRemoveBlock: 1,
     typeId: "custom-gallery",
     className: "",
-    addableBlockTypes: ["core-image"],
+    panelBlockTypes: ["core-image"],
+    shortcutBlockTypes: [],
     html: "",
     shouldBeCompiled: 1,
     previewHeader: `
@@ -101,7 +103,8 @@ MTBlockEditor.registerBlockType(
     label: "エクセル",
     html: ``,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     previewHeader: `
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.2/xlsx.full.min.js" integrity="sha256-SOeQ8yqDi+NlDLrc0HMhyEdsXn+Z/TPVSjhAukwBiyU=" crossorigin="anonymous"></script>
@@ -179,7 +182,8 @@ MTBlockEditor.registerBlockType(
     label: "ソースコード",
     html: ``,
     canRemoveBlock: false,
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     shouldBeCompiled: true,
     html:
       '<!-- mt-beb t="sixapart-textarea" m="{&quot;blockElement&quot;:&quot;pre&quot;,&quot;formatter&quot;:&quot;none&quot;,&quot;text&quot;:&quot;&quot;,&quot;label&quot;:&quot;ソースコード&quot;,&quot;className&quot;:&quot;source&quot;}"--><pre class="source"></pre><!-- /mt-beb --><!-- mt-beb t="sixapart-select" m="{&quot;options&quot;:&quot;html\\njavascript&quot;,&quot;blockElement&quot;:&quot;p&quot;,&quot;text&quot;:&quot;html&quot;,&quot;label&quot;:&quot;言語&quot;,&quot;className&quot;:&quot;language&quot;}"--><p class="language">html</p><!-- /mt-beb -->',
@@ -207,7 +211,7 @@ window.MTBlockEditor.registerBlockType(
     canRemoveBlock: "",
     typeId: "custom-markdown",
     className: "",
-    addableBlockTypes: [
+    panelBlockTypes: [
       "core-text",
       "mt-image",
       "mt-file",
@@ -224,6 +228,7 @@ window.MTBlockEditor.registerBlockType(
       "custom-source",
       "custom-blog_module",
     ],
+    shortcutBlockTypes: [],
     html:
       '<!-- mt-beb t="sixapart-textarea" m=\'{"blockElement":"p","formatter":"none","text":"","className":"source"}\' --><p class="source"></p><!-- /mt-beb -->',
     shouldBeCompiled: 1,
@@ -238,7 +243,8 @@ window.MTBlockEditor.registerBlockType(
   window.MTBlockEditor.createBoilerplateBlock({
     icon: "",
     canRemoveBlock: "",
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     typeId: "custom-1header",
     className: "",
     html:
@@ -254,7 +260,8 @@ window.MTBlockEditor.registerBlockType(
   window.MTBlockEditor.createBoilerplateBlock({
     icon: "",
     canRemoveBlock: "",
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     typeId: "custom-2header",
     className: "",
     html:
@@ -270,7 +277,8 @@ window.MTBlockEditor.registerBlockType(
   window.MTBlockEditor.createBoilerplateBlock({
     icon: "",
     canRemoveBlock: "",
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     typeId: "custom-3header",
     className: "",
     html:
@@ -286,7 +294,8 @@ window.MTBlockEditor.registerBlockType(
   window.MTBlockEditor.createBoilerplateBlock({
     icon: "",
     canRemoveBlock: "",
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     typeId: "custom-paragraph",
     className: "",
     html:
@@ -302,7 +311,8 @@ window.MTBlockEditor.registerBlockType(
   window.MTBlockEditor.createBoilerplateBlock({
     icon: "",
     canRemoveBlock: "",
-    addableBlockTypes: [],
+    panelBlockTypes: [],
+    shortcutBlockTypes: [],
     typeId: "custom-image_text",
     className: "",
     html:

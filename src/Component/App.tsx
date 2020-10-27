@@ -34,7 +34,8 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     getFocusedId: () => focusedId,
   };
   const blocksContext = {
-    addableBlockTypes: null,
+    panelBlockTypes: null,
+    shortcutBlockTypes: null,
     addBlock: (b: Block, index: number | Block) => {
       if (index instanceof Block) {
         index = editor.blocks.indexOf(index) + 1;

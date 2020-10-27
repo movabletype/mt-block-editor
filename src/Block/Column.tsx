@@ -42,7 +42,8 @@ const Editor: React.FC<EditorProps> = ({
   const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
   const blocksContext = {
-    addableBlockTypes: block.addableBlockTypes,
+    panelBlockTypes: block.panelBlockTypes,
+    shortcutBlockTypes: block.shortcutBlockTypes,
     addBlock: (b: Block, index: number | Block) => {
       if (index instanceof Block) {
         index = block.blocks.indexOf(index) + 1;
@@ -181,7 +182,8 @@ class Column extends Block implements HasBlocks {
   public blocks: Block[] = [];
 
   public canRemoveBlock = true;
-  public addableBlockTypes: string[] | null = null;
+  public panelBlockTypes: string[] | null = null;
+  public shortcutBlockTypes: string[] | null = null;
 
   public constructor(init?: Partial<Column>) {
     super();
@@ -373,7 +375,7 @@ class Column extends Block implements HasBlocks {
     if (!this.canRemoveBlock) {
       return [];
     }
-    return this.addableBlockTypes || [];
+    return (this.panelBlockTypes || []).concat(this.shortcutBlockTypes || []);
   }
 }
 

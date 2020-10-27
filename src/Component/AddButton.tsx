@@ -26,7 +26,7 @@ const AddButton: React.FC<AddButtonProps> = ({
   showShortcuts,
 }: AddButtonProps) => {
   const { editor } = useEditorContext();
-  const { addableBlockTypes, addBlock } = useBlocksContext();
+  const { panelBlockTypes, shortcutBlockTypes, addBlock } = useBlocksContext();
   const [showList, setShowList] = useState(ListStatus.Hidden);
   const buttonElRef = useRef(null);
   const blockListElRef = useRef(null);
@@ -83,9 +83,13 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
-  const shortcutTypes = showShortcuts ? editor.shortcutTypes() : [];
-  const panelTypes = addableBlockTypes
-    ? editor.selectableTypes(addableBlockTypes)
+  const shortcutTypes = !showShortcuts
+    ? []
+    : shortcutBlockTypes
+    ? editor.selectableTypes(shortcutBlockTypes)
+    : editor.shortcutTypes();
+  const panelTypes = panelBlockTypes
+    ? editor.selectableTypes(panelBlockTypes)
     : showShortcuts
     ? editor.panelTypes()
     : [...new Set(editor.shortcutTypes().concat(editor.panelTypes()))];

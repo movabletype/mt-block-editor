@@ -32,7 +32,8 @@ interface BoilerplateBlockOptions {
   iconString: string;
   html: string;
   canRemoveBlock: boolean;
-  addableBlockTypes: string[];
+  panelBlockTypes?: string[];
+  shortcutBlockTypes?: string[];
   shouldBeCompiled: boolean;
   previewHeader: string;
 }
@@ -40,7 +41,8 @@ interface BoilerplateBlockOptions {
 interface BoilerplateBlockOverwrites {
   _html: string;
   canRemoveBlock?: boolean;
-  addableBlockTypes?: string[];
+  panelBlockTypes?: string[];
+  shortcutBlockTypes?: string[];
   previewHeader?: string;
 }
 
@@ -111,7 +113,8 @@ class EditorUtil {
     iconString,
     html,
     canRemoveBlock,
-    addableBlockTypes,
+    panelBlockTypes,
+    shortcutBlockTypes,
     shouldBeCompiled,
     previewHeader,
   }: BoilerplateBlockOptions): typeof Block {
@@ -125,8 +128,11 @@ class EditorUtil {
       if (canRemoveBlock !== undefined) {
         overwrite.canRemoveBlock = !!canRemoveBlock;
       }
-      if (addableBlockTypes) {
-        overwrite.addableBlockTypes = addableBlockTypes;
+      if (panelBlockTypes) {
+        overwrite.panelBlockTypes = panelBlockTypes;
+      }
+      if (shortcutBlockTypes) {
+        overwrite.shortcutBlockTypes = shortcutBlockTypes;
       }
       if (previewHeader !== undefined) {
         overwrite.previewHeader = previewHeader;
