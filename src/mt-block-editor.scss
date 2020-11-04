@@ -382,6 +382,7 @@ $root-font-size: 16px;
       width: 290px;
 
       li {
+        margin: 0;
         height: calc(68px + 16px);
         list-style: none;
         outline: 1px solid #eee;
@@ -435,6 +436,7 @@ $root-font-size: 16px;
     }
 
     li {
+      margin: 0;
       list-style: none;
 
       button {
