@@ -1,5 +1,5 @@
 /** @license
-# Movable Type Block Editor (C) 2021 Six Apart Ltd. All Rights Reserved.
+# Movable Type Block Editor (C) 2020 Six Apart Ltd. All Rights Reserved.
 # This code cannot be redistributed without permission from www.sixapart.com.
 */
 
