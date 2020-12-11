@@ -144,6 +144,12 @@ context("Undo", () => {
       );
 
       type("{ctrl}zz");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+      );
+
       type("{ctrl}yy");
 
       serializedTextarea(textareaId).should(
@@ -159,13 +165,13 @@ context("Undo", () => {
           cy.get(`[data-mt-be-type="core-table"]`).click();
         });
       cy.wait(100);
-      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.get(`button[aria-label="Source code"], button[aria-label="ソースコード"]`).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
+      cy.get(".tox-dialog textarea").invoke(
         "val",
         "<table><tbody><tr><td>1</td><td>2</td></tr></tbody></table>"
       );
-      cy.get(".mce-window .mce-primary button:first-child").click();
+      cy.get(".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)").click();
 
       serializedTextarea(textareaId).should(
         "have.value",

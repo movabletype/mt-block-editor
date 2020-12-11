@@ -25,6 +25,20 @@ $root-font-size: 16px;
     margin: 0;
   }
 
+  .mt-be-btn-default {
+    width: fit-content;
+    font-size: 11px;
+    color: #666;
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #eee;
+    }
+  }
+
   .mt-be-btn-add {
     width: 100%;
     display: block;
@@ -382,6 +396,7 @@ $root-font-size: 16px;
       width: 290px;
 
       li {
+        margin: 0;
         height: calc(68px + 16px);
         list-style: none;
         outline: 1px solid #eee;
@@ -435,6 +450,7 @@ $root-font-size: 16px;
     }
 
     li {
+      margin: 0;
       list-style: none;
 
       button {

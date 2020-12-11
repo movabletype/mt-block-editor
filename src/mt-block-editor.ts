@@ -1,3 +1,8 @@
+/** @license
+# Movable Type Block Editor (C) 2020 Six Apart Ltd. All Rights Reserved.
+# This code cannot be redistributed without permission from www.sixapart.com.
+*/
+
 import { version } from "../package.json";
 import i18n, { init as initI18n } from "./i18n";
 import { InitOptions as InitOptionsI18n } from "i18next";
