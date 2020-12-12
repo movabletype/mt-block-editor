@@ -37,7 +37,7 @@
     "i18next-parser": "^1.0.0-beta9",
     "jest": "^24.9.0",
     "mini-css-extract-plugin": "^0.8.2",
-    "mt-block-editor-block": "../mt-block-editor-block",
+    "mt-block-editor-block": "^1.1.1",
     "postcss-flexbugs-fixes": "^4.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
