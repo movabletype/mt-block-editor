@@ -51,8 +51,8 @@ module.exports = class extends Generator {
 
   writing() {
     const files = [
-      ".eslintrc.js",
-      ".gitignore",
+      "dot.eslintrc.js",
+      "dot.gitignore",
       "i18next-parser.config.js",
       "LICENSE",
       "Makefile",
@@ -77,9 +77,12 @@ module.exports = class extends Generator {
     ];
 
     files.forEach(f => {
+      const dest = f
+        .replace(/__blockName__/, this.props.blockName)
+        .replace(/\bdot\./, ".");
       this.fs.copyTpl(
         this.templatePath(f),
-        this.destinationPath(f.replace(/__blockName__/, this.props.blockName)),
+        this.destinationPath(dest),
         Object.assign(
           {
             appname: this.appname,

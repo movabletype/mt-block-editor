@@ -1,6 +1,6 @@
 {
   "name": "generator-mt-block-editor-block",
-  "version": "0.0.0",
+  "version": "0.0.6",
   "description": "Init custom block implementation for block editor.",
   "homepage": "",
   "author": {
