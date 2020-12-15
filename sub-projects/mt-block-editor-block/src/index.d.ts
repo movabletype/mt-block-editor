@@ -1,4 +1,4 @@
-import { i18n } from "i18next";
+import { i18n, InitOptions as InitOptionsI18n } from "i18next";
 
 interface Map {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,9 +12,28 @@ export interface Metadata {
 
 export interface EditorOptions {
   id: string;
-  stylesheets: Array<string>;
-  selectableBlockTypes?: string[];
-  block: Map;
+  mode: string;
+  stylesheets: string[];
+  rootClassName?: string;
+  panelBlockTypes?: string[];
+  shortcutBlockTypes?: string[];
+  block: Metadata;
+  i18n: InitOptionsI18n;
+}
+
+export interface BoilerplateBlockOptions {
+  typeId: string;
+  className: string;
+  rootBlock?: string | null;
+  label: string;
+  icon?: string;
+  iconString?: string;
+  html: string;
+  canRemoveBlock: boolean;
+  panelBlockTypes?: string[];
+  shortcutBlockTypes?: string[];
+  shouldBeCompiled: boolean;
+  previewHeader: string;
 }
 
 export interface SerializeOptions {
@@ -25,6 +44,24 @@ export class Editor {
   public id: string;
   public opts: EditorOptions;
   public serialize(): Promise<void>;
+
+  /** Definitions from eventemitter */
+  static prefixed: string | boolean;
+  public eventNames(): any;
+  public listeners(event: any): any[];
+  public listenerCount(event: any): number;
+  public emit(event: any, ...args: any): boolean;
+  public on(event: any, fn: any, context?: any): this;
+  public addListener(event: any, fn: any, context?: any): this;
+  public once(event: any, fn: any, context?: any): this;
+  public removeListener(
+    event: any,
+    fn?: any,
+    context?: any,
+    once?: boolean
+  ): this;
+  public off(event: any, fn?: any, context?: any, once?: boolean): this;
+  public removeAllListeners(any): this;
 }
 
 export class Block {
@@ -55,6 +92,10 @@ export class EditorUtil {
   public static unload({ id }: { id: string }): Promise<void>;
   public static serialize(): Promise<void>;
   public static registerBlockType(block: typeof Block): void;
+  public static createBoilerplateBlock(
+    opts: BoilerplateBlockOptions
+  ): typeof Block;
+  public static isSupportedEnvironment(): boolean;
 }
 
 declare global {
