@@ -24,6 +24,7 @@ export interface SerializeOptions {
 export class Editor {
   public id: string;
   public opts: EditorOptions;
+  public serialize(): Promise<void>;
 }
 
 export class Block {
@@ -49,6 +50,10 @@ export class EditorUtil {
   public static React: Map;
   public static Context: Map;
   public static Block: typeof Block;
+  public static apply(opts: EditorOptions): Promise<Editor>;
+  public static get({ id }: { id: string }): Editor | undefined;
+  public static unload({ id }: { id: string }): Promise<void>;
+  public static serialize(): Promise<void>;
   public static registerBlockType(block: typeof Block): void;
 }
 
