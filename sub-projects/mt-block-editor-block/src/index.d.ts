@@ -74,6 +74,7 @@ export class Block {
   public compiledHtml: string;
   public metadata(): Metadata | null;
   public metadataByOwnKeys(opts?: { keys?: string[] }): Metadata | null;
+  public keysForSetup(): string[];
   public compile(opts: SerializeOptions): Promise<void>;
 }
 
