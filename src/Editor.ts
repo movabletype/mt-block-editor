@@ -11,7 +11,7 @@ import {
   escapeSingleQuoteAttribute,
   ParserContext,
 } from "./util";
-import Block, { HasBlocks } from "./Block";
+import Block, { HasBlocks, DEFAULT_KEYS_FOR_SETUP } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 import EditManager from "./EditManager";
@@ -251,12 +251,7 @@ class Editor extends EventEmitter implements HasBlocks {
         : "") + values.join("");
   }
 
-  public serializeMeta(meta: Metadata | null): string | null {
-    if (!meta) {
-      return null;
-    }
-
-    const str = JSON.stringify(meta);
+  private getMetadataMapIndex(str: string): string {
     return (
       this.metadataMap.get(str) ||
       ((): string => {
@@ -265,6 +260,27 @@ class Editor extends EventEmitter implements HasBlocks {
         return id;
       })()
     );
+  }
+
+  public serializeMeta(block: Block): string | null {
+    const meta = block.metadata();
+    if (!meta) {
+      return null;
+    }
+
+    const metaSetup: Metadata = {};
+    DEFAULT_KEYS_FOR_SETUP.concat(block.keysForSetup()).forEach((k) => {
+      if (k in meta) {
+        metaSetup[k] = meta[k];
+        Reflect.deleteProperty(meta, k);
+      }
+    });
+
+    return [metaSetup, meta]
+      .map((m) => (Object.keys(m).length > 0 ? JSON.stringify(m) : null))
+      .filter((s) => s)
+      .map((s) => this.getMetadataMapIndex(s))
+      .join(",");
   }
 
   public unload(): void {
