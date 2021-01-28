@@ -160,7 +160,7 @@ class Columns extends Block implements HasBlocks {
   }
 
   public async serialize(opts: SerializeOptions): Promise<string> {
-    const m = opts.editor.serializeMeta(this.metadata());
+    const m = opts.editor.serializeMeta(this);
     const serializedColumns = await Promise.all(
       this.blocks.map((c) => c.serialize(opts))
     );

@@ -328,7 +328,7 @@ class Column extends Block implements HasBlocks {
       return super.serialize(opts);
     }
 
-    const m = opts.editor.serializeMeta(this.metadata());
+    const m = opts.editor.serializeMeta(this);
     const typeId = (this.constructor as typeof Column).typeId;
     return [
       `<!-- mt-beb t="${typeId}"${
