@@ -4,6 +4,14 @@ import { parseContent, preParseContent } from "../../src/util/editor";
 
 import Text from "../../src/Block/Text";
 
+function serializeMeta(block) {
+  const meta = block.metadata();
+  if (!meta) {
+    return null;
+  }
+  return JSON.stringify(meta);
+}
+
 describe("parseContent()", () => {
   test("text block", async () => {
     const blocks = await parseContent(
@@ -18,7 +26,7 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {
@@ -41,7 +49,7 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {
@@ -66,7 +74,7 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {
@@ -89,11 +97,13 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {
-        expect(str).toBe(`<!-- mt-beb m='{\"label\":\"Test Label\"}' -->test<!-- /mt-beb -->`);
+        expect(str).toBe(
+          `<!-- mt-beb m='{\"label\":\"Test Label\"}' -->test<!-- /mt-beb -->`
+        );
       });
   });
 
@@ -112,7 +122,7 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {
@@ -135,7 +145,7 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {
@@ -160,7 +170,7 @@ describe("parseContent()", () => {
     return block
       .serialize({
         editor: {
-          serializeMeta: (meta) => (meta ? JSON.stringify(meta) : null),
+          serializeMeta,
         },
       })
       .then((str) => {

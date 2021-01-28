@@ -49,6 +49,8 @@ export interface SerializeOptions {
   editor: Editor;
 }
 
+export const DEFAULT_KEYS_FOR_SETUP = ["label", "helpText", "className"];
+
 class Block {
   public static typeId: string;
   public static label: string;
@@ -214,6 +216,10 @@ class Block {
     return Object.keys(data).length !== 0 ? data : null;
   }
 
+  public keysForSetup(): string[] {
+    return [];
+  }
+
   public isSetupBlank(): boolean {
     return !(this.label || this.helpText || this.className);
   }
@@ -240,7 +246,7 @@ class Block {
       await this.compile(opts);
     }
 
-    const m = opts.editor.serializeMeta(this.metadata());
+    const m = opts.editor.serializeMeta(this);
     const html = await this.serializedString(opts);
 
     let typeId = (this.constructor as typeof Block).typeId;
