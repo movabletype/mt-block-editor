@@ -192,7 +192,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   }
 
   const containerElRef = useRef(null);
-  const [src, setSrc] = useState("");
+  const [_src, setSrc] = useState("");
   const [_rawHtmlText, _setHtmlText] = useState(
     typeof html === "string" ? html : ""
   );
@@ -250,6 +250,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const beforeRenderIframePreviewOpt = {
     editor,
     html: rawHtmlText,
+    scheme: "data",
   };
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
@@ -310,11 +311,19 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     ],
     { type: "text/html" }
   );
-  const reader = new FileReader();
-  reader.readAsDataURL(blob);
-  reader.onload = () => {
-    setSrc(reader.result as string);
-  };
+
+  const src = ((): string => {
+    if (beforeRenderIframePreviewOpt.scheme === "blob") {
+      return URL.createObjectURL(blob);
+    } else {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = () => {
+        setSrc(reader.result as string);
+      };
+      return _src;
+    }
+  })();
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
