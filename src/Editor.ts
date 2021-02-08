@@ -278,7 +278,7 @@ class Editor extends EventEmitter implements HasBlocks {
 
     return [metaSetup, meta]
       .map((m) => (Object.keys(m).length > 0 ? JSON.stringify(m) : null))
-      .filter((s) => s)
+      .filter((s): s is string => !!s)
       .map((s) => this.getMetadataMapIndex(s))
       .join(",");
   }
