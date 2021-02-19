@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production && tsc --module ESNext --sourceMap --inlineSources --outDir ./tsc-dist ./src/register-boilerplate-blocks.ts >/dev/null; terser -c -m --source-map 'content=\"./tsc-dist/register-boilerplate-blocks.js.map\"' --source-map 'url=\"register-boilerplate-blocks.js.map\"' ./tsc-dist/register-boilerplate-blocks.js -o ./docs/dist/register-boilerplate-blocks.js && rimraf ./tsc-dist",
     "start": "webpack-dev-server --hot --inline",
     "test": "jest",
     "check-types": "tsc",
