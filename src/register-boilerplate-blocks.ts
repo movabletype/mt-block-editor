@@ -69,9 +69,8 @@ const MTBlockEditor = window.MTBlockEditor;
 const scriptElm = document.querySelector(
   `script[src^="${import.meta.url}"][data-block-types][data-blocks]`
 ) as HTMLScriptElement;
-const dataset = scriptElm?.dataset;
-const blockTypes = dataset && dataset.blockTypes;
-const blocks = dataset && dataset.blocks;
+const blockTypes = scriptElm && scriptElm.dataset.blockTypes;
+const blocks = scriptElm && scriptElm.dataset.blocks;
 if (MTBlockEditor && blocks && blockTypes) {
   init(
     MTBlockEditor,
