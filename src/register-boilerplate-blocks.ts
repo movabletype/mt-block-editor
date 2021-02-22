@@ -1,5 +1,11 @@
 import type { EditorUtil, BoilerplateBlockOptions } from "./mt-block-editor";
 
+declare global {
+  interface ImportMeta {
+    url: string;
+  }
+}
+
 interface AddableBlockType {
   typeId: string;
   panel: boolean;
@@ -60,7 +66,9 @@ export default function init(
 }
 
 const MTBlockEditor = window.MTBlockEditor;
-const scriptElm = document.querySelector(`script[src^="${import.meta.url}"][data-block-types][data-blocks]`);
+const scriptElm = document.querySelector(
+  `script[src^="${import.meta.url}"][data-block-types][data-blocks]`
+) as HTMLScriptElement;
 const dataset = scriptElm?.dataset;
 const blockTypes = dataset && dataset.blockTypes;
 const blocks = dataset && dataset.blocks;
