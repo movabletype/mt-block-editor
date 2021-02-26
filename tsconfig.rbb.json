@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "sourceMap": true,
+    "inlineSources": true,
+    "noEmit": false,
+    "outDir": "./rbb-dist"
+  },
+  "include": ["src/@types", "src/register-boilerplate-blocks.ts"]
+}
