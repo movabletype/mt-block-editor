@@ -6,7 +6,7 @@ import { EditHistoryHandlers } from "../EditManager";
 import { Size } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
-const MAX_HEIGHT = "1000px";
+const MAX_HEIGHT = "5000px";
 const SHRINK_THRESHOLD = 50;
 
 interface EditorProps {
