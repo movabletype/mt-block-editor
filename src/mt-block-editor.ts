@@ -28,7 +28,7 @@ import * as icon from "./icon";
 import * as util from "./util";
 import * as decorator from "./decorator";
 
-interface BoilerplateBlockOptions {
+export interface BoilerplateBlockOptions {
   typeId: string;
   className: string;
   rootBlock?: string | null;
@@ -56,7 +56,7 @@ interface BoilerplateBlockInitOptions {
   [key: string]: any;
 }
 
-class EditorUtil {
+export class EditorUtil {
   public static version = version;
   public static i18n = i18n;
   public static Component = {
