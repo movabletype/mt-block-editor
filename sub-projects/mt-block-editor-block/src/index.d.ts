@@ -40,10 +40,53 @@ export interface SerializeOptions {
   editor: Editor;
 }
 
+interface SetFocusedIdOptions {
+  forceUpdate: boolean;
+}
+
+type SetFocusedId = (
+  id: string | null,
+  opts?: SetFocusedIdOptions
+) => void;
+
+interface EditorContextProps {
+  editor: Editor;
+  setFocusedId: SetFocusedId;
+  getFocusedId: () => string | null;
+}
+
+export interface EditHistoryHandlers {
+  id: symbol;
+  merge?: (a: EditHistory, b: EditHistory) => EditHistory | undefined | null;
+  undo: (history: EditHistory, props: EditorContextProps) => void;
+  redo: (history: EditHistory, props: EditorContextProps) => void;
+}
+
+export interface EditHistory {
+  block: Block;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any;
+  group?: number | undefined;
+  handlers: EditHistoryHandlers;
+}
+
+export class EditManager {
+  public unload(): void;
+  public canUndo(): boolean;
+  public canRedo(): boolean;
+  public add(history: EditHistory): void;
+  public undo(props: EditorContextProps, group?: number): void;
+  public redo(props: EditorContextProps, group?: number): void;
+  public generateGroup(): number;
+  public beginGrouping(): void;
+  public endGrouping(): void;
+}
+
 export class Editor {
   public id: string;
   public opts: EditorOptions;
   public serialize(): Promise<void>;
+  public editManager: EditManager;
 
   /** Definitions from eventemitter */
   static prefixed: string | boolean;
