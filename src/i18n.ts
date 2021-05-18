@@ -40,6 +40,9 @@ export async function init(opts: InitOptions): Promise<TFunction> {
             ),
             crossDomain: true,
           },
+
+          nsSeparator: ":::",
+          keySeparator: "::",
         },
         opts
       )
