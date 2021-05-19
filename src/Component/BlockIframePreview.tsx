@@ -255,6 +255,17 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
 
+  const rootAttributesObj = editor.opts.rootAttributes as Record<
+    string,
+    string
+  >;
+  const rootAttributes = Object.keys(rootAttributesObj)
+    .map((k) => {
+      const map: Record<string, string> = { "&": "&amp;", '"': "&quot;" };
+      const v = rootAttributesObj[k].replace(/[&"]/g, (m) => map[m]);
+      return `${k}="${v}"`;
+    })
+    .join(" ");
   const blob = new Blob(
     [
       `
@@ -306,7 +317,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       </head>
       <body data-block-id="${block.id}"${
         block.compiledHtml && ` data-has-compiled-html="1"`
-      } class="${editor.opts.rootClassName || ""}">${htmlText}</body>
+      } class="${
+        editor.opts.rootClassName
+      }" ${rootAttributes}>${htmlText}</body>
       </html>`,
     ],
     { type: "text/html" }

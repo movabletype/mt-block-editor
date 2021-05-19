@@ -43,6 +43,7 @@ export interface EditorOptions {
   mode: string;
   stylesheets: Array<string>;
   rootClassName?: string;
+  rootAttributes?: Record<string, string>;
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   addButtons: Metadata;
@@ -71,6 +72,8 @@ class Editor extends EventEmitter implements HasBlocks {
     opts.block = opts.block || {};
     opts.i18n = opts.i18n || {};
     opts.addButtons = opts.addButtons || { bottom: true };
+    opts.rootClassName = opts.rootClassName || "";
+    opts.rootAttributes = opts.rootAttributes || {};
 
     this.factory = new BlockFactory();
     this.editManager = new EditManager(

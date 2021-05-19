@@ -15,6 +15,7 @@ export interface EditorOptions {
   mode: string;
   stylesheets: string[];
   rootClassName?: string;
+  rootAttributes?: Record<string, string>;
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   block: Metadata;
