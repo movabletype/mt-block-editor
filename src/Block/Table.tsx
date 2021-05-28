@@ -176,6 +176,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         fullWidth={true}
         hasBorder={false}
         className="mt-be-block-toolbar--tinymce"
+        onMouseDown={(ev) => {
+          if (ev.target instanceof HTMLElement && ev.target.closest(".tox")) {
+            return;
+          }
+
+          ev.preventDefault();
+        }}
       ></BlockToolbar>
     </div>
   );

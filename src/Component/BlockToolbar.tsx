@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState, ReactNode, MouseEventHandler } from "react";
 import { t } from "../i18n";
 import { useBlocksContext, useBlockContext } from "../Context";
 import BlockCommandPanel from "./BlockCommandPanel";
@@ -12,6 +12,7 @@ interface BlockToolbarProps {
   rows?: number;
   hasBorder?: boolean;
   fullWidth?: boolean;
+  onMouseDown?: MouseEventHandler<HTMLDivElement>;
 }
 
 const BlockToolbar: React.FC<BlockToolbarProps> = (
@@ -38,15 +39,18 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   if (props.hasBorder === false) {
     className += " mt-be-block-toolbar--no-border";
   }
+  const onMouseDown =
+    props.onMouseDown ||
+    ((ev) => {
+      ev.preventDefault();
+    });
 
   return (
     <>
       <div
         id={props.id || ""}
         className={`mt-be-block-toolbar ${className}`}
-        onMouseDown={(ev) => {
-          ev.preventDefault();
-        }}
+        onMouseDown={onMouseDown}
       >
         {props.children}
         <div className="mt-be-block-toolbar-default-items">

@@ -280,6 +280,13 @@ const Editor: React.FC<EditorProps> = ({
         className={`mt-be-block-toolbar--tinymce ${
           html !== "" || !block.toolbarDefaultVisible ? "invisible" : ""
         }`}
+        onMouseDown={(ev) => {
+          if (ev.target instanceof HTMLElement && ev.target.closest(".tox")) {
+            return;
+          }
+
+          ev.preventDefault();
+        }}
       ></BlockToolbar>
     </div>
   );
