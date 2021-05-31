@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="./tinymce5/js/tinymce/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+  </head>
+  <body>
+    <div>
+      <form style="margin-top: 80px;">
+        <textarea id="body"></textarea>
+        <input type="submit" id="submit" />
+        <input type="reset" id="reset" />
+        <input type="submit" id="unload" value="Unload" />
+        <input type="submit" id="toggle-mode" value="Toggle mode" />
+      </form>
+    </div>
+    <script type="module">
+      window.document.getElementById("body").value =
+        window.sessionStorage.getItem("MTBlockEditorBody") || "";
+
+      const ts = new Date().getTime();
+      const loader = [
+        "./dist/mt-block-editor.js",
+        "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.1/mt-block-editor-block-oembed.js",
+        "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/1.0.1/mt-block-editor-block-form-element.js",
+        "./register-block-with-custom-blocks.js",
+      ].reduce(
+        (chain, m) => chain.then(() => import(`${m}?ts=${ts}`)),
+        Promise.resolve()
+      );
+
+      if (/^localhost(?::|$)/.test(location.host)) {
+        // Probably in the development environment.
+      } else {
+        [
+          "./dist/mt-block-editor.css",
+          "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.1/mt-block-editor-block-oembed.css",
+        ].forEach((url) => {
+          const link = window.document.createElement("LINK");
+          link.rel = "stylesheet";
+          link.href = `${url}?ts=${ts}`;
+          window.document.querySelector("head").appendChild(link);
+        });
+      }
+
+      loader
+        .then(() => {
+          return window;
+        })
+        .then(({ MTBlockEditor, sessionStorage, document }) => {
+          MTBlockEditor.apply({
+            mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
+            id: "body",
+            stylesheets: [
+              (() => {
+                const a = document.createElement("A");
+                a.href = "./editor-content.css";
+                return a.href;
+              })(),
+            ],
+            i18n: {
+              lng: "ja",
+              debug: true,
+              //backend: {
+              //  loadPath: `https://example.com/mt-block-editor/locales/{{lng}}/{{ns}}.json`,
+              //  crossDomain: true,
+              //},
+            },
+            block: {
+              "sixapart-oembed": {
+                resolver: async ({ url, maxwidth, maxheight }) => {
+                  const res = await fetch(
+                    `https://noembed.com/embed?url=${url}&maxwidth=${
+                      maxwidth || ""
+                    }&maxheight=${maxheight || ""}`
+                  );
+                  return await res.json();
+                },
+              },
+            },
+            shortcutBlockTypes: [
+              "core-text",
+              "core-image",
+              "core-file",
+              "custom-oembed",
+              "custom-excel",
+              "custom-test",
+            ],
+            panelBlockTypes: [
+              "core-text",
+              "core-image",
+              "core-file",
+              "core-horizontalrule",
+              "core-html",
+              "core-table",
+              "core-columns",
+              "sixapart-oembed",
+              "custom-oembed",
+              "custom-excel",
+              "custom-test",
+              "custom-bgcolor_contents",
+            ],
+          }).then((ed) => {
+            ed.on("initializeBlocks", ({ blocks }) => {
+              console.log(blocks);
+            });
+            ed.on("buildTinyMCESettings", ({ block, settings }) => {
+              console.log(block.constructor.typeId);
+              console.log(settings);
+              settings.plugins += " mt_security";
+              settings.extended_valid_elements = [
+                // we embed 'a[onclick]' by inserting image with popup
+                `a[id|class|style|title|accesskey|tabindex|lang|dir|draggable|dropzone|contextmenu|hidden|onclick|href|target|name]`,
+                // allow SPAN element without attributes
+                `span[id|class|style|title|accesskey|tabindex|lang|dir|draggable|dropzone|contextmenu|hidden|onclick]`,
+                // allow SCRIPT element
+                "script[id|name|type|src]",
+              ].join(",");
+              settings.valid_children = "+a[div]";
+            });
+          });
+
+          document
+            .getElementById("submit")
+            .form.addEventListener("submit", function (ev) {
+              ev.preventDefault();
+              MTBlockEditor.serialize().then(function () {
+                console.log("serialized");
+                sessionStorage.setItem(
+                  "MTBlockEditorBody",
+                  document.querySelector("#body").value
+                );
+              });
+            });
+
+          document
+            .getElementById("reset")
+            .addEventListener("click", function (ev) {
+              ev.preventDefault();
+              sessionStorage.setItem("MTBlockEditorBody", "");
+              location.reload();
+            });
+
+          document
+            .getElementById("unload")
+            .addEventListener("click", function (ev) {
+              ev.preventDefault();
+              MTBlockEditor.unload({ id: "body" });
+            });
+
+          document
+            .getElementById("toggle-mode")
+            .addEventListener("click", function (ev) {
+              ev.preventDefault();
+
+              const cur =
+                sessionStorage.getItem("MTBlockEditorMode") || "composition";
+              const next = cur === "composition" ? "setup" : "composition";
+              sessionStorage.setItem("MTBlockEditorMode", next);
+              location.reload();
+            });
+        });
+    </script>
+  </body>
+</html>
