@@ -120,10 +120,15 @@ function apply(opts) {
             block: {
               "sixapart-oembed": {
                 resolver: async ({ url, maxwidth, maxheight }) => {
+                  const params = new URLSearchParams({ url: url });
+                  if (maxwidth) {
+                    params.append("maxwidth", maxwidth);
+                  }
+                  if (maxheight) {
+                    params.append("maxheight", maxheight);
+                  }
                   const res = await fetch(
-                    `https://noembed.com/embed?url=${url}&maxwidth=${
-                      maxwidth || ""
-                    }&maxheight=${maxheight || ""}`
+                    `https://noembed.com/embed?${params.toString()}`
                   );
                   return await res.json();
                 },
