@@ -1,6 +1,7 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = async function (_, env) {
@@ -81,6 +82,7 @@ module.exports = async function (_, env) {
             },
           },
         }),
+        new CssMinimizerPlugin(),
       ],
     },
     devServer: {
