@@ -30,7 +30,7 @@ export async function parseContent(
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(
     `<xml>${value.replace(
-      // eslint-disable-next-line no-control-regex
+      // eslint-disable-next-line no-control-regex,no-misleading-character-class
       /[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD\uD800-\uDBFF\uDC00-\uDFFF]/gm,
       ""
     )}</xml>`,
