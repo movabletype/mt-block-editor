@@ -34,6 +34,48 @@ describe("parseContent()", () => {
       });
   });
 
+  test("remove control chars", async () => {
+    const blocks = await parseContent(
+      preParseContent(`<!-- mt-beb -->test\x0b<!-- /mt-beb -->`),
+      new BlockFactory(),
+      new ParserContext()
+    );
+
+    const block = blocks[0];
+    expect(block).toBeInstanceOf(Text);
+
+    return block
+      .serialize({
+        editor: {
+          serializeMeta,
+        },
+      })
+      .then((str) => {
+        expect(str).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
+      });
+  });
+
+  test("preserve 4byte chars", async () => {
+    const blocks = await parseContent(
+      preParseContent(`<!-- mt-beb -->🍣<!-- /mt-beb -->`),
+      new BlockFactory(),
+      new ParserContext()
+    );
+
+    const block = blocks[0];
+    expect(block).toBeInstanceOf(Text);
+
+    return block
+      .serialize({
+        editor: {
+          serializeMeta,
+        },
+      })
+      .then((str) => {
+        expect(str).toBe(`<!-- mt-beb -->🍣<!-- /mt-beb -->`);
+      });
+  });
+
   test("serialized meta: simple", async () => {
     const blocks = await parseContent(
       preParseContent(
