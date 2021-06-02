@@ -1,4 +1,4 @@
-import { version } from "../package.json";
+import packageInfo from "../package.json";
 import i18n, { init as initI18n } from "./i18n";
 import { InitOptions as InitOptionsI18n } from "i18next";
 import "./mt-block-editor.scss";
@@ -52,7 +52,7 @@ interface BoilerplateBlockInitOptions {
 }
 
 export class EditorUtil {
-  public static version = version;
+  public static version = packageInfo.version;
   public static i18n = i18n;
   public static Component = {
     BlockIframePreview,
