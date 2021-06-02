@@ -45,7 +45,7 @@ module.exports = async function (_, env) {
             { loader: "postcss-loader", options: { sourceMap: isProd } },
           ],
         },
-        { test: /\.svg$/, use: "svg-url-loader" },
+        { test: /\.svg$/, type: "asset/inline" },
       ],
     },
     plugins: [
