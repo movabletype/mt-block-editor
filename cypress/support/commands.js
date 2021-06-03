@@ -23,3 +23,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+if (Cypress.env("default_type_delay")) {
+  Cypress.Commands.overwrite(
+    "type",
+    (originalFn, subject, text, options = {}) => {
+      options.delay = (options.delay || 0) + 100;
+
+      return cy
+        .wait(Cypress.env("wait_unit_time"))
+        .then(() => originalFn(subject, text, options));
+    }
+  );
+}

@@ -73,3 +73,8 @@ export function blur() {
     footer.remove();
   });
 }
+
+export function wait(count) {
+  count = count || 1;
+  cy.wait((Cypress.env("wait_unit_time") || 100) * count);
+}
