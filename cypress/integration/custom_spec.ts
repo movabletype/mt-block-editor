@@ -4,6 +4,7 @@ import {
   type,
   apply,
   blur,
+  wait,
   registerCustomBlock,
   serializedTextarea,
 } from "../helpers";
@@ -21,8 +22,7 @@ context("CustomBlock", () => {
       panelBlockTypes: [],
       shortcutBlockTypes: [],
       className: "wrap",
-      html:
-        '<!-- mt-beb t="core-columns" m=\'{"className":"row"}\' --><div class="mt-be-columns row" style="display: flex"><!-- mt-beb t="core-column" m=\'{"className":"col-left"}\' --><div class=\'mt-be-column col-left\'></div><!-- /mt-beb --><!-- mt-beb t="core-column" m=\'{"className":"col-right"}\' --><div class=\'mt-be-column col-right\'></div><!-- /mt-beb --></div><!-- /mt-beb -->',
+      html: '<!-- mt-beb t="core-columns" m=\'{"className":"row"}\' --><div class="mt-be-columns row" style="display: flex"><!-- mt-beb t="core-column" m=\'{"className":"col-left"}\' --><div class=\'mt-be-column col-left\'></div><!-- /mt-beb --><!-- mt-beb t="core-column" m=\'{"className":"col-right"}\' --><div class=\'mt-be-column col-right\'></div><!-- /mt-beb --></div><!-- /mt-beb -->',
       shouldBeCompiled: "",
       previewHeader: "",
       label: "test",
@@ -78,7 +78,7 @@ context("CustomBlock", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(200);
+      wait(2);
       type("1");
 
       cy.get(
@@ -88,12 +88,12 @@ context("CustomBlock", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(200);
+      wait(2);
       type("2");
 
       blur();
 
-      cy.wait(100);
+      wait(1);
       cy.get("iframe")
         .its("0.contentDocument.body")
         .find("> div.wrap")
@@ -114,27 +114,31 @@ context("CustomBlock", () => {
           cy.get(`[data-mt-be-type="custom-bgcolor_contents"]`).click();
         });
 
-      cy.wait(100);
-      cy.get(`.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-html"]`).should("not.exist");
+      wait(1);
       cy.get(
-        `.mt-be-block .mt-be-btn-add-bottom`
-      )
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-html"]`
+      ).should("not.exist");
+      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
         .click()
         .within(() => {
           cy.get(`[data-mt-be-type="core-html"]`).click();
         });
-      cy.wait(100);
+      wait(1);
       type("<pre>html content</pre>");
 
-      cy.wait(100);
+      wait(1);
       cy.get(`.mt-be-block .mt-be-btn-add-bottom`).click();
-      cy.get(`.mt-be-block .mt-be-block-list-wrapper [data-mt-be-type="core-text"]`).should("not.exist");
+      cy.get(
+        `.mt-be-block .mt-be-block-list-wrapper [data-mt-be-type="core-text"]`
+      ).should("not.exist");
 
-      cy.get(`.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Hello\n");
-      cy.wait(100);
+      wait(1);
       type("a");
 
       blur();
@@ -145,10 +149,11 @@ context("CustomBlock", () => {
       );
 
       cy.get(`.mt-be-block`).click();
+      wait(1);
       cy.get(`.mt-be-block .mt-be-block`).last().click();
-      cy.wait(100);
+      wait(1);
       type("{backspace}{backspace}");
-      cy.wait(100);
+      wait(1);
       type("!");
 
       blur();

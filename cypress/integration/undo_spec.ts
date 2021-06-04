@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { type, apply, serializedTextarea, blur } from "../helpers";
+import { type, apply, serializedTextarea, blur, wait } from "../helpers";
 
 context("Undo", () => {
   const textareaId = "text";
@@ -46,7 +46,7 @@ context("Undo", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Hello!");
 
       serializedTextarea(textareaId).should(
@@ -84,10 +84,10 @@ context("Undo", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Hello!\n");
 
-      cy.wait(100);
+      wait(1);
       type("ALOHA!");
 
       serializedTextarea(textareaId).should(
@@ -119,14 +119,14 @@ context("Undo", () => {
   });
 
   describe("Block", () => {
-    it("Text", () => {
+    it("Text", !Cypress.env("ci"), () => {
       cy.get(
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Hello!\n");
-      cy.wait(100);
+      wait(1);
       type("Block Editor!");
 
       type("{ctrl}zz");
@@ -158,20 +158,24 @@ context("Undo", () => {
       );
     });
 
-    it("Table", () => {
+    it("Table", !Cypress.env("ci"), () => {
       cy.get(`.mt-be-btn-add-bottom`)
         .click()
         .within(() => {
           cy.get(`[data-mt-be-type="core-table"]`).click();
         });
-      cy.wait(100);
-      cy.get(`button[aria-label="Source code"], button[aria-label="ソースコード"]`).click({ force: true });
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
       cy.wait(50);
       cy.get(".tox-dialog textarea").invoke(
         "val",
         "<table><tbody><tr><td>1</td><td>2</td></tr></tbody></table>"
       );
-      cy.get(".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)").click();
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -277,7 +281,7 @@ context("Undo", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(100);
+      wait(1);
       type("1");
 
       cy.get(`.mt-be-block .mt-be-column:nth-child(2) .mt-be-btn-add-bottom`)
@@ -285,7 +289,7 @@ context("Undo", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(100);
+      wait(1);
       type("2");
 
       cy.get(`.mt-be-block`).first().click();
@@ -297,7 +301,7 @@ context("Undo", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(100);
+      wait(1);
       type("3");
 
       cy.get(`.mt-be-block .mt-be-column:nth-child(4) .mt-be-btn-add-bottom`)
@@ -305,7 +309,7 @@ context("Undo", () => {
         .within(() => {
           cy.get(`[data-mt-be-type="core-text"]`).click();
         });
-      cy.wait(100);
+      wait(1);
       type("4");
 
       serializedTextarea(textareaId).should(
@@ -352,7 +356,7 @@ context("Undo", () => {
   });
 
   describe("Multiple editor", () => {
-    it("secondary", () => {
+    it("secondary", !Cypress.env("ci"), () => {
       const secondaryId = "custom-field";
       apply({
         id: secondaryId,
@@ -361,13 +365,13 @@ context("Undo", () => {
       cy.get(
         `[data-mt-be-id="${textareaId}"] .mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
-      cy.wait(100);
+      wait(1);
       type("Hello Primary!");
 
       cy.get(
         `[data-mt-be-id="${secondaryId}"] .mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
-      cy.wait(100);
+      wait(1);
       type("Hello Secondary!");
 
       type("{ctrl}z");

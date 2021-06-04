@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { type, apply, serializedTextarea, blur } from "../helpers";
+import { type, apply, serializedTextarea, blur, wait } from "../helpers";
 
 context("Editor", () => {
   const textareaId = "text";
@@ -26,13 +26,15 @@ context("Editor", () => {
       .within(() => {
         cy.get(`[data-mt-be-type="core-text"]`).click();
       });
-    cy.wait(100);
+    wait(1);
     type("1");
 
     blur();
 
     cy.get(`.mt-be-block .mt-be-column:nth-child(1) .mt-be-block`).click();
-    cy.get(`.mt-be-block .mt-be-column:nth-child(1) .mt-be-block input[name="className"]`).click();
+    cy.get(
+      `.mt-be-block .mt-be-column:nth-child(1) .mt-be-block input[name="className"]`
+    ).click();
     type("custom-class-name");
 
     serializedTextarea(textareaId).should(
