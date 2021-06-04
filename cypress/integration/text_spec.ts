@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { type, apply, serializedTextarea, blur } from "../helpers";
+import { type, apply, serializedTextarea, blur, wait } from "../helpers";
 
 context("Text", () => {
   const textareaId = "text";
@@ -17,13 +17,13 @@ context("Text", () => {
   });
 
   afterEach(() => {
-    Cypress.off('uncaught:exception', ignoreErrorHandler);
+    Cypress.off("uncaught:exception", ignoreErrorHandler);
   });
 
   it("hello", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
-    cy.wait(100);
+    wait(1);
     type("Hello!");
 
     serializedTextarea(textareaId).should(
@@ -35,7 +35,7 @@ context("Text", () => {
   it("typo", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
-    cy.wait(100);
+    wait(1);
     type("Hell0{backspace}o!");
 
     serializedTextarea(textareaId).should(
@@ -46,11 +46,13 @@ context("Text", () => {
 
   context("merge blocks", () => {
     it("merge", () => {
-      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
 
-      cy.wait(100);
+      wait(1);
       type("a\n");
-      cy.wait(100);
+      wait(1);
       type("b{leftarrow}{backspace}");
 
       serializedTextarea(textareaId)
@@ -69,78 +71,96 @@ context("Text", () => {
     });
 
     it("merge to blank text block", () => {
-      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
 
-      cy.wait(100);
+      wait(1);
       type("a\n\n\n");
-      cy.wait(100);
+      wait(1);
       type("b{leftarrow}{backspace}");
 
-      serializedTextarea(textareaId)
-        .should("have.value", "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->");
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->"
+      );
     });
 
     it("merge with br", () => {
-      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
 
-      cy.wait(100);
+      wait(1);
       type("a\n{shift}\nb{leftarrow}{leftarrow}{backspace}");
 
-      serializedTextarea(textareaId)
-        .should("have.value", "<!-- mt-beb --><p>a<br />b</p><!-- /mt-beb -->");
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a<br />b</p><!-- /mt-beb -->"
+      );
     });
 
     it("should not to merge in middle of content", () => {
-      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
 
-      cy.wait(100);
+      wait(1);
       type("a\nb{shift}\nc{leftarrow}{backspace}");
 
-      serializedTextarea(textareaId)
-        .should("have.value", "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->");
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->"
+      );
     });
 
     it("should not to merge in middle of content - 2", () => {
-      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
 
-      cy.wait(100);
+      wait(1);
       type("a\nbc{leftarrow}{shift}\n{backspace}");
 
-      serializedTextarea(textareaId)
-        .should("have.value", "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->");
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->"
+      );
     });
   });
 
   context("style", () => {
-    ["20px", "30px"].forEach(fs => {
+    ["20px", "30px"].forEach((fs) => {
       it(fs, () => {
         cy.visit("./cypress/resources/editor.html");
         apply({
           id: textareaId,
-          stylesheets: [`
+          stylesheets: [
+            `
   p { font-size: ${fs}; line-height: ${fs} }
-          `],
+          `,
+          ],
         });
 
         cy.get(
           `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
         ).click();
-        cy.wait(100);
+        wait(1);
         type("Hello!");
 
         blur();
-        cy.wait(100);
+        wait(1);
 
         cy.get(`.mt-be-block`).click();
         cy.get(`.mt-be-block .mce-content-body`).should(
           "have.css",
           "font-size",
-          fs,
+          fs
         );
         cy.get(`.mt-be-block .mce-content-body`).should(
           "have.css",
           "line-height",
-          fs,
+          fs
         );
       });
     });
@@ -152,14 +172,14 @@ context("Text", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Block Editor");
 
       blur();
 
       cy.get(`.mt-be-block`).click();
 
-      cy.wait(100);
+      wait(1);
       type("!");
 
       serializedTextarea(textareaId).should(
@@ -173,7 +193,7 @@ context("Text", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Rich Editor!");
 
       blur();
@@ -188,7 +208,7 @@ context("Text", () => {
       });
       cy.get(`.mt-be-block`).click();
 
-      cy.wait(100);
+      wait(1);
       type("{backspace}{backspace}{backspace}{backspace}Block");
 
       serializedTextarea(textareaId).should(
@@ -202,7 +222,7 @@ context("Text", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       type("Rich Editor!");
 
       blur();
@@ -219,7 +239,7 @@ context("Text", () => {
       });
       cy.get(`.mt-be-block`).click();
 
-      cy.wait(100);
+      wait(1);
       type("{backspace}Block");
 
       serializedTextarea(textareaId).should(
@@ -233,7 +253,7 @@ context("Text", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       cy.get(`[aria-label="Source code"] button`).click({ force: true });
       cy.wait(50);
       cy.get(".mce-window textarea").invoke(
@@ -256,7 +276,7 @@ context("Text", () => {
       });
       cy.get(`.mt-be-block`).click();
 
-      cy.wait(100);
+      wait(1);
       type("{backspace}");
 
       serializedTextarea(textareaId).should(
@@ -272,15 +292,12 @@ context("Text", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       cy.get(`[aria-label="Source code"] button`).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
-        "val",
-        "<p>a</p><p>b</p>"
-      );
+      cy.get(".mce-window textarea").invoke("val", "<p>a</p><p>b</p>");
 
-      Cypress.on('uncaught:exception', ignoreErrorHandler);
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
       cy.get(".mce-window .mce-primary button:first-child").click();
 
       serializedTextarea(textareaId).should(
@@ -294,7 +311,7 @@ context("Text", () => {
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
 
-      cy.wait(100);
+      wait(1);
       cy.get(`[aria-label="Source code"] button`).click({ force: true });
       cy.wait(50);
       cy.get(".mce-window textarea").invoke(
@@ -302,10 +319,10 @@ context("Text", () => {
         "<ul><li></li><li>a</li><li>b</li></ul>"
       );
 
-      Cypress.on('uncaught:exception', ignoreErrorHandler);
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
       cy.get(".mce-window .mce-primary button:first-child").click();
 
-      cy.wait(100);
+      wait(1);
       type("{backspace}");
 
       serializedTextarea(textareaId).should(
