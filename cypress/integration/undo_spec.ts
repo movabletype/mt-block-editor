@@ -119,7 +119,7 @@ context("Undo", () => {
   });
 
   describe("Block", () => {
-    it("Text", !Cypress.env("ci"), () => {
+    it("Text", !Cypress.env("ci") && {}, () => {
       cy.get(
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
@@ -152,7 +152,7 @@ context("Undo", () => {
       );
     });
 
-    it("Table", !Cypress.env("ci"), () => {
+    it("Table", !Cypress.env("ci") && {}, () => {
       cy.get(`.mt-be-btn-add-bottom`)
         .click()
         .within(() => {
@@ -346,7 +346,7 @@ context("Undo", () => {
   });
 
   describe("Multiple editor", () => {
-    it("secondary", !Cypress.env("ci"), () => {
+    it("secondary", !Cypress.env("ci") && {}, () => {
       const secondaryId = "custom-field";
       apply({
         id: secondaryId,
