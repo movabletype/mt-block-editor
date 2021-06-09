@@ -17,7 +17,7 @@ module.exports = async function (_, env) {
     },
     output: {
       path: path.join(__dirname, "docs", "dist"),
-      publicPath: "dist",
+      publicPath: "/dist",
     },
     resolve: {
       extensions: [".ts", ".js", ".tsx", ".json"],
