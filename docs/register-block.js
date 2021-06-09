@@ -99,3 +99,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     `,
   })
 );
+
+MTBlockEditor.registerBlockType(
+  MTBlockEditor.createBoilerplateBlock({
+    icon: "",
+    canRemoveBlock: true,
+    typeId: "custom-text",
+    className: "",
+    html: '<!-- mt-beb t="core-context" m=\'{"1":{"label":"text1 label","helpText":"text1 desc","className":"text1 class"},"2":{"label":"text2 label","helpText":"text2 desc","className":"text2 class"}}\' --><!-- /mt-beb --><!-- mt-beb m=\'1\' --><p class="text1 class">text1 value</p><!-- /mt-beb --><!-- mt-beb m=\'2\' --><p class="text2 class">text2 value</p><!-- /mt-beb -->',
+    shouldBeCompiled: false,
+    previewHeader: "",
+    label: "text",
+    rootBlock: "div",
+  })
+);
