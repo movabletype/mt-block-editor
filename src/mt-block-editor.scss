@@ -341,6 +341,11 @@ $root-font-size: 16px;
         @mixin input;
         @mixin full-width;
       }
+
+      + .mt-be-input-container,
+      + .mt-be-input {
+        margin-top: -16px;
+      }
     }
 
     .mt-be-content-label {
