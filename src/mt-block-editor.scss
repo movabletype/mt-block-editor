@@ -295,6 +295,12 @@ $root-font-size: 16px;
       box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.4);
     }
 
+    .mt-be-input-container {
+      border: 1px solid rgb(118, 118, 118);
+      border-radius: 3px;
+      padding: 6px;
+    }
+
     .mt-be-input {
       @mixin input;
     }
@@ -320,6 +326,11 @@ $root-font-size: 16px;
       > textarea {
         @mixin input;
         @mixin full-width;
+      }
+
+      + .mt-be-input-container,
+      + .mt-be-input {
+        margin-top: -16px;
       }
     }
 

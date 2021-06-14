@@ -3,8 +3,8 @@ import React from "react";
 import { render } from "react-dom";
 import { InitOptions as InitOptionsI18n } from "i18next";
 
-import resetCss from "./reset.css";
-import editorContentCss from "./editor-content.css";
+import resetCss from "./reset.css?raw";
+import editorContentCss from "./editor-content.css?raw";
 import {
   getElementById,
   preParseContent,

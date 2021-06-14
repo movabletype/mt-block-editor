@@ -57,8 +57,8 @@ module.exports = async function (_, env) {
           },
         },
         {
-          test: /\.css$/,
-          type: "asset/source"
+          resourceQuery: /raw/,
+          type: "asset/source",
         },
       ],
     },

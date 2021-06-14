@@ -259,6 +259,7 @@ const Editor: React.FC<EditorProps> = ({
   });
 
   const html = block.html();
+  const isInSetupMode = editor.opts.mode === "setup";
 
   return (
     <div
@@ -278,6 +279,7 @@ const Editor: React.FC<EditorProps> = ({
       <BlockLabel block={block}>
         <div
           id={block.tinymceId()}
+          className={isInSetupMode ? "mt-be-input-container" : ""}
           dangerouslySetInnerHTML={{ __html: sanitize(html) }}
         ></div>
       </BlockLabel>
