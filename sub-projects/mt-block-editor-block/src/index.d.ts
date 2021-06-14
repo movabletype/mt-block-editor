@@ -116,6 +116,8 @@ export class Block {
   public static shouldBeCompiled: boolean;
   public id: string;
   public compiledHtml: string;
+  public placeholderLabel(): string;
+  public placeholder(): JSX.Element;
   public metadata(): Metadata | null;
   public metadataByOwnKeys(opts?: { keys?: string[] }): Metadata | null;
   public keysForSetup(): string[];
