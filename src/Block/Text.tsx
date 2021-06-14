@@ -367,7 +367,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
         </>
       );
     } else {
-      return this.placeholderElement();
+      return this.placeholder();
     }
   }
 

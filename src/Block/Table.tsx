@@ -9,6 +9,7 @@ import {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/table.svg";
+import EditorMode from "../Component/EditorMode";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -162,12 +163,15 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     };
   });
 
+  const isInSetupMode = editor.opts.mode === "setup";
+
   return (
     <div style={block.editorStyle}>
       <BlockSetupCommon block={block} />
       <BlockLabel block={block}>
         <div
           id={block.tinymceId()}
+          className={isInSetupMode ? "mt-be-input-container" : ""}
           dangerouslySetInnerHTML={{ __html: sanitize(block.html()) }}
         ></div>
       </BlockLabel>
@@ -227,11 +231,25 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
   }
 
   public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? (
-      <Editor key={this.id} block={this} focus={focus} />
-    ) : (
-      <BlockContentEditablePreview block={this} html={this.htmlString()} />
-    );
+    if (focus) {
+      return <Editor key={this.id} block={this} focus={focus} />;
+    }
+
+    if (this.htmlString()) {
+      const preview = (
+        <BlockContentEditablePreview block={this} html={this.htmlString()} />
+      );
+      return (
+        <>
+          <EditorMode mode="composition">
+            <BlockLabel block={this}>{preview}</BlockLabel>
+          </EditorMode>
+          <EditorMode mode="setup">{preview}</EditorMode>
+        </>
+      );
+    } else {
+      return this.placeholder();
+    }
   }
 
   public html(): string {
