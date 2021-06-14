@@ -66,7 +66,7 @@ export default function blockProperty<T extends EditorProps>(
     const [editGroups, setEditGroups] = useState<MapObject>({});
     const children = editor(props);
     const editorContext = useEditorContext();
-    const setFocusedId = editorContext.setFocusedId;
+    const { setFocusedId, getFocusedId } = editorContext;
     const blockEditor = editorContext.editor;
 
     useEffect(() => {
@@ -89,7 +89,9 @@ export default function blockProperty<T extends EditorProps>(
         const activeEl = document.activeElement;
         if (
           activeEl &&
-          activeEl.closest(`[data-mt-block-editor-block-id="${block.id}"]`)
+          activeEl.closest(
+            `[data-mt-block-editor-block-id="${getFocusedId()}"]`
+          )
         ) {
           return;
         }
