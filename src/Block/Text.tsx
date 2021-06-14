@@ -297,7 +297,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {
-    return t("Text");
+    return t("Text Block");
   }
 
   public text = "";
@@ -310,6 +310,10 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public placeholderLabel(): string {
+    return t("Text");
   }
 
   public contentLabel(): string {
@@ -352,7 +356,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
         <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );
     } else {
-      return <p>{"\u00A0"}</p>;
+      return this.placeholderElement();
     }
   }
 
