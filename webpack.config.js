@@ -56,6 +56,10 @@ module.exports = async function (_, env) {
             },
           },
         },
+        {
+          test: /\.css$/,
+          type: "asset/source"
+        },
       ],
     },
     plugins: [

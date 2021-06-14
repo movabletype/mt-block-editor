@@ -1,4 +1,5 @@
-import { RefObject } from "react";
+import { t } from "./i18n";
+import React, { RefObject } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
@@ -141,6 +142,21 @@ class Block {
 
   public contentLabel(): string {
     return (this.constructor as typeof Block).label;
+  }
+
+  public placeholderLabel(): string {
+    return this.contentLabel();
+  }
+
+  public placeholderElement(): JSX.Element {
+    const label = this.label || this.placeholderLabel();
+    return (
+      <span className="mt-be-placeholder">
+        {t("Please input {{label}}.", {
+          label: label,
+        })}
+      </span>
+    );
   }
 
   public childBlocks(): Block[] {

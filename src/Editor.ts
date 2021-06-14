@@ -4,6 +4,7 @@ import { render } from "react-dom";
 import { InitOptions as InitOptionsI18n } from "i18next";
 
 import resetCss from "./reset.css";
+import editorContentCss from "./editor-content.css";
 import {
   getElementById,
   preParseContent,
@@ -303,7 +304,7 @@ class Editor extends EventEmitter implements HasBlocks {
     return [
       {
         type: StylesheetType.css,
-        data: resetCss,
+        data: resetCss + editorContentCss,
       },
       ...this.opts.stylesheets
         .filter((s) => s)
