@@ -248,7 +248,7 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
         </>
       );
     } else {
-      return this.placeholderElement();
+      return this.placeholder();
     }
   }
 
