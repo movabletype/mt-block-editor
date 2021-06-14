@@ -31,6 +31,38 @@
       </form>
     </div>
     <script type="module">
+      const applyOpts = {
+        mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
+        id: "body",
+        stylesheets: [
+          (() => {
+            const a = document.createElement("A");
+            a.href = "./editor-content.css";
+            return a.href;
+          })(),
+        ],
+        i18n: {
+          lng: "ja",
+          debug: true,
+          //backend: {
+          //  loadPath: `https://example.com/mt-block-editor/locales/{{lng}}/{{ns}}.json`,
+          //  crossDomain: true,
+          //},
+        },
+        shortcutBlockTypes: ["core-text", "core-image", "core-file"],
+        panelBlockTypes: [
+          "core-text",
+          "core-image",
+          "core-file",
+          "core-horizontalrule",
+          "core-html",
+          "core-table",
+          "core-columns",
+          "custom-oembed",
+          "custom-excel",
+        ],
+      };
+
       window.document.getElementById("body").value =
         window.sessionStorage.getItem("MTBlockEditorBody") || "";
 
@@ -38,17 +70,30 @@
       const loader = [
         "./dist/mt-block-editor.js",
         "./register-block.js",
+        // "./dist/mt-block-editor-block-form-element.js",
+        // "./blocks-officer.html",
       ].reduce(
-        (chain, m) => chain.then(() => import(`${m}?ts=${ts}`)),
+        (chain, m) =>
+          chain.then(() => {
+            if (m.match(/\.html/)) {
+              return fetch(m)
+                .then((res) => res.text())
+                .then((html) => {
+                  const t = document.createElement("template");
+                  t.innerHTML = html;
+                  document.body.appendChild(t.content);
+                });
+            } else {
+              return import(`${m}?ts=${ts}`);
+            }
+          }),
         Promise.resolve()
       );
 
       if (/^localhost(?::|$)/.test(location.host)) {
         // Probably in the development environment.
       } else {
-        [
-          "./dist/mt-block-editor.css",
-        ].forEach((url) => {
+        ["./dist/mt-block-editor.css"].forEach((url) => {
           const link = window.document.createElement("LINK");
           link.rel = "stylesheet";
           link.href = `${url}?ts=${ts}`;
@@ -57,41 +102,31 @@
       }
 
       loader
+        .then(async () => {
+          const blocksElm = document.querySelector(
+            `[data-block-types][data-blocks]`
+          );
+          const blockTypes = blocksElm && blocksElm.dataset.blockTypes;
+          const blocks = blocksElm && blocksElm.dataset.blocks;
+          if (!(blocks && blockTypes)) {
+            return;
+          }
+          const { registerBoilerplateBlocks } = await import(
+            `./dist/register-boilerplate-blocks.js?ts=${ts}`
+          );
+
+          registerBoilerplateBlocks(
+            window.MTBlockEditor,
+            JSON.parse(blockTypes),
+            JSON.parse(blocks)
+          );
+          Reflect.deleteProperty(applyOpts, "panelBlockTypes");
+        })
         .then(() => {
           return window;
         })
         .then(({ MTBlockEditor, sessionStorage, document }) => {
-          MTBlockEditor.apply({
-            mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
-            id: "body",
-            stylesheets: [
-              (() => {
-                const a = document.createElement("A");
-                a.href = "./editor-content.css";
-                return a.href;
-              })(),
-            ],
-            i18n: {
-              lng: "ja",
-              debug: true,
-              //backend: {
-              //  loadPath: `https://example.com/mt-block-editor/locales/{{lng}}/{{ns}}.json`,
-              //  crossDomain: true,
-              //},
-            },
-            shortcutBlockTypes: ["core-text", "core-image", "core-file"],
-            panelBlockTypes: [
-              "core-text",
-              "core-image",
-              "core-file",
-              "core-horizontalrule",
-              "core-html",
-              "core-table",
-              "core-columns",
-              "custom-oembed",
-              "custom-excel",
-            ],
-          }).then((ed) => {
+          MTBlockEditor.apply(applyOpts).then((ed) => {
             ed.on("initializeBlocks", ({ blocks }) => {
               console.log(blocks);
             });

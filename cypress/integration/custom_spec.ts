@@ -58,6 +58,48 @@ context("CustomBlock", () => {
       rootBlock: "",
     });
 
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: "",
+      typeId: "custom-html",
+      panelBlockTypes: [],
+      shortcutBlockTypes: [],
+      className: "",
+      html: '<!-- mt-beb t="core-html" --><!-- /mt-beb -->',
+      shouldBeCompiled: 1,
+      previewHeader: "",
+      label: "textarea",
+      rootBlock: "",
+    });
+
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: true,
+      typeId: "custom-textarea-list",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["custom-html"],
+      className: "",
+      html: '<!-- mt-beb t="core-html" --><!-- /mt-beb -->',
+      shouldBeCompiled: 1,
+      previewHeader: "",
+      label: "textarea list",
+      rootBlock: "",
+    });
+
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: true,
+      typeId: "custom-textarea-list-group",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["custom-textarea-list"],
+      className: "",
+      html: "",
+      shouldBeCompiled: 1,
+      previewHeader: "",
+      label: "textarea list group",
+      rootBlock: "",
+    });
+
     apply({
       id: textareaId,
     });
@@ -161,6 +203,47 @@ context("CustomBlock", () => {
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","className":"color"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-bgcolor_contents" h='&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb t="core-html" --&gt;&lt;pre&gt;html content&lt;/pre&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;Hello!&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><!-- mt-beb m='1' --><!-- /mt-beb --><!-- mt-beb t="custom-contents" --><!-- mt-beb t="core-html" --><pre>html content</pre><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- /mt-beb --></div></div><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context("custom-textareas", () => {
+    it("add", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-textarea-list-group"]`).click();
+        });
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-textarea-list"]`
+      ).click();
+
+      wait(1);
+      type("1");
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-textarea-list"]`
+      ).click();
+
+      wait(1);
+      type("2");
+
+      blur();
+
+      wait(1);
+      cy.get(`.mt-be-block`).click();
+
+      wait(1);
+      type("{del}a");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-textarea-list-group" h='&lt;!-- mt-beb t="custom-textarea-list" h=&#x27;&amp;lt;!-- mt-beb t="core-html" --&amp;gt;a&amp;lt;!-- /mt-beb --&amp;gt;&#x27; --&gt;&lt;!-- mt-beb t="core-html" --&gt;a&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-textarea-list" h=&#x27;&amp;lt;!-- mt-beb t="core-html" --&amp;gt;2&amp;lt;!-- /mt-beb --&amp;gt;&#x27; --&gt;&lt;!-- mt-beb t="core-html" --&gt;2&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><!-- mt-beb t="custom-textarea-list" h='&lt;!-- mt-beb t="core-html" --&gt;a&lt;!-- /mt-beb --&gt;' --><!-- mt-beb t="core-html" -->a<!-- /mt-beb --><!-- /mt-beb --><!-- mt-beb t="custom-textarea-list" h='&lt;!-- mt-beb t="core-html" --&gt;2&lt;!-- /mt-beb --&gt;' --><!-- mt-beb t="core-html" -->2<!-- /mt-beb --><!-- /mt-beb --><!-- /mt-beb -->`
       );
     });
   });
