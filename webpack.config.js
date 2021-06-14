@@ -56,6 +56,10 @@ module.exports = async function (_, env) {
             },
           },
         },
+        {
+          resourceQuery: /raw/,
+          type: "asset/source",
+        },
       ],
     },
     plugins: [

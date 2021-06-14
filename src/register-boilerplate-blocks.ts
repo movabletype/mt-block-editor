@@ -20,7 +20,7 @@ interface BlockOptions extends BoilerplateBlockOptions {
   addableBlockTypes: AddableBlockTypesMap;
 }
 
-export default function init(
+export function registerBoilerplateBlocks(
   MTBlockEditor: typeof EditorUtil,
   blockTypes: string[],
   blocks: BlockOptions[]
@@ -72,7 +72,7 @@ const scriptElm = document.querySelector(
 const blockTypes = scriptElm && scriptElm.dataset.blockTypes;
 const blocks = scriptElm && scriptElm.dataset.blocks;
 if (MTBlockEditor && blocks && blockTypes) {
-  init(
+  registerBoilerplateBlocks(
     MTBlockEditor,
     JSON.parse(blockTypes) as string[],
     JSON.parse(blocks) as BlockOptions[]

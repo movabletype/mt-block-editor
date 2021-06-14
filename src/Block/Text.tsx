@@ -15,6 +15,7 @@ import {
   isTouchDevice,
   getShadowDomSelectorSet,
 } from "../util";
+import EditorMode from "../Component/EditorMode";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -251,6 +252,7 @@ const Editor: React.FC<EditorProps> = ({
   });
 
   const html = block.html();
+  const isInSetupMode = editor.opts.mode === "setup";
 
   return (
     <div
@@ -270,6 +272,7 @@ const Editor: React.FC<EditorProps> = ({
       <BlockLabel block={block}>
         <div
           id={block.tinymceId()}
+          className={isInSetupMode ? "mt-be-input-container" : ""}
           dangerouslySetInnerHTML={{ __html: sanitize(html) }}
         ></div>
       </BlockLabel>
@@ -297,7 +300,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public static selectable = true;
   public static icon = icon;
   public static get label(): string {
-    return t("Text");
+    return t("Text Block");
   }
 
   public text = "";
@@ -310,6 +313,10 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public placeholderLabel(): string {
+    return t("Text");
   }
 
   public contentLabel(): string {
@@ -348,11 +355,19 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     }
 
     if (this.htmlString()) {
-      return (
+      const preview = (
         <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );
+      return (
+        <>
+          <EditorMode mode="composition">
+            <BlockLabel block={this}>{preview}</BlockLabel>
+          </EditorMode>
+          <EditorMode mode="setup">{preview}</EditorMode>
+        </>
+      );
     } else {
-      return <p>{"\u00A0"}</p>;
+      return this.placeholderElement();
     }
   }
 
