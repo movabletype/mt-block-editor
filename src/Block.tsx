@@ -148,7 +148,7 @@ class Block {
     return this.contentLabel();
   }
 
-  public placeholderElement(): JSX.Element {
+  public placeholder(): JSX.Element {
     const label = this.label || this.placeholderLabel();
     return (
       <span className="mt-be-placeholder">
