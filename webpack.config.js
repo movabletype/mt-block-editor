@@ -1,4 +1,5 @@
 const path = require("path");
+const svgToMiniDataURI = require("mini-svg-data-uri");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -16,7 +17,7 @@ module.exports = async function (_, env) {
     },
     output: {
       path: path.join(__dirname, "docs", "dist"),
-      publicPath: "dist",
+      publicPath: "/dist",
     },
     resolve: {
       extensions: [".ts", ".js", ".tsx", ".json"],
@@ -45,7 +46,16 @@ module.exports = async function (_, env) {
             { loader: "postcss-loader", options: { sourceMap: isProd } },
           ],
         },
-        { test: /\.svg$/, type: "asset/inline" },
+        {
+          test: /\.svg$/,
+          type: "asset/inline",
+          generator: {
+            dataUrl: (content) => {
+              content = content.toString();
+              return svgToMiniDataURI(content);
+            },
+          },
+        },
       ],
     },
     plugins: [

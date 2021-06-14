@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { type, apply, serializedTextarea, blur } from "../helpers";
+import { type, apply, serializedTextarea, blur, wait } from "../helpers";
 
 context("Editor", () => {
   const textareaId = "text";
@@ -16,7 +16,7 @@ context("Editor", () => {
 
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
-    cy.wait(100);
+    wait(1);
     type("Hello Block Editor!");
 
     serializedTextarea(textareaId).should(
@@ -34,14 +34,13 @@ context("Editor", () => {
 
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
-    cy.wait(100);
+    wait(1);
     type("Hello Block Editor!");
 
     blur();
-    cy.get(".mt-block-editor .mt-be-block > div:last-child")
-      .should(($e) => {
-        const root = $e.get(0).shadowRoot.childNodes[0];
-        expect(root.className).to.equal(rootClassName);
-      });
+    cy.get(".mt-block-editor .mt-be-block > div:last-child").should(($e) => {
+      const root = $e.get(0).shadowRoot.childNodes[0];
+      expect(root.className).to.equal(rootClassName);
+    });
   });
 });
