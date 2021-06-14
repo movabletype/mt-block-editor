@@ -105,7 +105,7 @@ export class Editor {
     once?: boolean
   ): this;
   public off(event: any, fn?: any, context?: any, once?: boolean): this;
-  public removeAllListeners(any): this;
+  public removeAllListeners(event?: any): this;
 }
 
 export class Block {
