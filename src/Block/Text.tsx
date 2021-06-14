@@ -15,6 +15,7 @@ import {
   isTouchDevice,
   getShadowDomSelectorSet,
 } from "../util";
+import EditorMode from "../Component/EditorMode";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import BlockLabel from "../Component/BlockLabel";
@@ -355,8 +356,16 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     }
 
     if (this.htmlString()) {
-      return (
+      const preview = (
         <BlockContentEditablePreview block={this} html={this.htmlString()} />
+      );
+      return (
+        <>
+          <EditorMode mode="composition">
+            <BlockLabel block={this}>{preview}</BlockLabel>
+          </EditorMode>
+          <EditorMode mode="setup">{preview}</EditorMode>
+        </>
       );
     } else {
       return this.placeholderElement();
