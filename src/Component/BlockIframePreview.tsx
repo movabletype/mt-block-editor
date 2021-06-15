@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
@@ -396,8 +396,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           {
             maxWidth: MAX_WIDTH,
             maxHeight: MAX_HEIGHT,
+            boxSizing: "border-box",
             border: border || "1px solid #ccc",
-          },
+          } as Partial<CSSProperties>,
           size
         )}
       />
