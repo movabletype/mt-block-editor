@@ -26,35 +26,27 @@ export function registerBoilerplateBlocks(
   blocks: BlockOptions[]
 ): void {
   blocks.forEach((block) => {
-    const panelBlockTypes = Array.from(blockTypes);
-    const shortcutBlockTypes = Array.from(blockTypes);
+    const panelBlockTypes = Array.from(blockTypes); // display all by default
+    const shortcutBlockTypes: string[] = []; // display nothing by default
 
-    (block.addableBlockTypes.post || [])
+    (block.addableBlockTypes.post || block.addableBlockTypes.common || [])
       .concat({ typeId: block.typeId, panel: false, shortcut: false })
       .reverse()
-      .forEach((b) => {
-        [
-          {
-            ids: panelBlockTypes,
-            key: "panel" as keyof AddableBlockType,
-          },
-          {
-            ids: shortcutBlockTypes,
-            key: "shortcut" as keyof AddableBlockType,
-          },
-        ].forEach((conf: { ids: string[]; key: keyof AddableBlockType }) => {
-          const index = conf.ids.indexOf(b.typeId);
-          if (index === -1) {
-            return;
-          }
+      .forEach(({ typeId, panel, shortcut }) => {
+        const index = panelBlockTypes.indexOf(typeId);
+        if (index === -1) {
+          // unkown typeId
+          return;
+        }
 
-          const typeId = conf.ids.splice(index, 1)[0];
+        panelBlockTypes.splice(index, 1);
+        if (panel) {
+          panelBlockTypes.unshift(typeId);
+        }
 
-          if (b[conf.key]) {
-            // add to head if enabled
-            conf.ids.splice(0, 0, typeId);
-          }
-        });
+        if (shortcut) {
+          shortcutBlockTypes.unshift(typeId);
+        }
       });
 
     MTBlockEditor.registerBlockType(
