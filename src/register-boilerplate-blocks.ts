@@ -58,9 +58,12 @@ export function registerBoilerplateBlocks(
 }
 
 const MTBlockEditor = window.MTBlockEditor;
-const scriptElm = document.querySelector(
-  `script[src^="${import.meta.url}"][data-block-types][data-blocks]`
-) as HTMLScriptElement;
+const scriptElm = (() => {
+  const elm = document.querySelector(
+    `script[data-block-types][data-blocks]`
+  ) as HTMLScriptElement | null;
+  return elm && elm.src.startsWith(import.meta.url) ? elm : null;
+})();
 const blockTypes = scriptElm && scriptElm.dataset.blockTypes;
 const blocks = scriptElm && scriptElm.dataset.blocks;
 if (MTBlockEditor && blocks && blockTypes) {
