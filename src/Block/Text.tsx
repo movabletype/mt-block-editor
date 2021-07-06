@@ -342,7 +342,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     return `textarea-${this.id}`;
   }
 
-  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
+  public editor({ focus, focusBlock, canRemove }: EditorOptions): JSX.Element {
     if (focus) {
       return (
         <Editor
@@ -354,7 +354,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
       );
     }
 
-    if (this.htmlString()) {
+    if (focusBlock || this.htmlString()) {
       const preview = (
         <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );
