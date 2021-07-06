@@ -28,6 +28,8 @@ const COMPILE_TIMEOUT = 2000;
 const Editor: React.FC<EditorProps> = ({
   block,
   focus,
+  focusBlock,
+  focusDescendant,
   canRemove,
 }: EditorProps) => {
   block.compiledHtml = "";
@@ -120,15 +122,15 @@ const Editor: React.FC<EditorProps> = ({
       <BlockSetupCommon block={block} keys={["className"]} />
       {block.blocks.map((b, i) => {
         const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
-        const focusItem = focusFirstBlock || getFocusedId() === b.id;
+        const focusItem = (focus && focusFirstBlock) || getFocusedId() === b.id;
         return (
           <BlockItem
             key={b.id}
             id={b.id}
             block={b}
             focus={focusItem}
-            focusBlock={focus}
-            ignoreClickEvent={focusFirstBlock}
+            focusBlock={focus || focusBlock || focusDescendant}
+            ignoreClickEvent={focusItem && focusFirstBlock}
             index={i}
             parentBlock={block}
             canRemove={canRemove === true}
@@ -240,7 +242,9 @@ class Column extends Block implements HasBlocks {
       <Editor
         key={this.id}
         block={this}
-        focus={!!(focus || focusDescendant || focusBlock)}
+        focus={focus}
+        focusBlock={focusBlock}
+        focusDescendant={focusDescendant}
         canRemove={canRemove}
       />
     );
