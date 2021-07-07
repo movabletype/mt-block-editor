@@ -71,7 +71,7 @@ export default function blockProperty<T extends EditorProps>(
 
     useEffect(() => {
       // focus
-      (() => {
+      setTimeout(function () {
         const blockEl = document.querySelector(
           `[data-mt-block-editor-block-id="${block.id}"]`
         );
@@ -97,7 +97,7 @@ export default function blockProperty<T extends EditorProps>(
         }
 
         focusEl.focus();
-      })();
+      }, 10);
 
       // adjust height
       (() => {
