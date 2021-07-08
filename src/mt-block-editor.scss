@@ -22,6 +22,9 @@ $root-font-size: 16px;
   position: relative;
 
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre {
+    font-size: inherit;
+    line-height: inherit;
+    font-family: inherit;
     margin: 0;
   }
 
