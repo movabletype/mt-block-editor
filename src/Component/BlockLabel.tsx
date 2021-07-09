@@ -31,7 +31,13 @@ const BlockLabel: React.FC<EditorProps> = ({
 
   return (
     <>
-      <label className="mt-be-label-name" style={{ display: "block" }}>
+      <label
+        className="mt-be-label-name"
+        style={{ display: "block" }}
+        onClick={() => {
+          block.focusEditor();
+        }}
+      >
         {block.label ? (
           <div className="mt-be-label-block">{block.label}</div>
         ) : null}

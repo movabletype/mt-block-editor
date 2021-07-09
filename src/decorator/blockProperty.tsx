@@ -71,7 +71,7 @@ export default function blockProperty<T extends EditorProps>(
 
     useEffect(() => {
       // focus
-      (() => {
+      setTimeout(function () {
         const blockEl = document.querySelector(
           `[data-mt-block-editor-block-id="${block.id}"]`
         );
@@ -97,20 +97,18 @@ export default function blockProperty<T extends EditorProps>(
         }
 
         focusEl.focus();
-      })();
+      }, 10);
 
       // adjust height
-      (() => {
-        [
-          ...document.querySelectorAll<HTMLTextAreaElement>(
-            `[data-mt-block-editor-block-id="${block.id}"] textarea[data-min-rows]`
-          ),
-        ].forEach((target) => {
-          if (target.scrollHeight > target.offsetHeight) {
-            target.style.height = target.scrollHeight + "px";
-          }
-        });
-      })();
+      [
+        ...document.querySelectorAll<HTMLTextAreaElement>(
+          `[data-mt-block-editor-block-id="${block.id}"] textarea[data-min-rows]`
+        ),
+      ].forEach((target) => {
+        if (target.scrollHeight > target.offsetHeight) {
+          target.style.height = target.scrollHeight + "px";
+        }
+      });
     });
 
     return recursiveMap(children, (child: JSX.Element) => {
