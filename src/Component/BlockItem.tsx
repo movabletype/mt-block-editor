@@ -170,6 +170,14 @@ const BlockItem: React.FC<Props> = ({
     rendered: false,
   };
 
+  const withBlockContext = !!(
+    focus ||
+    focusBlock ||
+    focusDescendant ||
+    b instanceof Column ||
+    b instanceof Columns
+  );
+
   return (
     <div
       key={b.id}
@@ -271,38 +279,33 @@ const BlockItem: React.FC<Props> = ({
         {!focus && !(b instanceof Columns) && (
           <div className="mt-be-content-label">{b.contentLabel()}</div>
         )}
-        {focus ||
-        focusBlock ||
-        focusDescendant ||
-        b instanceof Column ||
-        b instanceof Columns ? (
+        {withBlockContext && (
           <BlockContext.Provider value={blockContext}>
             {ed}
             {focus && showButton && <DefaultToolbar />}
           </BlockContext.Provider>
-        ) : (
-          <>
-            <root.div>
-              <div
-                className={editor.opts.rootClassName || ""}
-                style={{ overflow: "auto" }}
-              >
-                {editor.stylesheets.map((s, i) => {
-                  if (s.type === StylesheetType.css) {
-                    return (
-                      <style type="text/css" key={i}>
-                        {s.data}
-                      </style>
-                    );
-                  } else {
-                    return <link rel="stylesheet" key={i} href={s.data} />;
-                  }
-                })}
-                {ed}
-              </div>
-            </root.div>
-          </>
         )}
+        <>
+          <root.div>
+            <div
+              className={editor.opts.rootClassName || ""}
+              style={{ overflow: "auto" }}
+            >
+              {editor.stylesheets.map((s, i) => {
+                if (s.type === StylesheetType.css) {
+                  return (
+                    <style type="text/css" key={i}>
+                      {s.data}
+                    </style>
+                  );
+                } else {
+                  return <link rel="stylesheet" key={i} href={s.data} />;
+                }
+              })}
+              {!withBlockContext && ed}
+            </div>
+          </root.div>
+        </>
       </div>
     </div>
   );
