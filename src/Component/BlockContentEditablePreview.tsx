@@ -10,11 +10,13 @@ export interface HasEditorStyle extends Block {
 interface EditorProps {
   block: Block;
   html: string;
+  onMouseUp?(ev: MouseEvent): void;
 }
 
 const BlockContentEditablePreview: React.FC<EditorProps> = ({
   block,
   html,
+  onMouseUp,
 }: EditorProps) => {
   const { setFocusedId } = useEditorContext();
   const divElRef = useRef<HTMLDivElement>(null);
@@ -45,11 +47,14 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
       () => {
         document.addEventListener(
           "mouseup",
-          () => {
+          (ev: MouseEvent) => {
             if (!getShadowDomSelectorSet(block.id)) {
               return;
             }
 
+            if (onMouseUp) {
+              onMouseUp(ev);
+            }
             setFocusedId(block.id);
           },
           { once: true, passive: true }
