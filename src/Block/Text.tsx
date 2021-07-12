@@ -49,7 +49,7 @@ const TAG_NAME_MAP: { [key: string]: string } = {
   h5: "Heading 5",
   h6: "Heading 6",
   pre: "Preformatted",
-};
+} as const;
 
 const Editor: React.FC<EditorProps> = ({
   block,
