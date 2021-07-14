@@ -68,21 +68,30 @@ export default function blockProperty<T extends EditorProps>(
     const editorContext = useEditorContext();
     const { setFocusedId, getFocusedId } = editorContext;
     const blockEditor = editorContext.editor;
+    const isNewlyAdded = block.isNewlyAdded;
 
     useEffect(() => {
       // focus
       setTimeout(function () {
-        const blockEl = document.querySelector(
-          `[data-mt-block-editor-block-id="${block.id}"]`
+        const focusEl = blockEditor.editorElement.querySelector<HTMLElement>(
+          `[data-mt-block-editor-block-id="${block.id}"] [data-mt-block-editor-focus-default]`
         );
-        if (!blockEl) {
+        if (!focusEl) {
           return;
         }
 
-        const focusEl = blockEl.querySelector<HTMLElement>(
-          `[data-mt-block-editor-focus-default]`
-        );
-        if (!focusEl) {
+        // Skip if focusEl is a grand child
+        if (
+          (focusEl.closest("[data-mt-block-editor-block-id]") as HTMLElement)
+            .dataset.mtBlockEditorBlockId !== block.id
+        ) {
+          return;
+        }
+
+        if (
+          !isNewlyAdded &&
+          focusEl.closest(`[data-mt-block-editor-skip-focus-default]`)
+        ) {
           return;
         }
 

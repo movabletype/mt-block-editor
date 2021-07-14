@@ -136,7 +136,10 @@ const Editor: React.FC<EditorProps> = ({
             id={b.id}
             block={b}
             focus={focusItem}
-            focusBlock={!b.showPreview || focus || focusBlock || focusDescendant}
+            skipFocusDefault={!(block.showPreview || block.isNewlyAdded)}
+            focusBlock={
+              !block.showPreview || focus || focusBlock || focusDescendant
+            }
             ignoreClickEvent={focusItem && focusFirstBlock}
             index={i}
             parentBlock={block}
