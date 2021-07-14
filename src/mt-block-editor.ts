@@ -35,6 +35,7 @@ export interface BoilerplateBlockOptions {
   panelBlockTypes?: string[];
   shortcutBlockTypes?: string[];
   shouldBeCompiled: boolean;
+  showPreview: boolean;
   previewHeader: string;
 }
 
@@ -116,6 +117,7 @@ export class EditorUtil {
     panelBlockTypes,
     shortcutBlockTypes,
     shouldBeCompiled,
+    showPreview,
     previewHeader,
   }: BoilerplateBlockOptions): typeof Block {
     const BoilerplateBlock = function (
@@ -162,6 +164,9 @@ export class EditorUtil {
     BoilerplateBlock.selectable = true;
     if (shouldBeCompiled !== undefined) {
       BoilerplateBlock.shouldBeCompiled = shouldBeCompiled;
+    }
+    if (showPreview !== undefined) {
+      BoilerplateBlock.showPreview = showPreview;
     }
 
     Object.setPrototypeOf(BoilerplateBlock, Column);
