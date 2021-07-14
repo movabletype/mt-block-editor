@@ -32,6 +32,42 @@ context("Text", () => {
     );
   });
 
+  it("toolbar", () => {
+    cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+    wait(1);
+
+    cy.get(".mt-be-block-toolbar").should('be.visible');
+
+    type("Toolbar!");
+
+    cy.get(".mt-be-block-toolbar").should('not.be.visible');
+
+    blur();
+    wait(1);
+
+    cy.get(".mt-be-block-toolbar").should('not.exist');
+
+    cy.get(".mt-be-block div:last-child").then(($div) => {
+      const root = $div.get(0).shadowRoot;
+      const editableDiv = root.querySelector("div[contenteditable]");
+
+      editableDiv.dispatchEvent(new Event('mousedown'));
+
+      const range = new Range();
+      range.setStart(editableDiv.firstChild.firstChild, 0);
+      range.setEnd(editableDiv.firstChild.firstChild, 1);
+
+      const selection = root.getSelection
+        ? root.getSelection() // chrome
+        : document.getSelection(); // firefox
+      selection.addRange(range);
+
+      $div.get(0).ownerDocument.dispatchEvent(new Event('mouseup'));
+    });
+
+    cy.get(".mt-be-block-toolbar").should('be.visible');
+  });
+
   it("typo", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
 
@@ -62,6 +98,8 @@ context("Text", () => {
         );
 
       type("{backspace}");
+
+      cy.get(".mt-be-block-toolbar").should('not.be.visible');
 
       serializedTextarea(textareaId)
         .should("have.value", "<!-- mt-beb --><p>b</p><!-- /mt-beb -->")
