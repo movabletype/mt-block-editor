@@ -40,6 +40,17 @@ interface EditorProps extends EditorOptions {
   block: Text;
 }
 
+const TAG_NAME_MAP: { [key: string]: string } = {
+  p: "Paragraph",
+  h1: "Heading 1",
+  h2: "Heading 2",
+  h3: "Heading 3",
+  h4: "Heading 4",
+  h5: "Heading 5",
+  h6: "Heading 6",
+  pre: "Preformatted",
+} as const;
+
 const ToolbarVisibleStatus = {
   DependsOnContent: Symbol(),
   Visible: Symbol(),
@@ -339,7 +350,11 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public contentLabel(): string {
     const m = this.htmlString().match(/<(\w+)/);
     if (m) {
-      return m[1].toLowerCase();
+      let label = m[1].toLowerCase();
+      if (TAG_NAME_MAP[label]) {
+        label = t(TAG_NAME_MAP[label]);
+      }
+      return `${super.contentLabel()} - ${label}`;
     } else {
       return super.contentLabel();
     }
