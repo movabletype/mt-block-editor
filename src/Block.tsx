@@ -59,6 +59,7 @@ class Block {
   public static shouldBeCompiled = false;
   public id: string;
   public isNewlyAdded = false;
+  public wrapperElement: null | HTMLDivElement = null;
   public compiledHtml = "";
   public label = "";
   public helpText = "";
@@ -140,7 +141,20 @@ class Block {
   }
 
   public focusEditor(): void {
-    return;
+    if (!this.wrapperElement) {
+      return;
+    }
+
+    const inputElm =
+      this.wrapperElement.querySelector<HTMLElement>(
+        "[data-mt-block-editor-focus-default]"
+      ) ||
+      this.wrapperElement.querySelector<HTMLElement>("input, textarea, select");
+    if (!inputElm) {
+      return;
+    }
+
+    inputElm.focus();
   }
 
   public contentLabel(): string {

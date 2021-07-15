@@ -136,6 +136,8 @@ const BlockItem: React.FC<Props> = ({
   });
 
   useEffect(() => {
+    block.wrapperElement = ref.current;
+
     return () => {
       block.isNewlyAdded = false;
     };
