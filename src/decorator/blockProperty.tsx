@@ -72,8 +72,13 @@ export default function blockProperty<T extends EditorProps>(
     useEffect(() => {
       // focus
       setTimeout(function () {
-        const focusEl = blockEditor.editorElement.querySelector<HTMLElement>(
-          `[data-mt-block-editor-block-id="${block.id}"] [data-mt-block-editor-focus-default]`
+        if (!block.wrapperElement) {
+          return;
+        }
+        const wrapperElement = block.wrapperElement as HTMLElement;
+
+        const focusEl = wrapperElement.querySelector<HTMLElement>(
+          `[data-mt-block-editor-focus-default]`
         );
         if (!focusEl) {
           return;
@@ -81,8 +86,7 @@ export default function blockProperty<T extends EditorProps>(
 
         // Skip if focusEl is a grand child
         if (
-          (focusEl.closest("[data-mt-block-editor-block-id]") as HTMLElement)
-            .dataset.mtBlockEditorBlockId !== block.id
+          focusEl.closest("[data-mt-block-editor-block-id]") !== wrapperElement
         ) {
           return;
         }
