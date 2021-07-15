@@ -136,7 +136,9 @@ const BlockItem: React.FC<Props> = ({
   });
 
   useEffect(() => {
-    block.isNewlyAdded = false;
+    return () => {
+      block.isNewlyAdded = false;
+    };
   });
 
   const [{ isDragging }, drag, preview] = useDrag({

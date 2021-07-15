@@ -68,7 +68,6 @@ export default function blockProperty<T extends EditorProps>(
     const editorContext = useEditorContext();
     const { setFocusedId, getFocusedId } = editorContext;
     const blockEditor = editorContext.editor;
-    const isNewlyAdded = block.isNewlyAdded;
 
     useEffect(() => {
       // focus
@@ -89,7 +88,7 @@ export default function blockProperty<T extends EditorProps>(
         }
 
         if (
-          !isNewlyAdded &&
+          !block.isNewlyAdded &&
           focusEl.closest(`[data-mt-block-editor-skip-focus-default]`)
         ) {
           return;
