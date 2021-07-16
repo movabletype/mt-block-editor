@@ -2,6 +2,7 @@ import { t } from "../i18n";
 import React, { ReactNode } from "react";
 import Block from "../Block";
 import { useEditorContext } from "../Context";
+import { nl2br } from "../util";
 
 interface EditorProps {
   children: ReactNode;
@@ -42,7 +43,7 @@ const BlockLabel: React.FC<EditorProps> = ({
           <div className="mt-be-label-block">{block.label}</div>
         ) : null}
         {block.helpText ? (
-          <div className="mt-be-help-block">{block.helpText}</div>
+          <div className="mt-be-help-block">{nl2br(block.helpText)}</div>
         ) : null}
       </label>
       {children}
