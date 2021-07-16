@@ -3,7 +3,7 @@
  * http://react-dnd.github.io/react-dnd/examples
  */
 
-import React, { useRef, createRef, CSSProperties } from "react";
+import React, { useEffect, useRef, createRef, CSSProperties } from "react";
 import root from "react-shadow";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
@@ -33,6 +33,7 @@ interface DragObject extends DragObjectWithType {
 interface Props {
   block: Block;
   focus: boolean;
+  skipFocusDefault?: boolean;
   focusBlock?: boolean;
   ignoreClickEvent?: boolean;
   id: string;
@@ -60,6 +61,7 @@ const BlockItem: React.FC<Props> = ({
   id,
   block,
   focus,
+  skipFocusDefault,
   focusBlock,
   ignoreClickEvent,
   index,
@@ -133,6 +135,14 @@ const BlockItem: React.FC<Props> = ({
     },
   });
 
+  useEffect(() => {
+    block.wrapperElement = ref.current;
+
+    return () => {
+      block.isNewlyAdded = false;
+    };
+  });
+
   const [{ isDragging }, drag, preview] = useDrag({
     item: { type: parentBlock ? parentBlock.id : "block", id, index },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -182,6 +192,9 @@ const BlockItem: React.FC<Props> = ({
     <div
       key={b.id}
       data-mt-block-editor-block-id={b.id}
+      {...(skipFocusDefault
+        ? { "data-mt-block-editor-skip-focus-default": true }
+        : {})}
       onClick={(ev) => {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
