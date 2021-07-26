@@ -545,6 +545,7 @@ $root-font-size: 16px;
 
   .mt-be-block-toolbar {
     position: absolute;
+    width: max-content;
     left: -8px;
     background: white;
     z-index: 1000;
