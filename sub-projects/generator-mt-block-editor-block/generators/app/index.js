@@ -1,6 +1,6 @@
 "use strict";
 const path = require("path");
-const mkdirp = require('mkdirp');
+const mkdirp = require("mkdirp");
 const Generator = require("yeoman-generator");
 const chalk = require("chalk");
 const yosay = require("yosay");
@@ -77,7 +77,7 @@ module.exports = class extends Generator {
       "src/Block/__blockName__.tsx",
     ];
 
-    files.forEach(f => {
+    files.forEach((f) => {
       const dest = f
         .replace(/__blockName__/, this.props.blockName)
         .replace(/\bdot\./, ".");
