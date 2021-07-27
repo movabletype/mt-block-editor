@@ -25,9 +25,10 @@ module.exports = class extends Generator {
       },
     ];
 
-    return this.prompt(prompts).then(props => {
-      props.blockName = props.blockName.replace(/^[a-z]/g, c =>
-        c.toUpperCase()
+    return this.prompt(prompts).then((props) => {
+      props.blockName = props.blockName.replace(
+        /(^|[ _-]+)([a-z])/g,
+        (all, prefix, c) => c.toUpperCase()
       );
       this.props = props;
     });
