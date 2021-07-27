@@ -1,6 +1,8 @@
 const path = require("path");
+const svgToMiniDataURI = require("mini-svg-data-uri");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = async function (_, env) {
@@ -15,7 +17,7 @@ module.exports = async function (_, env) {
     },
     output: {
       path: path.join(__dirname, "docs", "dist"),
-      publicPath: "dist",
+      publicPath: "/dist",
     },
     resolve: {
       extensions: [".ts", ".js", ".tsx", ".json"],
@@ -35,7 +37,20 @@ module.exports = async function (_, env) {
             { loader: "postcss-loader", options: { sourceMap: isProd } },
           ],
         },
-        { test: /\.svg$/, use: "svg-url-loader" },
+        {
+          test: /\.svg$/,
+          type: "asset/inline",
+          generator: {
+            dataUrl: (content) => {
+              content = content.toString();
+              return svgToMiniDataURI(content);
+            },
+          },
+        },
+        {
+          resourceQuery: /raw/,
+          type: "asset/source",
+        },
       ],
     },
     plugins: [
@@ -49,6 +64,7 @@ module.exports = async function (_, env) {
       tinymce: "tinymce",
     },
     optimization: {
+      minimize: isProd,
       minimizer: [
         new TerserPlugin({
           cache: true,
@@ -60,6 +76,7 @@ module.exports = async function (_, env) {
             },
           },
         }),
+        new CssMinimizerPlugin(),
       ],
     },
     devServer: {

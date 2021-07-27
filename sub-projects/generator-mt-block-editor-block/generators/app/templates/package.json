@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production",
-    "start": "webpack-dev-server --hot --inline",
+    "start": "webpack serve --inline",
     "test": "jest",
     "check-types": "tsc",
     "lint": "eslint --fix --ext .ts --ext .tsx ./src"
@@ -29,14 +29,16 @@
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.4.2",
+    "css-minimizer-webpack-plugin": "^3.0.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.17.0",
     "husky": "^3.1.0",
-    "i18next-parser": "^1.0.0-beta9",
+    "i18next-parser": "^1.0.6",
     "jest": "^26.6.3",
     "mini-css-extract-plugin": "^0.8.2",
+    "mini-svg-data-uri": "^1.3.3",
     "mt-block-editor-block": "^1.1.3",
     "postcss-flexbugs-fixes": "^4.1.0",
     "postcss-import": "^12.0.1",
@@ -48,9 +50,9 @@
     "svg-url-loader": "^3.0.3",
     "terser-webpack-plugin": "^2.3.2",
     "typescript": "^3.7.4",
-    "webpack": "^5.10.1",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "webpack": "^5.47.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.0",
