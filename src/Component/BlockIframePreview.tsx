@@ -39,14 +39,8 @@ const editHandlers: EditHistoryHandlers = {
 function postMessageFunc(): void {
   const body = document.body;
   const html = document.documentElement;
-  const height = Math.max(
-    body.scrollHeight,
-    html.scrollHeight,
-  );
-  const width = Math.max(
-    body.scrollWidth,
-    html.scrollWidth,
-  );
+  const height = Math.max(body.scrollHeight, html.scrollHeight);
+  const width = Math.max(body.scrollWidth, html.scrollWidth);
   parent.postMessage(
     {
       method: "MTBlockEditorSetSize",
