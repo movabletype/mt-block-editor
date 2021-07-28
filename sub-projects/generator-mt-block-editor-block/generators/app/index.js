@@ -46,9 +46,11 @@ module.exports = class extends Generator {
             .replace(/(\s|[_-])+/g, "_")
             .toLowerCase();
         },
-        vrlidate: (str) => {
-          console.log(str);
-          return false;
+        validate: (str) => {
+          if (/^[a-zA-Z_]+$/.test(str)) {
+            return true;
+          }
+          return "Only alphabets and underscores can be used.";
         },
       },
     ];

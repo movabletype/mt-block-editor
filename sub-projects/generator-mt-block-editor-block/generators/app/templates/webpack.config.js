@@ -15,10 +15,6 @@ module.exports = async function (_, env) {
     entry: {
       [path.basename(__dirname)]: "./index.ts",
     },
-    output: {
-      path: path.join(__dirname, "docs", "dist"),
-      publicPath: "/dist",
-    },
     resolve: {
       extensions: [".ts", ".js", ".tsx", ".json"],
     },
