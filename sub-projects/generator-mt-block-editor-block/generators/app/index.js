@@ -23,6 +23,34 @@ module.exports = class extends Generator {
         message: "Your block name",
         default: this.appname.replace(/mt-block-editor-block-/, ""),
       },
+      {
+        type: "input",
+        name: "author",
+        message: "Author",
+        default: () => {
+          try {
+            return `${this.user.git.name()} <${this.user.git.email()}>`;
+          } catch (e) {
+            return "";
+          }
+        },
+      },
+      {
+        type: "input",
+        name: "vendorId",
+        message:
+          "Vendor ID (e.g. Organization name, store name or github accout name)",
+        default: (props) => {
+          return props.author
+            .replace(/\s+$|\s+<.*/, "")
+            .replace(/(\s|[_-])+/g, "_")
+            .toLowerCase();
+        },
+        vrlidate: (str) => {
+          console.log(str);
+          return false;
+        },
+      },
     ];
 
     return this.prompt(prompts).then((props) => {
@@ -87,9 +115,6 @@ module.exports = class extends Generator {
         Object.assign(
           {
             appname: this.appname,
-            author: "Taku Amano",
-            email: "tamano@sixapart.com",
-            vendorId: "tamano",
           },
           this.props
         )

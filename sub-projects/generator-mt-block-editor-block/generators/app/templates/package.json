@@ -15,7 +15,7 @@
       "pre-commit": "npm run lint && npx tsc && npm run build"
     }
   },
-  "author": "<%= author %> <<%= email %>>",
+  "author": "<%= author %>",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.8.0",
