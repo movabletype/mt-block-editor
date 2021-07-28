@@ -1,0 +1,9 @@
+{
+  "name": "<%= appname %>",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "cd mt-static/plugins/<%= blockName %> && webpack serve --inline",
+    "build-js": "cd mt-static/plugins/<%= blockName %> && npx webpack --mode=production",
+    "build": "npm run build-js && zip -r <%= appname %>.zip README.md LICENSE mt-static/plugins/<%= blockName %>/dist plugins"
+  }
+}

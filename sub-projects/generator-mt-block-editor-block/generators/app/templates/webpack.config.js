@@ -13,7 +13,7 @@ module.exports = async function (_, env) {
     devtool: isProd ? "source-map" : "inline-source-map",
     context: path.join(__dirname, "src"),
     entry: {
-      [path.basename(__dirname)]: "./index.ts",
+      "<%= scriptBasename %>": "./index.ts",
     },
     resolve: {
       extensions: [".ts", ".js", ".tsx", ".json"],
