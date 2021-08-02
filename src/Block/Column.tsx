@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect, CSSProperties } from "react";
+import React, { Fragment, useEffect, CSSProperties } from "react";
 import { render } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
@@ -245,6 +245,7 @@ class Column extends Block implements HasBlocks {
         preview = React.createElement(
           this.rootBlock,
           {
+            key: this.id,
             className: "mt-be-column",
             style: {
               width: "100%",
@@ -262,7 +263,7 @@ class Column extends Block implements HasBlocks {
     }
 
     return (
-      <>
+      <Fragment key={this.id}>
         <Editor
           key={this.id}
           block={this}
@@ -272,7 +273,7 @@ class Column extends Block implements HasBlocks {
           canRemove={canRemove}
         />
         {preview && <div style={STYLE_HIDDEN}>{preview}</div>}
-      </>
+      </Fragment>
     );
   }
 
