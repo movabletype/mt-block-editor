@@ -22,6 +22,7 @@ interface EditorProps extends EditorOptions {
 const Editor: React.FC<EditorProps> = ({
   block,
   focus,
+  focusBlock,
   canRemove,
 }: EditorProps) => {
   const { editor } = useEditorContext();
@@ -66,7 +67,7 @@ const Editor: React.FC<EditorProps> = ({
     <>
       <BlockSetupCommon block={block} keys={["className"]} />
       <div className="mt-be-columns" style={{ display: "flex" }}>
-        {block.blocks.map((c) => c.editor({ focus, canRemove }))}
+        {block.blocks.map((c) => c.editor({ focus, focusBlock, canRemove }))}
       </div>
       {focus && canRemove && (
         <BlockToolbar>
@@ -145,9 +146,15 @@ class Columns extends Block implements HasBlocks {
     return this.blocks;
   }
 
-  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
+  public editor({ focus, focusBlock, canRemove }: EditorOptions): JSX.Element {
     return (
-      <Editor key={this.id} block={this} focus={focus} canRemove={canRemove} />
+      <Editor
+        key={this.id}
+        block={this}
+        focus={focus}
+        focusBlock={focusBlock}
+        canRemove={canRemove}
+      />
     );
   }
 

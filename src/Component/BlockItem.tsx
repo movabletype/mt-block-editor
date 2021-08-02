@@ -3,7 +3,7 @@
  * http://react-dnd.github.io/react-dnd/examples
  */
 
-import React, { useRef, createRef, CSSProperties } from "react";
+import React, { useEffect, useRef, createRef, CSSProperties } from "react";
 import root from "react-shadow";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
@@ -33,6 +33,7 @@ interface DragObject extends DragObjectWithType {
 interface Props {
   block: Block;
   focus: boolean;
+  skipFocusDefault?: boolean;
   focusBlock?: boolean;
   ignoreClickEvent?: boolean;
   id: string;
@@ -56,6 +57,7 @@ const BlockItem: React.FC<Props> = ({
   id,
   block,
   focus,
+  skipFocusDefault,
   focusBlock,
   ignoreClickEvent,
   index,
@@ -129,6 +131,14 @@ const BlockItem: React.FC<Props> = ({
     },
   });
 
+  useEffect(() => {
+    block.wrapperElement = ref.current;
+
+    return () => {
+      block.isNewlyAdded = false;
+    };
+  });
+
   const [{ isDragging }, drag, preview] = useDrag({
     item: { type: parentBlock ? parentBlock.id : "block", id, index },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,10 +176,21 @@ const BlockItem: React.FC<Props> = ({
     rendered: false,
   };
 
+  const withBlockContext = !!(
+    focus ||
+    focusBlock ||
+    focusDescendant ||
+    b instanceof Column ||
+    b instanceof Columns
+  );
+
   return (
     <div
       key={b.id}
       data-mt-block-editor-block-id={b.id}
+      {...(skipFocusDefault
+        ? { "data-mt-block-editor-skip-focus-default": true }
+        : {})}
       onClick={(ev) => {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
@@ -267,39 +288,34 @@ const BlockItem: React.FC<Props> = ({
         {!focus && !(b instanceof Columns) && (
           <div className="mt-be-content-label">{b.contentLabel()}</div>
         )}
-        {focus ||
-        focusBlock ||
-        focusDescendant ||
-        b instanceof Column ||
-        b instanceof Columns ? (
+        {withBlockContext && (
           <BlockContext.Provider value={blockContext}>
             {ed}
             {focus && showButton && <DefaultToolbar />}
           </BlockContext.Provider>
-        ) : (
-          <>
-            <root.div>
-              <div
-                className={editor.opts.rootClassName || ""}
-                style={{ overflow: "auto" }}
-                {...editor.opts.rootAttributes}
-              >
-                {editor.stylesheets.map((s, i) => {
-                  if (s.type === StylesheetType.css) {
-                    return (
-                      <style type="text/css" key={i}>
-                        {s.data}
-                      </style>
-                    );
-                  } else {
-                    return <link rel="stylesheet" key={i} href={s.data} />;
-                  }
-                })}
-                {ed}
-              </div>
-            </root.div>
-          </>
         )}
+        <>
+          <root.div>
+            <div
+              className={editor.opts.rootClassName || ""}
+              style={{ overflow: "auto" }}
+              {...editor.opts.rootAttributes}
+            >
+              {editor.stylesheets.map((s, i) => {
+                if (s.type === StylesheetType.css) {
+                  return (
+                    <style type="text/css" key={i}>
+                      {s.data}
+                    </style>
+                  );
+                } else {
+                  return <link rel="stylesheet" key={i} href={s.data} />;
+                }
+              })}
+              {!withBlockContext && ed}
+            </div>
+          </root.div>
+        </>
       </div>
     </div>
   );

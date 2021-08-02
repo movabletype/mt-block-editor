@@ -71,18 +71,30 @@ export default function blockProperty<T extends EditorProps>(
 
     useEffect(() => {
       // focus
-      (() => {
-        const blockEl = document.querySelector(
-          `[data-mt-block-editor-block-id="${block.id}"]`
-        );
-        if (!blockEl) {
+      setTimeout(function () {
+        if (!block.wrapperElement) {
           return;
         }
+        const wrapperElement = block.wrapperElement as HTMLElement;
 
-        const focusEl = blockEl.querySelector<HTMLElement>(
+        const focusEl = wrapperElement.querySelector<HTMLElement>(
           `[data-mt-block-editor-focus-default]`
         );
         if (!focusEl) {
+          return;
+        }
+
+        // Skip if focusEl is a grand child
+        if (
+          focusEl.closest("[data-mt-block-editor-block-id]") !== wrapperElement
+        ) {
+          return;
+        }
+
+        if (
+          !block.isNewlyAdded &&
+          focusEl.closest(`[data-mt-block-editor-skip-focus-default]`)
+        ) {
           return;
         }
 
@@ -97,20 +109,18 @@ export default function blockProperty<T extends EditorProps>(
         }
 
         focusEl.focus();
-      })();
+      }, 10);
 
       // adjust height
-      (() => {
-        [
-          ...document.querySelectorAll<HTMLTextAreaElement>(
-            `[data-mt-block-editor-block-id="${block.id}"] textarea[data-min-rows]`
-          ),
-        ].forEach((target) => {
-          if (target.scrollHeight > target.offsetHeight) {
-            target.style.height = target.scrollHeight + "px";
-          }
-        });
-      })();
+      [
+        ...document.querySelectorAll<HTMLTextAreaElement>(
+          `[data-mt-block-editor-block-id="${block.id}"] textarea[data-min-rows]`
+        ),
+      ].forEach((target) => {
+        if (target.scrollHeight > target.offsetHeight) {
+          target.style.height = target.scrollHeight + "px";
+        }
+      });
     });
 
     return recursiveMap(children, (child: JSX.Element) => {

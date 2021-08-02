@@ -230,12 +230,12 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
     return `textarea-${this.id}`;
   }
 
-  public editor({ focus }: EditorOptions): JSX.Element {
+  public editor({ focus, focusBlock }: EditorOptions): JSX.Element {
     if (focus) {
       return <Editor key={this.id} block={this} focus={focus} />;
     }
 
-    if (this.htmlString()) {
+    if (focusBlock || this.htmlString()) {
       const preview = (
         <BlockContentEditablePreview block={this} html={this.htmlString()} />
       );

@@ -40,6 +40,24 @@ interface EditorProps extends EditorOptions {
   block: Text;
 }
 
+const TAG_NAME_MAP: { [key: string]: string } = {
+  p: "Paragraph",
+  h1: "Heading 1",
+  h2: "Heading 2",
+  h3: "Heading 3",
+  h4: "Heading 4",
+  h5: "Heading 5",
+  h6: "Heading 6",
+  pre: "Preformatted",
+} as const;
+
+const ToolbarVisibleStatus = {
+  DependsOnContent: Symbol(),
+  Visible: Symbol(),
+  Invisible: Symbol(),
+} as const;
+type ToolbarVisibleStatus = typeof ToolbarVisibleStatus[keyof typeof ToolbarVisibleStatus];
+
 const Editor: React.FC<EditorProps> = ({
   block,
   focus,
@@ -165,9 +183,13 @@ const Editor: React.FC<EditorProps> = ({
                 }
               }
               const text = c.childNodes.length === 0 ? "" : c.outerHTML;
-
               // eslint-disable-next-line @typescript-eslint/no-use-before-define
-              addBlock(new Text({ text, toolbarDefaultVisible: false }), block);
+              const textBlock = new Text({
+                text,
+                toolbarVisibleStatus: ToolbarVisibleStatus.Invisible,
+              });
+
+              addBlock(textBlock, block);
             });
           } else {
             setFocusedId(null);
@@ -253,6 +275,11 @@ const Editor: React.FC<EditorProps> = ({
 
   const html = block.html();
   const isInSetupMode = editor.opts.mode === "setup";
+  const toolbarVisible =
+    block.toolbarVisibleStatus === ToolbarVisibleStatus.Visible ||
+    (block.toolbarVisibleStatus === ToolbarVisibleStatus.DependsOnContent &&
+      html === "");
+  block.toolbarVisibleStatus = ToolbarVisibleStatus.DependsOnContent;
 
   return (
     <div
@@ -281,7 +308,7 @@ const Editor: React.FC<EditorProps> = ({
         rows={2}
         hasBorder={false}
         className={`mt-be-block-toolbar--tinymce ${
-          html !== "" || !block.toolbarDefaultVisible ? "invisible" : ""
+          toolbarVisible ? "" : "invisible"
         }`}
         onMouseDown={(ev) => {
           if (ev.target instanceof HTMLElement && ev.target.closest(".tox")) {
@@ -306,7 +333,8 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public text = "";
   public editorStyle: CSSProperties = {};
   public tinymce: TinyMCE | null = null;
-  public toolbarDefaultVisible = true;
+  public toolbarVisibleStatus: ToolbarVisibleStatus =
+    ToolbarVisibleStatus.DependsOnContent;
 
   public constructor(init?: Partial<Text>) {
     super();
@@ -322,7 +350,11 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public contentLabel(): string {
     const m = this.htmlString().match(/<(\w+)/);
     if (m) {
-      return m[1].toLowerCase();
+      let label = m[1].toLowerCase();
+      if (TAG_NAME_MAP[label]) {
+        label = t(TAG_NAME_MAP[label]);
+      }
+      return `${super.contentLabel()} - ${label}`;
     } else {
       return super.contentLabel();
     }
@@ -342,7 +374,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     return `textarea-${this.id}`;
   }
 
-  public editor({ focus, canRemove }: EditorOptions): JSX.Element {
+  public editor({ focus, focusBlock, canRemove }: EditorOptions): JSX.Element {
     if (focus) {
       return (
         <Editor
@@ -354,9 +386,15 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
       );
     }
 
-    if (this.htmlString()) {
+    if (focusBlock || this.htmlString()) {
       const preview = (
-        <BlockContentEditablePreview block={this} html={this.htmlString()} />
+        <BlockContentEditablePreview
+          block={this}
+          html={this.htmlString()}
+          onMouseUp={() => {
+            this.toolbarVisibleStatus = ToolbarVisibleStatus.Visible;
+          }}
+        />
       );
       return (
         <>

@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect } from "react";
+import React, { useEffect, CSSProperties } from "react";
 import { render } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
@@ -25,9 +25,18 @@ interface EditorProps extends EditorOptions {
 
 const COMPILE_TIMEOUT = 2000;
 
+const STYLE_HIDDEN: CSSProperties = {
+  position: "absolute",
+  overflow: "hidden",
+  height: "0px",
+  border: "none",
+};
+
 const Editor: React.FC<EditorProps> = ({
   block,
   focus,
+  focusBlock,
+  focusDescendant,
   canRemove,
 }: EditorProps) => {
   block.compiledHtml = "";
@@ -120,15 +129,18 @@ const Editor: React.FC<EditorProps> = ({
       <BlockSetupCommon block={block} keys={["className"]} />
       {block.blocks.map((b, i) => {
         const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
-        const focusItem = focusFirstBlock || getFocusedId() === b.id;
+        const focusItem = (focus && focusFirstBlock) || getFocusedId() === b.id;
         return (
           <BlockItem
             key={b.id}
             id={b.id}
             block={b}
             focus={focusItem}
-            focusBlock={focus}
-            ignoreClickEvent={focusFirstBlock}
+            skipFocusDefault={!(block.showPreview || block.isNewlyAdded)}
+            focusBlock={
+              !block.showPreview || focus || focusBlock || focusDescendant
+            }
+            ignoreClickEvent={focusItem && focusFirstBlock}
             index={i}
             parentBlock={block}
             canRemove={canRemove === true}
@@ -172,6 +184,7 @@ class Column extends Block implements HasBlocks {
   public static className = "mt-be-column";
   public static rootBlock: string | null = "div";
   public static selectable = false;
+  public static showPreview = true;
   public static get label(): string {
     return t("Column");
   }
@@ -200,12 +213,18 @@ class Column extends Block implements HasBlocks {
     return (this.constructor as typeof Column).rootBlock;
   }
 
+  public get showPreview(): boolean {
+    return (this.constructor as typeof Column).showPreview;
+  }
+
   public editor({
     focus,
     focusBlock,
     focusDescendant,
     canRemove,
   }: EditorOptions): JSX.Element {
+    let preview: null | JSX.Element = null;
+
     if (
       (this.constructor as typeof Column).typeId !== "core-column" &&
       ((this._html === "" &&
@@ -213,7 +232,7 @@ class Column extends Block implements HasBlocks {
         this.effectiveAddableBlockTypes().length === 0) ||
         (!focus && !focusDescendant && !focusBlock))
     ) {
-      const res = (
+      const iframePreview = (
         <BlockIframePreview
           key={this.id}
           block={this}
@@ -221,8 +240,9 @@ class Column extends Block implements HasBlocks {
           border="none"
         />
       );
+
       if (this.rootBlock) {
-        return React.createElement(
+        preview = React.createElement(
           this.rootBlock,
           {
             className: "mt-be-column",
@@ -230,19 +250,29 @@ class Column extends Block implements HasBlocks {
               width: "100%",
             },
           },
-          res
+          iframePreview
         );
       } else {
-        return res;
+        preview = iframePreview;
+      }
+
+      if (this.showPreview) {
+        return preview;
       }
     }
+
     return (
-      <Editor
-        key={this.id}
-        block={this}
-        focus={!!(focus || focusDescendant || focusBlock)}
-        canRemove={canRemove}
-      />
+      <>
+        <Editor
+          key={this.id}
+          block={this}
+          focus={focus}
+          focusBlock={focusBlock}
+          focusDescendant={focusDescendant}
+          canRemove={canRemove}
+        />
+        {preview && <div style={STYLE_HIDDEN}>{preview}</div>}
+      </>
     );
   }
 
@@ -275,12 +305,7 @@ class Column extends Block implements HasBlocks {
   public async compile({ editor }: SerializeOptions): Promise<void> {
     return new Promise((resolve, reject) => {
       const div = document.createElement("DIV");
-      Object.assign(div.style, {
-        position: "absolute",
-        overflow: "hidden",
-        height: "0px",
-        border: "none",
-      });
+      Object.assign(div.style, STYLE_HIDDEN);
       document.body.appendChild(div);
 
       const onSetCompiledHtml = (error?: Error): void => {

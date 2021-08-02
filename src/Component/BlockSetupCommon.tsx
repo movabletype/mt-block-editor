@@ -25,7 +25,19 @@ const BlockSetupCommon: React.FC<EditorProps> = blockProperty(
             style={{ display: "inline-block", width: "100%" }}
           >
             <div>{t(labelMap[k])}</div>
-            <input type="text" name={k} style={{ width: "100%" }} />
+            {k === "helpText" ? (
+              <textarea
+                name={k}
+                className="mt-be-input mt-be-input--full-width"
+                data-min-rows="1"
+              />
+            ) : (
+              <input
+                type="text"
+                name={k}
+                className="mt-be-input mt-be-input--full-width"
+              />
+            )}
           </label>
         </BlockSetup>
       ))}

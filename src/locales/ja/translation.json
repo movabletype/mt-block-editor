@@ -27,5 +27,13 @@
   "Text": "テキスト",
   "Two columns": "2カラム",
   "Three columns": "3カラム",
-  "Four columns": "4カラム"
+  "Four columns": "4カラム",
+  "Paragraph": "段落",
+  "Heading 1": "見出し1",
+  "Heading 2": "見出し2",
+  "Heading 3": "見出し3",
+  "Heading 4": "見出し4",
+  "Heading 5": "見出し5",
+  "Heading 6": "見出し6",
+  "Preformatted": "書式設定済み"
 }

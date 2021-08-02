@@ -22,6 +22,10 @@ $root-font-size: 16px;
   position: relative;
 
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre {
+    font-size: inherit;
+    line-height: inherit;
+    font-family: inherit;
+    word-break: break-all;
     margin: 0;
   }
 
@@ -335,6 +339,8 @@ $root-font-size: 16px;
       margin-bottom: 20px;
       font-size: calc($root-font-size * 0.75);
       font-weight: normal;
+      font-family: inherit;
+      line-height: normal;
       color: #666;
       > input,
       > textarea {
@@ -352,11 +358,13 @@ $root-font-size: 16px;
     .mt-be-content-label {
       pointer-events: none;
       position: absolute;
-      top: 4px;
+      top: -9px;
       left: 4px;
+      padding: 0 5px;
       font-size: calc($root-font-size * 0.75);
       color: #666;
       transition: 0.1s;
+      background: white;
       opacity: 0;
     }
     &:hover > .mt-be-content-label {
@@ -521,25 +529,25 @@ $root-font-size: 16px;
   }
 
   /* mt-be-columns */
-  .mt-be-column {
-    position: relative;
-    flex-basis: 50%;
-    padding: 0 15px;
+  .mt-be-columns {
+    .mt-be-column {
+      position: relative;
+      flex-basis: 50%;
+      padding: 0 15px;
 
-    &:first-child {
-      padding-left: 0;
-    }
+      &:first-child {
+        padding-left: 0;
+      }
 
-    &:last-child {
-      padding-right: 0;
-    }
-    .mt-be-btn-add {
-      opacity: 1;
+      &:last-child {
+        padding-right: 0;
+      }
     }
   }
 
   .mt-be-block-toolbar {
     position: absolute;
+    width: max-content;
     left: -8px;
     background: white;
     z-index: 1000;
