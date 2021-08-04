@@ -12,7 +12,6 @@ import {
   getElementById,
   sanitize,
   isIos,
-  isTouchDevice,
   getShadowDomSelectorSet,
 } from "../util";
 import EditorMode from "../Component/EditorMode";
@@ -253,30 +252,7 @@ const Editor: React.FC<EditorProps> = ({
     });
     tinymce.init(settings);
 
-    const onMouseMove = (): void => {
-      if (tinymce.activeEditor !== block.tinymce) {
-        return;
-      }
-
-      getElementById(`${block.tinymceId()}toolbar`).classList.remove(
-        "invisible"
-      );
-    };
-
-    if (!isTouchDevice()) {
-      window.addEventListener("mousemove", onMouseMove, {
-        capture: true,
-        passive: true,
-      });
-    }
-
     return () => {
-      if (!isTouchDevice()) {
-        window.removeEventListener("mousemove", onMouseMove, {
-          capture: true,
-        });
-      }
-
       removeTinyMCEFromBlock(block);
     };
   });
@@ -292,11 +268,6 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <div
       onClick={() => {
-        getElementById(`${block.tinymceId()}toolbar`).classList.remove(
-          "invisible"
-        );
-      }}
-      onMouseMove={() => {
         getElementById(`${block.tinymceId()}toolbar`).classList.remove(
           "invisible"
         );
