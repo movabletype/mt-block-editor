@@ -329,7 +329,8 @@ $root-font-size: 16px;
       line-height: normal;
       color: #666;
       > input,
-      > textarea {
+      > textarea,
+      > select {
         @mixin input;
         @mixin full-width;
       }
