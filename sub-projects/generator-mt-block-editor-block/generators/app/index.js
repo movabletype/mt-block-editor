@@ -32,6 +32,7 @@ const mtPluginFiles = [
   "mt-plugin/package.json",
   "mt-plugin/README.md",
   "mt-plugin/LICENSE",
+  "mt-plugin/scripts/build-package.js",
   "mt-plugin/plugins/__blockName__/config.yaml",
   "mt-plugin/plugins/__blockName__/tmpl/extension.tmpl",
 ];
@@ -169,10 +170,9 @@ module.exports = class extends Generator {
       this.spawnCommand("npm", ["install"], {
         cwd: `mt-static/plugins/${this.props.blockName}`,
       });
-    } else {
-      this.installDependencies({
-        bower: false,
-      });
     }
+    this.installDependencies({
+      bower: false,
+    });
   }
 };
