@@ -14,7 +14,6 @@ const blockFiles = [
   "docs/index.html",
   "README.md",
   "babel.config.js",
-  "package-lock.json",
   "package.json",
   "tsconfig.json",
   "postcss.config.js",
