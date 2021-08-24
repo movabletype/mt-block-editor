@@ -1,7 +1,7 @@
 {
   "name": "<%= appname %>",
   "scripts": {
-    "start": "cd mt-static/plugins/<%= blockName %> && npx webpack serve --inline",
+    "start": "cd mt-static/plugins/<%= blockName %> && npx webpack --watch",
     "build-js": "cd mt-static/plugins/<%= blockName %> && npx webpack --mode=production",
     "build": "npm run build-js && node scripts/build-package.js"
   },

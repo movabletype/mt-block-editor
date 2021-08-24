@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production",
-    "start": "webpack serve --inline",
+    "start": "webpack serve",
     "test": "jest",
     "check-types": "tsc",
     "lint": "eslint --fix --ext .ts --ext .tsx ./src"
