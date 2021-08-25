@@ -13,6 +13,7 @@ import BlockFactory from "./BlockFactory";
 import BlockIframePreview from "./Component/BlockIframePreview";
 import BlockToolbar from "./Component/BlockToolbar";
 import BlockToolbarButton from "./Component/BlockToolbarButton";
+import BlockConfigPanel from "./Component/BlockConfigPanel";
 import BlockSetup from "./Component/BlockSetup";
 import BlockSetupCommon from "./Component/BlockSetupCommon";
 import BlockLabel from "./Component/BlockLabel";
@@ -59,6 +60,7 @@ export class EditorUtil {
     BlockIframePreview,
     BlockToolbar,
     BlockToolbarButton,
+    BlockConfigPanel,
     BlockSetup,
     BlockSetupCommon,
     BlockLabel,
