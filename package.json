@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --mode=production && npm run build-register-boilerplate-blocks",
     "build-register-boilerplate-blocks": "tsc --project tsconfig.rbb.json && mkdirp docs/dist && terser -c -m --source-map 'content=\"./rbb-dist/src/register-boilerplate-blocks.js.map\"' --source-map 'url=\"register-boilerplate-blocks.js.map\"' ./rbb-dist/src/register-boilerplate-blocks.js -o ./docs/dist/register-boilerplate-blocks.js && rimraf ./rbb-dist",
-    "start": "webpack serve --inline",
+    "start": "webpack serve",
     "test": "jest",
     "check-types": "tsc",
     "lint": "eslint --fix --ext .ts --ext .tsx ./src",
@@ -72,7 +72,7 @@
     "typescript": "^3.9.7",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^4.0.0"
   },
   "dependencies": {
     "core-js": "^3.6.5",

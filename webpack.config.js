@@ -89,9 +89,13 @@ module.exports = async function (_, env) {
       ],
     },
     devServer: {
-      contentBase: "docs",
-      watchContentBase: true,
-      overlay: true,
+      static: {
+        directory: path.resolve(__dirname, "docs"),
+        watch: true,
+      },
+      client: {
+        overlay: true,
+      },
     },
   };
 };
