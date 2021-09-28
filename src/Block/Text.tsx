@@ -179,6 +179,21 @@ const Editor: React.FC<EditorProps> = ({
                   target = c;
                 }
                 if (target) {
+                  if (
+                    // has no text content
+                    target.textContent === "" &&
+                    // has no embedded / interactive content
+                    // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories
+                    target.querySelector(
+                      `audio, canvas, embed, iframe, img, math, object, svg, video, button, details, embed, iframe, keygen, select, textarea, input:not([type="hidden"]), menu:not([type="toolbar"])`
+                    ) === null
+                  ) {
+                    while (target && target.firstChild !== null) {
+                      target = target.firstChild as HTMLElement;
+                    }
+                    caret.removeAttribute(CARET_ATTR);
+                  }
+
                   target.insertBefore(caret, target.firstChild);
                 }
               }
