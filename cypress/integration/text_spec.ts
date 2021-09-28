@@ -167,6 +167,58 @@ context("Text", () => {
     });
   });
 
+  context("new blocks", () => {
+    it("a plain paragraph should be added", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      type("a\nb");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->"
+      );
+    });
+
+    it("a strong element should be added", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(`[aria-label="Bold"] button`).click({ force: true });
+      wait(1);
+      type("a\nb");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p><strong>a</strong></p><!-- /mt-beb --><!-- mt-beb --><p><strong>b</strong></p><!-- /mt-beb -->"
+      );
+    });
+
+    it("em and span elements should be added", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(`[aria-label="Italic"] button`).click({ force: true });
+      wait(1);
+      cy.get(`[aria-label="Text color"] button`).click({ multiple: true, force: true });
+      wait(1);
+      cy.get(`div[data-mce-color="#008000"]`).click({ force: true });
+      wait(1);
+      type("a\nb");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><p><span style="color: #008000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p><span style="color: #008000;"><em>b</em></span></p><!-- /mt-beb -->`
+      );
+    });
+  });
+
   context("style", () => {
     ["20px", "30px"].forEach((fs) => {
       it(fs, () => {
