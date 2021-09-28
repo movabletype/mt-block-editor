@@ -180,6 +180,13 @@ const Editor: React.FC<EditorProps> = ({
                   target = c;
                 }
                 if (target) {
+                  if (target.textContent === "") {
+                    while (target && target.firstChild !== null) {
+                      target = target.firstChild as HTMLElement;
+                    }
+                    caret.removeAttribute(CARET_ATTR);
+                  }
+
                   target.insertBefore(caret, target.firstChild);
                 }
               }
