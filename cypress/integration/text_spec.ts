@@ -174,7 +174,9 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\nb");
+      type("a\n");
+      wait(1);
+      type("b");
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -188,9 +190,11 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Bold"] button`).click({ force: true });
+      cy.get(`[aria-label="Bold"] button, button[aria-label="太字"]`).click({ force: true });
       wait(1);
-      type("a\nb");
+      type("a\n");
+      wait(1);
+      type("b");
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -204,17 +208,19 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Italic"] button`).click({ force: true });
+      cy.get(`[aria-label="Italic"] button, button[aria-label="斜体"]`).click({ force: true });
       wait(1);
-      cy.get(`[aria-label="Text color"] button`).click({ multiple: true, force: true });
+      cy.get(`[aria-label="Text color"] button, [aria-label="テキストの色"] span.tox-split-button__chevron`).click({ multiple: true, force: true });
       wait(1);
-      cy.get(`div[data-mce-color="#008000"]`).click({ force: true });
+      cy.get(`div[data-mce-color="#000000"]`).click({ force: true });
       wait(1);
-      type("a\nb");
+      type("a\n");
+      wait(1);
+      type("b");
 
       serializedTextarea(textareaId).should(
         "have.value",
-        `<!-- mt-beb --><p><span style="color: #008000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p><span style="color: #008000;"><em>b</em></span></p><!-- /mt-beb -->`
+        `<!-- mt-beb --><p><span style="color: #000000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p><span style="color: #000000;"><em>b</em></span></p><!-- /mt-beb -->`
       );
     });
   });
