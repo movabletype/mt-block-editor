@@ -764,18 +764,21 @@ $root-font-size: 16px;
 
     .mt-be-label-name {
       display: flex;
-      align-items: center;
+      align-items: baseline;
 
       .mt-be-label-block {
-        font-weight: normal;
         margin-top: 4px;
         width: 25%;
         max-width: 25%;
+        text-align: right;
+        padding: 0 15px;
+        white-space: nowrap;
       }
 
       .mt-be-input {
         @mixin input;
         width: 75%;
+        margin: 0 15px;
       }
     }
   }
@@ -953,5 +956,37 @@ $root-font-size: 16px;
     .mt-be-block-command-panel {
       padding: 4px 12px;
     }
+  }
+}
+
+.mt-be-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.mt-be-overlay-enter-done {
+    opacity: 1;
+  }
+  &.mt-be-overlay-exit,
+  &.overlay-enter {
+    opacity: 0;
+  }
+
+  .mt-be-modal {
+    background: white;
+    width: 50%;
+
+    label {
+      display: block;
+    }
+
   }
 }
