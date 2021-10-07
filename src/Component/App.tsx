@@ -90,6 +90,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   };
 
   const onWindowClick = (ev: Event): void => {
+    if (document.querySelector(".mt-be-overlay")) {
+      return;
+    }
+
     const editorEl = editor.editorElement;
 
     if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
