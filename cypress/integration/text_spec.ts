@@ -168,7 +168,7 @@ context("Text", () => {
   });
 
   context("new blocks", () => {
-    it("a plain paragraph should be added", () => {
+    it("a plain paragraph", () => {
       cy.get(
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
@@ -182,7 +182,7 @@ context("Text", () => {
       );
     });
 
-    it("a strong element should be added", () => {
+    it("a strong element", () => {
       cy.get(
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
@@ -194,11 +194,11 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        "<!-- mt-beb --><p><strong>a</strong></p><!-- /mt-beb --><!-- mt-beb --><p><strong>b</strong></p><!-- /mt-beb -->"
+        "<!-- mt-beb --><p><strong>a</strong></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->"
       );
     });
 
-    it("em and span elements should be added", () => {
+    it("em and span elements", () => {
       cy.get(
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
@@ -214,7 +214,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        `<!-- mt-beb --><p><span style="color: #008000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p><span style="color: #008000;"><em>b</em></span></p><!-- /mt-beb -->`
+        `<!-- mt-beb --><p><span style="color: #008000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
       );
     });
   });
