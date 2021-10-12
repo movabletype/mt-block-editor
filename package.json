@@ -84,7 +84,7 @@
     "react-dnd-touch-backend": "^10.0.2",
     "react-dom": "^16.14.0",
     "react-i18next": "^11.7.3",
-    "react-shadow": "^17.6.0",
+    "react-shadow": "^19.0.2",
     "react-transition-group": "^4.4.1"
   }
 }
