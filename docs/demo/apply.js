@@ -151,6 +151,19 @@ function apply(opts) {
           settings.valid_children = "+a[div]";
         });
 
+        ed.on("beforeRenderIframePreview", (args) => {
+          const m = args.html.match(
+            /^\s*<iframe[^>]+ src="(https:\/\/form\.movabletype\.net[^"]+)"[^>]*><\/iframe>\s*$/i
+          );
+          if (m) {
+            args.scheme = "blob";
+            args.html = `
+<iframe width="100%" src="${m[1]}" frameborder="0" scrolling="no"></iframe>
+<script src="https://form.movabletype.net/dist/parent-loader.js" type="text/javascript"></script>
+    `;
+          }
+        });
+
         document
           .getElementById("undo")
           .addEventListener("click", keydown(ed, "z"));
