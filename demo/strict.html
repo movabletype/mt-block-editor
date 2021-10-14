@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>定形入力 - Movable Type Block Editor</title>
+    <meta
+      name="description"
+      content="MovableType.net と Movable Type で利用可能な「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!--
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; script-src 'self' https://cdnjs.cloudflare.com https://cdn.movabletype.net https://gist.github.com; connect-src 'self' https://noembed.com;img-src * data: blob: 'unsafe-inline'; frame-src * data: blob:; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline'">
+    -->
+
+    <link rel="canonical" href="https://movabletype.github.io/mt-block-editor/demo/strict.html">
+
+    <!-- 共通設定 -->
+    <meta property="og:title" content="定形入力 - Movable Type Block Editor" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://movabletype.github.io/mt-block-editor/demo/strict.html" />
+    <meta property="og:image" content="https://movabletype.github.io/mt-block-editor/demo/images/ogimage.png" />
+    <meta property="og:site_name" content="Movable Type Block Editor" />
+    <meta
+      property="og:description"
+      content="MovableType.net と Movable Type で利用可能な「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta property="og:locale" content="ja_JP" />
+    <!-- Facebookの設定 -->
+    <meta property="fb:app_id" content="1382941401998962" />
+    <!-- Twitterの設定 -->
+    <meta name="twitter:card" content="summary" />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"
+      integrity="sha256-Xt8pc4G0CdcRvI0nZ2lRpZ4VHng0EoUDMlGcBSQ9HiQ="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="/mt-block-editor/tinymce/js/tinymce/tinymce.min.js"
+      referrerpolicy="origin"
+      defer
+    ></script>
+    <script type="module" src="/mt-block-editor/demo/apply.js?ts=8085b8541335b9200707243819c6d81048fba186" defer></script>
+    <script type="application/json" id="mt-block-editor-options">
+      {
+        "shortcutBlockTypes": [],
+        "panelBlockTypes": [
+          "custom-1header",
+          "custom-2header",
+          "custom-3header",
+          "custom-paragraph",
+          "custom-image_text",
+          "custom-gallery"
+        ]
+      }
+    </script>
+    <script src="/mt-block-editor/demo/fallback.js?ts=8085b8541335b9200707243819c6d81048fba186" defer></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha256-aAr2Zpq8MZ+YA/D6JtRD3xtrwpEz2IqOS+pWD/7XKIw="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"
+      integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o="
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/mt-block-editor/demo/index.css" />
+    <link rel="shortcut icon" href="/mt-block-editor/demo/images/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      href="/mt-block-editor/demo/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/mt-block-editor/demo/images/favicon/android-chrome-256x256.png"
+    />
+    <link rel="stylesheet" href="/mt-block-editor/demo/index.css?ts=8085b8541335b9200707243819c6d81048fba186" />
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-light bg-light justify-content-between"
+    >
+      <!--
+        <a class="navbar-brand" href="/mt-block-editor/">Movable Type Block Editor</a>
+      -->
+      <div class="control-buttons">
+        <button
+          type="button"
+          id="undo"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="取り消す"
+          disabled
+        >
+          <i class="undo" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          id="redo"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="やり直す"
+          disabled
+        >
+          <i class="redo" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          id="export"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="出力HTMLをダウンロード"
+        >
+          <i class="file-export" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="blockeditorlogo">
+        <img
+          src="/mt-block-editor/demo/images/blockeditorlogo.svg"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_pc"
+        />
+        <img
+          src="/mt-block-editor/demo/images/logo.png"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_sp"
+        />
+      </p>
+      <div class="customize-buttons">
+        <ul>
+          <li>
+            <a href="/mt-block-editor/">標準</a>
+          </li>
+          <li>
+            <a href="/mt-block-editor/demo/custom-block.html">カスタムブロック</a>
+          </li>
+          <li>
+            <a class="active" href="/mt-block-editor/demo/strict.html">定形入力</a>
+          </li>
+          <li>
+            <a href="/mt-block-editor/demo/markdown.html">Markdownエディタ</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="mt-5">
+            <textarea id="body" class="d-none">
+            &lt;!-- mt-beb t=&quot;custom-1header&quot; --&gt;&lt;!-- mt-beb t=&quot;sixapart-input&quot; m=&#039;{&quot;blockElement&quot;:&quot;h1&quot;,&quot;text&quot;:&quot;定形入力&quot;,&quot;label&quot;:&quot;大見出し&quot;,&quot;helpText&quot;:&quot;H1で出力されます&quot;}&#039; --&gt;&lt;h1&gt;定形入力&lt;/h1&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-paragraph&quot; --&gt;&lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&#039;{&quot;blockElement&quot;:&quot;p&quot;,&quot;formatter&quot;:&quot;nl2br&quot;,&quot;text&quot;:&quot;定形入力のカスタムブロックのみで構成することもできます。&quot;,&quot;label&quot;:&quot;段落&quot;,&quot;helpText&quot;:&quot;Pで出力されます&quot;}&#039; --&gt;&lt;p&gt;テキストの入力のみで装飾を受け付けない、定形入力のフォーマットのみで構成することもできます。&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-image_text&quot; --&gt;&lt;!-- mt-beb t=&quot;core-columns&quot; m=&#039;{&quot;className&quot;:&quot;row&quot;}&#039; --&gt;&lt;div class=&quot;mt-be-columns row&quot; style=&quot;display: flex&quot;&gt;&lt;!-- mt-beb t=&quot;core-column&quot; m=&#039;{&quot;className&quot;:&quot;col-sm-6&quot;}&#039; --&gt;&lt;div class=&#039;mt-be-column col-sm-6&#039;&gt;&lt;!-- mt-beb t=&quot;core-image&quot; --&gt;&lt;figure&gt;&lt;img src=&quot;/mt-block-editor/demo/images/strict/image.png&quot; style=&quot;max-width:100%;height:auto&quot;/&gt;&lt;figcaption&gt;画像のキャプションです&lt;/figcaption&gt;&lt;/figure&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;core-column&quot; m=&#039;{&quot;className&quot;:&quot;col-sm-6&quot;}&#039; --&gt;&lt;div class=&#039;mt-be-column col-sm-6&#039;&gt;&lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&#039;{&quot;blockElement&quot;:&quot;p&quot;,&quot;formatter&quot;:&quot;nl2br&quot;,&quot;text&quot;:&quot;画像の説明テキストです。\n幅576px以上の画面では2列で、それより小さい幅の画面では1列で表示されます。&quot;}&#039; --&gt;&lt;p&gt;画像の説明テキストです。&lt;br/&gt;幅576px以上の画面では2列で、それより小さい幅の画面では1列で表示されます。&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;
+
+</textarea
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-muted bg-light">
+      <div class="p-3 p-md-5 text-center">
+        Copyright © Six Apart Ltd. All Rights Reserved.
+      </div>
+    </footer>
+  </body>
+</html>
