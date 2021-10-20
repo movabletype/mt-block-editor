@@ -45,8 +45,8 @@ function apply(opts) {
     isDev
       ? "../dist/mt-block-editor.js"
       : "/mt-block-editor/dist/mt-block-editor.js",
-    "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/0.0.10/mt-block-editor-block-oembed.js",
-    "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/0.0.9/mt-block-editor-block-form-element.js",
+    "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.3/mt-block-editor-block-oembed.js",
+    "https://cdn.movabletype.net/libs/mt-block-editor-block-form-element/1.0.4/mt-block-editor-block-form-element.js",
     isDev ? "./register-block.js" : "/mt-block-editor/demo/register-block.js",
   ].reduce(
     (chain, m) => chain.then(() => import(`${m}?ts=${ts}`)),
@@ -58,7 +58,7 @@ function apply(opts) {
     cssUrls.push("/mt-block-editor/dist/mt-block-editor.css");
   }
   cssUrls.push(
-    "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/0.0.10/mt-block-editor-block-oembed.css"
+    "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.3/mt-block-editor-block-oembed.css"
   );
   cssUrls.forEach((url) => {
     const link = window.document.createElement("LINK");
