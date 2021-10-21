@@ -43,10 +43,6 @@ interface Props {
   parentBlock?: Block;
 }
 
-interface BlockInstance {
-  getNode(): HTMLDivElement | null;
-}
-
 const DefaultToolbar: React.FC = () => {
   const { rendered } = useBlockContext();
 
