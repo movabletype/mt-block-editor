@@ -227,7 +227,7 @@ const Editor: React.FC<EditorProps> = ({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const sel = (ed.selection.getSel() as any) as Selection;
               const start = ed.selection.getStart();
-              const rng = ed.selection.getRng(false);
+              const rng = ed.selection.getRng();
               if (
                 rng.collapsed &&
                 rng.startOffset === 0 &&

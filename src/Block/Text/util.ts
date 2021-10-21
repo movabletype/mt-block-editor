@@ -45,7 +45,7 @@ function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
 
     if (startNode && endNode) {
       try {
-        const rng = ed.selection.getRng(false);
+        const rng = ed.selection.getRng();
         rng.setStart(startNode, start.offset);
         rng.setEnd(endNode, end.offset);
         return;
