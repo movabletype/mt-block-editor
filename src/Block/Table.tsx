@@ -46,7 +46,6 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
 
@@ -54,7 +53,6 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         block.tinymce = ed;
       },
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
         if (focus) {

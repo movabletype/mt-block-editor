@@ -78,7 +78,6 @@ const Editor: React.FC<EditorProps> = ({
         "bullist numlist outdent indent | blockquote link unlink",
       ],
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
 
@@ -86,7 +85,6 @@ const Editor: React.FC<EditorProps> = ({
         block.tinymce = ed;
       },
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
         if (focus) {
