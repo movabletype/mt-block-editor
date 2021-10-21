@@ -86,9 +86,11 @@ export function getShadowDomSelectorSet(blockId: string): SelectorSet | null {
     return null;
   }
 
-  const s = div.shadowRoot.getSelection
-    ? div.shadowRoot.getSelection() // chrome
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const s = (div.shadowRoot as any).getSelection
+    ? (div.shadowRoot as any).getSelection() // chrome
     : document.getSelection(); // firefox
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // currently only supports text nodes
   if (
