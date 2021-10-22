@@ -60,8 +60,8 @@ export function registerBlockType(block) {
   });
 }
 
-export function serializedTextarea(id) {
-  cy.window().then((w) => w.MTBlockEditor.serialize());
+export function serializedTextarea(id, opts = {}) {
+  cy.window().then(opts, (w) => w.MTBlockEditor.serialize());
   return cy.get(`#${id}`);
 }
 
