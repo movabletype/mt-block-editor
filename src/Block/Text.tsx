@@ -78,7 +78,6 @@ const Editor: React.FC<EditorProps> = ({
         "bullist numlist outdent indent | blockquote link unlink",
       ],
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
       inline: true,
 
@@ -86,7 +85,6 @@ const Editor: React.FC<EditorProps> = ({
         block.tinymce = ed;
       },
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
         if (focus) {
@@ -229,7 +227,7 @@ const Editor: React.FC<EditorProps> = ({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const sel = (ed.selection.getSel() as any) as Selection;
               const start = ed.selection.getStart();
-              const rng = ed.selection.getRng(false);
+              const rng = ed.selection.getRng();
               if (
                 rng.collapsed &&
                 rng.startOffset === 0 &&
