@@ -114,7 +114,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\n\n\n");
+      type("a\n\n\n", { delay: 100 });
       wait(1);
       type("b{leftarrow}{backspace}");
 
@@ -130,7 +130,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\n{shift}\nb{leftarrow}{leftarrow}{backspace}");
+      type("a\n{shift}\nb{leftarrow}{leftarrow}{backspace}", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -144,7 +144,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\nb{shift}\nc{leftarrow}{backspace}");
+      type("a\nb{shift}\nc{leftarrow}{backspace}", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -158,7 +158,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\nbc{leftarrow}{shift}\n{backspace}");
+      type("a\nbc{leftarrow}{shift}\n{backspace}", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -295,8 +295,8 @@ context("Text", () => {
         range.setStart(el.childNodes[0].childNodes[0], 4);
         document.getSelection().removeAllRanges(range);
         document.getSelection().addRange(range);
+        el.click();
       });
-      cy.get(`.mt-be-block`).click();
 
       wait(1);
       type("{backspace}{backspace}{backspace}{backspace}Block");
@@ -326,8 +326,8 @@ context("Text", () => {
         range.setEnd(el.childNodes[0].childNodes[0], 4);
         document.getSelection().removeAllRanges(range);
         document.getSelection().addRange(range);
+        el.click();
       });
-      cy.get(`.mt-be-block`).click();
 
       wait(1);
       type("{backspace}Block");
@@ -363,8 +363,8 @@ context("Text", () => {
         range.setEnd(el.childNodes[0].childNodes[3].childNodes[0], 1);
         document.getSelection().removeAllRanges(range);
         document.getSelection().addRange(range);
+        el.click();
       });
-      cy.get(`.mt-be-block`).click();
 
       wait(1);
       type("{backspace}");
