@@ -136,7 +136,7 @@ context("Undo", () => {
         "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
       );
 
-      type("{ctrl}{shift}zz");
+      type("{ctrl}{shift}zz", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -150,7 +150,7 @@ context("Undo", () => {
         "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
       );
 
-      type("{ctrl}yy");
+      type("{ctrl}yy", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -341,13 +341,13 @@ context("Undo", () => {
         `<!-- mt-beb t="core-columns" --><div class="mt-be-columns" style="display: flex"><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>2</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'></div><!-- /mt-beb --></div><!-- /mt-beb -->`
       );
 
-      type("{ctrl}yy");
+      type("{ctrl}yy", { delay: 50 });
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb t="core-columns" --><div class="mt-be-columns" style="display: flex"><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>2</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>3</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'></div><!-- /mt-beb --></div><!-- /mt-beb -->`
       );
 
-      type("{ctrl}yy");
+      type("{ctrl}yy", { delay: 50 });
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb t="core-columns" --><div class="mt-be-columns" style="display: flex"><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>2</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>3</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" --><div class='mt-be-column'><!-- mt-beb --><p>4</p><!-- /mt-beb --></div><!-- /mt-beb --></div><!-- /mt-beb -->`
