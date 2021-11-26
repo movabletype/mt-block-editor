@@ -240,6 +240,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   };
 
   if (typeof html !== "string") {
+    header = "";
     html.then(_setHtmlText);
   }
 
