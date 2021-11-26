@@ -125,15 +125,15 @@ const Editor: React.FC<EditorProps> = ({
         };
 
         ed.on("NodeChange Change", () => {
-          if (
-            root.childNodes.length <= 1 ||
-            root.querySelector(".mce-pastebin")
-          ) {
+          const children = ([...root.childNodes] as HTMLElement[]).filter(
+            (e) => !e.classList.contains("mce-resizehandle")
+          );
+
+          if (children.length <= 1 || root.querySelector(".mce-pastebin")) {
             addEdit();
             return;
           }
 
-          const children = [...root.childNodes] as HTMLElement[];
           const firstChild = children.shift();
           if (!firstChild) {
             addEdit();
