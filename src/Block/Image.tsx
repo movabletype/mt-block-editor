@@ -75,8 +75,12 @@ class Image extends Block {
     }
   }
 
-  public editor({ focus }: EditorOptions): JSX.Element {
-    return focus ? <Editor key={this.id} block={this} /> : this.html();
+  public editor({ focus, focusBlock }: EditorOptions): JSX.Element {
+    return focus || focusBlock ? (
+      <Editor key={this.id} block={this} />
+    ) : (
+      this.html()
+    );
   }
 
   public html(): JSX.Element {

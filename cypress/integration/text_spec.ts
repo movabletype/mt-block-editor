@@ -114,7 +114,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\n\n\n", { delay: 50 });
+      type("a\n\n\n", { delay: 100 });
       wait(1);
       type("b{leftarrow}{backspace}");
 
@@ -130,7 +130,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\n{shift}\nb{leftarrow}{leftarrow}{backspace}");
+      type("a\n{shift}\nb{leftarrow}{leftarrow}{backspace}", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -144,7 +144,7 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\nb{shift}\nc{leftarrow}{backspace}");
+      type("a\nb{shift}\nc{leftarrow}{backspace}", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -158,11 +158,69 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      type("a\nbc{leftarrow}{shift}\n{backspace}");
+      type("a\nbc{leftarrow}{shift}\n{backspace}", { delay: 50 });
 
       serializedTextarea(textareaId).should(
         "have.value",
         "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>bc</p><!-- /mt-beb -->"
+      );
+    });
+  });
+
+  context("new blocks", () => {
+    it("a plain paragraph", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      type("a\n");
+      wait(1);
+      type("b");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->"
+      );
+    });
+
+    it("a strong element", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(`[aria-label="Bold"] button, button[aria-label="太字"]`).click({ force: true });
+      wait(1);
+      type("a\n");
+      wait(1);
+      type("b");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p><strong>a</strong></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->"
+      );
+    });
+
+    it("em and span elements", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(`[aria-label="Italic"] button, button[aria-label="斜体"]`).click({ force: true });
+      wait(1);
+      cy.get(`[aria-label="Text color"] button, [aria-label="テキストの色"] span.tox-split-button__chevron`).click({ multiple: true, force: true });
+      wait(1);
+      cy.get(`div[data-mce-color="#000000"]`).click({ force: true });
+      wait(1);
+      type("a\n");
+      wait(1);
+      type("b");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><p><span style="color: #000000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
       );
     });
   });
@@ -243,8 +301,8 @@ context("Text", () => {
         range.setStart(el.childNodes[0].childNodes[0], 4);
         document.getSelection().removeAllRanges(range);
         document.getSelection().addRange(range);
+        el.click();
       });
-      cy.get(`.mt-be-block`).click();
 
       wait(1);
       type("{backspace}{backspace}{backspace}{backspace}Block");
@@ -274,8 +332,8 @@ context("Text", () => {
         range.setEnd(el.childNodes[0].childNodes[0], 4);
         document.getSelection().removeAllRanges(range);
         document.getSelection().addRange(range);
+        el.click();
       });
-      cy.get(`.mt-be-block`).click();
 
       wait(1);
       type("{backspace}Block");
@@ -315,8 +373,8 @@ context("Text", () => {
         range.setEnd(el.childNodes[0].childNodes[3].childNodes[0], 1);
         document.getSelection().removeAllRanges(range);
         document.getSelection().addRange(range);
+        el.click();
       });
-      cy.get(`.mt-be-block`).click();
 
       wait(1);
       type("{backspace}");

@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useEffect, CSSProperties } from "react";
+import React, { Fragment, useEffect, CSSProperties } from "react";
 import { render } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
@@ -39,8 +39,6 @@ const Editor: React.FC<EditorProps> = ({
   focusDescendant,
   canRemove,
 }: EditorProps) => {
-  block.compiledHtml = "";
-
   if (
     (block.constructor as typeof Block).typeId !== "core-column" ||
     typeof canRemove === "undefined"
@@ -107,8 +105,13 @@ const Editor: React.FC<EditorProps> = ({
   };
 
   useEffect(() => {
+    block.resetCompiledHtml();
+    const onUnload = (): void => {
+      block.resetCompiledHtml();
+    };
+
     if (block._html === "") {
-      return;
+      return onUnload;
     }
 
     parseContent(
@@ -122,6 +125,8 @@ const Editor: React.FC<EditorProps> = ({
         setFocusedId(blocks[0].id);
       }
     });
+
+    return onUnload;
   });
 
   const res = (
@@ -193,6 +198,7 @@ class Column extends Block implements HasBlocks {
   public previewHeader = "";
   public showShortcuts = true;
   public blocks: Block[] = [];
+  public cancelOngoingCompilationHandlers: (() => void)[] = [];
 
   public canRemoveBlock = true;
   public panelBlockTypes: string[] | null = null;
@@ -215,6 +221,15 @@ class Column extends Block implements HasBlocks {
 
   public get showPreview(): boolean {
     return (this.constructor as typeof Column).showPreview;
+  }
+
+  public resetCompiledHtml(): void {
+    this.compiledHtml = "";
+
+    this.cancelOngoingCompilationHandlers.map((h) => {
+      h();
+    });
+    this.cancelOngoingCompilationHandlers = [];
   }
 
   public editor({
@@ -245,6 +260,7 @@ class Column extends Block implements HasBlocks {
         preview = React.createElement(
           this.rootBlock,
           {
+            key: this.id,
             className: "mt-be-column",
             style: {
               width: "100%",
@@ -262,7 +278,7 @@ class Column extends Block implements HasBlocks {
     }
 
     return (
-      <>
+      <Fragment key={this.id}>
         <Editor
           key={this.id}
           block={this}
@@ -272,7 +288,7 @@ class Column extends Block implements HasBlocks {
           canRemove={canRemove}
         />
         {preview && <div style={STYLE_HIDDEN}>{preview}</div>}
-      </>
+      </Fragment>
     );
   }
 
@@ -303,12 +319,26 @@ class Column extends Block implements HasBlocks {
   }
 
   public async compile({ editor }: SerializeOptions): Promise<void> {
+    let canceled = false;
+    this.cancelOngoingCompilationHandlers.push(() => {
+      canceled = true;
+    });
+    const onBeforeSetCompiledHtml = (): boolean => !canceled;
+
+    const sourceHtml = await this.serializedString({ editor });
     return new Promise((resolve, reject) => {
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
       const div = document.createElement("DIV");
       Object.assign(div.style, STYLE_HIDDEN);
       document.body.appendChild(div);
 
-      const onSetCompiledHtml = (error?: Error): void => {
+      const onSetCompiledHtml = (error: Error | null): void => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+
         div.remove();
         if (error) {
           reject(error);
@@ -328,7 +358,9 @@ class Column extends Block implements HasBlocks {
           <BlockIframePreview
             key={this.id}
             block={this}
+            html={sourceHtml}
             header={this.previewHeader}
+            onBeforeSetCompiledHtml={onBeforeSetCompiledHtml}
             onSetCompiledHtml={onSetCompiledHtml}
           />
         </EditorContext.Provider>,
@@ -336,11 +368,11 @@ class Column extends Block implements HasBlocks {
       );
 
       const opts = editor.opts.block["core-column"] || {};
-      setTimeout(async () => {
-        this.compiledHtml = await this.serializedString({
-          editor,
-        });
-        onSetCompiledHtml();
+      timeoutId = setTimeout(async () => {
+        if (!canceled) {
+          this.compiledHtml ||= sourceHtml;
+        }
+        onSetCompiledHtml(null);
       }, opts["compile-timeout"] || COMPILE_TIMEOUT);
     });
   }

@@ -12,7 +12,6 @@ import {
   getElementById,
   sanitize,
   isIos,
-  isTouchDevice,
   getShadowDomSelectorSet,
 } from "../util";
 import EditorMode from "../Component/EditorMode";
@@ -169,16 +168,27 @@ const Editor: React.FC<EditorProps> = ({
                 e.remove()
               );
               if (c.childNodes.length !== 0 && i === children.length - 1) {
-                const caret = document.createElement("BR");
-                caret.setAttribute(CARET_ATTR, "1");
-
                 let target: HTMLElement | null;
                 if (["UL", "OL"].find((tn) => c.tagName === tn)) {
                   target = c.querySelector("LI");
+                } else if (
+                  // has no text content
+                  c.textContent === "" &&
+                  // has no embedded / interactive content
+                  // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories
+                  c.querySelector(
+                    `audio, canvas, embed, iframe, img, math, object, svg, video, button, details, embed, iframe, keygen, select, textarea, input:not([type="hidden"]), menu:not([type="toolbar"])`
+                  ) === null
+                ) {
+                  c.textContent = "";
+                  target = null;
                 } else {
                   target = c;
                 }
                 if (target) {
+                  const caret = document.createElement("BR");
+                  caret.setAttribute(CARET_ATTR, "1");
+
                   target.insertBefore(caret, target.firstChild);
                 }
               }
@@ -217,7 +227,7 @@ const Editor: React.FC<EditorProps> = ({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const sel = (ed.selection.getSel() as any) as Selection;
               const start = ed.selection.getStart();
-              const rng = ed.selection.getRng(false);
+              const rng = ed.selection.getRng();
               if (
                 rng.collapsed &&
                 rng.startOffset === 0 &&
@@ -245,30 +255,7 @@ const Editor: React.FC<EditorProps> = ({
     });
     tinymce.init(settings);
 
-    const onMouseMove = (): void => {
-      if (tinymce.activeEditor !== block.tinymce) {
-        return;
-      }
-
-      getElementById(`${block.tinymceId()}toolbar`).classList.remove(
-        "invisible"
-      );
-    };
-
-    if (!isTouchDevice()) {
-      window.addEventListener("mousemove", onMouseMove, {
-        capture: true,
-        passive: true,
-      });
-    }
-
     return () => {
-      if (!isTouchDevice()) {
-        window.removeEventListener("mousemove", onMouseMove, {
-          capture: true,
-        });
-      }
-
       removeTinyMCEFromBlock(block);
     };
   });
@@ -284,11 +271,6 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <div
       onClick={() => {
-        getElementById(`${block.tinymceId()}toolbar`).classList.remove(
-          "invisible"
-        );
-      }}
-      onMouseMove={() => {
         getElementById(`${block.tinymceId()}toolbar`).classList.remove(
           "invisible"
         );

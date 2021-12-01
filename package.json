@@ -1,12 +1,12 @@
 {
   "name": "mt-block-editor",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production && npm run build-register-boilerplate-blocks",
     "build-register-boilerplate-blocks": "tsc --project tsconfig.rbb.json && mkdirp docs/dist && terser -c -m --source-map 'content=\"./rbb-dist/src/register-boilerplate-blocks.js.map\"' --source-map 'url=\"register-boilerplate-blocks.js.map\"' ./rbb-dist/src/register-boilerplate-blocks.js -o ./docs/dist/register-boilerplate-blocks.js && rimraf ./rbb-dist",
-    "start": "webpack serve --inline",
+    "start": "webpack serve",
     "test": "jest",
     "check-types": "tsc",
     "lint": "eslint --fix --ext .ts --ext .tsx ./src",
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.16.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
@@ -38,21 +39,21 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-transition-group": "^4.4.0",
-    "@types/tinymce": "^4.6.0",
-    "@typescript-eslint/eslint-plugin": "^4.25.0",
-    "@typescript-eslint/parser": "^4.25.0",
+    "@types/tinymce": "^4.6.4",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^5.2.6",
     "css-minimizer-webpack-plugin": "^3.0.1",
-    "cypress": "^4.12.1",
-    "eslint": "^6.8.0",
+    "cypress": "^9.0.0",
+    "eslint": "^8.2.0",
     "eslint-config-prettier": "^6.14.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "husky": "^4.3.0",
-    "i18next-parser": "^1.0.6",
-    "jest": "^26.6.3",
+    "i18next-parser": "^5.1.0",
+    "jest": "^27.3.1",
     "mini-css-extract-plugin": "^0.9.0",
     "mini-svg-data-uri": "^1.3.3",
     "mkdirp": "^1.0.4",
@@ -69,10 +70,10 @@
     "rimraf": "^3.0.2",
     "style-loader": "^1.3.0",
     "terser-webpack-plugin": "^2.3.8",
-    "typescript": "^4.2.4",
+    "typescript": "^4.4.4",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^4.0.0"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -84,7 +85,7 @@
     "react-dnd-touch-backend": "^10.0.2",
     "react-dom": "^16.14.0",
     "react-i18next": "^11.7.3",
-    "react-shadow": "^17.6.0",
+    "react-shadow": "^19.0.2",
     "react-transition-group": "^4.4.1"
   }
 }

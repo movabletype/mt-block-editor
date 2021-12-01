@@ -211,15 +211,6 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
     }
   }
 
-  public contentLabel(): string {
-    const m = this.htmlString().match(/<(\w+)/);
-    if (m) {
-      return m[1].toLowerCase();
-    } else {
-      return super.contentLabel();
-    }
-  }
-
   public focusEditor(): void {
     if (this.tinymce) {
       this.tinymce.focus(false);

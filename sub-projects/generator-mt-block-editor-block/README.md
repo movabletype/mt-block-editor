@@ -1,10 +1,18 @@
 # generator-mt-block-editor-block
 
-Init custom block implementation for MTBlockEditor.
+Initialize plugin project for Movable Type Block Editor.
 
 ## Installation
 
-First, install [Yeoman](http://yeoman.io) and generator-mt-block-editor-block using [npm](https://www.npmjs.com/) (we assume you have pre-installed [noge.js](https://nodejs.org/)).
+If you are using npm 5.2 or later, you can create a template by executing the following command.
+
+```bash
+npx -p yo -p generator-mt-block-editor-block -- yo mt-block-editor-block
+```
+
+### Install individual packages
+
+Install [Yeoman](http://yeoman.io) and generator-mt-block-editor-block using [npm](https://www.npmjs.com/) (we assume you have pre-installed [noge.js](https://nodejs.org/)). This way it's also available for npm 5.2 and earlier versions.
 
 ```bash
 npm install -g yo
@@ -15,12 +23,6 @@ Then generate your new project:
 
 ```bash
 yo mt-block-editor-block
-```
-
-or
-
-```bash
-npx -p yo -p generator-mt-block-editor-block -- yo mt-block-editor-block
 ```
 
 ## License

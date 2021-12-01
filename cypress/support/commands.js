@@ -28,7 +28,7 @@ if (Cypress.env("default_type_delay")) {
   Cypress.Commands.overwrite(
     "type",
     (originalFn, subject, text, options = {}) => {
-      options.delay = (options.delay || 0) + 100;
+      options.delay = (options.delay || 0) + Cypress.env("default_type_delay");
 
       return cy
         .wait(Cypress.env("wait_unit_time"))

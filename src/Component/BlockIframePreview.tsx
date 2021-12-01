@@ -13,7 +13,8 @@ interface EditorProps {
   block: Block;
   html?: string | Promise<string>;
   header?: string;
-  onSetCompiledHtml?: (error?: Error) => void;
+  onSetCompiledHtml?: (error: Error | null) => void;
+  onBeforeSetCompiledHtml?: (error: Error | null) => boolean;
   border?: string;
 }
 
@@ -171,6 +172,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   html,
   header,
   onSetCompiledHtml,
+  onBeforeSetCompiledHtml,
   border,
 }: EditorProps) => {
   const { editor } = useEditorContext();
@@ -194,12 +196,18 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const size = block.getIframePreviewSize(rawHtmlText);
 
   const setCompiledHtml = (
-    res: string | Error,
+    res: string,
+    error: Error | null,
     opts: SetCompiledHtmlOptions
   ): void => {
-    if (res instanceof Error) {
+    if (onBeforeSetCompiledHtml && onBeforeSetCompiledHtml(error) === false) {
+      // canceled
+      return;
+    }
+
+    if (error) {
       if (onSetCompiledHtml) {
-        onSetCompiledHtml(res);
+        onSetCompiledHtml(error);
       } else {
         // TODO: report error
       }
@@ -226,7 +234,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     });
 
     if (onSetCompiledHtml) {
-      onSetCompiledHtml();
+      onSetCompiledHtml(null);
     }
     _setHtmlText(res);
   };
@@ -372,10 +380,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           }
           break;
         case "MTBlockEditorSetCompiledHtml":
-          setCompiledHtml(ev.data.html || new Error(ev.data.error || "Error"), {
-            addEditHistory:
-              ev.data.arguments && ev.data.arguments.addEditHistory,
-          });
+          setCompiledHtml(
+            ev.data.html,
+            ev.data.html ? null : new Error(ev.data.error || "Error"),
+            {
+              addEditHistory:
+                ev.data.arguments && ev.data.arguments.addEditHistory,
+            }
+          );
           break;
       }
     };

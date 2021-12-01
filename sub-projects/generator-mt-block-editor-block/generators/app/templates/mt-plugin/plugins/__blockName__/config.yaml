@@ -1,0 +1,15 @@
+id: <%= blockName %>
+name: <%= blockName %>
+version: 0.0.1
+author_name: "<%- author %>"
+description: This plugin provides custom block editor block
+
+editors:
+  block_editor:
+    extension: extension.tmpl
+    block_types:
+      <%= vendorId %>-<%= blockName.toLowerCase() %>:
+        label: <%= blockName %>
+        identifier: <%= vendorId %>-<%= blockName.toLowerCase() %>
+        is_default_hidden: 0
+        is_form_element: 0

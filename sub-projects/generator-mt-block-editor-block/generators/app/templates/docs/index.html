@@ -16,7 +16,7 @@
       crossorigin="anonymous"
     />
     <script
-      src="https://cdn.tiny.cloud/1/no-api-key/tinymce/4/tinymce.min.js"
+      src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"
       referrerpolicy="origin"
     ></script>
   </head>
@@ -36,10 +36,10 @@
     </div>
     <link
       rel="stylesheet"
-      href="https://cdn.movabletype.net/libs/mt-block-editor/0.0.15/mt-block-editor.css"
+      href="https://movabletype.github.io/mt-block-editor/dist/mt-block-editor.css"
     />
-    <script src="https://cdn.movabletype.net/libs/mt-block-editor/0.0.15/mt-block-editor.js"></script>
-    <script src="./dist/<%= appname %>.js"></script>
+    <script src="https://movabletype.github.io/mt-block-editor/dist/mt-block-editor.js"></script>
+    <script src="./<%= scriptBasename %>.js"></script>
     <script>
       MTBlockEditor.apply({
         mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
