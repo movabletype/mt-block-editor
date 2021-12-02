@@ -18,6 +18,7 @@ interface EditorProps {
   onBeforeSetCompiledHtml?: (error: Error | null) => boolean;
   border?: string;
   scheme?: BlockIframePreviewScheme;
+  sandbox?: string;
 }
 
 interface SetCompiledHtmlOptions {
@@ -177,6 +178,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   onBeforeSetCompiledHtml,
   border,
   scheme = "data",
+  sandbox,
 }: EditorProps) => {
   const { editor } = useEditorContext();
 
@@ -250,6 +252,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     editor,
     html: rawHtmlText,
     scheme: scheme,
+    sandbox: sandbox,
   };
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
@@ -411,6 +414,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       <iframe
         src={src}
         frameBorder="0"
+        sandbox={sandbox}
         style={Object.assign(
           {
             maxWidth: MAX_WIDTH,
