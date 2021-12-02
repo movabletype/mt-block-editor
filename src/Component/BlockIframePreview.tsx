@@ -183,8 +183,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const containerElRef = useRef(null);
   const [_src, setSrc] = useState("");
-  const [_rawHtmlText, _setHtmlText] = useState(
-    typeof html === "string" ? html : ""
+  const [_rawHtmlText, _setHtmlText] = useState<string | null>(
+    typeof html === "string" ? html : null
   );
   const rawHtmlText = _rawHtmlText || (typeof html === "string" ? html : "");
 
@@ -239,7 +239,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     _setHtmlText(res);
   };
 
-  if (typeof html !== "string") {
+  if (typeof html !== "string" && _rawHtmlText === null) {
+    header = "";
     html.then(_setHtmlText);
   }
 
