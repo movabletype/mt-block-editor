@@ -9,6 +9,7 @@ const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "5000px";
 const SHRINK_THRESHOLD = 50;
 
+type BlockIframePreviewScheme = "data" | "blob";
 interface EditorProps {
   block: Block;
   html?: string | Promise<string>;
@@ -16,6 +17,7 @@ interface EditorProps {
   onSetCompiledHtml?: (error: Error | null) => void;
   onBeforeSetCompiledHtml?: (error: Error | null) => boolean;
   border?: string;
+  scheme?: BlockIframePreviewScheme;
 }
 
 interface SetCompiledHtmlOptions {
@@ -174,6 +176,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   onSetCompiledHtml,
   onBeforeSetCompiledHtml,
   border,
+  scheme = "data",
 }: EditorProps) => {
   const { editor } = useEditorContext();
 
@@ -246,7 +249,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const beforeRenderIframePreviewOpt = {
     editor,
     html: rawHtmlText,
-    scheme: "data",
+    scheme: scheme,
   };
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
