@@ -6,12 +6,15 @@
   "scripts": {
     "build": "webpack --mode=production && npm run build-register-boilerplate-blocks",
     "build-register-boilerplate-blocks": "tsc --project tsconfig.rbb.json && mkdirp docs/dist && terser -c -m --source-map 'content=\"./rbb-dist/src/register-boilerplate-blocks.js.map\"' --source-map 'url=\"register-boilerplate-blocks.js.map\"' ./rbb-dist/src/register-boilerplate-blocks.js -o ./docs/dist/register-boilerplate-blocks.js && rimraf ./rbb-dist",
+    "build-mt-block-editor-block": "mv node_modules node_modules_tmp; ( cd sub-projects/mt-block-editor-block && npm run build ) ; mv node_modules_tmp node_modules",
+    "build-test-blocks": "webpack -c cypress/blocks/webpack.config.js --mode=production",
     "start": "webpack serve",
     "test": "jest",
     "check-types": "tsc",
     "lint": "eslint --fix --ext .ts --ext .tsx ./src",
-    "cypress:open": "npm run build && cypress open",
-    "cypress:run": "npm run build && cypress run"
+    "cypress:build": "npm run build && npm run build-mt-block-editor-block && npm run build-test-blocks",
+    "cypress:open": "npm run cypress:build && cypress open",
+    "cypress:run": "npm run cypress:build && cypress run"
   },
   "jest": {
     "moduleNameMapper": {
