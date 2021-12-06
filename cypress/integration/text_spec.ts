@@ -447,7 +447,9 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Source code"] button`).click({ force: true });
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
       cy.wait(50);
       cy.get(".mce-window textarea").invoke(
         "val",
