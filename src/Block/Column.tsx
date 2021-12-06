@@ -1,6 +1,6 @@
 import { t } from "../i18n";
 import React, { Fragment, useEffect, CSSProperties } from "react";
-import { render } from "react-dom";
+import { render, unmountComponentAtNode } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
   NewFromHtmlOptions,
@@ -339,6 +339,7 @@ class Column extends Block implements HasBlocks {
           timeoutId = null;
         }
 
+        unmountComponentAtNode(div);
         div.remove();
         if (error) {
           reject(error);
