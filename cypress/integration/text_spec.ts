@@ -439,4 +439,30 @@ context("Text", () => {
       );
     });
   });
+
+  context("Source code", () => {
+    it("table", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".mce-window textarea").invoke(
+        "val",
+        "<table><tr><td>test</td></tr></table>"
+      );
+      cy.get(".mce-window .mce-primary button:first-child").click();
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><table>\n<tbody>\n<tr>\n<td>test</td>\n</tr>\n</tbody>\n</table><!-- /mt-beb -->"
+      );
+    });
+  });
 });

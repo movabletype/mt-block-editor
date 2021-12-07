@@ -76,6 +76,31 @@ context("CustomBlock", () => {
 
     registerCustomBlock({
       icon: "",
+      canRemoveBlock: 1,
+      typeId: "custom-wrap",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["custom-bgcolor_contents"],
+      className: "",
+      html: '',
+      shouldBeCompiled: 1,
+      previewHeader: `
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  if (document.body.dataset.hasCompiledHtml) {
+    // 処理済み
+    return;
+  }
+
+  MTBlockEditorSetCompiledHtml('<div class="custom-wrap">' + document.body.innerHTML + '</div>');
+});
+</script>
+      `,
+      label: "Wrap",
+      rootBlock: "",
+    });
+
+    registerCustomBlock({
+      icon: "",
       canRemoveBlock: "",
       typeId: "custom-html",
       panelBlockTypes: [],
@@ -387,6 +412,62 @@ context("CustomBlock", () => {
             expect(before).to.equal(after);
           });
         });
+    });
+  });
+
+  context("custom-wrap", () => {
+    it("nested", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-wrap"]`).click();
+        });
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-btn-add-bottom`
+      )
+        .first()
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="core-text"]`).click();
+        });
+
+      wait(1);
+      type("a");
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-btn-add-bottom`
+      )
+        .eq(1)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="core-text"]`).click();
+        });
+
+      wait(1);
+      type("b");
+
+      blur();
+
+      wait(1);
+
+      serializedTextarea(textareaId).should(($input) => {
+        const value = $input.val();
+        const html = value.replace(/<!--.*?-->/g, "");
+        expect(html).to.equal(`<div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div>\n      </div>`);
+      });
     });
   });
 });

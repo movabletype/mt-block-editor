@@ -1,6 +1,6 @@
 import { t } from "../i18n";
 import React, { Fragment, useEffect, CSSProperties } from "react";
-import { render } from "react-dom";
+import { render, unmountComponentAtNode } from "react-dom";
 import { EditorContext, useEditorContext, BlocksContext } from "../Context";
 import Block, {
   NewFromHtmlOptions,
@@ -106,12 +106,9 @@ const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     block.resetCompiledHtml();
-    const onUnload = (): void => {
-      block.resetCompiledHtml();
-    };
 
     if (block._html === "") {
-      return onUnload;
+      return;
     }
 
     parseContent(
@@ -125,8 +122,6 @@ const Editor: React.FC<EditorProps> = ({
         setFocusedId(blocks[0].id);
       }
     });
-
-    return onUnload;
   });
 
   const res = (
@@ -273,6 +268,9 @@ class Column extends Block implements HasBlocks {
       }
 
       if (this.showPreview) {
+        // Before unload "Editor" and before start BlockIframePreview
+        this.resetCompiledHtml();
+
         return preview;
       }
     }
@@ -339,6 +337,7 @@ class Column extends Block implements HasBlocks {
           timeoutId = null;
         }
 
+        unmountComponentAtNode(div);
         div.remove();
         if (error) {
           reject(error);
