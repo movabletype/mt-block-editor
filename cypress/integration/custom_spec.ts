@@ -463,10 +463,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       wait(1);
 
+      const expectedResult = `<div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div>\n      </div>`;
+
       serializedTextarea(textareaId).should(($input) => {
         const value = $input.val();
         const html = value.replace(/<!--.*?-->/g, "");
-        expect(html).to.equal(`<div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div>\n      </div>`);
+        expect(html).to.equal(expectedResult);
+      });
+
+      cy.get(`.mt-be-btn-add-bottom`).click()
+      blur();
+
+      // No change.
+      serializedTextarea(textareaId).should(($input) => {
+        const value = $input.val();
+        const html = value.replace(/<!--.*?-->/g, "");
+        expect(html).to.equal(expectedResult);
       });
     });
   });
