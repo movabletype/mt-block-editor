@@ -199,7 +199,7 @@ class Column extends Block implements HasBlocks {
   public panelBlockTypes: string[] | null = null;
   public shortcutBlockTypes: string[] | null = null;
 
-  private isInEditMode: boolean = false;
+  private isInEditMode = false;
 
   public constructor(init?: Partial<Column>) {
     super();
