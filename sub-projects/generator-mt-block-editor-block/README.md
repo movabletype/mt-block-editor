@@ -7,7 +7,7 @@ Initialize plugin project for Movable Type Block Editor.
 If you are using npm 5.2 or later, you can create a template by executing the following command.
 
 ```bash
-npx -p yo -p generator-mt-block-editor-block -- yo mt-block-editor-block
+npx -p yo -p generator-mt-block-editor-block@latest -- yo mt-block-editor-block
 ```
 
 ### Install individual packages
