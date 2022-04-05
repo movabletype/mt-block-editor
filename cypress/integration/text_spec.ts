@@ -134,7 +134,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        "<!-- mt-beb --><p>a<br />b</p><!-- /mt-beb -->"
+        "<!-- mt-beb --><p>a<br>b</p><!-- /mt-beb -->"
       );
     });
 
@@ -220,7 +220,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        `<!-- mt-beb --><p><span style="color: #000000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
+        `<!-- mt-beb --><p><span style="color: rgb(0, 0, 0);"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
       );
     });
   });
