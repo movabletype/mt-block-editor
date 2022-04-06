@@ -89,9 +89,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           last = cur;
         };
 
-        ed.on("NodeChange Change", () => {
+        ed.on("NodeChange Change", (ev) => {
           if (root.childNodes.length <= 1) {
             addEdit();
+            return;
+          }
+
+          if (ev.type === "change") {
             return;
           }
 

@@ -125,7 +125,7 @@ const Editor: React.FC<EditorProps> = ({
           last = cur;
         };
 
-        ed.on("NodeChange Change", () => {
+        ed.on("NodeChange Change", (ev) => {
           const children = [...root.children].filter(
             (e) => !e.classList.contains("mce-resizehandle")
           );
@@ -138,6 +138,10 @@ const Editor: React.FC<EditorProps> = ({
           const firstChild = children.shift();
           if (!firstChild) {
             addEdit();
+            return;
+          }
+
+          if (ev.type === "change") {
             return;
           }
 
