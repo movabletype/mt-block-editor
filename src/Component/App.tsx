@@ -166,7 +166,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
         <DndProvider backend={DndBackend}>
-          <div>
+          <div className="mt-be-app">
             {blocks.map((b, i) => {
               const focus = b.id === focusedId;
               return (

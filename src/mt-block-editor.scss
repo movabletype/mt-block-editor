@@ -16,10 +16,10 @@ $root-font-size: 16px;
 }
 
 .mt-block-editor {
-  padding: 0 40px 0 40px;
-  border-radius: 4px;
-  font-size: initial;
-  position: relative;
+  .mt-be-app {
+    padding: 0 40px 0 40px;
+    font-size: initial;
+  }
 
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre {
     font-size: inherit;
@@ -692,12 +692,102 @@ $root-font-size: 16px;
   .mce-item-table {
     width: 100%;
   }
+
+  .mt-be-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    background: rgba(255, 255, 255, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .mt-be-modal {
+      transition: 0.3s ease-in-out;
+    }
+    &.mt-be-overlay-enter {
+      .mt-be-modal {
+        opacity: 0;
+        margin-top: -128px;
+      }
+    }
+    &.mt-be-overlay-enter-active,
+    &.mt-be-overlay-exit {
+      .mt-be-modal {
+        opacity: 1;
+        margin-top: 0;
+      }
+    }
+    &.mt-be-overlay-exit-active {
+      .mt-be-modal {
+        opacity: 0;
+        margin-top: -128px;
+      }
+    }
+
+    .mt-be-modal-content {
+      background: white;
+      width: 600px;
+      max-width: 600px;
+      border-radius: 6px;
+      box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+    }
+
+    .mt-be-modal-header {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .mt-be-modal-title {
+      font-size: calc($root-font-size * 1.2);
+      font-weight: normal;
+      margin: 0;
+    }
+
+    .mt-be-modal-body {
+      padding: 10px;
+    }
+
+    .mt-be-modal-footer {
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      text-align: right;
+
+      button + button {
+        margin-left: 5px;
+      }
+    }
+
+    .mt-be-label-name {
+      display: flex;
+      align-items: center;
+
+      .mt-be-label-block {
+        font-weight: normal;
+        margin-top: 4px;
+        width: 25%;
+        max-width: 25%;
+      }
+
+      .mt-be-input {
+        @mixin input;
+        width: 75%;
+      }
+    }
+  }
 }
 
 @media (max-width: 991.5px) {
   .mt-block-editor {
-    padding: 0 0;
-    margin: 0 16px;
+    .mt-be-app {
+      padding: 0 0;
+      margin: 0 16px;
+    }
+
     .mt-be-btn-command {
       width: 32px;
       height: 34px;
