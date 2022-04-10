@@ -15,6 +15,7 @@ import {
   DialogBody,
   DialogFooter,
 } from "../Component/Dialog";
+import { useCommands } from "../CommandManager";
 
 interface EditorProps {
   block: Image;
@@ -48,6 +49,20 @@ const Editor: React.FC<EditorProps> = blockProperty(
   ({ block }: EditorProps) => {
     const [isLinkDialogOpen, setLinkDialogOpen] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
+
+    useCommands({
+      block,
+      commands: [
+        {
+          name: "core-insertLink",
+          callback: () => {
+            if (!isLinkDialogOpen) {
+              setLinkDialogOpen(true);
+            }
+          },
+        },
+      ],
+    });
 
     return (
       <>
