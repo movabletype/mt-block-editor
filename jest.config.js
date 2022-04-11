@@ -5,5 +5,6 @@ module.exports = {
   },
   testPathIgnorePatterns: [
     "<rootDir>/sub-projects/generator-mt-block-editor-block/",
+    "<rootDir>/.vscode/",
   ],
 };
