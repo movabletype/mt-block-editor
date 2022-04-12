@@ -18,6 +18,12 @@ import BlockSetup from "./Component/BlockSetup";
 import BlockSetupCommon from "./Component/BlockSetupCommon";
 import BlockLabel from "./Component/BlockLabel";
 import EditorMode from "./Component/EditorMode";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "./Component/Dialog";
 
 import * as Context from "./Context";
 import * as icon from "./icon";
@@ -65,6 +71,10 @@ export class EditorUtil {
     BlockSetupCommon,
     BlockLabel,
     EditorMode,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
   };
   public static decorator = decorator;
   public static React = React;
