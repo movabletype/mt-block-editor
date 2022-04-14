@@ -22,9 +22,9 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   const { block, index } = blockContext;
 
   const { swapBlocks } = useBlocksContext();
-  const [showCommandPanel, setCommandPanel] = useState(false);
-  const toggleCommandPanel = useCallback(() => {
-    setCommandPanel((prev) => !prev);
+  const [isCommandPanelShown, setCommandPanelShown] = useState(false);
+  const toggleCommandPanelShown = useCallback(() => {
+    setCommandPanelShown((prev) => !prev);
     block.focusEditor();
   }, []);
 
@@ -63,11 +63,11 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
           <button
             type="button"
             className="mt-be-btn-command"
-            onClick={toggleCommandPanel}
+            onClick={toggleCommandPanelShown}
           ></button>
         </div>
       </div>
-      <BlockCommandPanel in={showCommandPanel}>
+      <BlockCommandPanel in={isCommandPanelShown}>
         <ul className="mt-be-command-list">
           <li>
             <AddButton index={index} label={t("Insert before")} />
