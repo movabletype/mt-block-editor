@@ -60,7 +60,10 @@ export default class CommandManager {
   }
 }
 
-export function useCommands({ block, commands }: UseCommandsParams): void {
+export function useCommands(
+  { block, commands }: UseCommandsParams,
+  deps?: React.DependencyList | undefined
+): void {
   const {
     editor: { commandManager: CommandManager },
   } = useEditorContext();
@@ -73,5 +76,5 @@ export function useCommands({ block, commands }: UseCommandsParams): void {
     return () => {
       CommandManager.removeAllListenersOfBlock(block.id);
     };
-  });
+  }, deps);
 }
