@@ -20,11 +20,7 @@ type DialogContextProps = Pick<DialogProps, "onClose">;
 const DialogContext = createContext<DialogContextProps>({});
 export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-
-  let className = "mt-be-dialog";
-  if (props.className) {
-    className += ` ${props.className}`;
-  }
+  const className = `mt-be-dialog ${props.className || ""}`;
 
   useEffect(() => {
     if (!props.open) {
