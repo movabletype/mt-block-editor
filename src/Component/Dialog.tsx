@@ -51,7 +51,7 @@ export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
     setTimeout(() => {
       focusEl.focus();
     }, TRANSITION_TIMEOUT);
-  });
+  }, [props.open]);
 
   return (
     <Overlay open={props.open} onClose={props.onClose}>
