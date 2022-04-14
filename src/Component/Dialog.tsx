@@ -43,11 +43,6 @@ export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
       return;
     }
 
-    const activeEl = document.activeElement;
-    if (activeEl && activeEl.closest(`.${className}`) === modalEl) {
-      return;
-    }
-
     setTimeout(() => {
       focusEl.focus();
     }, TRANSITION_TIMEOUT);
