@@ -127,11 +127,16 @@ const Editor: React.FC<EditorProps> = blockProperty(
                 type="button"
                 className="mt-be-btn-primary"
                 onClick={() => {
-                  for (const e of (formRef.current?.elements ||
-                    []) as HTMLInputElement[]) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    (block as any)[e.name] = e.value;
+                  const form = formRef.current;
+                  if (!form) {
+                    return;
                   }
+
+                  const keys = ["linkUrl", "linkTitle", "linkTarget"] as const;
+                  keys.forEach((name) => {
+                    block[name] = (form[name] as HTMLInputElement).value;
+                  });
+
                   setLinkDialogOpen(false);
                 }}
               >
