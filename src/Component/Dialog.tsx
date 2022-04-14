@@ -39,7 +39,6 @@ export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
     const focusEl = modalEl.querySelector<HTMLElement>(
       `[data-mt-block-editor-focus-default]`
     );
-    console.log(focusEl);
     if (!focusEl) {
       return;
     }
