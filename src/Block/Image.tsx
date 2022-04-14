@@ -54,7 +54,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
       block,
       commands: [
         {
-          name: "core-insertLink",
+          command: "core-insertLink",
           callback: () => {
             if (!isLinkDialogOpen) {
               setLinkDialogOpen(true);

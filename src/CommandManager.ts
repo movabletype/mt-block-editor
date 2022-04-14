@@ -6,7 +6,7 @@ import type Block from "./Block";
 import { useEditorContext } from "./Context";
 
 interface Command {
-  name: string;
+  command: string;
   callback: (event: Event) => void;
 }
 
@@ -25,11 +25,11 @@ export default class CommandManager {
 
   public on(
     blockId: string,
-    name: string,
+    command: string,
     callback: (event: Event) => void
   ): void {
     this.eventEmitters[blockId] ||= new EventEmitter();
-    this.eventEmitters[blockId].on(name, callback);
+    this.eventEmitters[blockId].on(command, callback);
   }
 
   public removeAllListenersOfBlock(blockId: string): void {
@@ -38,8 +38,8 @@ export default class CommandManager {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public emit(blockId: string, name: string, ...args: any[]): void {
-    this.eventEmitters[blockId]?.emit(name, ...args);
+  public emit(blockId: string, command: string, ...args: any[]): void {
+    this.eventEmitters[blockId]?.emit(command, ...args);
   }
 
   public dispatchKeydownEvent({
@@ -67,7 +67,7 @@ export function useCommands({ block, commands }: UseCommandsParams): void {
 
   useEffect(() => {
     for (const command of commands) {
-      CommandManager.on(block.id, command.name, command.callback);
+      CommandManager.on(block.id, command.command, command.callback);
     }
 
     return () => {
