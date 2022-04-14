@@ -27,15 +27,6 @@ const Overlay: React.FC<OverlayProps> = ({
     return () => portal.remove();
   });
 
-  // scroll lock
-  useEffect(() => {
-    const style = document.documentElement.style;
-    style.overflow = "hidden";
-    return () => {
-      style.overflow = "";
-    };
-  });
-
   // cancel by escape
   useEffect(() => {
     function onEsc(e: KeyboardEvent): void {
@@ -54,6 +45,12 @@ const Overlay: React.FC<OverlayProps> = ({
   return createPortal(
     <CSSTransition
       in={open}
+      onEnter={() =>
+        document.body.classList.add("mt-block-editor-overlay-open")
+      }
+      onExit={() =>
+        document.body.classList.remove("mt-block-editor-overlay-open")
+      }
       classNames={OVERLAY_CLASS_NAME}
       unmountOnExit
       timeout={TRANSITION_TIMEOUT}

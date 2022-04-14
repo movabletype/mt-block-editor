@@ -19,10 +19,12 @@ context("Dialog", () => {
 
     wait(1);
     type("./images/logo.png");
+    cy.get("body").should("not.have.class", "mt-block-editor-overlay-open");
 
     cy.get(`.mt-be-block-toolbar-button`).click({ force: true });
     cy.wait(TRANSITION_TIMEOUT);
     cy.get(".mt-be-dialog").should("be.visible");
+    cy.get("body").should("have.class", "mt-block-editor-overlay-open");
     cy.focused().should("have.attr", "name", "linkUrl");
     type("https://example.com/");
 
