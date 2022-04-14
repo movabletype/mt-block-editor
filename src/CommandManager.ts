@@ -44,10 +44,10 @@ export default class CommandManager {
 
   public dispatchKeydownEvent({
     event,
-    focusedBlockId,
+    blockId,
   }: {
     event: KeyboardEvent;
-    focusedBlockId: string;
+    blockId: string;
   }): void {
     if (
       event.key === "k" &&
@@ -55,7 +55,7 @@ export default class CommandManager {
       !event.shiftKey
     ) {
       event.preventDefault();
-      this.editor.commandManager.emit(focusedBlockId, "core-insertLink");
+      this.emit(blockId, "core-insertLink");
     }
   }
 }

@@ -151,7 +151,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
     editor.commandManager.dispatchKeydownEvent({
       event: ev,
-      focusedBlockId: focusedId,
+      blockId: focusedId,
     });
   };
 
