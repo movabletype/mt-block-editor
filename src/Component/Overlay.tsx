@@ -21,22 +21,20 @@ const Overlay: React.FC<OverlayProps> = ({
     document.createElement("div")
   );
 
-  // prepare portal element
   useEffect(() => {
-    document.body.appendChild(portal);
-    return () => portal.remove();
-  });
-
-  // cancel by escape
-  useEffect(() => {
-    function onEsc(e: KeyboardEvent): void {
-      if (e.key === "Escape") {
+    function onKeydown(ev: KeyboardEvent): void {
+      if (ev.key === "Escape") {
         onClose();
       }
     }
 
-    document.addEventListener("keydown", onEsc);
-    return () => document.removeEventListener("keydown", onEsc);
+    document.body.appendChild(portal);
+    document.addEventListener("keydown", onKeydown);
+
+    return () => {
+      portal.remove();
+      document.removeEventListener("keydown", onKeydown);
+    };
   });
 
   Object.assign(portal.style, PORTAL_STYLE);
