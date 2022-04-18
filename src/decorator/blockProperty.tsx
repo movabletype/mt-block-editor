@@ -132,6 +132,10 @@ export default function blockProperty<T extends EditorProps>(
         return child;
       }
 
+      if ("defaultValue" in child.props) {
+        return child;
+      }
+
       if (child.props.onChange && child.props.onKeyDown) {
         return child;
       }

@@ -15,11 +15,23 @@ $root-font-size: 16px;
   width: calc(100% - 2px) !important;
 }
 
+@define-mixin form-button {
+  padding: 6px 12px;
+  border-radius: 3px;
+  border: 1px solid #dddddd;
+  color: #333333;
+  background-color: #fff;
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
 .mt-block-editor {
-  padding: 0 40px 0 40px;
-  border-radius: 4px;
-  font-size: initial;
-  position: relative;
+  .mt-be-app {
+    padding: 0 40px 0 40px;
+    font-size: initial;
+  }
 
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre {
     font-size: inherit;
@@ -27,6 +39,19 @@ $root-font-size: 16px;
     font-family: inherit;
     word-break: break-all;
     margin: 0;
+  }
+
+  .mt-be-btn-default {
+    @mixin form-button;
+  }
+
+  .mt-be-btn-primary {
+    @mixin form-button;
+    background-color: #337ab7;
+    color: #fff;
+    &:hover {
+      background-color: #286090;
+    }
   }
 
   .mt-be-btn-add {
@@ -692,12 +717,125 @@ $root-font-size: 16px;
   .mce-item-table {
     width: 100%;
   }
+
+  .mt-be-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    background: rgba(255, 255, 255, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .mt-be-dialog {
+      transition: 0.3s ease-in-out;
+    }
+    &.mt-be-overlay-enter {
+      .mt-be-dialog {
+        opacity: 0;
+        margin-top: -128px;
+      }
+    }
+    &.mt-be-overlay-enter-active,
+    &.mt-be-overlay-exit {
+      .mt-be-dialog {
+        opacity: 1;
+        margin-top: 0;
+      }
+    }
+    &.mt-be-overlay-exit-active {
+      .mt-be-dialog {
+        opacity: 0;
+        margin-top: -128px;
+      }
+    }
+
+    .mt-be-dialog-content {
+      background: white;
+      width: 600px;
+      max-width: 600px;
+      border-radius: 6px;
+      box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+    }
+
+    .mt-be-dialog-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .mt-be-dialog-btn-close {
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1;
+      border: 0;
+      color: #000;
+      text-shadow: 0 1px 0 #fff;
+      opacity: 0.2;
+      background: #fff;
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+
+    .mt-be-dialog-title {
+      font-size: calc($root-font-size * 1.2);
+      font-weight: normal;
+      margin: 0;
+    }
+
+    .mt-be-dialog-body {
+      padding: 10px;
+    }
+
+    .mt-be-dialog-footer {
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      text-align: right;
+
+      button + button {
+        margin-left: 5px;
+      }
+    }
+
+    .mt-be-label-name {
+      display: flex;
+      align-items: baseline;
+
+      .mt-be-label-block {
+        margin-top: 4px;
+        width: 25%;
+        max-width: 25%;
+        text-align: right;
+        padding: 0 15px;
+        white-space: nowrap;
+      }
+
+      .mt-be-input {
+        @mixin input;
+        width: 75%;
+        margin: 0 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+      }
+    }
+  }
 }
 
 @media (max-width: 991.5px) {
   .mt-block-editor {
-    padding: 0 0;
-    margin: 0 16px;
+    .mt-be-app {
+      padding: 0 0;
+      margin: 0 16px;
+    }
+
     .mt-be-btn-command {
       width: 32px;
       height: 34px;
@@ -862,6 +1000,17 @@ $root-font-size: 16px;
     }
     .mt-be-block-command-panel {
       padding: 4px 12px;
+    }
+
+    .mt-be-overlay {
+      .mt-be-dialog-content {
+        width: calc(100vw - 32px);
+      }
+      .mt-be-label-name {
+        .mt-be-label-block {
+          width: 200px;
+        }
+      }
     }
   }
 }
