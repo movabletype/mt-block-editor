@@ -35,5 +35,12 @@
   "Heading 4": "見出し4",
   "Heading 5": "見出し5",
   "Heading 6": "見出し6",
-  "Preformatted": "書式設定済み"
+  "Preformatted": "書式設定済み",
+  "Title": "タイトル",
+  "Target Attribute": "ターゲット属性",
+  "Insert Link": "リンクの挿入",
+  "None": "なし",
+  "New window": "新規ウィンドウ",
+  "Close": "閉じる",
+  "Save": "保存"
 }
