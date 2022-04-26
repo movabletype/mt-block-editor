@@ -50,19 +50,20 @@ const Editor: React.FC<EditorProps> = blockProperty(
     const [isLinkDialogOpen, setLinkDialogOpen] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
 
-    useCommands({
-      block,
-      commands: [
-        {
-          command: "core-insertLink",
-          callback: () => {
-            if (!isLinkDialogOpen) {
+    useCommands(
+      {
+        block,
+        commands: [
+          {
+            command: "core-insertLink",
+            callback: () => {
               setLinkDialogOpen(true);
-            }
+            },
           },
-        },
-      ],
-    });
+        ],
+      },
+      []
+    );
 
     return (
       <>

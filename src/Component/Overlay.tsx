@@ -22,23 +22,26 @@ const Overlay: React.FC<OverlayProps> = ({
   );
 
   useEffect(() => {
+    Object.assign(portal.style, PORTAL_STYLE);
+    portal.classList.add("mt-block-editor");
+    document.body.appendChild(portal);
+    return () => portal.remove();
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
     function onKeydown(ev: KeyboardEvent): void {
       if (ev.key === "Escape") {
         onClose();
       }
     }
 
-    document.body.appendChild(portal);
     document.addEventListener("keydown", onKeydown);
-
-    return () => {
-      portal.remove();
-      document.removeEventListener("keydown", onKeydown);
-    };
-  });
-
-  Object.assign(portal.style, PORTAL_STYLE);
-  portal.classList.add("mt-block-editor");
+    return () => document.removeEventListener("keydown", onKeydown);
+  }, [open]);
 
   return createPortal(
     <CSSTransition

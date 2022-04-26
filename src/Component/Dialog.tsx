@@ -20,11 +20,7 @@ type DialogContextProps = Pick<DialogProps, "onClose">;
 const DialogContext = createContext<DialogContextProps>({});
 export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-
-  let className = "mt-be-dialog";
-  if (props.className) {
-    className += ` ${props.className}`;
-  }
+  const className = `mt-be-dialog ${props.className || ""}`;
 
   useEffect(() => {
     if (!props.open) {
@@ -39,20 +35,14 @@ export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
     const focusEl = modalEl.querySelector<HTMLElement>(
       `[data-mt-block-editor-focus-default]`
     );
-    console.log(focusEl);
     if (!focusEl) {
-      return;
-    }
-
-    const activeEl = document.activeElement;
-    if (activeEl && activeEl.closest(`.${className}`) === modalEl) {
       return;
     }
 
     setTimeout(() => {
       focusEl.focus();
     }, TRANSITION_TIMEOUT);
-  });
+  }, [props.open]);
 
   return (
     <Overlay open={props.open} onClose={props.onClose}>
