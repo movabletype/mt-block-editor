@@ -16,14 +16,6 @@
     "cypress:open": "npm run cypress:build && cypress open",
     "cypress:run": "npm run cypress:build && cypress run"
   },
-  "jest": {
-    "moduleNameMapper": {
-      "(\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|scss)|\\?raw)$": "<rootDir>/__mocks__/fileMock.js"
-    },
-    "testPathIgnorePatterns": [
-      "<rootDir>/sub-projects/generator-mt-block-editor-block/"
-    ]
-  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint && npx tsc && npm run build"

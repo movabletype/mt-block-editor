@@ -16,6 +16,7 @@ import Block, { HasBlocks, DEFAULT_KEYS_FOR_SETUP } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 import EditManager from "./EditManager";
+import CommandManager from "./CommandManager";
 import {
   add as editHandlersAdd,
   remove as editHandlersRemove,
@@ -58,6 +59,7 @@ class Editor extends EventEmitter implements HasBlocks {
   public opts: EditorOptions;
   public factory: BlockFactory;
   public editManager: EditManager;
+  public commandManager: CommandManager;
   public blocks: Block[] = [];
   public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
@@ -80,6 +82,7 @@ class Editor extends EventEmitter implements HasBlocks {
     this.editManager = new EditManager(
       Object.assign({ editor: this }, opts.editManager || {})
     );
+    this.commandManager = new CommandManager({ editor: this });
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";

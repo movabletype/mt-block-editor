@@ -51,7 +51,7 @@ export const BlockContext = createContext<BlockContextProps | null>(null);
 export function useBlockContext(): BlockContextProps {
   const c = useContext(BlockContext);
   if (!c) {
-    throw Error("BlocksContext is not initialized");
+    throw Error("BlockContext is not initialized");
   }
   return c;
 }

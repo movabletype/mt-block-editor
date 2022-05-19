@@ -90,6 +90,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
   };
 
   const onWindowClick = (ev: Event): void => {
+    if (document.querySelector(".mt-be-overlay")) {
+      return;
+    }
+
     const editorEl = editor.editorElement;
 
     if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
@@ -144,6 +148,11 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         setFocusedId,
       });
     }
+
+    editor.commandManager.dispatchKeydownEvent({
+      event: ev,
+      blockId: focusedId,
+    });
   };
 
   useEffect(() => {
@@ -166,7 +175,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     <EditorContext.Provider value={editorContext}>
       <BlocksContext.Provider value={blocksContext}>
         <DndProvider backend={DndBackend}>
-          <div>
+          <div className="mt-be-app">
             {blocks.map((b, i) => {
               const focus = b.id === focusedId;
               return (

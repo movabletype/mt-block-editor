@@ -451,11 +451,15 @@ context("Text", () => {
         `button[aria-label="Source code"], button[aria-label="ソースコード"]`
       ).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
+      cy.get(".tox-dialog textarea").invoke(
         "val",
         "<table><tr><td>test</td></tr></table>"
       );
-      cy.get(".mce-window .mce-primary button:first-child").click();
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
 
       blur();
 
