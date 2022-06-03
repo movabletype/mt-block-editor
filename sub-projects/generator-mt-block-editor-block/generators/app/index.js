@@ -168,11 +168,11 @@ module.exports = class extends Generator {
   install() {
     if (this.props.isPlugin) {
       this.spawnCommand("npm", ["install"], {
-        cwd: `mt-static/plugins/${this.props.blockName}`,
+        cwd: `${this.destinationPath()}/mt-static/plugins/${this.props.blockName}`,
       });
     }
-    this.installDependencies({
-      bower: false,
+    this.spawnCommand("npm", ["install"], {
+      cwd: this.destinationPath(),
     });
   }
 };
