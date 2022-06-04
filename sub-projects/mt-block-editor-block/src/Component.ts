@@ -7,6 +7,10 @@ const {
   BlockSetupCommon,
   BlockLabel,
   EditorMode,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
 } = window.MTBlockEditor.Component;
 
 export {
@@ -18,4 +22,8 @@ export {
   BlockSetupCommon,
   BlockLabel,
   EditorMode,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
 };
