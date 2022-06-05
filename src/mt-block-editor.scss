@@ -18,6 +18,7 @@ $root-font-size: 16px;
 @define-mixin form-button {
   padding: 6px 12px;
   border-radius: 3px;
+  font-size: 14px;
   border: 1px solid #dddddd;
   color: #333333;
   background-color: #fff;
