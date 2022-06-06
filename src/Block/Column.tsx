@@ -122,7 +122,7 @@ const Editor: React.FC<EditorProps> = ({
         setFocusedId(blocks[0].id);
       }
     });
-  });
+  }, [focus, focusBlock, focusDescendant]);
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
