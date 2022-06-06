@@ -1,5 +1,11 @@
 import { focusIfIos } from "../util";
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import { CSSTransition } from "react-transition-group";
 import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
@@ -32,34 +38,34 @@ const AddButton: React.FC<AddButtonProps> = ({
   const blockListElRef = useRef(null);
   const dummyInputElRef = useRef<HTMLInputElement>(null);
 
-  const onDrop = (): void => {
-    if (buttonElRef.current === null) {
-      return;
-    }
-
-    const buttonEl = (buttonElRef.current as unknown) as HTMLElement;
-    buttonEl.classList.remove("mt-be-droppable");
-  };
-
-  const onWindowClick = (ev: MouseEvent): void => {
-    if (blockListElRef.current === null) {
-      return;
-    }
-
-    const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
-
-    let target = ev.target as HTMLElement;
-    while (target.parentNode && target.parentNode !== target) {
-      if (target === blockListEl) {
+  useEffect(() => {
+    const onDrop = (): void => {
+      if (buttonElRef.current === null) {
         return;
       }
-      target = target.parentNode as HTMLElement;
-    }
 
-    setShowList(ListStatus.Hidden);
-  };
+      const buttonEl = (buttonElRef.current as unknown) as HTMLElement;
+      buttonEl.classList.remove("mt-be-droppable");
+    };
 
-  useEffect(() => {
+    const onWindowClick = (ev: MouseEvent): void => {
+      if (blockListElRef.current === null) {
+        return;
+      }
+
+      const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
+
+      let target = ev.target as HTMLElement;
+      while (target.parentNode && target.parentNode !== target) {
+        if (target === blockListEl) {
+          return;
+        }
+        target = target.parentNode as HTMLElement;
+      }
+
+      setShowList(ListStatus.Hidden);
+    };
+
     document.addEventListener("drop", onDrop, {
       capture: true,
       passive: true,
@@ -83,32 +89,40 @@ const AddButton: React.FC<AddButtonProps> = ({
     return <></>;
   }
 
-  const shortcutTypes = !showShortcuts
-    ? []
-    : shortcutBlockTypes
-    ? editor.selectableTypes(shortcutBlockTypes)
-    : editor.shortcutTypes();
-  const panelTypes = panelBlockTypes
-    ? editor.selectableTypes(panelBlockTypes)
-    : showShortcuts
-    ? editor.panelTypes()
-    : [...new Set(editor.shortcutTypes().concat(editor.panelTypes()))];
+  const [shortcutTypes, panelTypes] = useMemo(
+    () => [
+      !showShortcuts
+        ? []
+        : shortcutBlockTypes
+        ? editor.selectableTypes(shortcutBlockTypes)
+        : editor.shortcutTypes(),
+      panelBlockTypes
+        ? editor.selectableTypes(panelBlockTypes)
+        : showShortcuts
+        ? editor.panelTypes()
+        : [...new Set(editor.shortcutTypes().concat(editor.panelTypes()))],
+    ],
+    []
+  );
   const onlyShortcuts = showShortcuts && panelTypes.length === 0;
 
   if (shortcutTypes.length === 0 && panelTypes.length === 0) {
     return <></>;
   }
 
-  const add = async (type: typeof Block): Promise<void> => {
-    focusIfIos(dummyInputElRef);
-    addBlock(
-      await type.new({
-        editor: editor,
-        event: new Event("addButton"),
-      }),
-      index
-    );
-  };
+  const add = useCallback(
+    async (type: typeof Block): Promise<void> => {
+      focusIfIos(dummyInputElRef);
+      addBlock(
+        await type.new({
+          editor: editor,
+          event: new Event("addButton"),
+        }),
+        index
+      );
+    },
+    [index, addBlock]
+  );
 
   return (
     <>
