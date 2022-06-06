@@ -70,7 +70,7 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
       },
       { passive: true }
     );
-  });
+  }, []);
 
   return (
     <div

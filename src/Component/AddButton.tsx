@@ -77,7 +77,7 @@ const AddButton: React.FC<AddButtonProps> = ({
         capture: true,
       });
     };
-  });
+  }, []);
 
   if (!editor) {
     return <></>;

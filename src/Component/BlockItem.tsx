@@ -137,7 +137,7 @@ const BlockItem: React.FC<Props> = ({
     return () => {
       block.isNewlyAdded = false;
     };
-  });
+  }, []);
 
   const [{ isDragging }, drag, preview] = useDrag({
     item: { type: parentBlock ? parentBlock.id : "block", id, index },

@@ -264,7 +264,7 @@ const Editor: React.FC<EditorProps> = ({
     return () => {
       removeTinyMCEFromBlock(block);
     };
-  });
+  }, [focus]);
 
   const html = block.html();
   const isInSetupMode = editor.opts.mode === "setup";
