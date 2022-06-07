@@ -139,3 +139,29 @@ export function findDescendantBlock(
 
   return null;
 }
+
+export function getBlocksByRange(
+  ancestor: Block | Editor,
+  start: string,
+  end: string
+): Block[] {
+  const childBlocks =
+    ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
+  let started = false;
+  const blocks = [];
+  for (let i = 0; i < childBlocks.length; i++) {
+    const b = childBlocks[i];
+    if (b.id === start || b.id === end) {
+      blocks.push(b);
+      if (started) {
+        return blocks;
+      } else {
+        started = true;
+      }
+    } else if (started) {
+      blocks.push(b);
+    }
+  }
+
+  return blocks;
+}

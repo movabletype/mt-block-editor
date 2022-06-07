@@ -13,6 +13,7 @@ import {
   BlocksContextProps,
 } from "../Context";
 import AddButton from "./AddButton";
+import { getBlocksByRange } from "../util";
 
 interface AppProps {
   editor: Editor;
@@ -29,6 +30,16 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       setFocusedId: (id, opts?) => {
         if (!id) {
           _setFocusedId(id);
+          return;
+        }
+
+        const focusedId = focusedIdRef.current;
+        if (
+          focusedId &&
+          focusedId.indexOf(",") !== -1 &&
+          focusedId.indexOf(id) !== -1
+        ) {
+          // do nothing
           return;
         }
 
@@ -165,8 +176,41 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       editor.commandManager.dispatchKeydownEvent({
         event: ev,
         blockId: focusedIdRef.current,
+        editorContext,
       });
     };
+
+    let startId = "";
+    const onEditorMousedown = (ev: MouseEvent): void => {
+      if (ev.target instanceof HTMLElement) {
+        startId =
+          ev.target.closest<HTMLElement>("[data-mt-block-editor-block-id]")
+            ?.dataset.mtBlockEditorBlockId || "";
+      }
+    };
+
+    const onEditorMouseup = (ev: MouseEvent): void => {
+      if (ev.target instanceof HTMLElement) {
+        const endId =
+          ev.target.closest<HTMLElement>("[data-mt-block-editor-block-id]")
+            ?.dataset.mtBlockEditorBlockId || "";
+        if (startId && endId && startId !== endId) {
+          setFocusedId(
+            getBlocksByRange(editor, startId, endId)
+              .map((b) => b.id)
+              .join(",")
+          );
+
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      }
+
+      startId = "";
+    };
+
+    editor.editorElement.addEventListener("mousedown", onEditorMousedown);
+    editor.editorElement.addEventListener("mouseup", onEditorMouseup);
 
     window.addEventListener("click", onWindowClick, {
       capture: true,
@@ -176,6 +220,8 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     window.addEventListener("keydown", onWindowKeydown);
 
     return () => {
+      editor.editorElement.removeEventListener("mousedown", onEditorMousedown);
+      editor.editorElement.removeEventListener("mouseup", onEditorMouseup);
       window.removeEventListener("click", onWindowClick, {
         capture: true,
       });
@@ -189,7 +235,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         <DndProvider backend={DndBackend}>
           <div className="mt-be-app">
             {editor.blocks.map((b, i) => {
-              const focus = b.id === focusedIdRef.current;
+              const focus = focusedIdRef.current?.indexOf(b.id) === 0;
               return (
                 <BlockItem
                   key={b.id}
