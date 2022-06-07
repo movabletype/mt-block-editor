@@ -42,34 +42,37 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
       };
     }, 10);
 
-    divEl.addEventListener(
-      "mousedown",
-      () => {
-        document.addEventListener(
-          "mouseup",
-          (ev: MouseEvent) => {
-            if (!getShadowDomSelectorSet(block.id)) {
-              return;
-            }
+    const mousedownListener = (ev: MouseEvent): void => {
+      if (ev.shiftKey || ev.ctrlKey || ev.metaKey || ev.altKey) {
+        return;
+      }
 
-            if (onMouseUp) {
-              onMouseUp(ev);
-            }
-            setFocusedId(block.id);
-          },
-          { once: true, passive: true }
-        );
-      },
-      { passive: true }
-    );
+      document.addEventListener(
+        "mouseup",
+        (ev: MouseEvent) => {
+          if (!getShadowDomSelectorSet(block.id)) {
+            return;
+          }
 
-    divEl.addEventListener(
-      "keyup",
-      () => {
-        setFocusedId(block.id);
-      },
-      { passive: true }
-    );
+          if (onMouseUp) {
+            onMouseUp(ev);
+          }
+          setFocusedId(block.id);
+        },
+        { once: true, passive: true }
+      );
+    };
+    divEl.addEventListener("mousedown", mousedownListener, { passive: true });
+
+    const keyupListener = (): void => {
+      setFocusedId(block.id);
+    };
+    divEl.addEventListener("keyup", keyupListener, { passive: true });
+
+    return () => {
+      divEl.removeEventListener("mousedown", mousedownListener);
+      divEl.removeEventListener("keyup", keyupListener);
+    };
   }, []);
 
   return (
