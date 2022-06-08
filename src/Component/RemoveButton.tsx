@@ -1,7 +1,8 @@
 import { t } from "../i18n";
 import React from "react";
-import { useBlocksContext } from "../Context";
+import { useEditorContext, useBlocksContext } from "../Context";
 import Block from "../Block";
+import { findDescendantBlock } from "../util";
 
 interface RemoveButtonProps {
   block: Block;
@@ -10,10 +11,10 @@ interface RemoveButtonProps {
 }
 
 const RemoveButton: React.FC<RemoveButtonProps> = ({
-  block,
   label,
   confirm,
 }: RemoveButtonProps) => {
+  const { editor, getFocusedId } = useEditorContext();
   const { removeBlock } = useBlocksContext();
   let className = "mt-be-btn-remove";
   if (label) {
@@ -27,14 +28,24 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({
         className={className}
         onClick={(ev) => {
           ev.stopPropagation();
+
+          const removeBlocks = (): void => {
+            const blocks = (getFocusedId()?.split(/,/) || [])
+              .map((id) => findDescendantBlock(editor, id))
+              .filter((b): b is Block => !!b);
+            editor.editManager.beginGrouping();
+            blocks.forEach((block) => removeBlock(block));
+            editor.editManager.endGrouping();
+          };
+
           if (confirm) {
             if (
               window.confirm(t("Are you sure you want to remove the block?"))
             ) {
-              removeBlock(block);
+              removeBlocks();
             }
           } else {
-            removeBlock(block);
+            removeBlocks();
           }
         }}
       >
