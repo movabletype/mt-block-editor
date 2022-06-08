@@ -1,5 +1,5 @@
 /*
- * Got a lots of codes from examles of react-dnd.
+ * Got a lots of codes from examples of react-dnd.
  * http://react-dnd.github.io/react-dnd/examples
  */
 
