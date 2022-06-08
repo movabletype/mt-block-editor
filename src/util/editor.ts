@@ -21,7 +21,8 @@ export function preParseContent(value: string): string {
 export async function parseContent(
   value: string,
   factory: BlockFactory,
-  context: ParserContext
+  context: ParserContext,
+  fallbackBlockType = "core-html"
 ): Promise<Block[]> {
   if (!value) {
     return [];
@@ -44,7 +45,7 @@ export async function parseContent(
   let children = [...doc.children[0].children];
   if (children.length === 0) {
     const fallback = document.createElement("DIV");
-    fallback.setAttribute("t", "core-html");
+    fallback.setAttribute("t", fallbackBlockType);
     fallback.innerHTML = value;
     children = [fallback];
   }
