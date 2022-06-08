@@ -4,9 +4,11 @@
  */
 
 import React, {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
+  useState,
   createRef,
   CSSProperties,
 } from "react";
@@ -30,7 +32,12 @@ import Column from "../Block/Column";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
-import { findDescendantBlock } from "../util";
+import BlockCommandPanel from "./BlockCommandPanel";
+import {
+  findDescendantBlock,
+  getBlocksByRange,
+  toKeyboardShortcutLabel,
+} from "../util";
 
 interface DragObject extends DragObjectWithType {
   index: number;
@@ -72,9 +79,20 @@ const BlockItem: React.FC<Props> = ({
   parentBlock,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
-  const { editor, getFocusedId, setFocusedId } = useEditorContext();
+  const editorContext = useEditorContext();
+  const { editor, getFocusedId, setFocusedId } = editorContext;
+  const focusedId = getFocusedId();
   const b = block;
   const i = index;
+
+  const [isCommandPanelShown, setCommandPanelShown] = useState(false);
+  const toggleCommandPanelShown = useCallback(() => {
+    setCommandPanelShown((prev) => !prev);
+    block.focusEditor();
+  }, []);
+  if (!focus && isCommandPanelShown) {
+    setCommandPanelShown(false);
+  }
 
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop(
@@ -167,7 +185,7 @@ const BlockItem: React.FC<Props> = ({
   const style: CSSProperties = {};
   style.opacity = isDragging ? (featurePreview ? 0 : 0.5) : 1;
   preview(drop(ref));
-  const focusDescendant = !!findDescendantBlock(b, getFocusedId());
+  const focusDescendant = !!findDescendantBlock(b, focusedId);
   const clickBlockTargetRef = createRef<HTMLElement>();
 
   // TODO: render preview
@@ -212,7 +230,9 @@ const BlockItem: React.FC<Props> = ({
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
-        if (getFocusedId() === b.id) {
+        const focusedId = getFocusedId();
+
+        if (focusedId === b.id) {
           return;
         }
 
@@ -221,7 +241,15 @@ const BlockItem: React.FC<Props> = ({
         if (clickBlockTargetRef.current) {
           clickBlockTargetRef.current.click();
         } else if (!ignoreClickEvent) {
-          setFocusedId(b.id);
+          if (focusedId && ev.shiftKey) {
+            setFocusedId(
+              getBlocksByRange(editor, focusedId, b.id)
+                .map((b) => b.id)
+                .join(",")
+            );
+          } else {
+            setFocusedId(b.id);
+          }
         }
       }}
       onCopy={(ev) => {
@@ -266,27 +294,87 @@ const BlockItem: React.FC<Props> = ({
         ev.clipboardData.setData("text/html", html);
         ev.preventDefault();
       }}
-      className={`mt-be-block-wrapper ${focus ? "focus" : ""}`}
+      className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
+        focusedId?.match(/,/) && focusedId.indexOf(b.id) !== -1
+          ? "mt-be-focus"
+          : ""
+      }`}
       style={style}
       ref={ref}
     >
       {showButton && (
         <>
           <div className="mt-be-btn-move-wrapper">
+            <BlockCommandPanel in={isCommandPanelShown}>
+              {editor.commandManager.commands().map((command) => {
+                const [isDialogOpen, setDialogOpen] = useState(false);
+                return (
+                  <button
+                    key={command.command}
+                    type="button"
+                    className="mt-be-btn-context-command"
+                    onClick={() => {
+                      if (command.dialog) {
+                        setDialogOpen(true);
+                      } else {
+                        editor.commandManager.execute({
+                          command: command.command,
+                          blockId: focusedId || b.id,
+                          editorContext,
+                        });
+                      }
+                    }}
+                  >
+                    <span>
+                      {command.icon && <img src={command.icon} />}
+                      {typeof command.label === "function"
+                        ? command.label()
+                        : command.label}
+                    </span>
+                    <span>
+                      {command.shortcut &&
+                        toKeyboardShortcutLabel(command.shortcut)}
+                    </span>
+                    {command.dialog && <command.dialog open={isDialogOpen} />}
+                  </button>
+                );
+              })}
+            </BlockCommandPanel>
             <button
               type="button"
               className="mt-be-btn-up"
-              onClick={() => swapBlocks(index, index - 1, true)}
+              onClick={() => {
+                const ids = focusedId?.split(/,/) || [];
+                if (ids.length >= 2) {
+                  for (let i = index; i < index + ids.length; i++) {
+                    swapBlocks(i - 1, i);
+                  }
+                  return;
+                }
+
+                swapBlocks(index, index - 1, true);
+              }}
             ></button>
             <button
               type="button"
               className="mt-be-btn-move"
+              onClick={toggleCommandPanelShown}
               ref={drag}
             ></button>
             <button
               type="button"
               className="mt-be-btn-down"
-              onClick={() => swapBlocks(index, index + 1, true)}
+              onClick={() => {
+                const ids = focusedId?.split(/,/) || [];
+                if (ids.length >= 2) {
+                  for (let i = index + ids.length; i >= index; i--) {
+                    swapBlocks(i + 1, i);
+                  }
+                  return;
+                }
+
+                swapBlocks(index, index + 1, true);
+              }}
             ></button>
           </div>
           <div className="mt-be-btn-add-wrapper">
