@@ -1,6 +1,8 @@
+import Editor from "../src/Editor";
 import Block from "../src/Block";
 
 class TestBlock extends Block {
+  public static typeId = "test-test";
   public _html = "";
   constructor(init?: Partial<TestBlock>) {
     super();
@@ -42,7 +44,10 @@ describe("htmlString()", () => {
     });
 
     test("append className", () => {
-      const b = new TestBlock({ _html: '<p class="a b">test</p>', className: "custom" });
+      const b = new TestBlock({
+        _html: '<p class="a b">test</p>',
+        className: "custom",
+      });
       expect(b.htmlString()).toBe('<p class="a b custom">test</p>');
     });
 
@@ -55,12 +60,30 @@ describe("htmlString()", () => {
     });
 
     test.each([
-      ['<p>test</p>', '<p class="c1 c2">test</p>'],
+      ["<p>test</p>", '<p class="c1 c2">test</p>'],
       ['<p class="a c1 b c2">test</p>', '<p class="a c1 b c2">test</p>'],
       ['<p class="a b c2">test</p>', '<p class="a b c2 c1">test</p>'],
     ])("multiple className: %s", (_html, expected) => {
       const b = new TestBlock({ _html, className: "c1 c2" });
       expect(b.htmlString()).toBe(expected);
     });
+  });
+});
+
+describe("toClipboardItem()", () => {
+  test("get item", async () => {
+    const input = document.createElement("INPUT");
+    input.id = "input-" + Math.random();
+    document.body.appendChild(input);
+    const editor = new Editor({
+      id: input.id,
+      stylesheets: [],
+    });
+    const b = new TestBlock({ _html: "<p>test</p>" });
+
+    const item = await b.toClipboardItem({ editor });
+    expect(item).toBe(
+      `<!-- mt-beb t="test-test" --><p>test</p><!-- /mt-beb -->`
+    );
   });
 });
