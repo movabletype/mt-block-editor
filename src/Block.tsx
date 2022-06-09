@@ -294,6 +294,12 @@ class Block {
     } -->${this.compiledHtml || html}<!-- /mt-beb -->`;
   }
 
+  public async toClipboardItem(
+    opts: SerializeOptions
+  ): Promise<ClipboardItem[] | string> {
+    return await this.serialize(opts);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public editor(opts: EditorOptions): JSX.Element {
     throw "Should be implemented for each concrete class";

@@ -428,6 +428,10 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
     return this.text;
   }
 
+  public async toClipboardItem(): Promise<ClipboardItem[] | string> {
+    return this.html();
+  }
+
   public static async newFromHtml({
     html,
     meta,
