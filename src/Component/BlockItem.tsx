@@ -327,9 +327,7 @@ const BlockItem: React.FC<Props> = ({
                   >
                     <span>
                       {command.icon && <img src={command.icon} />}
-                      {typeof command.label === "function"
-                        ? command.label()
-                        : command.label}
+                      {command.label}
                     </span>
                     <span>
                       {command.shortcut &&

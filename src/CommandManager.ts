@@ -10,7 +10,7 @@ import { DialogProps } from "./Component/Dialog";
 export interface Command {
   command: string;
   callback?: (event: BlockEditorCommandEvent) => void;
-  label?: string | (() => string);
+  label?: string;
   icon?: string;
   shortcut?: string;
   dialog?: React.FC<DialogProps>;

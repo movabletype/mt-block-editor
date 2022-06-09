@@ -16,7 +16,7 @@ import Block, { HasBlocks, DEFAULT_KEYS_FOR_SETUP } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 import EditManager from "./EditManager";
-import CommandManager from "./CommandManager";
+import CommandManager, { Command } from "./CommandManager";
 import {
   add as editHandlersAdd,
   remove as editHandlersRemove,
@@ -24,6 +24,7 @@ import {
 } from "./Editor/edit";
 
 import "./import-default-blocks";
+import "./import-default-commands";
 
 export enum StylesheetType {
   url,
@@ -127,6 +128,10 @@ class Editor extends EventEmitter implements HasBlocks {
     return this.opts.shortcutBlockTypes
       ? this.selectableTypes(this.opts.shortcutBlockTypes)
       : [];
+  }
+
+  public keyboardShortcuts(): Command[] {
+    return this.commandManager.commands();
   }
 
   public addBlock(parent: HasBlocks, block: Block, index: number): void {
