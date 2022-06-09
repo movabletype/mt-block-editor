@@ -144,8 +144,9 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
     const onWindowKeydown = (ev: KeyboardEvent): void => {
       const editorEl = editor.editorElement;
+      const focusedId = focusedIdRef.current;
 
-      if (!focusedIdRef.current) {
+      if (!focusedId) {
         return;
       }
 
@@ -154,30 +155,48 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         return;
       }
 
-      if (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
+      const key = ev.key;
+
+      if (key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
         ev.preventDefault();
         editor.editManager.undo({
           editor,
-          getFocusedId: () => focusedIdRef.current,
+          getFocusedId: () => focusedId,
           setFocusedId,
         });
       } else if (
-        (ev.key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
-        (ev.key === "y" && (ev.ctrlKey || ev.metaKey))
+        (key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
+        (key === "y" && (ev.ctrlKey || ev.metaKey))
       ) {
         ev.preventDefault();
         editor.editManager.redo({
           editor,
-          getFocusedId: () => focusedIdRef.current,
+          getFocusedId: () => focusedId,
           setFocusedId,
         });
       }
 
       editor.commandManager.dispatchKeydownEvent({
         event: ev,
-        blockId: focusedIdRef.current,
+        blockId: focusedId,
         editorContext,
       });
+
+      if (ev.defaultPrevented) {
+        return;
+      }
+
+      if (focusedId.indexOf(",") !== -1) {
+        ev.preventDefault();
+
+        if (key === "Delete" || key === "Backspace") {
+          editor.commandManager.execute({
+            command: "core-deleteBlock",
+            blockId: focusedId,
+            editorContext,
+          });
+        }
+      }
     };
 
     let startId = "";
