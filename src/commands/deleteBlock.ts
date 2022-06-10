@@ -8,7 +8,7 @@ const command: Command = {
   },
   icon,
   command: "core-deleteBlock",
-  callback: async ({
+  callback: ({
     detail: {
       blocks,
       editorContext: { editor },

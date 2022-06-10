@@ -269,7 +269,7 @@ const BlockItem: React.FC<Props> = ({
         <>
           <div className="mt-be-btn-move-wrapper">
             <BlockCommandPanel in={isCommandPanelShown}>
-              {editor.commandManager.commands().map((command) => {
+              {editor.commandManager.contextCommands().map((command) => {
                 const [isDialogOpen, setDialogOpen] = useState(false);
                 return (
                   <button

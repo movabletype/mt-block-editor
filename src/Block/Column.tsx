@@ -364,7 +364,7 @@ class Column extends Block implements HasBlocks {
 
       const editorContext = {
         editor,
-        setFocusedIds: () => null,
+        setFocusedIds: () => undefined,
         getFocusedIds: () => [],
       };
 

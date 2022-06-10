@@ -37,15 +37,27 @@ interface UseCommandsParams {
 
 export default class CommandManager {
   public static allCommands: Command[] = [];
+  private static _allContextCommands: Command[] | undefined;
   public editor: Editor;
-  private eventEmitters: Record<string, EventEmitter> = {};
+  private eventEmitters: Map<Block, EventEmitter> = new Map();
 
   public static registerCommand(command: Command): void {
     CommandManager.allCommands.push(command);
+    CommandManager._allContextCommands = undefined;
+  }
+
+  public static get allContextCommands(): Command[] {
+    return (this._allContextCommands ||= CommandManager.allCommands.filter(
+      (c) => !!c.label
+    ));
   }
 
   public constructor(init: Pick<CommandManager, "editor">) {
     this.editor = init.editor;
+  }
+
+  public contextCommands(): Command[] {
+    return CommandManager.allContextCommands;
   }
 
   public commands(): Command[] {
@@ -53,23 +65,29 @@ export default class CommandManager {
   }
 
   public on(
-    blockId: string,
+    block: Block,
     command: string,
     callback: (event: BlockEditorCommandEvent) => void
   ): void {
-    this.eventEmitters[blockId] ||= new EventEmitter();
-    this.eventEmitters[blockId].on(command, callback);
+    let emitter = this.eventEmitters.get(block);
+    if (!emitter) {
+      this.eventEmitters.set(block, (emitter = new EventEmitter()));
+    }
+    emitter.on(command, callback);
   }
 
-  public removeAllListenersOfBlock(blockId: string): void {
-    this.eventEmitters[blockId]?.removeAllListeners();
-    delete this.eventEmitters[blockId];
+  public removeAllListenersOfBlock(block: Block): void {
+    this.eventEmitters.get(block)?.removeAllListeners();
+    this.eventEmitters.delete(block);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public emit(blockIds: string[], command: string, ...args: any[]): void {
-    for (let i = 0, len = blockIds.length; i < len; i++) {
-      this.eventEmitters[blockIds[i]]?.emit(command, ...args);
+  public emit(
+    blocks: Readonly<Block[]>,
+    command: string,
+    ...args: unknown[]
+  ): void {
+    for (let i = 0, len = blocks.length; i < len; i++) {
+      this.eventEmitters.get(blocks[i])?.emit(command, ...args);
     }
   }
 
@@ -84,32 +102,24 @@ export default class CommandManager {
   }): void {
     const key = toKeyboardShortcutKey(event);
 
-    if (key === "cmd+k") {
-      event.preventDefault();
-      this.emit(blockIds, "core-insertLink");
-      return;
-    }
     if (key === "cmd+c") {
       const s = window.getSelection();
       if (s && !s.isCollapsed) {
+        // Prefer browser default behavior
         return;
       }
     }
 
-    for (const command of this.editor.keyboardShortcuts()) {
-      if (command.shortcut === key) {
-        event.preventDefault();
+    const command = this.editor.keyboardShortcutMap()[key];
+    if (command && command.callback) {
+      event.preventDefault();
 
-        command.callback &&
-          command.callback(
-            new BlockEditorCommandEvent({
-              blocks: findDescendantBlocks(this.editor, blockIds),
-              editorContext,
-            })
-          );
-
-        return;
-      }
+      command.callback(
+        new BlockEditorCommandEvent({
+          blocks: findDescendantBlocks(this.editor, blockIds),
+          editorContext,
+        })
+      );
     }
   }
 
@@ -140,18 +150,18 @@ export function useCommands(
   deps?: React.DependencyList | undefined
 ): void {
   const {
-    editor: { commandManager: CommandManager },
+    editor: { commandManager },
   } = useEditorContext();
 
   useEffect(() => {
     for (const command of commands) {
       if (command.callback) {
-        CommandManager.on(block.id, command.command, command.callback);
+        commandManager.on(block, command.command, command.callback);
       }
     }
 
     return () => {
-      CommandManager.removeAllListenersOfBlock(block.id);
+      commandManager.removeAllListenersOfBlock(block);
     };
   }, deps);
 }

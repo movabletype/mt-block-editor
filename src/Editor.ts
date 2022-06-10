@@ -66,6 +66,7 @@ class Editor extends EventEmitter implements HasBlocks {
 
   private inputElement: HTMLInputElement;
   private metadataMap: Map<string, string> = new Map<string, string>();
+  private keyboardShortcutCache?: Record<string, Command>;
 
   public constructor(opts: EditorOptions) {
     super();
@@ -130,8 +131,16 @@ class Editor extends EventEmitter implements HasBlocks {
       : [];
   }
 
-  public keyboardShortcuts(): Command[] {
-    return this.commandManager.commands();
+  public keyboardShortcutMap(): Record<string, Command> {
+    return (this.keyboardShortcutCache ||= (() => {
+      const cache: Record<string, Command> = {};
+      for (const command of this.commandManager.commands()) {
+        if (command.shortcut) {
+          cache[command.shortcut] = command;
+        }
+      }
+      return cache;
+    })());
   }
 
   public addBlock(parent: HasBlocks, block: Block, index: number): void {
