@@ -51,7 +51,7 @@ const Editor: React.FC<EditorProps> = ({
     canRemove = block.canRemoveBlock;
   }
 
-  const { editor, setFocusedId, getFocusedId } = useEditorContext();
+  const { editor, setFocusedIds, getFocusedIds } = useEditorContext();
 
   const blocksContext = useMemo<BlocksContextProps>(
     () => ({
@@ -62,19 +62,19 @@ const Editor: React.FC<EditorProps> = ({
           index = block.blocks.indexOf(index) + 1;
         }
         editor.addBlock(block, b, index);
-        setFocusedId(b.id);
+        setFocusedIds([b.id]);
       },
       mergeBlock: (b: Block) => {
         const index = block.blocks.indexOf(b);
         if (editor.mergeBlock(block, b)) {
-          setFocusedId(block.blocks[index - 1].id);
+          setFocusedIds([block.blocks[index - 1].id]);
         }
       },
       removeBlock: (b: Block) => {
         const index = block.blocks.indexOf(b);
         editor.removeBlock(block, b);
         if (index > 0) {
-          setFocusedId(block.blocks[index - 1].id);
+          setFocusedIds([block.blocks[index - 1].id]);
         }
       },
       swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
@@ -127,7 +127,7 @@ const Editor: React.FC<EditorProps> = ({
       block._html = "";
       block.blocks = blocks;
       if (blocks[0]) {
-        setFocusedId(blocks[0].id);
+        setFocusedIds([blocks[0].id]);
       }
     });
   });
@@ -137,7 +137,8 @@ const Editor: React.FC<EditorProps> = ({
       <BlockSetupCommon block={block} keys={["className"]} />
       {block.blocks.map((b, i) => {
         const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
-        const focusItem = (focus && focusFirstBlock) || getFocusedId() === b.id;
+        const focusItem =
+          (focus && focusFirstBlock) || getFocusedIds().includes(b.id);
         return (
           <BlockItem
             key={b.id}
@@ -363,8 +364,8 @@ class Column extends Block implements HasBlocks {
 
       const editorContext = {
         editor,
-        setFocusedId: () => null,
-        getFocusedId: () => null,
+        setFocusedIds: () => null,
+        getFocusedIds: () => [],
       };
 
       render(

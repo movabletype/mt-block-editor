@@ -19,39 +19,53 @@ interface AppProps {
   editor: Editor;
 }
 
+function arrayEquals<T>(a: T[], b: T[]): boolean {
+  if (a === b) {
+    return true;
+  }
+
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  for (let i = 0, len = a.length; i < len; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 const App: React.FC<AppProps> = ({ editor }: AppProps) => {
-  const [_focusedId, _setFocusedId] = useState<string | null>(null);
-  const focusedIdRef = useRef<string | null>(null);
-  focusedIdRef.current = _focusedId ? _focusedId.replace(/:.*/, "") : null;
+  const [_focusedIds, _setFocusedIds] = useState<string[]>([]);
+  const focusedIdsRef = useRef<string[]>(_focusedIds);
 
   const editorContext = useMemo<EditorContextProps>(
     () => ({
       editor: editor,
-      setFocusedId: (id, opts?) => {
-        if (!id) {
-          _setFocusedId(id);
-          return;
-        }
-
-        const focusedId = focusedIdRef.current;
+      setFocusedIds: (ids, opts?) => {
+        const focusedIds = focusedIdsRef.current;
         if (
-          focusedId &&
-          focusedId.indexOf(",") !== -1 &&
-          focusedId.indexOf(id) !== -1
+          focusedIds.length >= 2 &&
+          ids.some((id) => focusedIds.includes(id))
         ) {
           // do nothing
           return;
         }
 
-        _setFocusedId(
-          id + (opts && opts.forceUpdate ? ":" + new Date().getTime() : "")
-        );
+        if (!opts?.forceUpdate && arrayEquals(focusedIds, ids)) {
+          return;
+        }
+
+        focusedIdsRef.current = ids;
+        _setFocusedIds(ids);
       },
-      getFocusedId: () => focusedIdRef.current,
+      getFocusedIds: () => focusedIdsRef.current,
     }),
     []
   );
-  const setFocusedId = editorContext.setFocusedId;
+  const setFocusedIds = editorContext.setFocusedIds;
 
   const blocksContext = useMemo<BlocksContextProps>(
     () => ({
@@ -62,19 +76,19 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
           index = editor.blocks.indexOf(index) + 1;
         }
         editor.addBlock(editor, b, index);
-        setFocusedId(b.id);
+        setFocusedIds([b.id]);
       },
       mergeBlock: (b: Block) => {
         const index = editor.blocks.indexOf(b);
         if (editor.mergeBlock(editor, b)) {
-          setFocusedId(editor.blocks[index - 1].id);
+          setFocusedIds([editor.blocks[index - 1].id]);
         }
       },
       removeBlock: (b: Block) => {
         const index = editor.blocks.indexOf(b);
         editor.removeBlock(editor, b);
         if (index > 0) {
-          setFocusedId(editor.blocks[index - 1].id);
+          setFocusedIds([editor.blocks[index - 1].id]);
         }
       },
       swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
@@ -131,22 +145,22 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
           return;
         }
         if (target === editorEl) {
-          if (!focusedIdRef.current) {
-            setFocusedId("editor");
+          if (focusedIdsRef.current.length === 0) {
+            setFocusedIds(["editor"]);
           }
           return;
         }
         target = target.parentNode as HTMLElement;
       }
 
-      setFocusedId(null);
+      setFocusedIds([]);
     };
 
     const onWindowKeydown = (ev: KeyboardEvent): void => {
       const editorEl = editor.editorElement;
-      const focusedId = focusedIdRef.current;
+      const focusedIds = focusedIdsRef.current;
 
-      if (!focusedId) {
+      if (focusedIds.length === 0) {
         return;
       }
 
@@ -161,8 +175,8 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         ev.preventDefault();
         editor.editManager.undo({
           editor,
-          getFocusedId: () => focusedId,
-          setFocusedId,
+          getFocusedIds: () => focusedIds,
+          setFocusedIds,
         });
       } else if (
         (key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
@@ -171,14 +185,14 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         ev.preventDefault();
         editor.editManager.redo({
           editor,
-          getFocusedId: () => focusedId,
-          setFocusedId,
+          getFocusedIds: () => focusedIds,
+          setFocusedIds,
         });
       }
 
       editor.commandManager.dispatchKeydownEvent({
         event: ev,
-        blockId: focusedId,
+        blockIds: focusedIds,
         editorContext,
       });
 
@@ -186,13 +200,13 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         return;
       }
 
-      if (focusedId.indexOf(",") !== -1) {
+      if (focusedIds.length >= 2) {
         ev.preventDefault();
 
         if (key === "Delete" || key === "Backspace") {
           editor.commandManager.execute({
             command: "core-deleteBlock",
-            blockId: focusedId,
+            blockIds: focusedIds,
             editorContext,
           });
         }
@@ -214,10 +228,8 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
           ev.target.closest<HTMLElement>("[data-mt-block-editor-block-id]")
             ?.dataset.mtBlockEditorBlockId || "";
         if (startId && endId && startId !== endId) {
-          setFocusedId(
-            getBlocksByRange(editor, startId, endId)
-              .map((b) => b.id)
-              .join(",")
+          setFocusedIds(
+            getBlocksByRange(editor, startId, endId).map((b) => b.id)
           );
 
           ev.preventDefault();
@@ -254,7 +266,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         <DndProvider backend={DndBackend}>
           <div className="mt-be-app">
             {editor.blocks.map((b, i) => {
-              const focus = focusedIdRef.current?.indexOf(b.id) === 0;
+              const focus = focusedIdsRef.current.indexOf(b.id) === 0;
               return (
                 <BlockItem
                   key={b.id}

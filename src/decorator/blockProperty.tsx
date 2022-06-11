@@ -35,15 +35,15 @@ const editHandlers: EditHistoryHandlers = {
     a.data.cur = b.data.cur;
     return a;
   },
-  undo(hist, { editor, setFocusedId }) {
+  undo(hist, { editor, setFocusedIds }) {
     hist.data.cur = hist.data.cur || (hist.block as MapObject)[hist.data.name];
     (hist.block as MapObject)[hist.data.name] = hist.data.last;
-    setFocusedId(hist.block.id);
+    setFocusedIds([hist.block.id]);
     editor.render();
   },
-  redo(hist, { editor, setFocusedId }) {
+  redo(hist, { editor, setFocusedIds }) {
     (hist.block as MapObject)[hist.data.name] = hist.data.cur;
-    setFocusedId(hist.block.id);
+    setFocusedIds([hist.block.id]);
     editor.render();
   },
 };
@@ -66,7 +66,7 @@ export default function blockProperty<T extends EditorProps>(
     const [editGroups, setEditGroups] = useState<MapObject>({});
     const children = editor(props);
     const editorContext = useEditorContext();
-    const { setFocusedId, getFocusedId } = editorContext;
+    const { setFocusedIds, getFocusedIds } = editorContext;
     const blockEditor = editorContext.editor;
 
     useEffect(() => {
@@ -102,7 +102,9 @@ export default function blockProperty<T extends EditorProps>(
         if (
           activeEl &&
           activeEl.closest(
-            `[data-mt-block-editor-block-id="${getFocusedId()}"]`
+            getFocusedIds()
+              .map((id) => `[data-mt-block-editor-block-id="${id}"]`)
+              .join(",")
           )
         ) {
           return;
@@ -198,7 +200,7 @@ export default function blockProperty<T extends EditorProps>(
         }
         if (ev.keyCode === 13) {
           ev.preventDefault();
-          setFocusedId(null); // blur
+          setFocusedIds([]); // blur
         }
       };
 

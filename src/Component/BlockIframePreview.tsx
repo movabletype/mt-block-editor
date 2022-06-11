@@ -30,13 +30,13 @@ const editHandlers: EditHistoryHandlers = {
   merge(a, b) {
     return a.data.last === b.data.last ? a : undefined;
   },
-  undo(hist, { setFocusedId }) {
+  undo(hist, { setFocusedIds }) {
     hist.block.compiledHtml = hist.data.last;
-    setFocusedId(hist.block.id, { forceUpdate: true });
+    setFocusedIds([hist.block.id], { forceUpdate: true });
   },
-  redo(hist, { setFocusedId }) {
+  redo(hist, { setFocusedIds }) {
     hist.block.compiledHtml = hist.data.cur;
-    setFocusedId(hist.block.id, { forceUpdate: true });
+    setFocusedIds([hist.block.id], { forceUpdate: true });
   },
 };
 

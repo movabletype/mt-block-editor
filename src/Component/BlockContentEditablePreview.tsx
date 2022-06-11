@@ -18,7 +18,7 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
   html,
   onMouseUp,
 }: EditorProps) => {
-  const { setFocusedId } = useEditorContext();
+  const { setFocusedIds } = useEditorContext();
   const divElRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
           if (onMouseUp) {
             onMouseUp(ev);
           }
-          setFocusedId(block.id);
+          setFocusedIds([block.id]);
         },
         { once: true, passive: true }
       );
@@ -65,7 +65,7 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
     divEl.addEventListener("mousedown", mousedownListener, { passive: true });
 
     const keyupListener = (): void => {
-      setFocusedId(block.id);
+      setFocusedIds([block.id]);
     };
     divEl.addEventListener("keyup", keyupListener, { passive: true });
 

@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import type Editor from "./Editor";
 import type Block from "./Block";
 import { useEditorContext, EditorContextProps } from "./Context";
-import { findDescendantBlock, toKeyboardShortcutKey } from "./util";
+import { findDescendantBlocks, toKeyboardShortcutKey } from "./util";
 import { DialogProps } from "./Component/Dialog";
 
 export interface Command {
@@ -17,7 +17,7 @@ export interface Command {
 }
 
 interface BlockEditorCommandEventDetail {
-  blocks: Block[];
+  blocks: Readonly<Block[]>;
   editorContext: EditorContextProps;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
@@ -67,24 +67,26 @@ export default class CommandManager {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public emit(blockId: string, command: string, ...args: any[]): void {
-    this.eventEmitters[blockId]?.emit(command, ...args);
+  public emit(blockIds: string[], command: string, ...args: any[]): void {
+    for (let i = 0, len = blockIds.length; i < len; i++) {
+      this.eventEmitters[blockIds[i]]?.emit(command, ...args);
+    }
   }
 
   public dispatchKeydownEvent({
     event,
-    blockId,
+    blockIds,
     editorContext,
   }: {
     event: KeyboardEvent;
-    blockId: string;
+    blockIds: string[];
     editorContext: EditorContextProps;
   }): void {
     const key = toKeyboardShortcutKey(event);
 
     if (key === "cmd+k") {
       event.preventDefault();
-      this.emit(blockId, "core-insertLink");
+      this.emit(blockIds, "core-insertLink");
       return;
     }
     if (key === "cmd+c") {
@@ -97,17 +99,15 @@ export default class CommandManager {
     for (const command of this.editor.keyboardShortcuts()) {
       if (command.shortcut === key) {
         event.preventDefault();
-        const blocks = blockId
-          ?.split(",")
-          .map((id) => findDescendantBlock(this.editor, id))
-          .filter((b): b is Block => !!b);
+
         command.callback &&
           command.callback(
             new BlockEditorCommandEvent({
-              blocks,
+              blocks: findDescendantBlocks(this.editor, blockIds),
               editorContext,
             })
           );
+
         return;
       }
     }
@@ -115,26 +115,21 @@ export default class CommandManager {
 
   public execute({
     command,
-    blockId,
+    blockIds,
     editorContext,
   }: {
     command: string;
-    blockId: string;
+    blockIds: string[];
     editorContext: EditorContextProps;
   }): void {
     this.commands().forEach((c) => {
-      if (c.command === command) {
-        const blocks = blockId
-          ?.split(",")
-          .map((id) => findDescendantBlock(this.editor, id))
-          .filter((b): b is Block => !!b);
-        c.callback &&
-          c.callback(
-            new BlockEditorCommandEvent({
-              blocks,
-              editorContext,
-            })
-          );
+      if (c.command === command && c.callback) {
+        c.callback(
+          new BlockEditorCommandEvent({
+            blocks: findDescendantBlocks(this.editor, blockIds),
+            editorContext,
+          })
+        );
       }
     });
   }

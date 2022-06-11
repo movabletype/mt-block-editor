@@ -34,7 +34,7 @@ import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
 import BlockCommandPanel from "./BlockCommandPanel";
 import {
-  findDescendantBlock,
+  findDescendantBlocks,
   getBlocksByRange,
   toKeyboardShortcutLabel,
 } from "../util";
@@ -80,8 +80,8 @@ const BlockItem: React.FC<Props> = ({
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
   const editorContext = useEditorContext();
-  const { editor, getFocusedId, setFocusedId } = editorContext;
-  const focusedId = getFocusedId();
+  const { editor, getFocusedIds, setFocusedIds } = editorContext;
+  const focusedIds = getFocusedIds();
   const b = block;
   const i = index;
 
@@ -185,7 +185,7 @@ const BlockItem: React.FC<Props> = ({
   const style: CSSProperties = {};
   style.opacity = isDragging ? (featurePreview ? 0 : 0.5) : 1;
   preview(drop(ref));
-  const focusDescendant = !!findDescendantBlock(b, focusedId);
+  const focusDescendant = findDescendantBlocks(b, focusedIds).length !== 0;
   const clickBlockTargetRef = createRef<HTMLElement>();
 
   // TODO: render preview
@@ -230,9 +230,9 @@ const BlockItem: React.FC<Props> = ({
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
-        const focusedId = getFocusedId();
+        const focusedId = getFocusedIds();
 
-        if (focusedId === b.id) {
+        if (focusedId.includes(b.id)) {
           return;
         }
 
@@ -242,13 +242,11 @@ const BlockItem: React.FC<Props> = ({
           clickBlockTargetRef.current.click();
         } else if (!ignoreClickEvent) {
           if (focusedId && ev.shiftKey) {
-            setFocusedId(
-              getBlocksByRange(editor, focusedId, b.id)
-                .map((b) => b.id)
-                .join(",")
+            setFocusedIds(
+              getBlocksByRange(editor, focusedId[0], b.id).map((b) => b.id)
             );
           } else {
-            setFocusedId(b.id);
+            setFocusedIds([b.id]);
           }
         }
       }}
@@ -257,14 +255,12 @@ const BlockItem: React.FC<Props> = ({
 
         editor.commandManager.execute({
           command: "core-copyBlock",
-          blockId: focusedId || b.id,
+          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
         });
       }}
       className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
-        focusedId?.match(/,/) && focusedId.indexOf(b.id) !== -1
-          ? "mt-be-focus"
-          : ""
+        focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}
       style={style}
       ref={ref}
@@ -287,7 +283,8 @@ const BlockItem: React.FC<Props> = ({
                       } else {
                         editor.commandManager.execute({
                           command: command.command,
-                          blockId: focusedId || b.id,
+                          blockIds:
+                            focusedIds.length === 0 ? [b.id] : focusedIds,
                           editorContext,
                         });
                       }
@@ -310,9 +307,12 @@ const BlockItem: React.FC<Props> = ({
               type="button"
               className="mt-be-btn-up"
               onClick={() => {
-                const ids = focusedId?.split(/,/) || [];
-                if (ids.length >= 2) {
-                  for (let i = index; i < index + ids.length; i++) {
+                if (focusedIds.length >= 2) {
+                  for (
+                    let i = index, to = index + focusedIds.length;
+                    i < to;
+                    i++
+                  ) {
                     swapBlocks(i - 1, i);
                   }
                   return;
@@ -331,9 +331,8 @@ const BlockItem: React.FC<Props> = ({
               type="button"
               className="mt-be-btn-down"
               onClick={() => {
-                const ids = focusedId?.split(/,/) || [];
-                if (ids.length >= 2) {
-                  for (let i = index + ids.length; i >= index; i--) {
+                if (focusedIds.length >= 2) {
+                  for (let i = index + focusedIds.length; i >= index; i--) {
                     swapBlocks(i + 1, i);
                   }
                   return;

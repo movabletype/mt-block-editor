@@ -13,7 +13,7 @@ const command: Command = {
   callback: async ({
     detail: {
       blocks,
-      editorContext: { editor, setFocusedId },
+      editorContext: { editor, setFocusedIds },
     },
   }) => {
     if (blocks.length === 0) {
@@ -37,9 +37,9 @@ const command: Command = {
     editor.editManager.beginGrouping();
     for (const newBlock of newBlocks.reverse()) {
       editor.addBlock(editor, newBlock, index + 1);
-      setFocusedId(newBlock.id);
     }
     editor.editManager.endGrouping();
+    setFocusedIds([newBlocks[0].id]);
 
     editor.render();
   },

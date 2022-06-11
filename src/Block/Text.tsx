@@ -62,7 +62,7 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
-  const { editor, setFocusedId } = useEditorContext();
+  const { editor, setFocusedIds } = useEditorContext();
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
@@ -202,7 +202,7 @@ const Editor: React.FC<EditorProps> = ({
               addBlock(textBlock, block);
             });
           } else {
-            setFocusedId(null);
+            setFocusedIds([]);
           }
 
           editor.editManager.endGrouping();

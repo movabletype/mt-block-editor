@@ -11,8 +11,8 @@ let mockEditor = {
 
 const editorContextProps = {
   editor: mockEditor,
-  setFocusedId: (id, opts) => {},
-  getFocusedId: () => null,
+  setFocusedIds: (ids, opts) => {},
+  getFocusedIds: () => null,
 };
 
 beforeEach(() => {
