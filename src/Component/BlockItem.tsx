@@ -278,6 +278,7 @@ const BlockItem: React.FC<Props> = ({
                 return (
                   <button
                     key={command.command}
+                    data-mt-be-command={command.command}
                     type="button"
                     className="mt-be-btn-context-command"
                     onClick={() => {
