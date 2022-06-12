@@ -169,6 +169,24 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         return;
       }
 
+      if (!(ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey)) {
+        if (focusedIds.length >= 2) {
+          const key = ev.key;
+
+          if (key === "Delete" || key === "Backspace") {
+            ev.preventDefault();
+
+            editor.commandManager.execute({
+              command: "core-deleteBlock",
+              blockIds: focusedIds,
+              editorContext,
+            });
+          }
+        }
+
+        return;
+      }
+
       const key = ev.key;
 
       if (key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
@@ -195,22 +213,6 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         blockIds: focusedIds,
         editorContext,
       });
-
-      if (ev.defaultPrevented) {
-        return;
-      }
-
-      if (focusedIds.length >= 2) {
-        ev.preventDefault();
-
-        if (key === "Delete" || key === "Backspace") {
-          editor.commandManager.execute({
-            command: "core-deleteBlock",
-            blockIds: focusedIds,
-            editorContext,
-          });
-        }
-      }
     };
 
     let startId = "";
