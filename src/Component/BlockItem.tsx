@@ -33,11 +33,7 @@ import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
 import BlockCommandPanel from "./BlockCommandPanel";
-import {
-  findDescendantBlocks,
-  getBlocksByRange,
-  toKeyboardShortcutLabel,
-} from "../util";
+import { findDescendantBlocks, getBlocksByRange } from "../util";
 
 interface DragObject extends DragObjectWithType {
   index: number;
@@ -268,41 +264,7 @@ const BlockItem: React.FC<Props> = ({
       {showButton && (
         <>
           <div className="mt-be-btn-move-wrapper">
-            <BlockCommandPanel in={isCommandPanelShown}>
-              {editor.commandManager.contextCommands().map((command) => {
-                const [isDialogOpen, setDialogOpen] = useState(false);
-                return (
-                  <button
-                    key={command.command}
-                    data-mt-be-command={command.command}
-                    type="button"
-                    className="mt-be-btn-context-command"
-                    onClick={() => {
-                      if (command.dialog) {
-                        setDialogOpen(true);
-                      } else {
-                        editor.commandManager.execute({
-                          command: command.command,
-                          blockIds:
-                            focusedIds.length === 0 ? [b.id] : focusedIds,
-                          editorContext,
-                        });
-                      }
-                    }}
-                  >
-                    <span>
-                      {command.icon && <img src={command.icon} />}
-                      {command.label}
-                    </span>
-                    <span>
-                      {command.shortcut &&
-                        toKeyboardShortcutLabel(command.shortcut)}
-                    </span>
-                    {command.dialog && <command.dialog open={isDialogOpen} />}
-                  </button>
-                );
-              })}
-            </BlockCommandPanel>
+            <BlockCommandPanel in={isCommandPanelShown} block={b} />
             <button
               type="button"
               className="mt-be-btn-up"
