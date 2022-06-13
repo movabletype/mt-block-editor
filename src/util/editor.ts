@@ -172,7 +172,7 @@ export function getBlocksByRange(
     const b = childBlocks[i];
     if (b.id === start || b.id === end) {
       blocks.push(b);
-      if (started) {
+      if (started || start === end) {
         return blocks;
       } else {
         started = true;
@@ -182,5 +182,5 @@ export function getBlocksByRange(
     }
   }
 
-  return blocks;
+  return started ? [] : blocks;
 }
