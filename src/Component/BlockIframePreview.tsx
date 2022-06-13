@@ -183,7 +183,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const { editor } = useEditorContext();
 
   if (typeof html === "undefined") {
-    html = block.compiledHtml || block.serializedString({ editor });
+    html =
+      block.compiledHtml || block.serializedString({ editor, external: false });
   }
 
   const containerElRef = useRef(null);

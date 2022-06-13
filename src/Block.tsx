@@ -48,6 +48,7 @@ export interface NewFromHtmlOptions {
 
 export interface SerializeOptions {
   editor: Editor;
+  external: boolean;
 }
 
 export const DEFAULT_KEYS_FOR_SETUP = ["label", "helpText", "className"];
@@ -279,7 +280,9 @@ class Block {
       await this.compile(opts);
     }
 
-    const m = opts.editor.serializeMeta(this);
+    const m = opts.external
+      ? ((meta) => (meta ? JSON.stringify(meta) : null))(this.metadata())
+      : opts.editor.serializeMeta(this);
     const html = await this.serializedString(opts);
 
     let typeId = (this.constructor as typeof Block).typeId;
@@ -295,9 +298,9 @@ class Block {
   }
 
   public async toClipboardItem(
-    opts: SerializeOptions
+    opts: Omit<SerializeOptions, "external">
   ): Promise<ClipboardItem[] | string> {
-    return await this.serialize(opts);
+    return await this.serialize({ ...opts, external: true });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

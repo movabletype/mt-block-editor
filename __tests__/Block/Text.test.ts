@@ -1,3 +1,4 @@
+import { newEditor } from "../helper";
 import Block from "../../src/Block";
 import Text from "../../src/Block/Text";
 
@@ -9,10 +10,22 @@ test("constructor", () => {
 });
 
 describe("toClipboardItem()", () => {
+  const editor = newEditor();
+
   test("get item", async () => {
+    const editor = newEditor();
     const b = new Text({ text: "<p>test</p>" });
 
-    const item = await b.toClipboardItem();
+    const item = await b.toClipboardItem({ editor });
     expect(item).toBe(`<p>test</p>`);
+  });
+
+  test("with metadata", async () => {
+    const b = new Text({ text: "<p>test</p>", className: "custom" });
+
+    const item = await b.toClipboardItem({ editor });
+    expect(item).toBe(
+      `<!-- mt-beb m='{"className":"custom"}' --><p class="custom">test</p><!-- /mt-beb -->`
+    );
   });
 });

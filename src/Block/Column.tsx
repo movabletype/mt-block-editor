@@ -339,7 +339,7 @@ class Column extends Block implements HasBlocks {
     });
     const onBeforeSetCompiledHtml = (): boolean => !canceled;
 
-    const sourceHtml = await this.serializedString({ editor });
+    const sourceHtml = await this.serializedString({ editor, external: false });
     return new Promise((resolve, reject) => {
       let timeoutId: ReturnType<typeof setTimeout> | null = null;
 

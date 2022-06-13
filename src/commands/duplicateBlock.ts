@@ -21,7 +21,9 @@ const command: Command = {
     }
 
     const html = (
-      await Promise.all(blocks.map((block) => block.serialize({ editor })))
+      await Promise.all(
+        blocks.map((block) => block.serialize({ editor, external: true }))
+      )
     ).join("");
 
     const newBlocks = await parseContent(

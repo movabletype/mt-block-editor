@@ -37,6 +37,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: false,
       })
       .then((str) => {
         expect(str).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
@@ -58,6 +59,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: false,
       })
       .then((str) => {
         expect(str).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
@@ -79,6 +81,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: false,
       })
       .then((str) => {
         expect(str).toBe(`<!-- mt-beb -->🍣<!-- /mt-beb -->`);
@@ -102,6 +105,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: true,
       })
       .then((str) => {
         expect(str).toBe(
@@ -127,6 +131,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: false,
       })
       .then((str) => {
         expect(str).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
@@ -150,6 +155,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: true,
       })
       .then((str) => {
         expect(str).toBe(
@@ -175,6 +181,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: false,
       })
       .then((str) => {
         expect(str).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
@@ -198,6 +205,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: true,
       })
       .then((str) => {
         expect(str).toBe(
@@ -223,6 +231,7 @@ describe("parseContent()", () => {
         editor: {
           serializeMeta,
         } as Editor,
+        external: true,
       })
       .then((str) => {
         expect(str).toBe(

@@ -253,7 +253,7 @@ class Editor extends EventEmitter implements HasBlocks {
     });
 
     const values = await Promise.all(
-      blocks.map((b) => b.serialize({ editor: this }))
+      blocks.map((b) => b.serialize({ editor: this, external: false }))
     );
 
     const metadataReverseMap: Metadata = {};
