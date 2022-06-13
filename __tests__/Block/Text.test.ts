@@ -1,4 +1,3 @@
-import Editor from "../../src/Editor";
 import Block from "../../src/Block";
 import Text from "../../src/Block/Text";
 
@@ -11,16 +10,9 @@ test("constructor", () => {
 
 describe("toClipboardItem()", () => {
   test("get item", async () => {
-    const input = document.createElement("INPUT");
-    input.id = "input-" + Math.random();
-    document.body.appendChild(input);
-    const editor = new Editor({
-      id: input.id,
-      stylesheets: [],
-    });
     const b = new Text({ text: "<p>test</p>" });
 
-    const item = await b.toClipboardItem({ editor });
+    const item = await b.toClipboardItem();
     expect(item).toBe(`<p>test</p>`);
   });
 });

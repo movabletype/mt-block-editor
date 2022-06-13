@@ -5,7 +5,8 @@ module.exports = {
       "<rootDir>/__mocks__/fileMock.js",
   },
   testPathIgnorePatterns: [
-    "<rootDir>/sub-projects/generator-mt-block-editor-block/",
-    "<rootDir>/.vscode/",
+    "/sub-projects/generator-mt-block-editor-block/",
+    "/.vscode/",
+    "/__tests__/helper.ts",
   ],
 };

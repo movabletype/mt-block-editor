@@ -1,4 +1,4 @@
-import Editor from "../src/Editor";
+import { newEditor } from "./helper";
 import Block from "../src/Block";
 
 class TestBlock extends Block {
@@ -10,7 +10,7 @@ class TestBlock extends Block {
       Object.assign(this, init);
     }
   }
-  html() {
+  html(): string {
     return this._html;
   }
 }
@@ -72,13 +72,7 @@ describe("htmlString()", () => {
 
 describe("toClipboardItem()", () => {
   test("get item", async () => {
-    const input = document.createElement("INPUT");
-    input.id = "input-" + Math.random();
-    document.body.appendChild(input);
-    const editor = new Editor({
-      id: input.id,
-      stylesheets: [],
-    });
+    const editor = newEditor();
     const b = new TestBlock({ _html: "<p>test</p>" });
 
     const item = await b.toClipboardItem({ editor });

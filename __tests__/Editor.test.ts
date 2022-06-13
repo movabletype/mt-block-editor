@@ -1,17 +1,14 @@
-import Editor from "../src/Editor";
+import { newEditor } from "./helper";
 
 describe("serialize()", () => {
-  const input = document.createElement("INPUT");
+  const input = document.createElement("input");
   input.id = "input-" + Math.random();
   document.body.appendChild(input);
 
-  async function reserialize(str: string): string {
+  async function reserialize(str: string): Promise<string> {
     input.value = str;
 
-    const editor = new Editor({
-      id: input.id,
-      stylesheets: [],
-    });
+    const editor = newEditor({ id: input.id });
 
     await new Promise((resolve) => {
       editor.on("initializeBlocks", resolve);
@@ -24,20 +21,16 @@ describe("serialize()", () => {
   }
 
   test("simple", async () => {
-    const res = await reserialize(
-      `<!-- mt-beb -->test<!-- /mt-beb -->`
-    );
-    expect(res).toBe(
-      `<!-- mt-beb -->test<!-- /mt-beb -->`
-    );
+    const res = await reserialize(`<!-- mt-beb -->test<!-- /mt-beb -->`);
+    expect(res).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
   });
 
   test("meta", async () => {
     const res = await reserialize(
-      `<!-- mt-beb m='{\"label\":\"Test Label\",\"helpText\":\"Test Help\",\"className\":\"Test Class\"}' -->test<!-- /mt-beb -->`
+      `<!-- mt-beb m='{"label":"Test Label","helpText":"Test Help","className":"Test Class"}' -->test<!-- /mt-beb -->`
     );
     expect(res).toBe(
-      `<!-- mt-beb t=\"core-context\" m='{\"1\":{\"label\":\"Test Label\",\"helpText\":\"Test Help\",\"className\":\"Test Class\"}}' --><!-- /mt-beb --><!-- mt-beb m='1' -->test<!-- /mt-beb -->`
+      `<!-- mt-beb t="core-context" m='{"1":{"label":"Test Label","helpText":"Test Help","className":"Test Class"}}' --><!-- /mt-beb --><!-- mt-beb m='1' -->test<!-- /mt-beb -->`
     );
   });
 
