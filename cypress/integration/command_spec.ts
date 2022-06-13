@@ -176,55 +176,57 @@ context("Command", () => {
     });
   });
 
-  context("Copy and Paste", () => {
-    it("By context menu", () => {
-      apply({
-        id: textareaId,
+  if (!Cypress.env("ci")) {
+    context("Copy and Paste", () => {
+      it("By context menu", () => {
+        apply({
+          id: textareaId,
+        });
+
+        cy.get(
+          `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
+
+        wait(1);
+
+        type("Hello!\n");
+
+        wait(1);
+
+        type("Block Editor!\n");
+
+        wait(1);
+
+        type("Movable Type!");
+
+        cy.get(".mt-be-block").eq(0).click({ force: true });
+        cy.get(".mt-be-block").eq(1).click({
+          shiftKey: true,
+        });
+
+        wait(1);
+
+        cy.get(".mt-be-btn-move:visible").click();
+
+        wait(1);
+
+        cy.get(`[data-mt-be-command="core-copyBlock"]`).click();
+
+        cy.get(".mt-be-block").eq(2).click({ force: true });
+
+        wait(1);
+
+        cy.get(".mt-be-btn-move:visible").click();
+
+        wait(1);
+
+        cy.get(`[data-mt-be-command="core-pasteBlock"]`).click();
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          `<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb -->`
+        );
       });
-
-      cy.get(
-        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
-      ).click();
-
-      wait(1);
-
-      type("Hello!\n");
-
-      wait(1);
-
-      type("Block Editor!\n");
-
-      wait(1);
-
-      type("Movable Type!");
-
-      cy.get(".mt-be-block").eq(0).click({ force: true });
-      cy.get(".mt-be-block").eq(1).click({
-        shiftKey: true,
-      });
-
-      wait(1);
-
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-copyBlock"]`).click();
-
-      cy.get(".mt-be-block").eq(2).click({ force: true });
-
-      wait(1);
-
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-pasteBlock"]`).click();
-
-      serializedTextarea(textareaId).should(
-        "have.value",
-        `<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb -->`
-      );
     });
-  });
+  }
 });
