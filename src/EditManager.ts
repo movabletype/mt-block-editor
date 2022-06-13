@@ -28,10 +28,11 @@ class EditManager {
   private histories: EditHistory[] = [];
   private group: number | undefined = NO_GROUP;
 
-  public constructor(init?: Partial<EditManager>) {
-    if (init) {
-      Object.assign(this, init);
-    }
+  public constructor(init: {
+    editor: EditManager["editor"];
+    limit?: EditManager["limit"];
+  }) {
+    Object.assign(this, init);
   }
 
   public unload(): void {
