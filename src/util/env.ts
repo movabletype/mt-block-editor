@@ -30,3 +30,12 @@ export function focusIfIos(ref: RefObject<HTMLElement>): void {
 
   ref.current.focus();
 }
+
+let _isNarrowScreen = false;
+export function isNarrowScreen(): boolean {
+  return _isNarrowScreen;
+}
+function updateIsNarowScreen(): void {
+  _isNarrowScreen = matchMedia(`(max-width:${mediaBreakPoint}px)`).matches;
+}
+document.addEventListener("resize", updateIsNarowScreen, { passive: true });
