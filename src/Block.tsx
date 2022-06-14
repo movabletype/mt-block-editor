@@ -280,9 +280,7 @@ class Block {
       await this.compile(opts);
     }
 
-    const m = opts.external
-      ? ((meta) => (meta ? JSON.stringify(meta) : null))(this.metadata())
-      : opts.editor.serializeMeta(this);
+    const m = opts.editor.serializeMeta(this, opts.external);
     const html = await this.serializedString(opts);
 
     let typeId = (this.constructor as typeof Block).typeId;

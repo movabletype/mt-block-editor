@@ -280,10 +280,14 @@ class Editor extends EventEmitter implements HasBlocks {
     );
   }
 
-  public serializeMeta(block: Block): string | null {
+  public serializeMeta(block: Block, external: boolean): string | null {
     const meta = block.metadata();
     if (!meta) {
       return null;
+    }
+
+    if (external) {
+      return JSON.stringify(meta);
     }
 
     const metaSetup: Metadata = {};

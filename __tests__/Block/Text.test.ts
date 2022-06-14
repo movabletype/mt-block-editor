@@ -13,7 +13,6 @@ describe("toClipboardItem()", () => {
   const editor = newEditor();
 
   test("get item", async () => {
-    const editor = newEditor();
     const b = new Text({ text: "<p>test</p>" });
 
     const item = await b.toClipboardItem({ editor });
