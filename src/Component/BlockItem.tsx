@@ -18,7 +18,6 @@ import root from "react-shadow";
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
 import { featurePreview } from "./DndBackend";
 import { XYCoord } from "dnd-core";
-import { DragObjectWithType } from "react-dnd/lib/interfaces";
 
 import {
   useEditorContext,
@@ -41,8 +40,10 @@ import {
   isNarrowScreen,
 } from "../util";
 
-interface DragObject extends DragObjectWithType {
+interface DragObject {
   index: number;
+  id: string;
+  type: string;
 }
 
 interface Props {
@@ -184,7 +185,8 @@ const BlockItem: React.FC<Props> = ({
         },
       }),
       [swapBlocks, index]
-    )
+    ),
+    [swapBlocks, index]
   );
 
   useEffect(() => {
@@ -198,6 +200,7 @@ const BlockItem: React.FC<Props> = ({
   const [{ isDragging }, drag, preview] = useDrag(
     useMemo(
       () => ({
+        type: parentBlock ? parentBlock.id : "block",
         item: { type: parentBlock ? parentBlock.id : "block", id, index },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         collect: (monitor: any) => ({
@@ -205,7 +208,8 @@ const BlockItem: React.FC<Props> = ({
         }),
       }),
       [index]
-    )
+    ),
+    [index]
   );
 
   const style: CSSProperties = {};
