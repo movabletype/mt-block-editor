@@ -33,7 +33,11 @@ import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
 import BlockCommandPanel from "./BlockCommandPanel";
-import { findDescendantBlocks, getBlocksByRange } from "../util";
+import {
+  findDescendantBlocks,
+  getBlocksByRange,
+  isNarrowScreen,
+} from "../util";
 
 interface DragObject extends DragObjectWithType {
   index: number;
@@ -259,7 +263,7 @@ const BlockItem: React.FC<Props> = ({
       style={style}
       ref={ref}
     >
-      {showButton && (
+      {showButton && !isNarrowScreen() && (
         <>
           <div className="mt-be-btn-move-wrapper">
             <BlockCommandPanel in={isCommandPanelShown} block={b} />
@@ -307,12 +311,10 @@ const BlockItem: React.FC<Props> = ({
               <AddButton index={i} />
             </div>
           </div>
+          <div className="mt-be-btn-remove-wrapper">
+            <RemoveButton block={b} />
+          </div>
         </>
-      )}
-      {showButton && (
-        <div className="mt-be-btn-remove-wrapper">
-          <RemoveButton block={b} />
-        </div>
       )}
       <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
@@ -321,7 +323,7 @@ const BlockItem: React.FC<Props> = ({
         {withBlockContext && (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && showButton && <DefaultToolbar />}
+            {focus && showButton && isNarrowScreen() && <DefaultToolbar />}
           </BlockContext.Provider>
         )}
         <>
