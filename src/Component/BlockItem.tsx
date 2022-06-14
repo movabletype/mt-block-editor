@@ -4,6 +4,7 @@
  */
 
 import React, {
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -26,6 +27,7 @@ import {
   useBlockContext,
 } from "../Context";
 import { StylesheetType } from "../Editor";
+import type Editor from "../Editor";
 import Block from "../Block";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
@@ -65,6 +67,30 @@ const DefaultToolbar: React.FC = () => {
 
   return <BlockToolbar className="mt-be-block-toolbar--default" />;
 };
+
+interface StylesheetsProps {
+  editor: Editor;
+}
+
+const Stylesheets: React.FC<StylesheetsProps> = memo(function Stylesheets({
+  editor,
+}: StylesheetsProps) {
+  return (
+    <>
+      {editor.stylesheets.map((s, i) => {
+        if (s.type === StylesheetType.css) {
+          return (
+            <style type="text/css" key={i}>
+              {s.data}
+            </style>
+          );
+        } else {
+          return <link rel="stylesheet" key={i} href={s.data} />;
+        }
+      })}
+    </>
+  );
+});
 
 const BlockItem: React.FC<Props> = ({
   id,
@@ -332,17 +358,7 @@ const BlockItem: React.FC<Props> = ({
               className={editor.opts.rootClassName || ""}
               style={{ overflow: "auto" }}
             >
-              {editor.stylesheets.map((s, i) => {
-                if (s.type === StylesheetType.css) {
-                  return (
-                    <style type="text/css" key={i}>
-                      {s.data}
-                    </style>
-                  );
-                } else {
-                  return <link rel="stylesheet" key={i} href={s.data} />;
-                }
-              })}
+              <Stylesheets editor={editor} />
               {!withBlockContext && ed}
             </div>
           </root.div>
