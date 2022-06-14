@@ -245,12 +245,9 @@ const BlockItem: React.FC<Props> = ({
     b instanceof Columns
   );
 
-  return (
-    <div
-      key={b.id}
-      data-mt-block-editor-block-id={b.id}
-      data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
-      onClick={(ev) => {
+  const [onClick, onCopy, onUp, onDown] = useMemo(
+    () => [
+      function onClick(ev: React.MouseEvent) {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
@@ -273,8 +270,8 @@ const BlockItem: React.FC<Props> = ({
             setFocusedIds([b.id]);
           }
         }
-      }}
-      onCopy={(ev) => {
+      },
+      function onCopy(ev: React.ClipboardEvent) {
         ev.preventDefault();
 
         editor.commandManager.execute({
@@ -282,7 +279,38 @@ const BlockItem: React.FC<Props> = ({
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
         });
-      }}
+      },
+      function onUp() {
+        if (focusedIds.length >= 2) {
+          for (let i = index, to = index + focusedIds.length; i < to; i++) {
+            swapBlocks(i - 1, i);
+          }
+          return;
+        }
+
+        swapBlocks(index, index - 1, true);
+      },
+      function onDown() {
+        if (focusedIds.length >= 2) {
+          for (let i = index + focusedIds.length; i >= index; i--) {
+            swapBlocks(i + 1, i);
+          }
+          return;
+        }
+
+        swapBlocks(index, index + 1, true);
+      },
+    ],
+    [index]
+  );
+
+  return (
+    <div
+      key={b.id}
+      data-mt-block-editor-block-id={b.id}
+      data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
+      onClick={onClick}
+      onCopy={onCopy}
       className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
         focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}
@@ -296,20 +324,7 @@ const BlockItem: React.FC<Props> = ({
             <button
               type="button"
               className="mt-be-btn-up"
-              onClick={() => {
-                if (focusedIds.length >= 2) {
-                  for (
-                    let i = index, to = index + focusedIds.length;
-                    i < to;
-                    i++
-                  ) {
-                    swapBlocks(i - 1, i);
-                  }
-                  return;
-                }
-
-                swapBlocks(index, index - 1, true);
-              }}
+              onClick={onUp}
             ></button>
             <button
               type="button"
@@ -320,16 +335,7 @@ const BlockItem: React.FC<Props> = ({
             <button
               type="button"
               className="mt-be-btn-down"
-              onClick={() => {
-                if (focusedIds.length >= 2) {
-                  for (let i = index + focusedIds.length; i >= index; i--) {
-                    swapBlocks(i + 1, i);
-                  }
-                  return;
-                }
-
-                swapBlocks(index, index + 1, true);
-              }}
+              onClick={onDown}
             ></button>
           </div>
           <div className="mt-be-btn-add-wrapper">
