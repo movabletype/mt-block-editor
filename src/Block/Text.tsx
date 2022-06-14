@@ -431,7 +431,9 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   public async toClipboardItem(
     ...args: Parameters<Block["toClipboardItem"]>
   ): Promise<ClipboardItem[] | string> {
-    return this.metadata() ? super.toClipboardItem(...args) : this.html();
+    return this.metadata()
+      ? super.toClipboardItem(...args)
+      : this.html() || "<p></p>";
   }
 
   public static async newFromHtml({
