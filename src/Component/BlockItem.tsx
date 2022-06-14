@@ -338,7 +338,7 @@ const BlockItem: React.FC<Props> = ({
             </div>
           </div>
           <div className="mt-be-btn-remove-wrapper">
-            <RemoveButton block={b} />
+            <RemoveButton />
           </div>
         </>
       )}
