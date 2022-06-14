@@ -19,8 +19,7 @@ let isMac = false;
 let labelMap = labels.other;
 
 export function setPlatform(_platform: typeof platform): void {
-  isMac =
-    (_platform.os && /^(?:OS X|iOS)$/.test(_platform.os.family || "")) || false;
+  isMac = ["OS X", "iOS"].includes(_platform.os?.family || "");
   labelMap = isMac ? labels.mac : labels.other;
 }
 setPlatform(platform);

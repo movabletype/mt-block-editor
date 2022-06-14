@@ -1,14 +1,17 @@
+import platform from "platform";
 import { RefObject } from "react";
 
 export const mediaBreakPoint = 991.5;
 
-const _isIos = /ip(hone|(o|a)d)/i.test(navigator.userAgent);
+const _isIos = platform.os?.family === "iOS";
 export function isIos(): boolean {
   return _isIos;
 }
 
 // FIXME
-let _isTouchDevice = /ip(hone|(o|a)d)|android/i.test(navigator.userAgent);
+let _isTouchDevice = ["iOS", "Android", "Windows Phone"].includes(
+  platform.os?.family || ""
+);
 document.addEventListener("touchstart", () => {
   _isTouchDevice = true;
 });
