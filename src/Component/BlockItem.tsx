@@ -219,9 +219,7 @@ const BlockItem: React.FC<Props> = ({
     <div
       key={b.id}
       data-mt-block-editor-block-id={b.id}
-      {...(skipFocusDefault
-        ? { "data-mt-block-editor-skip-focus-default": true }
-        : {})}
+      data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
       onClick={(ev) => {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
