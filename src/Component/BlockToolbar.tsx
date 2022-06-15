@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState, useCallback, ReactNode } from "react";
 import { t } from "../i18n";
 import { useBlocksContext, useBlockContext } from "../Context";
 import BlockCommandPanel from "./BlockCommandPanel";
@@ -23,10 +23,10 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
 
   const { swapBlocks } = useBlocksContext();
   const [showCommandPanel, setCommandPanel] = useState(false);
-  function toggleCommandPanel(): void {
-    setCommandPanel(!showCommandPanel);
+  const toggleCommandPanel = useCallback(() => {
+    setCommandPanel((prev) => !prev);
     block.focusEditor();
-  }
+  }, []);
 
   let className = "mt-be-block-toolbar--block";
   if (props.className) {
