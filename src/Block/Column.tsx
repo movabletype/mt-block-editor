@@ -1,5 +1,11 @@
 import { t } from "../i18n";
-import React, { Fragment, useEffect, useMemo, CSSProperties } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  CSSProperties,
+} from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import {
   EditorContext,
@@ -112,8 +118,17 @@ const Editor: React.FC<EditorProps> = ({
     []
   );
 
+  const onFocus = useCallback(() => block.resetCompiledHtml(), []);
   useEffect(() => {
-    block.resetCompiledHtml();
+    if (focus || focusBlock || focusDescendant) {
+      block.resetCompiledHtml();
+    } else {
+      block.wrapperElement?.addEventListener("focus", onFocus, {
+        capture: true,
+        passive: true,
+        once: true,
+      });
+    }
 
     if (block._html === "") {
       return;
@@ -130,7 +145,13 @@ const Editor: React.FC<EditorProps> = ({
         setFocusedId(blocks[0].id);
       }
     });
-  });
+
+    return () => {
+      window.removeEventListener("focus", onFocus, {
+        capture: true,
+      });
+    };
+  }, [focus || focusBlock || focusDescendant]);
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
