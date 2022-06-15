@@ -349,6 +349,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         "have.value",
         `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","className":"color"},"2":{"className":"row"},"3":{"className":"col-left"},"4":{"className":"col-right"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-bgcolor_contents_without_preview" h='&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb t="core-html" --&gt;&lt;pre&gt;html content&lt;/pre&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;world&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-multicolumns" --&gt;&lt;div class=&#x27;wrap&#x27;&gt;&lt;!-- mt-beb t="core-columns" m=&#x27;2&#x27; --&gt;&lt;div class="mt-be-columns row" style="display: flex"&gt;&lt;!-- mt-beb t="core-column" m=&#x27;3&#x27; --&gt;&lt;div class=&#x27;mt-be-column col-left&#x27;&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;1&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="core-column" m=&#x27;4&#x27; --&gt;&lt;div class=&#x27;mt-be-column col-right&#x27;&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><!-- mt-beb m='1' --><!-- /mt-beb --><!-- mt-beb t="custom-contents" --><!-- mt-beb t="core-html" --><pre>html content</pre><!-- /mt-beb --><!-- mt-beb --><p>Hello</p><!-- /mt-beb --><!-- mt-beb --><p>world</p><!-- /mt-beb --><!-- mt-beb t="custom-multicolumns" --><div class="wrap"><!-- mt-beb t="core-columns" m='2' --><div class="mt-be-columns row" style="display: flex"><!-- mt-beb t="core-column" m='3' --><div class="mt-be-column col-left"><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" m='4' --><div class="mt-be-column col-right"></div><!-- /mt-beb --></div><!-- /mt-beb --></div><!-- /mt-beb --><!-- /mt-beb --></div></div><!-- /mt-beb -->`
       );
+
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`)
+        .last()
+        .click();
+
+      wait(1);
+      type("extra content");
+
+      cy.get(`.mt-be-block textarea`).focus();
+
+      wait(1);
+      type("\n<pre>second line</pre>");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","className":"color"},"2":{"className":"row"},"3":{"className":"col-left"},"4":{"className":"col-right"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-bgcolor_contents_without_preview" h='&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb t="core-html" --&gt;&lt;pre&gt;html content&lt;/pre&gt;&#x0A;&lt;pre&gt;second line&lt;/pre&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;world&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-multicolumns" --&gt;&lt;div class=&#x27;wrap&#x27;&gt;&lt;!-- mt-beb t="core-columns" m=&#x27;2&#x27; --&gt;&lt;div class="mt-be-columns row" style="display: flex"&gt;&lt;!-- mt-beb t="core-column" m=&#x27;3&#x27; --&gt;&lt;div class=&#x27;mt-be-column col-left&#x27;&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;1&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="core-column" m=&#x27;4&#x27; --&gt;&lt;div class=&#x27;mt-be-column col-right&#x27;&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;/div&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><!-- mt-beb m='1' --><!-- /mt-beb --><!-- mt-beb t="custom-contents" --><!-- mt-beb t="core-html" --><pre>html content</pre>\n<pre>second line</pre><!-- /mt-beb --><!-- mt-beb --><p>Hello</p><!-- /mt-beb --><!-- mt-beb --><p>world</p><!-- /mt-beb --><!-- mt-beb t="custom-multicolumns" --><div class="wrap"><!-- mt-beb t="core-columns" m='2' --><div class="mt-be-columns row" style="display: flex"><!-- mt-beb t="core-column" m='3' --><div class="mt-be-column col-left"><!-- mt-beb --><p>1</p><!-- /mt-beb --></div><!-- /mt-beb --><!-- mt-beb t="core-column" m='4' --><div class="mt-be-column col-right"></div><!-- /mt-beb --></div><!-- /mt-beb --></div><!-- /mt-beb --><!-- /mt-beb --></div></div><!-- /mt-beb --><!-- mt-beb --><p>extra content</p><!-- /mt-beb -->`
+      );
     });
   });
 
