@@ -133,22 +133,23 @@ export function getElementByNthOfTypeIndexes(
   return node;
 }
 
-const _entityMap = {
+const _entityMap: Record<string, string> = {
   "\t": "&#x08;",
   "\n": "&#x0A;",
   "\r": "&#x0D;",
   "&": "&amp;",
   "'": "&#x27;",
-  "`": "&#x60;",
   '"': "&quot;",
   "<": "&lt;",
   ">": "&gt;",
-} as { [key: string]: string };
+  "\u2018": "&#x2018;", // left single quotation mark
+  "\u2019": "&#x2019;", // right single quotation mark
+  "\u201c": "&#x201c;", // left double quotation mark
+  "\u201d": "&#x201d;", // right double quotation mark
+};
+const _entityKeysRe = new RegExp(`[${Object.keys(_entityMap).join("")}]`, "g");
 export function escapeSingleQuoteAttribute(string: string): string {
-  if (typeof string !== "string") {
-    return string;
-  }
-  return string.replace(/[&<>'\t\n\r]/g, (match) => _entityMap[match]);
+  return string.replace(_entityKeysRe, (match) => _entityMap[match]);
 }
 
 const DOMPurify = createDOMPurify(window);
