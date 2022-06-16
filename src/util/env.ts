@@ -39,7 +39,8 @@ let _isNarrowScreen = false;
 export function isNarrowScreen(): boolean {
   return _isNarrowScreen;
 }
-function updateIsNarowScreen(): void {
+function updateIsNarrowScreen(): void {
   _isNarrowScreen = matchMedia(`(max-width:${mediaBreakPoint}px)`).matches;
 }
-document.addEventListener("resize", updateIsNarowScreen, { passive: true });
+document.addEventListener("resize", updateIsNarrowScreen, { passive: true });
+updateIsNarrowScreen();
