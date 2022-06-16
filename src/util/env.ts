@@ -12,9 +12,13 @@ export function isIos(): boolean {
 let _isTouchDevice = ["iOS", "Android", "Windows Phone"].includes(
   platform.os?.family || ""
 );
-document.addEventListener("touchstart", () => {
-  _isTouchDevice = true;
-});
+document.addEventListener(
+  "touchstart",
+  () => {
+    _isTouchDevice = true;
+  },
+  { passive: true, once: true }
+);
 export function isTouchDevice(): boolean {
   return _isTouchDevice;
 }
