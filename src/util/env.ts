@@ -12,9 +12,13 @@ export function isIos(): boolean {
 let _isTouchDevice = ["iOS", "Android", "Windows Phone"].includes(
   platform.os?.family || ""
 );
-document.addEventListener("touchstart", () => {
-  _isTouchDevice = true;
-});
+document.addEventListener(
+  "touchstart",
+  () => {
+    _isTouchDevice = true;
+  },
+  { passive: true, once: true }
+);
 export function isTouchDevice(): boolean {
   return _isTouchDevice;
 }
@@ -30,3 +34,13 @@ export function focusIfIos(ref: RefObject<HTMLElement>): void {
 
   ref.current.focus();
 }
+
+let _isNarrowScreen = false;
+export function isNarrowScreen(): boolean {
+  return _isNarrowScreen;
+}
+function updateIsNarrowScreen(): void {
+  _isNarrowScreen = matchMedia(`(max-width:${mediaBreakPoint}px)`).matches;
+}
+document.addEventListener("resize", updateIsNarrowScreen, { passive: true });
+updateIsNarrowScreen();

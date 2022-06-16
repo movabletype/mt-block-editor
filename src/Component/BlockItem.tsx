@@ -4,6 +4,7 @@
  */
 
 import React, {
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -17,7 +18,6 @@ import root from "react-shadow";
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
 import { featurePreview } from "./DndBackend";
 import { XYCoord } from "dnd-core";
-import { DragObjectWithType } from "react-dnd/lib/interfaces";
 
 import {
   useEditorContext,
@@ -26,6 +26,7 @@ import {
   useBlockContext,
 } from "../Context";
 import { StylesheetType } from "../Editor";
+import type Editor from "../Editor";
 import Block from "../Block";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
@@ -33,10 +34,16 @@ import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
 import BlockCommandPanel from "./BlockCommandPanel";
-import { findDescendantBlocks, getBlocksByRange } from "../util";
+import {
+  findDescendantBlocks,
+  getBlocksByRange,
+  isNarrowScreen,
+} from "../util";
 
-interface DragObject extends DragObjectWithType {
+interface DragObject {
   index: number;
+  id: string;
+  type: string;
 }
 
 interface Props {
@@ -61,6 +68,30 @@ const DefaultToolbar: React.FC = () => {
 
   return <BlockToolbar className="mt-be-block-toolbar--default" />;
 };
+
+interface StylesheetsProps {
+  editor: Editor;
+}
+
+const Stylesheets: React.FC<StylesheetsProps> = memo(function Stylesheets({
+  editor,
+}: StylesheetsProps) {
+  return (
+    <>
+      {editor.stylesheets.map((s, i) => {
+        if (s.type === StylesheetType.css) {
+          return (
+            <style type="text/css" key={i}>
+              {s.data}
+            </style>
+          );
+        } else {
+          return <link rel="stylesheet" key={i} href={s.data} />;
+        }
+      })}
+    </>
+  );
+});
 
 const BlockItem: React.FC<Props> = ({
   id,
@@ -154,7 +185,8 @@ const BlockItem: React.FC<Props> = ({
         },
       }),
       [swapBlocks, index]
-    )
+    ),
+    [swapBlocks, index]
   );
 
   useEffect(() => {
@@ -168,6 +200,7 @@ const BlockItem: React.FC<Props> = ({
   const [{ isDragging }, drag, preview] = useDrag(
     useMemo(
       () => ({
+        type: parentBlock ? parentBlock.id : "block",
         item: { type: parentBlock ? parentBlock.id : "block", id, index },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         collect: (monitor: any) => ({
@@ -175,7 +208,8 @@ const BlockItem: React.FC<Props> = ({
         }),
       }),
       [index]
-    )
+    ),
+    [index]
   );
 
   const style: CSSProperties = {};
@@ -215,14 +249,9 @@ const BlockItem: React.FC<Props> = ({
     b instanceof Columns
   );
 
-  return (
-    <div
-      key={b.id}
-      data-mt-block-editor-block-id={b.id}
-      {...(skipFocusDefault
-        ? { "data-mt-block-editor-skip-focus-default": true }
-        : {})}
-      onClick={(ev) => {
+  const [onClick, onCopy, onUp, onDown] = useMemo(
+    () => [
+      function onClick(ev: React.MouseEvent) {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
@@ -245,8 +274,8 @@ const BlockItem: React.FC<Props> = ({
             setFocusedIds([b.id]);
           }
         }
-      }}
-      onCopy={(ev) => {
+      },
+      function onCopy(ev: React.ClipboardEvent) {
         ev.preventDefault();
 
         editor.commandManager.execute({
@@ -254,34 +283,52 @@ const BlockItem: React.FC<Props> = ({
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
         });
-      }}
+      },
+      function onUp() {
+        if (focusedIds.length >= 2) {
+          for (let i = index, to = index + focusedIds.length; i < to; i++) {
+            swapBlocks(i - 1, i);
+          }
+          return;
+        }
+
+        swapBlocks(index, index - 1, true);
+      },
+      function onDown() {
+        if (focusedIds.length >= 2) {
+          for (let i = index + focusedIds.length; i >= index; i--) {
+            swapBlocks(i + 1, i);
+          }
+          return;
+        }
+
+        swapBlocks(index, index + 1, true);
+      },
+    ],
+    [index]
+  );
+
+  return (
+    <div
+      key={b.id}
+      data-mt-block-editor-block-id={b.id}
+      data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
+      onClick={onClick}
+      onCopy={onCopy}
       className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
         focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}
       style={style}
       ref={ref}
     >
-      {showButton && (
+      {showButton && !isNarrowScreen() && (
         <>
           <div className="mt-be-btn-move-wrapper">
             <BlockCommandPanel in={isCommandPanelShown} block={b} />
             <button
               type="button"
               className="mt-be-btn-up"
-              onClick={() => {
-                if (focusedIds.length >= 2) {
-                  for (
-                    let i = index, to = index + focusedIds.length;
-                    i < to;
-                    i++
-                  ) {
-                    swapBlocks(i - 1, i);
-                  }
-                  return;
-                }
-
-                swapBlocks(index, index - 1, true);
-              }}
+              onClick={onUp}
             ></button>
             <button
               type="button"
@@ -292,16 +339,7 @@ const BlockItem: React.FC<Props> = ({
             <button
               type="button"
               className="mt-be-btn-down"
-              onClick={() => {
-                if (focusedIds.length >= 2) {
-                  for (let i = index + focusedIds.length; i >= index; i--) {
-                    swapBlocks(i + 1, i);
-                  }
-                  return;
-                }
-
-                swapBlocks(index, index + 1, true);
-              }}
+              onClick={onDown}
             ></button>
           </div>
           <div className="mt-be-btn-add-wrapper">
@@ -309,12 +347,10 @@ const BlockItem: React.FC<Props> = ({
               <AddButton index={i} />
             </div>
           </div>
+          <div className="mt-be-btn-remove-wrapper">
+            <RemoveButton />
+          </div>
         </>
-      )}
-      {showButton && (
-        <div className="mt-be-btn-remove-wrapper">
-          <RemoveButton block={b} />
-        </div>
       )}
       <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
@@ -323,7 +359,7 @@ const BlockItem: React.FC<Props> = ({
         {withBlockContext && (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && showButton && <DefaultToolbar />}
+            {focus && showButton && isNarrowScreen() && <DefaultToolbar />}
           </BlockContext.Provider>
         )}
         <>
@@ -332,17 +368,7 @@ const BlockItem: React.FC<Props> = ({
               className={editor.opts.rootClassName || ""}
               style={{ overflow: "auto" }}
             >
-              {editor.stylesheets.map((s, i) => {
-                if (s.type === StylesheetType.css) {
-                  return (
-                    <style type="text/css" key={i}>
-                      {s.data}
-                    </style>
-                  );
-                } else {
-                  return <link rel="stylesheet" key={i} href={s.data} />;
-                }
-              })}
+              <Stylesheets editor={editor} />
               {!withBlockContext && ed}
             </div>
           </root.div>
