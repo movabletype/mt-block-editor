@@ -54,6 +54,11 @@ export interface EditorOptions {
   i18n: InitOptionsI18n;
 }
 
+interface metadataMapData {
+  id: string;
+  blockIds: Set<string>;
+}
+
 class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
@@ -65,7 +70,11 @@ class Editor extends EventEmitter implements HasBlocks {
   public editorElement: HTMLElement;
 
   private inputElement: HTMLInputElement;
-  private metadataMap: Map<string, string> = new Map<string, string>();
+  private metadataMap: Map<string, metadataMapData> = new Map<
+    string,
+    metadataMapData
+  >();
+  private metadataMapSequence = 1;
 
   public constructor(opts: EditorOptions) {
     super();
@@ -246,8 +255,8 @@ class Editor extends EventEmitter implements HasBlocks {
     );
 
     const metadataReverseMap: Metadata = {};
-    this.metadataMap.forEach((k, v) => {
-      metadataReverseMap[k] = JSON.parse(v);
+    this.metadataMap.forEach(({ id }, v) => {
+      metadataReverseMap[id] = JSON.parse(v);
     });
 
     this.inputElement.value =
@@ -258,15 +267,34 @@ class Editor extends EventEmitter implements HasBlocks {
         : "") + values.join("");
   }
 
-  private getMetadataMapIndex(str: string): string {
-    return (
-      this.metadataMap.get(str) ||
-      ((): string => {
-        const id = (this.metadataMap.size + 1).toString(36);
-        this.metadataMap.set(str, id);
-        return id;
-      })()
-    );
+  private getMetadataMapIndex(blockId: string, str: string): string {
+    let targetData = this.metadataMap.get(str);
+    if (targetData?.blockIds.has(blockId)) {
+      return targetData.id;
+    }
+
+    for (const [k, data] of this.metadataMap) {
+      if (data.blockIds.has(blockId)) {
+        if (data.blockIds.size === 1) {
+          this.metadataMap.delete(k);
+          targetData ||= data; // reuse id
+        } else {
+          data.blockIds.delete(blockId);
+        }
+      }
+    }
+
+    targetData ||= {
+      id: (this.metadataMapSequence++).toString(36),
+      blockIds: new Set(),
+    };
+
+    targetData.blockIds.add(blockId);
+    if (!this.metadataMap.has(str)) {
+      this.metadataMap.set(str, targetData);
+    }
+
+    return targetData.id;
   }
 
   public serializeMeta(block: Block): string | null {
@@ -286,7 +314,7 @@ class Editor extends EventEmitter implements HasBlocks {
     return [metaSetup, meta]
       .map((m) => (Object.keys(m).length > 0 ? JSON.stringify(m) : null))
       .filter((s): s is string => !!s)
-      .map((s) => this.getMetadataMapIndex(s))
+      .map((s) => this.getMetadataMapIndex(block.id, s))
       .join(",");
   }
 

@@ -408,7 +408,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         capture: true,
       });
     };
-  });
+  }, []);
 
   return src ? (
     <div ref={containerElRef}>

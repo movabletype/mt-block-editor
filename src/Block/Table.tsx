@@ -161,7 +161,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     return () => {
       removeTinyMCEFromBlock(block);
     };
-  });
+  }, [focus]);
 
   const isInSetupMode = editor.opts.mode === "setup";
 

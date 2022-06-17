@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useState, MouseEvent } from "react";
+import React, { useState, useCallback, MouseEvent } from "react";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
@@ -27,11 +27,11 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor } = useEditorContext();
   const [showConfigPanel, setConfigPanel] = useState(false);
-  function toggleConfigPanel(): void {
-    setConfigPanel(!showConfigPanel);
-  }
+  const toggleConfigPanel = useCallback(() => {
+    setConfigPanel((prev) => !prev);
+  }, []);
 
-  function changeLayout(ev: MouseEvent): void {
+  const changeLayout = useCallback((ev: MouseEvent) => {
     const inputEl = ev.currentTarget.querySelector("input");
     if (!inputEl) {
       throw "error";
@@ -60,7 +60,7 @@ const Editor: React.FC<EditorProps> = ({
     editor.editManager.endGrouping();
 
     setConfigPanel(false);
-  }
+  }, []);
 
   const curLayout = block.getColumnLayout();
   return (
