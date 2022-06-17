@@ -4,21 +4,19 @@
 	 y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:none;}
-	.st1{fill:none;stroke:#666666;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-	.st2{fill:#FFFFFF;}
-	.st3{fill:none;stroke:#666666;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;}
+	.st1{fill:#FFFFFF;}
+	.st2{fill:none;stroke:#666666;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 </style>
 <desc>Download more icon variants from https://tabler-icons.io/i/clipboard</desc>
 <path class="st0" d="M0,0h24v24H0V0z"/>
-<path class="st1" d="M9,5H7C5.9,5,5,5.9,5,7v12c0,1.1,0.9,2,2,2h10c1.1,0,2-0.9,2-2V7c0-1.1-0.9-2-2-2h-2"/>
-<path class="st1" d="M11,3h2c1.1,0,2,0.9,2,2l0,0c0,1.1-0.9,2-2,2h-2C9.9,7,9,6.1,9,5l0,0C9,3.9,9.9,3,11,3z"/>
-<rect x="7.8" y="18.9" class="st2" width="12.7" height="3.1"/>
-<rect x="17.8" y="8.5" class="st2" width="2.3" height="12.5"/>
-<path class="st1" d="M18.9,22h-5.8c-0.6,0-1.2-0.5-1.2-1.2v-8.1c0-0.6,0.5-1.2,1.2-1.2h4.1l2.9,2.9v6.4C20.1,21.5,19.5,22,18.9,22z"
+<rect x="7.8" y="18.9" class="st1" width="12.7" height="3.1"/>
+<path class="st2" d="M18.9,22h-5.8c-0.6,0-1.2-0.5-1.2-1.2v-8.1c0-0.6,0.5-1.2,1.2-1.2h4.1l2.9,2.9v6.4C20.1,21.5,19.5,22,18.9,22z"
 	/>
-<line class="st1" x1="14.3" y1="15" x2="14.8" y2="15"/>
-<line class="st1" x1="14.3" y1="18.5" x2="17.7" y2="18.5"/>
-<path class="st1" d="M17.2,11.6v2.3c0,0.3,0.3,0.6,0.6,0.6h2.3"/>
-<line class="st3" x1="7" y1="21" x2="8.5" y2="21"/>
-<line class="st3" x1="19" y1="8" x2="19" y2="9"/>
+<line class="st2" x1="14.3" y1="15" x2="14.8" y2="15"/>
+<line class="st2" x1="14.3" y1="18.5" x2="17.7" y2="18.5"/>
+<path class="st2" d="M17.2,11.6v2.3c0,0.3,0.3,0.6,0.6,0.6h2.3"/>
+<path class="st0" d="M-4.2,9.2h24v24h-24V9.2z"/>
+<path class="st2" d="M19,9V7c0-1.1-0.9-2-2-2h-2"/>
+<path class="st2" d="M9,5H7C5.9,5,5,5.9,5,7v12c0,1.1,0.9,2,2,2h2"/>
+<path class="st2" d="M11,3h2c1.1,0,2,0.9,2,2l0,0c0,1.1-0.9,2-2,2h-2C9.9,7,9,6.1,9,5l0,0C9,3.9,9.9,3,11,3z"/>
 </svg>
