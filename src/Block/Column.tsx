@@ -1,7 +1,18 @@
 import { t } from "../i18n";
-import React, { Fragment, useEffect, CSSProperties } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  CSSProperties,
+} from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { EditorContext, useEditorContext, BlocksContext } from "../Context";
+import {
+  EditorContext,
+  useEditorContext,
+  BlocksContext,
+  BlocksContextProps,
+} from "../Context";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
@@ -48,64 +59,76 @@ const Editor: React.FC<EditorProps> = ({
 
   const { editor, setFocusedId, getFocusedId } = useEditorContext();
 
-  const blocksContext = {
-    panelBlockTypes: block.panelBlockTypes,
-    shortcutBlockTypes: block.shortcutBlockTypes,
-    addBlock: (b: Block, index: number | Block) => {
-      if (index instanceof Block) {
-        index = block.blocks.indexOf(index) + 1;
-      }
-      editor.addBlock(block, b, index);
-      setFocusedId(b.id);
-    },
-    mergeBlock: (b: Block) => {
-      const index = block.blocks.indexOf(b);
-      if (editor.mergeBlock(block, b)) {
-        setFocusedId(block.blocks[index - 1].id);
-      }
-    },
-    removeBlock: (b: Block) => {
-      const index = block.blocks.indexOf(b);
-      editor.removeBlock(block, b);
-      if (index > 0) {
-        setFocusedId(block.blocks[index - 1].id);
-      }
-    },
-    swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
-      if (
-        dragIndex === undefined ||
-        hoverIndex === undefined ||
-        !block.blocks[dragIndex] ||
-        !block.blocks[hoverIndex]
-      ) {
-        return;
-      }
-
-      if (scroll) {
-        const destEl = document.querySelector(
-          `[data-mt-block-editor-block-id="${block.blocks[dragIndex].id}"]`
-        );
-        if (!destEl) {
+  const blocksContext = useMemo<BlocksContextProps>(
+    () => ({
+      panelBlockTypes: block.panelBlockTypes,
+      shortcutBlockTypes: block.shortcutBlockTypes,
+      addBlock: (b: Block, index: number | Block) => {
+        if (index instanceof Block) {
+          index = block.blocks.indexOf(index) + 1;
+        }
+        editor.addBlock(block, b, index);
+        setFocusedId(b.id);
+      },
+      mergeBlock: (b: Block) => {
+        const index = block.blocks.indexOf(b);
+        if (editor.mergeBlock(block, b)) {
+          setFocusedId(block.blocks[index - 1].id);
+        }
+      },
+      removeBlock: (b: Block) => {
+        const index = block.blocks.indexOf(b);
+        editor.removeBlock(block, b);
+        if (index > 0) {
+          setFocusedId(block.blocks[index - 1].id);
+        }
+      },
+      swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
+        if (
+          dragIndex === undefined ||
+          hoverIndex === undefined ||
+          !block.blocks[dragIndex] ||
+          !block.blocks[hoverIndex]
+        ) {
           return;
         }
 
-        const rect = destEl.getBoundingClientRect();
-        const scrollTop =
-          window.pageYOffset || document.documentElement.scrollTop;
-        const offsetTop = rect.height + 22;
+        if (scroll) {
+          const destEl = document.querySelector(
+            `[data-mt-block-editor-block-id="${block.blocks[dragIndex].id}"]`
+          );
+          if (!destEl) {
+            return;
+          }
 
-        window.scrollTo({
-          top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
-          behavior: "smooth",
-        });
-      }
+          const rect = destEl.getBoundingClientRect();
+          const scrollTop =
+            window.pageYOffset || document.documentElement.scrollTop;
+          const offsetTop = rect.height + 22;
 
-      editor.swapBlocks(block, dragIndex, hoverIndex);
-    },
-  };
+          window.scrollTo({
+            top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
+            behavior: "smooth",
+          });
+        }
 
+        editor.swapBlocks(block, dragIndex, hoverIndex);
+      },
+    }),
+    []
+  );
+
+  const onFocus = useCallback(() => block.resetCompiledHtml(), []);
   useEffect(() => {
-    block.resetCompiledHtml();
+    if (focus || focusBlock || focusDescendant) {
+      block.resetCompiledHtml();
+    } else {
+      block.wrapperElement?.addEventListener("focus", onFocus, {
+        capture: true,
+        passive: true,
+        once: true,
+      });
+    }
 
     if (block._html === "") {
       return;
@@ -122,7 +145,13 @@ const Editor: React.FC<EditorProps> = ({
         setFocusedId(blocks[0].id);
       }
     });
-  });
+
+    return () => {
+      window.removeEventListener("focus", onFocus, {
+        capture: true,
+      });
+    };
+  }, [focus || focusBlock || focusDescendant]);
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
