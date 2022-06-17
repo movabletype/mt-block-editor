@@ -20,6 +20,7 @@ const BlockCommand: React.FC<BlockCommandProps> = ({
 
   return (
     <button
+      type="button"
       data-mt-be-command={command.command}
       className="mt-be-btn-command"
       onClick={() => {
