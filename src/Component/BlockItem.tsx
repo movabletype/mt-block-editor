@@ -1,12 +1,15 @@
 /*
- * Got a lots of codes from examles of react-dnd.
+ * Got a lots of codes from examples of react-dnd.
  * http://react-dnd.github.io/react-dnd/examples
  */
 
 import React, {
+  memo,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
+  useState,
   createRef,
   CSSProperties,
 } from "react";
@@ -15,7 +18,6 @@ import root from "react-shadow";
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
 import { featurePreview } from "./DndBackend";
 import { XYCoord } from "dnd-core";
-import { DragObjectWithType } from "react-dnd/lib/interfaces";
 
 import {
   useEditorContext,
@@ -24,16 +26,24 @@ import {
   useBlockContext,
 } from "../Context";
 import { StylesheetType } from "../Editor";
+import type Editor from "../Editor";
 import Block from "../Block";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
 import AddButton from "./AddButton";
 import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
-import { findDescendantBlock } from "../util";
+import BlockCommandPanel from "./BlockCommandPanel";
+import {
+  findDescendantBlocks,
+  getBlocksByRange,
+  isNarrowScreen,
+} from "../util";
 
-interface DragObject extends DragObjectWithType {
+interface DragObject {
   index: number;
+  id: string;
+  type: string;
 }
 
 interface Props {
@@ -59,6 +69,30 @@ const DefaultToolbar: React.FC = () => {
   return <BlockToolbar className="mt-be-block-toolbar--default" />;
 };
 
+interface StylesheetsProps {
+  editor: Editor;
+}
+
+const Stylesheets: React.FC<StylesheetsProps> = memo(function Stylesheets({
+  editor,
+}: StylesheetsProps) {
+  return (
+    <>
+      {editor.stylesheets.map((s, i) => {
+        if (s.type === StylesheetType.css) {
+          return (
+            <style type="text/css" key={i}>
+              {s.data}
+            </style>
+          );
+        } else {
+          return <link rel="stylesheet" key={i} href={s.data} />;
+        }
+      })}
+    </>
+  );
+});
+
 const BlockItem: React.FC<Props> = ({
   id,
   block,
@@ -72,9 +106,20 @@ const BlockItem: React.FC<Props> = ({
   parentBlock,
 }: Props) => {
   const { swapBlocks } = useBlocksContext();
-  const { editor, getFocusedId, setFocusedId } = useEditorContext();
+  const editorContext = useEditorContext();
+  const { editor, getFocusedIds, setFocusedIds } = editorContext;
+  const focusedIds = getFocusedIds();
   const b = block;
   const i = index;
+
+  const [isCommandPanelShown, setCommandPanelShown] = useState(false);
+  const toggleCommandPanelShown = useCallback(() => {
+    setCommandPanelShown((prev) => !prev);
+    block.focusEditor();
+  }, []);
+  if (!focus && isCommandPanelShown) {
+    setCommandPanelShown(false);
+  }
 
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop(
@@ -140,7 +185,8 @@ const BlockItem: React.FC<Props> = ({
         },
       }),
       [swapBlocks, index]
-    )
+    ),
+    [swapBlocks, index]
   );
 
   useEffect(() => {
@@ -154,6 +200,7 @@ const BlockItem: React.FC<Props> = ({
   const [{ isDragging }, drag, preview] = useDrag(
     useMemo(
       () => ({
+        type: parentBlock ? parentBlock.id : "block",
         item: { type: parentBlock ? parentBlock.id : "block", id, index },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         collect: (monitor: any) => ({
@@ -161,13 +208,14 @@ const BlockItem: React.FC<Props> = ({
         }),
       }),
       [index]
-    )
+    ),
+    [index]
   );
 
   const style: CSSProperties = {};
   style.opacity = isDragging ? (featurePreview ? 0 : 0.5) : 1;
   preview(drop(ref));
-  const focusDescendant = !!findDescendantBlock(b, getFocusedId());
+  const focusDescendant = findDescendantBlocks(b, focusedIds).length !== 0;
   const clickBlockTargetRef = createRef<HTMLElement>();
 
   // TODO: render preview
@@ -201,18 +249,15 @@ const BlockItem: React.FC<Props> = ({
     b instanceof Columns
   );
 
-  return (
-    <div
-      key={b.id}
-      data-mt-block-editor-block-id={b.id}
-      {...(skipFocusDefault
-        ? { "data-mt-block-editor-skip-focus-default": true }
-        : {})}
-      onClick={(ev) => {
+  const [onClick, onCopy, onUp, onDown] = useMemo(
+    () => [
+      function onClick(ev: React.MouseEvent) {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
-        if (getFocusedId() === b.id) {
+        const focusedId = getFocusedIds();
+
+        if (focusedId.includes(b.id)) {
           return;
         }
 
@@ -221,72 +266,80 @@ const BlockItem: React.FC<Props> = ({
         if (clickBlockTargetRef.current) {
           clickBlockTargetRef.current.click();
         } else if (!ignoreClickEvent) {
-          setFocusedId(b.id);
+          if (focusedId && ev.shiftKey) {
+            setFocusedIds(
+              getBlocksByRange(editor, focusedId[0], b.id).map((b) => b.id)
+            );
+          } else {
+            setFocusedIds([b.id]);
+          }
         }
-      }}
-      onCopy={(ev) => {
-        const s = document.getSelection();
-
-        if (!s || s.rangeCount < 1) {
-          return;
-        }
-
-        const range = s.getRangeAt(0);
-        const clonedSelection = range.cloneContents();
-
-        const div = document.createElement("div");
-        div.appendChild(clonedSelection);
-
-        const blockElms = div.querySelectorAll(".mt-be-block");
-
-        if (blockElms.length === 0) {
-          return;
-        }
-
-        const blocks = [...blockElms]
-          .map((e): Block | null => {
-            if (e.parentElement && e.parentElement.closest(".mt-be-block")) {
-              // has parent
-              return null;
-            }
-
-            const w = e.closest(".mt-be-block-wrapper") as HTMLElement | null;
-            return w
-              ? findDescendantBlock(editor, w.dataset.mtBlockEditorBlockId)
-              : b;
-          })
-          .filter((b) => b) as Block[];
-
-        if (blocks.length === 0) {
-          return;
-        }
-
-        const html = blocks.map((b) => b.htmlString()).join("");
-
-        ev.clipboardData.setData("text/html", html);
+      },
+      function onCopy(ev: React.ClipboardEvent) {
         ev.preventDefault();
-      }}
-      className={`mt-be-block-wrapper ${focus ? "focus" : ""}`}
+
+        editor.commandManager.execute({
+          command: "core-copyBlock",
+          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+          editorContext,
+        });
+      },
+      function onUp() {
+        if (focusedIds.length >= 2) {
+          for (let i = index, to = index + focusedIds.length; i < to; i++) {
+            swapBlocks(i - 1, i);
+          }
+          return;
+        }
+
+        swapBlocks(index, index - 1, true);
+      },
+      function onDown() {
+        if (focusedIds.length >= 2) {
+          for (let i = index + focusedIds.length; i >= index; i--) {
+            swapBlocks(i + 1, i);
+          }
+          return;
+        }
+
+        swapBlocks(index, index + 1, true);
+      },
+    ],
+    [index]
+  );
+
+  return (
+    <div
+      key={b.id}
+      data-mt-block-editor-block-id={b.id}
+      data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
+      onClick={onClick}
+      onCopy={onCopy}
+      className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
+        focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
+      }`}
       style={style}
       ref={ref}
     >
-      {showButton && (
+      {showButton && !isNarrowScreen() && (
         <>
           <div className="mt-be-btn-move-wrapper">
+            <BlockCommandPanel in={isCommandPanelShown} block={b} />
             <button
               type="button"
               className="mt-be-btn-up"
-              onClick={() => swapBlocks(index, index - 1, true)}
+              onClick={onUp}
             ></button>
             <button
               type="button"
               className="mt-be-btn-move"
+              onClick={toggleCommandPanelShown}
               ref={drag}
             ></button>
             <button
               type="button"
               className="mt-be-btn-down"
-              onClick={() => swapBlocks(index, index + 1, true)}
+              onClick={onDown}
             ></button>
           </div>
           <div className="mt-be-btn-add-wrapper">
@@ -294,12 +347,10 @@ const BlockItem: React.FC<Props> = ({
               <AddButton index={i} />
             </div>
           </div>
+          <div className="mt-be-btn-remove-wrapper">
+            <RemoveButton />
+          </div>
         </>
-      )}
-      {showButton && (
-        <div className="mt-be-btn-remove-wrapper">
-          <RemoveButton block={b} />
-        </div>
       )}
       <div className="mt-be-block">
         {!focus && !(b instanceof Columns) && (
@@ -308,7 +359,7 @@ const BlockItem: React.FC<Props> = ({
         {withBlockContext && (
           <BlockContext.Provider value={blockContext}>
             {ed}
-            {focus && showButton && <DefaultToolbar />}
+            {focus && showButton && isNarrowScreen() && <DefaultToolbar />}
           </BlockContext.Provider>
         )}
         <>
@@ -317,17 +368,7 @@ const BlockItem: React.FC<Props> = ({
               className={editor.opts.rootClassName || ""}
               style={{ overflow: "auto" }}
             >
-              {editor.stylesheets.map((s, i) => {
-                if (s.type === StylesheetType.css) {
-                  return (
-                    <style type="text/css" key={i}>
-                      {s.data}
-                    </style>
-                  );
-                } else {
-                  return <link rel="stylesheet" key={i} href={s.data} />;
-                }
-              })}
+              <Stylesheets editor={editor} />
               {!withBlockContext && ed}
             </div>
           </root.div>

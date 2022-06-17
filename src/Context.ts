@@ -2,19 +2,19 @@ import { createContext, useContext } from "react";
 import Editor from "./Editor";
 import Block from "./Block";
 
-interface SetFocusedIdOptions {
+interface SetFocusedIdsOptions {
   forceUpdate: boolean;
 }
 
-export type SetFocusedId = (
-  id: string | null,
-  opts?: SetFocusedIdOptions
+export type SetFocusedIds = (
+  ids: string[],
+  opts?: SetFocusedIdsOptions
 ) => void;
 
 export interface EditorContextProps {
   editor: Editor;
-  setFocusedId: SetFocusedId;
-  getFocusedId: () => string | null;
+  setFocusedIds: SetFocusedIds;
+  getFocusedIds: () => string[];
 }
 export const EditorContext = createContext<EditorContextProps | null>(null);
 export function useEditorContext(): EditorContextProps {

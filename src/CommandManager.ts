@@ -1,13 +1,33 @@
 import EventEmitter from "eventemitter3";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-import Editor from "./Editor";
+import type Editor from "./Editor";
 import type Block from "./Block";
-import { useEditorContext } from "./Context";
+import { useEditorContext, EditorContextProps } from "./Context";
+import { findDescendantBlocks, toKeyboardShortcutKey } from "./util";
+import { DialogProps } from "./Component/Dialog";
 
-interface Command {
+export interface Command {
   command: string;
-  callback: (event: Event) => void;
+  callback?: (event: BlockEditorCommandEvent) => void;
+  label?: string;
+  icon?: string;
+  shortcut?: string;
+  dialog?: React.FC<DialogProps>;
+}
+
+interface BlockEditorCommandEventDetail {
+  blocks: Readonly<Block[]>;
+  editorContext: EditorContextProps;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extra?: any;
+}
+export class BlockEditorCommandEvent extends CustomEvent<
+  BlockEditorCommandEventDetail
+> {
+  constructor(detail: BlockEditorCommandEventDetail) {
+    super("mt-be-command", { detail });
+  }
 }
 
 interface UseCommandsParams {
@@ -16,47 +36,112 @@ interface UseCommandsParams {
 }
 
 export default class CommandManager {
+  public static allCommands: Command[] = [];
+  private static _allContextCommands: Command[] | undefined;
   public editor: Editor;
-  private eventEmitters: Record<string, EventEmitter> = {};
+  private eventEmitters: Map<Block, EventEmitter> = new Map();
+
+  public static registerCommand(command: Command): void {
+    CommandManager.allCommands.push(command);
+    CommandManager._allContextCommands = undefined;
+  }
+
+  public static get allContextCommands(): Command[] {
+    return (this._allContextCommands ||= CommandManager.allCommands.filter(
+      (c) => !!c.label
+    ));
+  }
 
   public constructor(init: Pick<CommandManager, "editor">) {
     this.editor = init.editor;
   }
 
+  public contextCommands(): Command[] {
+    return CommandManager.allContextCommands;
+  }
+
+  public commands(): Command[] {
+    return CommandManager.allCommands;
+  }
+
   public on(
-    blockId: string,
+    block: Block,
     command: string,
-    callback: (event: Event) => void
+    callback: (event: BlockEditorCommandEvent) => void
   ): void {
-    this.eventEmitters[blockId] ||= new EventEmitter();
-    this.eventEmitters[blockId].on(command, callback);
+    let emitter = this.eventEmitters.get(block);
+    if (!emitter) {
+      this.eventEmitters.set(block, (emitter = new EventEmitter()));
+    }
+    emitter.on(command, callback);
   }
 
-  public removeAllListenersOfBlock(blockId: string): void {
-    this.eventEmitters[blockId]?.removeAllListeners();
-    delete this.eventEmitters[blockId];
+  public removeAllListenersOfBlock(block: Block): void {
+    this.eventEmitters.get(block)?.removeAllListeners();
+    this.eventEmitters.delete(block);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public emit(blockId: string, command: string, ...args: any[]): void {
-    this.eventEmitters[blockId]?.emit(command, ...args);
+  public emit(
+    blocks: Readonly<Block[]>,
+    command: string,
+    ...args: unknown[]
+  ): void {
+    for (let i = 0, len = blocks.length; i < len; i++) {
+      this.eventEmitters.get(blocks[i])?.emit(command, ...args);
+    }
   }
 
   public dispatchKeydownEvent({
     event,
-    blockId,
+    blockIds,
+    editorContext,
   }: {
     event: KeyboardEvent;
-    blockId: string;
+    blockIds: string[];
+    editorContext: EditorContextProps;
   }): void {
-    if (
-      event.key === "k" &&
-      (event.ctrlKey || event.metaKey) &&
-      !event.shiftKey
-    ) {
-      event.preventDefault();
-      this.emit(blockId, "core-insertLink");
+    const key = toKeyboardShortcutKey(event);
+
+    if (key === "cmd+c") {
+      const s = window.getSelection();
+      if (s && !s.isCollapsed) {
+        // Prefer browser default behavior
+        return;
+      }
     }
+
+    const command = this.editor.keyboardShortcutMap()[key];
+    if (command && command.callback) {
+      event.preventDefault();
+
+      command.callback(
+        new BlockEditorCommandEvent({
+          blocks: findDescendantBlocks(this.editor, blockIds),
+          editorContext,
+        })
+      );
+    }
+  }
+
+  public execute({
+    command,
+    blockIds,
+    editorContext,
+  }: {
+    command: string;
+    blockIds: string[];
+    editorContext: EditorContextProps;
+  }): void {
+    this.commands().forEach((c) => {
+      if (c.command === command && c.callback) {
+        c.callback(
+          new BlockEditorCommandEvent({
+            blocks: findDescendantBlocks(this.editor, blockIds),
+            editorContext,
+          })
+        );
+      }
+    });
   }
 }
 
@@ -65,16 +150,18 @@ export function useCommands(
   deps?: React.DependencyList | undefined
 ): void {
   const {
-    editor: { commandManager: CommandManager },
+    editor: { commandManager },
   } = useEditorContext();
 
   useEffect(() => {
     for (const command of commands) {
-      CommandManager.on(block.id, command.command, command.callback);
+      if (command.callback) {
+        commandManager.on(block, command.command, command.callback);
+      }
     }
 
     return () => {
-      CommandManager.removeAllListenersOfBlock(block.id);
+      commandManager.removeAllListenersOfBlock(block);
     };
   }, deps);
 }

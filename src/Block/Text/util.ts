@@ -18,7 +18,12 @@ export const CARET_ATTR = "data-mt-block-editor-caret";
 export const CARET = `<br ${CARET_ATTR}="1">`;
 
 function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
-  ed.focus(false);
+  try {
+    ed.focus(false);
+  } catch (e) {
+    // Probably unloaded.
+    return;
+  }
 
   if (!ed.selection) {
     return;

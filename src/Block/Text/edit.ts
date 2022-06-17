@@ -10,7 +10,7 @@ export const editHandlers: EditHistoryHandlers = {
     a.data.cur = b.data.last;
     return;
   },
-  undo(hist, { setFocusedId }) {
+  undo(hist, { setFocusedIds }) {
     const block = hist.block as Text;
     const data = hist.data;
 
@@ -21,10 +21,10 @@ export const editHandlers: EditHistoryHandlers = {
     } else {
       data.cur = data.cur || block.text;
       block.text = data.last;
-      setFocusedId(block.id);
+      setFocusedIds([block.id]);
     }
   },
-  redo(hist, { setFocusedId }) {
+  redo(hist, { setFocusedIds }) {
     const block = hist.block as Text;
     const data = hist.data;
 
@@ -33,7 +33,7 @@ export const editHandlers: EditHistoryHandlers = {
       ed.fire("MTBlockEditorEdit", { html: data.cur });
     } else {
       block.text = data.cur;
-      setFocusedId(block.id);
+      setFocusedIds([block.id]);
     }
   },
 };

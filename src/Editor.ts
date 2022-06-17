@@ -16,7 +16,7 @@ import Block, { HasBlocks, DEFAULT_KEYS_FOR_SETUP } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 import EditManager from "./EditManager";
-import CommandManager from "./CommandManager";
+import CommandManager, { Command } from "./CommandManager";
 import {
   add as editHandlersAdd,
   remove as editHandlersRemove,
@@ -24,6 +24,7 @@ import {
 } from "./Editor/edit";
 
 import "./import-default-blocks";
+import "./import-default-commands";
 
 export enum StylesheetType {
   url,
@@ -74,6 +75,7 @@ class Editor extends EventEmitter implements HasBlocks {
     metadataMapData
   >();
   private metadataMapSequence = 1;
+  private keyboardShortcutCache?: Record<string, Command>;
 
   public constructor(opts: EditorOptions) {
     super();
@@ -136,6 +138,18 @@ class Editor extends EventEmitter implements HasBlocks {
     return this.opts.shortcutBlockTypes
       ? this.selectableTypes(this.opts.shortcutBlockTypes)
       : [];
+  }
+
+  public keyboardShortcutMap(): Record<string, Command> {
+    return (this.keyboardShortcutCache ||= (() => {
+      const cache: Record<string, Command> = {};
+      for (const command of this.commandManager.commands()) {
+        if (command.shortcut) {
+          cache[command.shortcut] = command;
+        }
+      }
+      return cache;
+    })());
   }
 
   public addBlock(parent: HasBlocks, block: Block, index: number): void {
@@ -248,7 +262,7 @@ class Editor extends EventEmitter implements HasBlocks {
     });
 
     const values = await Promise.all(
-      blocks.map((b) => b.serialize({ editor: this }))
+      blocks.map((b) => b.serialize({ editor: this, external: false }))
     );
 
     const metadataReverseMap: Metadata = {};
@@ -294,10 +308,14 @@ class Editor extends EventEmitter implements HasBlocks {
     return targetData.id;
   }
 
-  public serializeMeta(block: Block): string | null {
+  public serializeMeta(block: Block, external: boolean): string | null {
     const meta = block.metadata();
     if (!meta) {
       return null;
+    }
+
+    if (external) {
+      return JSON.stringify(meta);
     }
 
     const metaSetup: Metadata = {};

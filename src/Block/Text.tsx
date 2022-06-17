@@ -62,7 +62,7 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
-  const { editor, setFocusedId } = useEditorContext();
+  const { editor, setFocusedIds } = useEditorContext();
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
@@ -202,7 +202,7 @@ const Editor: React.FC<EditorProps> = ({
               addBlock(textBlock, block);
             });
           } else {
-            setFocusedId(null);
+            setFocusedIds([]);
           }
 
           editor.editManager.endGrouping();
@@ -426,6 +426,14 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
       }
     }
     return this.text;
+  }
+
+  public async toClipboardItem(
+    ...args: Parameters<Block["toClipboardItem"]>
+  ): Promise<ClipboardItem[] | string> {
+    return this.metadata()
+      ? super.toClipboardItem(...args)
+      : this.html() || "<p></p>";
   }
 
   public static async newFromHtml({
