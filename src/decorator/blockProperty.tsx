@@ -121,7 +121,7 @@ export default function blockProperty<T extends EditorProps>(
           target.style.height = target.scrollHeight + "px";
         }
       });
-    });
+    }, []);
 
     return recursiveMap(children, (child: JSX.Element) => {
       if (
