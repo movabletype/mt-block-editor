@@ -3,7 +3,7 @@ import Text from "../src/Block/Text";
 import EditManager from "../src/EditManager";
 
 let events = [];
-let mockEditor = {
+const mockEditor = {
   emit(name, args) {
     events.push({ name, args });
   },
@@ -11,8 +11,8 @@ let mockEditor = {
 
 const editorContextProps = {
   editor: mockEditor,
-  setFocusedId: (id, opts) => {},
-  getFocusedId: () => null,
+  setFocusedIds: () => undefined,
+  getFocusedIds: () => null,
 };
 
 beforeEach(() => {
@@ -88,7 +88,7 @@ describe("add/canUndo/canRedo", () => {
         undo(hist) {
           count += hist.data.c;
         },
-        redo() {
+        redo(hist) {
           count += hist.data.c;
         },
       },
@@ -121,7 +121,7 @@ describe("add/canUndo/canRedo", () => {
         undo(hist) {
           count += hist.data.c;
         },
-        redo() {
+        redo(hist) {
           count += hist.data.c;
         },
       },
@@ -179,7 +179,7 @@ describe("add/canUndo/canRedo", () => {
       for (let i = 0; i < limit; i++) {
         manager.add(history2);
       }
-      for (let i = 0; i < limit*2; i++) {
+      for (let i = 0; i < limit * 2; i++) {
         manager.undo(editorContextProps);
       }
 

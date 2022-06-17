@@ -78,6 +78,49 @@ $root-font-size: 16px;
     }
   }
 
+  .mt-be-btn-command {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border: 0;
+    background-color: transparent;
+    color: #666;
+    font-size: calc($root-font-size * 0.75);
+
+    span {
+      white-space: nowrap;
+      text-transform: capitalize;
+    }
+
+    @media (min-width: 991.5px) {
+      min-width: 130px;
+      padding: 12px 13px;
+      &:focus,
+      &:hover {
+        outline: none;
+        cursor: pointer;
+        background-color: #eee;
+      }
+
+      img {
+        vertical-align: text-top;
+        width: 13px;
+        margin-right: 4px;
+      }
+    }
+
+    @media (max-width: 991.5px) {
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      padding: 0;
+
+      img {
+        display: none;
+      }
+    }
+  }
+
   .mt-be-btn-add-bottom {
     width: 100%;
     position: relative;
@@ -169,17 +212,6 @@ $root-font-size: 16px;
     font-size: 11px;
   }
 
-  .mt-be-btn-remove--label-only {
-    width: auto;
-    background: none;
-    width: auto;
-    padding: 8px 0;
-    height: 40px;
-    line-height: 40px;
-    padding: 0;
-    font-size: 12px;
-  }
-
   .mt-be-btn-move {
     background: none;
     border: none;
@@ -200,7 +232,7 @@ $root-font-size: 16px;
     background-size: 18px;
   }
 
-  .mt-be-btn-command {
+  .mt-be-btn-command-panel {
     background: none;
     border: none;
     cursor: pointer;
@@ -258,7 +290,9 @@ $root-font-size: 16px;
       flex-direction: column;
       visibility: hidden;
 
-      button {
+      .mt-be-btn-up,
+      .mt-be-btn-move,
+      .mt-be-btn-down {
         transition: 0.1s;
         &:hover {
           opacity: 0.3;
@@ -513,6 +547,10 @@ $root-font-size: 16px;
     }
   }
 
+  .mt-be-focus .mt-be-block {
+    outline: 2px solid #337ab7;
+  }
+
   .focus .mt-be-block {
     .mt-be-block {
       outline: none;
@@ -659,17 +697,15 @@ $root-font-size: 16px;
   }
 
   .mt-be-block-command-panel {
-    font-size: calc($root-font-size * 0.75);
     position: absolute;
     width: auto;
     height: auto;
-    right: 0px;
+    right: 20px;
     top: -4px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 1);
     z-index: 1000;
 
     color: #666;
-    padding: 12px;
     border: 1px solid #ddd;
 
     transition: 0.1s ease-in-out;
@@ -680,7 +716,7 @@ $root-font-size: 16px;
     }
 
     &.mt-be-block-command-panel-enter-active,
-    &.mt-be-block-command-panel-enter-done {
+    &.mt-be-block-command-panel-exit-done {
       opacity: 1;
     }
 
@@ -845,7 +881,7 @@ $root-font-size: 16px;
       margin: 0 16px;
     }
 
-    .mt-be-btn-command {
+    .mt-be-btn-command-panel {
       width: 32px;
       height: 34px;
       position: relative;
@@ -1009,6 +1045,8 @@ $root-font-size: 16px;
     }
     .mt-be-block-command-panel {
       padding: 4px 12px;
+      top: -4px;
+      right: 0px;
     }
 
     .mt-be-overlay {

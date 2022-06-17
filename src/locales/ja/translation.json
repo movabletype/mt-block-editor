@@ -42,5 +42,9 @@
   "None": "なし",
   "New window": "新規ウィンドウ",
   "Close": "閉じる",
-  "Save": "保存"
+  "Save": "保存",
+  "Copy": "コピー",
+  "Paste": "ペースト",
+  "Duplicate": "複製",
+  "Delete": "削除"
 }
