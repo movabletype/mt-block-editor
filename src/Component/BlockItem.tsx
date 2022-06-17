@@ -3,7 +3,13 @@
  * http://react-dnd.github.io/react-dnd/examples
  */
 
-import React, { useEffect, useRef, createRef, CSSProperties } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  createRef,
+  CSSProperties,
+} from "react";
 import root from "react-shadow";
 
 import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
@@ -71,65 +77,71 @@ const BlockItem: React.FC<Props> = ({
   const i = index;
 
   const ref = useRef<HTMLDivElement>(null);
-  const [, drop] = useDrop({
-    accept: parentBlock ? parentBlock.id : "block",
-    hover(item: DragObject, monitor: DropTargetMonitor) {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
+  const [, drop] = useDrop(
+    useMemo(
+      () => ({
+        accept: parentBlock ? parentBlock.id : "block",
+        hover(item: DragObject, monitor: DropTargetMonitor) {
+          if (!ref.current) {
+            return;
+          }
+          const dragIndex = item.index;
+          const hoverIndex = index;
 
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
+          // Don't replace items with themselves
+          if (dragIndex === hoverIndex) {
+            return;
+          }
 
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
+          // Determine rectangle on screen
+          const hoverBoundingRect = ref.current.getBoundingClientRect();
 
-      // Get vertical middle
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+          // Get vertical middle
+          const hoverMiddleY =
+            (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
+          // Determine mouse position
+          const clientOffset = monitor.getClientOffset();
 
-      // Get pixels to the top
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+          // Get pixels to the top
+          const hoverClientY =
+            (clientOffset as XYCoord).y - hoverBoundingRect.top;
 
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
+          // Only perform the move when the mouse has crossed half of the items height
+          // When dragging downwards, only move when the cursor is below 50%
+          // When dragging upwards, only move when the cursor is above 50%
 
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
+          // Dragging downwards
+          if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+            return;
+          }
 
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
+          // Dragging upwards
+          if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+            return;
+          }
 
-      // Time to actually perform the action
-      if (dragIndex < hoverIndex) {
-        for (let i = dragIndex; i < hoverIndex; i++) {
-          swapBlocks(i, i + 1);
-        }
-      } else {
-        for (let i = dragIndex; i > hoverIndex; i--) {
-          swapBlocks(i, i - 1);
-        }
-      }
+          // Time to actually perform the action
+          if (dragIndex < hoverIndex) {
+            for (let i = dragIndex; i < hoverIndex; i++) {
+              swapBlocks(i, i + 1);
+            }
+          } else {
+            for (let i = dragIndex; i > hoverIndex; i--) {
+              swapBlocks(i, i - 1);
+            }
+          }
 
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      item.index = hoverIndex;
-    },
-  });
+          // Note: we're mutating the monitor item here!
+          // Generally it's better to avoid mutations,
+          // but it's good here for the sake of performance
+          // to avoid expensive index searches.
+          item.index = hoverIndex;
+        },
+      }),
+      [swapBlocks, index]
+    )
+  );
 
   useEffect(() => {
     block.wrapperElement = ref.current;
@@ -137,15 +149,20 @@ const BlockItem: React.FC<Props> = ({
     return () => {
       block.isNewlyAdded = false;
     };
-  });
+  }, []);
 
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: parentBlock ? parentBlock.id : "block", id, index },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    collect: (monitor: any) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
+  const [{ isDragging }, drag, preview] = useDrag(
+    useMemo(
+      () => ({
+        item: { type: parentBlock ? parentBlock.id : "block", id, index },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        collect: (monitor: any) => ({
+          isDragging: monitor.isDragging(),
+        }),
+      }),
+      [index]
+    )
+  );
 
   const style: CSSProperties = {};
   style.opacity = isDragging ? (featurePreview ? 0 : 0.5) : 1;
