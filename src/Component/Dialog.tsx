@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import Overlay, { TRANSITION_TIMEOUT } from "./Overlay";
 
-interface DialogProps {
+export interface DialogProps {
   children?: ReactNode;
   open: boolean;
   onClose?: () => void;

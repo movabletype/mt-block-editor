@@ -21,7 +21,8 @@ export function preParseContent(value: string): string {
 export async function parseContent(
   value: string,
   factory: BlockFactory,
-  context: ParserContext
+  context: ParserContext,
+  fallbackBlockType = "core-html"
 ): Promise<Block[]> {
   if (!value) {
     return [];
@@ -44,7 +45,7 @@ export async function parseContent(
   let children = [...doc.children[0].children];
   if (children.length === 0) {
     const fallback = document.createElement("DIV");
-    fallback.setAttribute("t", "core-html");
+    fallback.setAttribute("t", fallbackBlockType);
     fallback.innerHTML = value;
     children = [fallback];
   }
@@ -115,27 +116,71 @@ export async function parseContent(
   return blocks;
 }
 
-export function findDescendantBlock(
+const emptyBlocks: Block[] = [];
+export function findDescendantBlocks(
   ancestor: Block | Editor,
-  id: string | null | undefined
-): Block | null {
-  if (!id) {
-    return null;
+  ids: Readonly<string[]>
+): Readonly<Block[]> {
+  if (ids.length === 0) {
+    return emptyBlocks;
   }
 
   const childBlocks =
     ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
-  for (let i = 0; i < childBlocks.length; i++) {
+  if (childBlocks.length === 0) {
+    return emptyBlocks;
+  }
+
+  return findDescendantBlocksInternal([...ids], childBlocks);
+}
+
+function findDescendantBlocksInternal(
+  ids: string[],
+  childBlocks: Readonly<Block[]>
+): Readonly<Block[]> {
+  const result: Block[] = [];
+  for (let i = 0, len = childBlocks.length; i < len; i++) {
     const b = childBlocks[i];
-    if (b.id === id) {
-      return b;
+    const index = ids.indexOf(b.id);
+    if (index !== -1) {
+      result.push(b);
+      ids.splice(index, 1);
+      if (ids.length === 0) {
+        return result;
+      }
     }
 
-    const cb = findDescendantBlock(b, id);
-    if (cb) {
-      return cb;
+    result.push(...findDescendantBlocksInternal(ids, b.childBlocks()));
+    if (ids.length === 0) {
+      return result;
     }
   }
 
-  return null;
+  return result;
+}
+
+export function getBlocksByRange(
+  ancestor: Block | Editor,
+  start: string,
+  end: string
+): Block[] {
+  const childBlocks =
+    ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
+  let started = false;
+  const blocks = [];
+  for (let i = 0; i < childBlocks.length; i++) {
+    const b = childBlocks[i];
+    if (b.id === start || b.id === end) {
+      blocks.push(b);
+      if (started || start === end) {
+        return blocks;
+      } else {
+        started = true;
+      }
+    } else if (started) {
+      blocks.push(b);
+    }
+  }
+
+  return started ? [] : blocks;
 }
