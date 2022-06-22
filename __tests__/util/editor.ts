@@ -6,6 +6,7 @@ import {
   preParseContent,
   findDescendantBlocks,
   getBlocksByRange,
+  removeControlCharacters,
 } from "../../src/util/editor";
 
 import { newEditor } from "../helper";
@@ -23,6 +24,26 @@ function serializeMeta(block): string | null {
   }
   return JSON.stringify(meta);
 }
+
+describe("removeControlCharacters", () => {
+  test("char", () => {
+    expect(removeControlCharacters(`test${String.fromCharCode(0)}`)).toBe(
+      "test"
+    );
+  });
+  test("numeric character reference : Dec", async () => {
+    expect(removeControlCharacters(`test&#0;`)).toBe("test");
+  });
+  test("numeric character reference : Dec with prefix 0", async () => {
+    expect(removeControlCharacters(`test&#0000;`)).toBe("test");
+  });
+  test("numeric character reference : Hex", async () => {
+    expect(removeControlCharacters(`test&#x0;`)).toBe("test");
+  });
+  test("numeric character reference : Hex with prefix 0", async () => {
+    expect(removeControlCharacters(`test&#x0000;`)).toBe("test");
+  });
+});
 
 describe("parseContent()", () => {
   test("text block", async () => {
