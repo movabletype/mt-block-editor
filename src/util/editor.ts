@@ -5,18 +5,32 @@ import Text from "../Block/Text";
 import Column from "../Block/Column";
 import ParserContext from "./ParserContext";
 
-export function preParseContent(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag) => {
-      return `<${tag
-        .replace(/&gt;/g, ">")
-        .replace(/&lt;/g, "<")
-        .replace(/&amp;/g, "&")}>`;
-    });
-}
+export const preParseContent = (() => {
+  const entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+  } as { [key: string]: string };
+  const entityReverseMap = Object.fromEntries(
+    Object.entries(entityMap).map(([k, v]) => [v, k])
+  );
+  const entityRegExp = new RegExp(`[${Object.keys(entityMap).join("")}]`, "g");
+  const entityReverseRegExp = new RegExp(
+    `(?:${Object.keys(entityReverseMap).join("|")})`,
+    "g"
+  );
+
+  return (value: string): string => {
+    return value
+      .replace(entityRegExp, (match) => entityMap[match])
+      .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag: string) => {
+        return `<${tag.replace(
+          entityReverseRegExp,
+          (match) => entityReverseMap[match]
+        )}>`;
+      });
+  };
+})();
 
 export function removeControlCharacters(str: string): string {
   return str.replace(
