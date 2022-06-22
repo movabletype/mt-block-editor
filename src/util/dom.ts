@@ -133,23 +133,25 @@ export function getElementByNthOfTypeIndexes(
   return node;
 }
 
-const _entityMap = {
-  "\t": "&#x08;",
-  "\n": "&#x0A;",
-  "\r": "&#x0D;",
-  "&": "&amp;",
-  "'": "&#x27;",
-  "`": "&#x60;",
-  '"': "&quot;",
-  "<": "&lt;",
-  ">": "&gt;",
-} as { [key: string]: string };
-export function escapeSingleQuoteAttribute(string: string): string {
-  if (typeof string !== "string") {
-    return string;
-  }
-  return string.replace(/[&<>'\t\n\r]/g, (match) => _entityMap[match]);
-}
+export const escapeSingleQuoteAttribute = (() => {
+  const entityMap = {
+    "\t": "&#x08;",
+    "\n": "&#x0A;",
+    "\r": "&#x0D;",
+    "&": "&amp;",
+    "'": "&#x27;",
+    "<": "&lt;",
+    ">": "&gt;",
+  } as { [key: string]: string };
+  const entityRegExp = new RegExp(`[${Object.keys(entityMap).join("")}]`, "g");
+
+  return (string: string): string => {
+    if (typeof string !== "string") {
+      return string;
+    }
+    return string.replace(entityRegExp, (match) => entityMap[match]);
+  };
+})();
 
 const DOMPurify = createDOMPurify(window);
 export function sanitize(str: string): string {
