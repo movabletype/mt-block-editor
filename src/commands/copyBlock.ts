@@ -71,10 +71,8 @@ const command: Command = {
       const plainBlob = new Blob([data], { type: "text/plain" });
       data = [
         new ClipboardItem({
-          "text/html": (htmlBlob as unknown) as Promise<ClipboardItemDataType>,
-          "text/plain": (plainBlob as unknown) as Promise<
-            ClipboardItemDataType
-          >,
+          "text/html": htmlBlob,
+          "text/plain": plainBlob,
         }),
       ];
     }
