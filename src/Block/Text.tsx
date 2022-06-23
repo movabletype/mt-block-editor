@@ -32,6 +32,7 @@ import {
   adjustToolbar,
 } from "./Text/util";
 import { editHandlers } from "./Text/edit";
+import { commonSettings } from "./Text/tinymce";
 
 declare const tinymce: EditorManager;
 
@@ -69,22 +70,12 @@ const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     const settings: TinyMCESettings = {
-      language: editor.opts.i18n.lng,
-      selector: `#${block.tinymceId()}`,
-      menubar: false,
+      ...commonSettings(editor, block),
       plugins: "lists paste media textcolor code hr link",
       toolbar: [
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
         "bullist numlist outdent indent | blockquote link unlink",
       ],
-
-      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      inline: true,
-
-      setup: (ed: TinyMCE) => {
-        block.tinymce = ed;
-      },
-
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
         if (focus) {
