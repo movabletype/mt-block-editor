@@ -277,12 +277,6 @@ const BlockItem: React.FC<Props> = ({
       },
       editor.keyboardShortcutMap()["cmd+c"]
         ? function onCopy(ev: React.ClipboardEvent) {
-            const selection = window.getSelection();
-            if (selection && !selection.isCollapsed) {
-              // Prefer browser default behavior
-              return;
-            }
-
             const focusedIds = getFocusedIds();
             editor.commandManager.execute({
               command: "core-copyBlock",

@@ -29,6 +29,12 @@ const command: Command = {
       nativeEvent,
     },
   }) => {
+    const selection = window.getSelection();
+    if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
+      // Prefer browser default behavior
+      return;
+    }
+
     if (blocks.length === 0) {
       return;
     }

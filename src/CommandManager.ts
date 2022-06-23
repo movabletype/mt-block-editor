@@ -115,15 +115,6 @@ export default class CommandManager {
     editorContext: EditorContextProps;
   }): void {
     const key = toKeyboardShortcutKey(event);
-
-    if (key === "cmd+c") {
-      const s = window.getSelection();
-      if (s && !s.isCollapsed) {
-        // Prefer browser default behavior
-        return;
-      }
-    }
-
     const command = this.editor.keyboardShortcutMap()[key];
     if (command && command.callback) {
       command.callback(
