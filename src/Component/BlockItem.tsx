@@ -255,9 +255,9 @@ const BlockItem: React.FC<Props> = ({
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
-        const focusedId = getFocusedIds();
+        const focusedIds = getFocusedIds();
 
-        if (focusedId.includes(b.id)) {
+        if (focusedIds.includes(b.id)) {
           return;
         }
 
@@ -266,9 +266,9 @@ const BlockItem: React.FC<Props> = ({
         if (clickBlockTargetRef.current) {
           clickBlockTargetRef.current.click();
         } else if (!ignoreClickEvent) {
-          if (focusedId && ev.shiftKey) {
+          if (focusedIds.length !== 0 && ev.shiftKey) {
             setFocusedIds(
-              getBlocksByRange(editor, focusedId[0], b.id).map((b) => b.id)
+              getBlocksByRange(editor, focusedIds[0], b.id).map((b) => b.id)
             );
           } else {
             setFocusedIds([b.id]);
