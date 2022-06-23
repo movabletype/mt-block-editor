@@ -16,7 +16,7 @@ describe("toClipboardItem()", () => {
     const b = new Text({ text: "<p>test</p>" });
 
     const item = await b.toClipboardItem({ editor });
-    expect(item).toBe(`<p>test</p>`);
+    expect(item).toBe(`<!-- mt-beb --><p>test</p><!-- /mt-beb -->`);
   });
 
   test("with metadata", async () => {
