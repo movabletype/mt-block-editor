@@ -75,7 +75,7 @@ class Editor extends EventEmitter implements HasBlocks {
     metadataMapData
   >();
   private metadataMapSequence = 1;
-  private keyboardShortcutCache?: Record<string, Command>;
+  private keyboardShortcutCache: Record<string, Command> = {};
 
   public constructor(opts: EditorOptions) {
     super();
@@ -108,6 +108,7 @@ class Editor extends EventEmitter implements HasBlocks {
     );
 
     setTimeout(async () => {
+      this.keyboardShortcutCache = await this.buildKeyboardShortcutCache();
       this.stylesheets = await Promise.all(this.buildStylesheets());
       const blocks = await parseContent(
         preParseContent(this.inputElement.value),
@@ -140,16 +141,18 @@ class Editor extends EventEmitter implements HasBlocks {
       : [];
   }
 
-  public keyboardShortcutMap(): Record<string, Command> {
-    return (this.keyboardShortcutCache ||= (() => {
-      const cache: Record<string, Command> = {};
-      for (const command of this.commandManager.commands()) {
-        if (command.shortcut) {
-          cache[command.shortcut] = command;
-        }
+  public async buildKeyboardShortcutCache(): Promise<Record<string, Command>> {
+    const cache: Record<string, Command> = {};
+    for (const command of await this.commandManager.commands()) {
+      if (command.shortcut) {
+        cache[command.shortcut] = command;
       }
-      return cache;
-    })());
+    }
+    return cache;
+  }
+
+  public keyboardShortcutMap(): Record<string, Command> {
+    return this.keyboardShortcutCache;
   }
 
   public addBlock(parent: HasBlocks, block: Block, index: number): void {

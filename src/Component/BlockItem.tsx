@@ -275,31 +275,40 @@ const BlockItem: React.FC<Props> = ({
           }
         }
       },
-      function onCopy(ev: React.ClipboardEvent) {
-        const selection = window.getSelection();
-        if (selection && !selection.isCollapsed) {
-          // Prefer browser default behavior
-          return;
-        }
+      editor.keyboardShortcutMap()["cmd+c"]
+        ? function onCopy(ev: React.ClipboardEvent) {
+            const selection = window.getSelection();
+            if (selection && !selection.isCollapsed) {
+              // Prefer browser default behavior
+              return;
+            }
 
-        ev.preventDefault();
+            ev.preventDefault();
 
-        editor.commandManager.execute({
-          command: "core-copyBlock",
-          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
-          editorContext,
-        });
-      },
-      function onPaste(ev: React.ClipboardEvent) {
-        ev.preventDefault();
+            editor.commandManager.execute({
+              command: "core-copyBlock",
+              blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+              editorContext,
+              nativeEvent: ev.nativeEvent,
+            });
+          }
+        : function onCopy() {
+            return;
+          },
+      editor.keyboardShortcutMap()["cmd+v"]
+        ? function onPaste(ev: React.ClipboardEvent) {
+            ev.preventDefault();
 
-        editor.commandManager.execute({
-          command: "core-pasteBlock",
-          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
-          editorContext,
-          nativeEvent: ev.nativeEvent,
-        });
-      },
+            editor.commandManager.execute({
+              command: "core-pasteBlock",
+              blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+              editorContext,
+              nativeEvent: ev.nativeEvent,
+            });
+          }
+        : function onPaste() {
+            return;
+          },
       function onUp() {
         if (focusedIds.length >= 2) {
           for (let i = index, to = index + focusedIds.length; i < to; i++) {

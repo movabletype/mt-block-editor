@@ -68,8 +68,14 @@ export default class CommandManager {
     ).filter((c): c is Command => !!c);
   }
 
-  public commands(): Command[] {
-    return CommandManager.allCommands;
+  public async commands(): Promise<Command[]> {
+    return (
+      await Promise.all(
+        CommandManager.allCommands.map(async (c) => {
+          return (await c.condition?.()) ?? true ? c : undefined;
+        })
+      )
+    ).filter((c): c is Command => !!c);
   }
 
   public on(
@@ -143,7 +149,7 @@ export default class CommandManager {
     editorContext: EditorContextProps;
     nativeEvent: Event;
   }): void {
-    this.commands().forEach((c) => {
+    CommandManager.allCommands.forEach((c) => {
       if (c.command === command && c.callback) {
         c.callback(
           new BlockEditorCommandEvent({
