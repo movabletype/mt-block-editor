@@ -283,6 +283,7 @@ const BlockItem: React.FC<Props> = ({
               return;
             }
 
+            const focusedIds = getFocusedIds();
             editor.commandManager.execute({
               command: "core-copyBlock",
               blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
@@ -295,6 +296,7 @@ const BlockItem: React.FC<Props> = ({
           },
       editor.keyboardShortcutMap()["cmd+v"]
         ? function onPaste(ev: React.ClipboardEvent) {
+            const focusedIds = getFocusedIds();
             editor.commandManager.execute({
               command: "core-pasteBlock",
               blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
@@ -306,6 +308,7 @@ const BlockItem: React.FC<Props> = ({
             return;
           },
       function onUp() {
+        const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
           for (let i = index, to = index + focusedIds.length; i < to; i++) {
             swapBlocks(i - 1, i);
@@ -316,6 +319,7 @@ const BlockItem: React.FC<Props> = ({
         swapBlocks(index, index - 1, true);
       },
       function onDown() {
+        const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
           for (let i = index + focusedIds.length; i >= index; i--) {
             swapBlocks(i + 1, i);
