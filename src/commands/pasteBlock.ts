@@ -31,46 +31,57 @@ const command: Command = {
       return;
     }
 
+    // Always ignore calls from keyboard shortcuts.
+    // ClipboardEvent will be fired next, and it will be handled there.
+    if (
+      nativeEvent instanceof KeyboardEvent &&
+      nativeEvent.target instanceof HTMLElement &&
+      nativeEvent.target.closest("[data-mt-block-editor-block-id]")
+    ) {
+      return;
+    }
+
     if (
       !(
-        (nativeEvent && nativeEvent instanceof ClipboardEvent) ||
+        nativeEvent instanceof ClipboardEvent ||
         typeof navigator.clipboard.read === "function"
       )
     ) {
       return;
     }
 
-    const html =
-      (nativeEvent
-        ? await (async () => {
-            const clipboardItems =
-              (nativeEvent as ClipboardEvent).clipboardData?.items || [];
-            for (const clipboardItem of clipboardItems) {
-              if (
-                clipboardItem.type === "text/plain" ||
-                clipboardItem.type === "text/html"
-              ) {
-                return new Promise<string>((resolve) =>
-                  clipboardItem.getAsString(resolve)
-                );
-              }
-            }
-          })()
-        : await (async () => {
-            const clipboardItems = await navigator.clipboard.read();
-            for (const clipboardItem of clipboardItems) {
-              const types = clipboardItem.types;
-              if (types.includes("text/html")) {
-                return await (await clipboardItem.getType("text/html")).text();
-              }
+    let html = "";
+    if (nativeEvent instanceof ClipboardEvent) {
+      const clipboardItems = nativeEvent.clipboardData?.items || [];
+      for (const clipboardItem of clipboardItems) {
+        if (
+          clipboardItem.type === "text/plain" ||
+          clipboardItem.type === "text/html"
+        ) {
+          html = nativeEvent.clipboardData?.getData(clipboardItem.type) || "";
+        }
+      }
 
-              for (const type of types) {
-                const blob = await clipboardItem.getType(type);
-                // we can now use blob here
-                return blob.text();
-              }
-            }
-          })()) || "";
+      if (!html.match(/<!-- mt-beb .*? \/mt-beb -->$/)) {
+        // Prefer browser default behavior
+        return;
+      }
+    } else {
+      for (const clipboardItem of await navigator.clipboard.read()) {
+        const types = clipboardItem.types;
+        if (types.includes("text/html")) {
+          html = await (await clipboardItem.getType("text/html")).text();
+          break;
+        }
+
+        for (const type of types) {
+          const blob = await clipboardItem.getType(type);
+          // we can now use blob here
+          html = await blob.text();
+          break;
+        }
+      }
+    }
 
     if (html === "") {
       return;
