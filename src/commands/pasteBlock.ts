@@ -76,6 +76,8 @@ const command: Command = {
       return;
     }
 
+    nativeEvent.preventDefault();
+
     const newBlocks = await parseContent(
       preParseContent(html),
       editor.factory,

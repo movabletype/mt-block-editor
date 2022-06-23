@@ -9,8 +9,11 @@ const command: Command = {
       editorContext: {
         editor: { commandManager },
       },
+      nativeEvent,
     },
   }) => {
+    nativeEvent.preventDefault();
+
     commandManager.emit(blocks, "core-insertLink");
   },
 };

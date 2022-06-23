@@ -26,11 +26,14 @@ const command: Command = {
     detail: {
       blocks,
       editorContext: { editor },
+      nativeEvent,
     },
   }) => {
     if (blocks.length === 0) {
       return;
     }
+
+    nativeEvent.preventDefault();
 
     if (blocks.length === 1) {
       const block = blocks[0];

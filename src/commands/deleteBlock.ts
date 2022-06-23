@@ -13,8 +13,11 @@ const command: Command = {
     detail: {
       blocks,
       editorContext: { editor },
+      nativeEvent,
     },
   }) => {
+    nativeEvent.preventDefault();
+
     if (isTouchDevice()) {
       if (!window.confirm(t("Are you sure you want to remove the block?"))) {
         return;

@@ -283,8 +283,6 @@ const BlockItem: React.FC<Props> = ({
               return;
             }
 
-            ev.preventDefault();
-
             editor.commandManager.execute({
               command: "core-copyBlock",
               blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
@@ -297,8 +295,6 @@ const BlockItem: React.FC<Props> = ({
           },
       editor.keyboardShortcutMap()["cmd+v"]
         ? function onPaste(ev: React.ClipboardEvent) {
-            ev.preventDefault();
-
             editor.commandManager.execute({
               command: "core-pasteBlock",
               blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,

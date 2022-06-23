@@ -14,11 +14,14 @@ const command: Command = {
     detail: {
       blocks,
       editorContext: { editor, setFocusedIds },
+      nativeEvent,
     },
   }) => {
     if (blocks.length === 0) {
       return;
     }
+
+    nativeEvent.preventDefault();
 
     const html = (
       await Promise.all(

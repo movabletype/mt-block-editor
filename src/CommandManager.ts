@@ -126,8 +126,6 @@ export default class CommandManager {
 
     const command = this.editor.keyboardShortcutMap()[key];
     if (command && command.callback) {
-      event.preventDefault();
-
       command.callback(
         new BlockEditorCommandEvent({
           blocks: findDescendantBlocks(this.editor, blockIds),
