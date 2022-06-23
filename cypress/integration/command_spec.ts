@@ -229,4 +229,91 @@ context("Command", () => {
       });
     });
   }
+
+  context("Clipboard API is not available", () => {
+    it("navigator.permissions.query throws an error. e.g. Firefox", () => {
+      apply({
+        id: textareaId,
+      });
+
+      cy.window().then((win) => {
+        win.navigator.permissions.query = async () => {
+          throw new Error("Permission denied");
+        };
+      });
+
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Block Editor!\n");
+
+      wait(1);
+
+      type("Movable Type!");
+
+      cy.get(".mt-be-block").eq(0).click({ force: true });
+      cy.get(".mt-be-block").eq(1).click({
+        shiftKey: true,
+      });
+
+      wait(1);
+
+      cy.get(".mt-be-btn-move:visible").click();
+
+      wait(1);
+
+      cy.get(`[data-mt-be-command="core-copyBlock"]`).should("be.visible");
+      cy.get(`[data-mt-be-command="core-pasteBlock"]`).should("not.exist");
+    });
+
+    it("denied. e.g. http://example.com/", () => {
+      apply({
+        id: textareaId,
+      });
+
+      cy.window().then((win) => {
+        win.navigator.permissions.query = async () =>
+          ({
+            state: "denied",
+          } as PermissionStatus);
+      });
+
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Block Editor!\n");
+
+      wait(1);
+
+      type("Movable Type!");
+
+      cy.get(".mt-be-block").eq(0).click({ force: true });
+      cy.get(".mt-be-block").eq(1).click({
+        shiftKey: true,
+      });
+
+      wait(1);
+
+      cy.get(".mt-be-btn-move:visible").click();
+
+      wait(1);
+
+      cy.get(`[data-mt-be-command="core-copyBlock"]`).should("not.exist");
+      cy.get(`[data-mt-be-command="core-pasteBlock"]`).should("not.exist");
+    });
+  });
 });

@@ -12,6 +12,16 @@ const command: Command = {
   icon,
   shortcut: "cmd+c",
   command: "core-copyBlock",
+  condition: async () =>
+    (
+      await navigator.permissions
+        .query({
+          name: "clipboard-read" as PermissionName,
+        })
+        .catch(() => ({
+          state: "granted", // fall back to "granted"
+        }))
+    ).state !== "denied",
   callback: async ({
     detail: {
       blocks,

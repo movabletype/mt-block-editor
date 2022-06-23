@@ -14,6 +14,7 @@ export interface Command {
   icon?: string;
   shortcut?: string;
   dialog?: React.FC<DialogProps>;
+  condition?: () => boolean | Promise<boolean>;
 }
 
 interface BlockEditorCommandEventDetail {
@@ -56,8 +57,14 @@ export default class CommandManager {
     this.editor = init.editor;
   }
 
-  public contextCommands(): Command[] {
-    return CommandManager.allContextCommands;
+  public async contextCommands(): Promise<Command[]> {
+    return (
+      await Promise.all(
+        CommandManager.allContextCommands.map(async (c) => {
+          return (await c.condition?.()) ?? true ? c : undefined;
+        })
+      )
+    ).filter((c): c is Command => !!c);
   }
 
   public commands(): Command[] {
