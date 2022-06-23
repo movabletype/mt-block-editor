@@ -20,6 +20,7 @@ export interface Command {
 interface BlockEditorCommandEventDetail {
   blocks: Readonly<Block[]>;
   editorContext: EditorContextProps;
+  nativeEvent: Event;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
 }
@@ -125,6 +126,7 @@ export default class CommandManager {
         new BlockEditorCommandEvent({
           blocks: findDescendantBlocks(this.editor, blockIds),
           editorContext,
+          nativeEvent: event,
         })
       );
     }
@@ -134,10 +136,12 @@ export default class CommandManager {
     command,
     blockIds,
     editorContext,
+    nativeEvent,
   }: {
     command: string;
     blockIds: string[];
     editorContext: EditorContextProps;
+    nativeEvent: Event;
   }): void {
     this.commands().forEach((c) => {
       if (c.command === command && c.callback) {
@@ -145,6 +149,7 @@ export default class CommandManager {
           new BlockEditorCommandEvent({
             blocks: findDescendantBlocks(this.editor, blockIds),
             editorContext,
+            nativeEvent,
           })
         );
       }

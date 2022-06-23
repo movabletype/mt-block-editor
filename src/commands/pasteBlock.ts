@@ -24,15 +24,39 @@ const command: Command = {
     detail: {
       blocks,
       editorContext: { editor, setFocusedIds },
+      nativeEvent,
     },
   }) => {
     if (blocks.length === 0) {
       return;
     }
 
+    if (
+      !(
+        (nativeEvent && nativeEvent instanceof ClipboardEvent) ||
+        typeof navigator.clipboard.read === "function"
+      )
+    ) {
+      return;
+    }
+
     const html =
-      (await (typeof navigator.clipboard.read === "function"
-        ? (async () => {
+      (nativeEvent
+        ? await (async () => {
+            const clipboardItems =
+              (nativeEvent as ClipboardEvent).clipboardData?.items || [];
+            for (const clipboardItem of clipboardItems) {
+              if (
+                clipboardItem.type === "text/plain" ||
+                clipboardItem.type === "text/html"
+              ) {
+                return new Promise<string>((resolve) =>
+                  clipboardItem.getAsString(resolve)
+                );
+              }
+            }
+          })()
+        : await (async () => {
             const clipboardItems = await navigator.clipboard.read();
             for (const clipboardItem of clipboardItems) {
               const types = clipboardItem.types;
@@ -46,8 +70,11 @@ const command: Command = {
                 return blob.text();
               }
             }
-          })()
-        : navigator.clipboard.readText())) || "";
+          })()) || "";
+
+    if (html === "") {
+      return;
+    }
 
     const newBlocks = await parseContent(
       preParseContent(html),
@@ -55,6 +82,10 @@ const command: Command = {
       new ParserContext(),
       "core-text"
     );
+
+    if (newBlocks.length === 0) {
+      return;
+    }
 
     const index = editor.blocks.findIndex(
       (b) => b.id === blocks[blocks.length - 1].id

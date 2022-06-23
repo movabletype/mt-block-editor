@@ -180,6 +180,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
               command: "core-deleteBlock",
               blockIds: focusedIds,
               editorContext,
+              nativeEvent: ev,
             });
           }
         }

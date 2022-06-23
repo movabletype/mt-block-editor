@@ -249,7 +249,7 @@ const BlockItem: React.FC<Props> = ({
     b instanceof Columns
   );
 
-  const [onClick, onCopy, onUp, onDown] = useMemo(
+  const [onClick, onCopy, onPaste, onUp, onDown] = useMemo(
     () => [
       function onClick(ev: React.MouseEvent) {
         ev.stopPropagation();
@@ -276,12 +276,28 @@ const BlockItem: React.FC<Props> = ({
         }
       },
       function onCopy(ev: React.ClipboardEvent) {
+        const selection = window.getSelection();
+        if (selection && !selection.isCollapsed) {
+          // Prefer browser default behavior
+          return;
+        }
+
         ev.preventDefault();
 
         editor.commandManager.execute({
           command: "core-copyBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
+        });
+      },
+      function onPaste(ev: React.ClipboardEvent) {
+        ev.preventDefault();
+
+        editor.commandManager.execute({
+          command: "core-pasteBlock",
+          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+          editorContext,
+          nativeEvent: ev.nativeEvent,
         });
       },
       function onUp() {
@@ -315,6 +331,7 @@ const BlockItem: React.FC<Props> = ({
       data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
       onClick={onClick}
       onCopy={onCopy}
+      onPaste={onPaste}
       className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
         focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}
