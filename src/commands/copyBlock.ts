@@ -5,6 +5,9 @@ import { tinymceFocus } from "../Block/Text/util";
 import Text from "../Block/Text";
 import Table from "../Block/Table";
 
+const isClipboardAPIAvailable: () => boolean = () =>
+  typeof navigator.clipboard?.write === "function" ||
+  typeof navigator.clipboard?.writeText === "function";
 const command: Command = {
   get label() {
     return t("Copy");
@@ -12,9 +15,7 @@ const command: Command = {
   icon,
   shortcut: "cmd+c",
   command: "core-copyBlock",
-  condition: async () =>
-    typeof navigator.clipboard?.write === "function" ||
-    typeof navigator.clipboard?.writeText === "function",
+  condition: isClipboardAPIAvailable,
   callback: async ({
     detail: {
       blocks,
@@ -22,6 +23,10 @@ const command: Command = {
       nativeEvent,
     },
   }) => {
+    if (!isClipboardAPIAvailable()) {
+      return;
+    }
+
     const selection = window.getSelection();
     if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
       // Prefer browser default behavior

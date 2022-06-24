@@ -275,32 +275,24 @@ const BlockItem: React.FC<Props> = ({
           }
         }
       },
-      editor.keyboardShortcutMap()["cmd+c"]
-        ? function onCopy(ev: React.ClipboardEvent) {
-            const focusedIds = getFocusedIds();
-            editor.commandManager.execute({
-              command: "core-copyBlock",
-              blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
-              editorContext,
-              nativeEvent: ev.nativeEvent,
-            });
-          }
-        : function onCopy() {
-            return;
-          },
-      editor.keyboardShortcutMap()["cmd+v"]
-        ? function onPaste(ev: React.ClipboardEvent) {
-            const focusedIds = getFocusedIds();
-            editor.commandManager.execute({
-              command: "core-pasteBlock",
-              blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
-              editorContext,
-              nativeEvent: ev.nativeEvent,
-            });
-          }
-        : function onPaste() {
-            return;
-          },
+      function onCopy(ev: React.ClipboardEvent) {
+        const focusedIds = getFocusedIds();
+        editor.commandManager.execute({
+          command: "core-copyBlock",
+          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+          editorContext,
+          nativeEvent: ev.nativeEvent,
+        });
+      },
+      function onPaste(ev: React.ClipboardEvent) {
+        const focusedIds = getFocusedIds();
+        editor.commandManager.execute({
+          command: "core-pasteBlock",
+          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+          editorContext,
+          nativeEvent: ev.nativeEvent,
+        });
+      },
       function onUp() {
         const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
