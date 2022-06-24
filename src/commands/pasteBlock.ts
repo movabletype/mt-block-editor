@@ -10,16 +10,7 @@ const command: Command = {
   icon,
   shortcut: "cmd+v",
   command: "core-pasteBlock",
-  condition: async () =>
-    (
-      await navigator.permissions
-        .query({
-          name: "clipboard-read" as PermissionName,
-        })
-        .catch(() => ({
-          state: "denied", // fall back to "denied"
-        }))
-    ).state !== "denied",
+  condition: async () => typeof navigator.clipboard?.read === "function",
   callback: async ({
     detail: {
       blocks,
