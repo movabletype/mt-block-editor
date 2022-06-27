@@ -7,9 +7,17 @@ import { useEditorContext, EditorContextProps } from "./Context";
 import { findDescendantBlocks, toKeyboardShortcutKey } from "./util";
 import { DialogProps } from "./Component/Dialog";
 
+interface BlockEditorCommandArgs {
+  blocks: Readonly<Block[]>;
+  editorContext: EditorContextProps;
+  event: Event;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extra?: any;
+}
+
 export interface Command {
   command: string;
-  callback?: (event: BlockEditorCommandEvent) => void;
+  callback?: (args: BlockEditorCommandArgs) => void;
   label?: string;
   icon?: string;
   shortcut?: string;
@@ -17,18 +25,18 @@ export interface Command {
   condition?: () => boolean | Promise<boolean>;
 }
 
-interface BlockEditorCommandEventDetail {
-  blocks: Readonly<Block[]>;
+interface BlockEditorCommandDetail {
+  command: string;
+  blockIds: Readonly<string[]>;
   editorContext: EditorContextProps;
-  nativeEvent: Event;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
 }
 export class BlockEditorCommandEvent extends CustomEvent<
-  BlockEditorCommandEventDetail
+  BlockEditorCommandDetail
 > {
-  constructor(detail: BlockEditorCommandEventDetail) {
-    super("mt-be-command", { detail });
+  constructor(detail: BlockEditorCommandDetail) {
+    super("mt-block-editor-command", { detail });
   }
 }
 
@@ -81,7 +89,7 @@ export default class CommandManager {
   public on(
     block: Block,
     command: string,
-    callback: (event: BlockEditorCommandEvent) => void
+    callback: (args: BlockEditorCommandArgs) => void
   ): void {
     let emitter = this.eventEmitters.get(block);
     if (!emitter) {
@@ -117,13 +125,11 @@ export default class CommandManager {
     const key = toKeyboardShortcutKey(event);
     const command = this.editor.keyboardShortcutMap()[key];
     if (command && command.callback) {
-      command.callback(
-        new BlockEditorCommandEvent({
-          blocks: findDescendantBlocks(this.editor, blockIds),
-          editorContext,
-          nativeEvent: event,
-        })
-      );
+      command.callback({
+        blocks: findDescendantBlocks(this.editor, blockIds),
+        editorContext,
+        event: event,
+      });
     }
   }
 
@@ -131,22 +137,20 @@ export default class CommandManager {
     command,
     blockIds,
     editorContext,
-    nativeEvent,
+    event,
   }: {
     command: string;
-    blockIds: string[];
+    blockIds: Readonly<string[]>;
     editorContext: EditorContextProps;
-    nativeEvent: Event;
+    event: Event;
   }): void {
     CommandManager.allCommands.forEach((c) => {
       if (c.command === command && c.callback) {
-        c.callback(
-          new BlockEditorCommandEvent({
-            blocks: findDescendantBlocks(this.editor, blockIds),
-            editorContext,
-            nativeEvent,
-          })
-        );
+        c.callback({
+          blocks: findDescendantBlocks(this.editor, blockIds),
+          editorContext,
+          event,
+        });
       }
     });
   }

@@ -11,17 +11,15 @@ const command: Command = {
   shortcut: "cmd+d",
   command: "core-duplicateBlock",
   callback: async ({
-    detail: {
-      blocks,
-      editorContext: { editor, setFocusedIds },
-      nativeEvent,
-    },
+    blocks,
+    editorContext: { editor, setFocusedIds },
+    event,
   }) => {
     if (blocks.length === 0) {
       return;
     }
 
-    nativeEvent.preventDefault();
+    event?.preventDefault();
 
     const html = (
       await Promise.all(

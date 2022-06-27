@@ -155,3 +155,9 @@ const DOMPurify = createDOMPurify(window);
 export function sanitize(str: string): string {
   return DOMPurify.sanitize(str);
 }
+
+export function decodeHtml(html: string): string {
+  const e = document.createElement("textarea");
+  e.innerHTML = html;
+  return e.value;
+}

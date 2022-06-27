@@ -33,14 +33,15 @@ interface EditorProps extends EditorOptions {
 }
 
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
-  const { editor } = useEditorContext();
+  const editorContext = useEditorContext();
+  const { editor } = editorContext;
   const { addBlock } = useBlocksContext();
 
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
-      ...commonSettings(editor, block),
+      ...commonSettings(editor, block, editorContext),
       plugins: "table code paste media textcolor link",
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",

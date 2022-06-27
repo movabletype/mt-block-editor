@@ -16,13 +16,7 @@ const command: Command = {
   shortcut: "cmd+c",
   command: "core-copyBlock",
   condition: isClipboardAPIAvailable,
-  callback: async ({
-    detail: {
-      blocks,
-      editorContext: { editor },
-      nativeEvent,
-    },
-  }) => {
+  callback: async ({ blocks, editorContext: { editor }, event }) => {
     if (!isClipboardAPIAvailable()) {
       return;
     }
@@ -37,7 +31,7 @@ const command: Command = {
       return;
     }
 
-    nativeEvent.preventDefault();
+    event.preventDefault();
 
     if (blocks.length === 1) {
       const block = blocks[0];

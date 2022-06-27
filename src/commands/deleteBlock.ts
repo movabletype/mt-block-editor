@@ -9,14 +9,8 @@ const command: Command = {
   },
   icon,
   command: "core-deleteBlock",
-  callback: ({
-    detail: {
-      blocks,
-      editorContext: { editor },
-      nativeEvent,
-    },
-  }) => {
-    nativeEvent.preventDefault();
+  callback: ({ blocks, editorContext: { editor }, event }) => {
+    event.preventDefault();
 
     if (isTouchDevice()) {
       if (!window.confirm(t("Are you sure you want to remove the block?"))) {

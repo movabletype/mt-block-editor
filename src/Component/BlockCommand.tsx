@@ -32,7 +32,7 @@ const BlockCommand: React.FC<BlockCommandProps> = ({
             blockIds:
               getFocusedIds().length === 0 ? [block.id] : getFocusedIds(),
             editorContext,
-            nativeEvent: ev.nativeEvent,
+            event: ev.nativeEvent,
           });
         }
       }}

@@ -1,7 +1,36 @@
 import { t } from "../i18n";
 import icon from "../img/paste.svg";
 import type { Command } from "../CommandManager";
+import type { EditorContextProps } from "../Context";
+import { BlockEditorCommandEvent } from "../CommandManager";
 import { parseContent, preParseContent, ParserContext } from "../util";
+
+const commandId = "core-pasteBlock";
+
+export class BlockEditorPasteCommandEvent extends BlockEditorCommandEvent {
+  constructor({
+    blockIds,
+    editorContext,
+    clipboardData,
+  }: {
+    blockIds: string[];
+    editorContext: EditorContextProps;
+    clipboardData: DataTransfer;
+  }) {
+    super({
+      command: commandId,
+      blockIds,
+      editorContext,
+      extra: {
+        clipboardData,
+      },
+    });
+  }
+
+  get clipboardData(): DataTransfer {
+    return this.detail.extra.clipboardData;
+  }
+}
 
 const command: Command = {
   get label() {
@@ -9,14 +38,12 @@ const command: Command = {
   },
   icon,
   shortcut: "cmd+v",
-  command: "core-pasteBlock",
+  command: commandId,
   condition: async () => typeof navigator.clipboard?.read === "function",
   callback: async ({
-    detail: {
-      blocks,
-      editorContext: { editor, setFocusedIds },
-      nativeEvent,
-    },
+    blocks,
+    editorContext: { editor, setFocusedIds },
+    event,
   }) => {
     if (blocks.length === 0) {
       return;
@@ -25,16 +52,25 @@ const command: Command = {
     // Always ignore calls from keyboard shortcuts.
     // ClipboardEvent will be fired next, and it will be handled there.
     if (
-      nativeEvent instanceof KeyboardEvent &&
-      nativeEvent.target instanceof HTMLElement &&
-      nativeEvent.target.closest("[data-mt-block-editor-block-id]")
+      event instanceof KeyboardEvent &&
+      event.target instanceof HTMLElement &&
+      event.target.closest("[data-mt-block-editor-block-id]")
+    ) {
+      return;
+    }
+
+    // Process on TinyMCE
+    if (
+      event?.target instanceof HTMLElement &&
+      event.target.id === "mcepastebin"
     ) {
       return;
     }
 
     if (
       !(
-        nativeEvent instanceof ClipboardEvent ||
+        event instanceof ClipboardEvent ||
+        event instanceof BlockEditorPasteCommandEvent ||
         typeof navigator.clipboard.read === "function"
       )
     ) {
@@ -42,14 +78,17 @@ const command: Command = {
     }
 
     let html = "";
-    if (nativeEvent instanceof ClipboardEvent) {
-      const clipboardItems = nativeEvent.clipboardData?.items || [];
+    if (
+      event instanceof ClipboardEvent ||
+      event instanceof BlockEditorPasteCommandEvent
+    ) {
+      const clipboardItems = event.clipboardData?.items || [];
       for (const clipboardItem of clipboardItems) {
         if (
           clipboardItem.type === "text/plain" ||
           clipboardItem.type === "text/html"
         ) {
-          html = nativeEvent.clipboardData?.getData(clipboardItem.type) || "";
+          html = event.clipboardData?.getData(clipboardItem.type) || "";
         }
       }
 
@@ -78,7 +117,7 @@ const command: Command = {
       return;
     }
 
-    nativeEvent.preventDefault();
+    event?.preventDefault();
 
     const newBlocks = await parseContent(
       preParseContent(html),

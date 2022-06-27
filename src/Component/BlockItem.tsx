@@ -281,7 +281,7 @@ const BlockItem: React.FC<Props> = ({
           command: "core-copyBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
-          nativeEvent: ev.nativeEvent,
+          event: ev.nativeEvent,
         });
       },
       function onPaste(ev: React.ClipboardEvent) {
@@ -290,7 +290,7 @@ const BlockItem: React.FC<Props> = ({
           command: "core-pasteBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
-          nativeEvent: ev.nativeEvent,
+          event: ev.nativeEvent,
         });
       },
       function onUp() {
