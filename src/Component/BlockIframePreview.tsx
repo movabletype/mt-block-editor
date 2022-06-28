@@ -3,7 +3,8 @@ import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import { EditHistoryHandlers } from "../EditManager";
-import { Size } from "./BlockIframePreview/size";
+import type { Size } from "./BlockIframePreview/size";
+import { isDefaultSize } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "5000px";
@@ -39,6 +40,30 @@ const editHandlers: EditHistoryHandlers = {
     setFocusedIds([hist.block.id], { forceUpdate: true });
   },
 };
+
+function InitSizeFunc(): void {
+  const body = document.body;
+  const children = body.childNodes;
+  for (let i = children.length - 1; i >= 0; i--) {
+    if (children[i].nodeType === Node.ELEMENT_NODE) {
+      const elm = children[i] as HTMLElement;
+      const style = window.getComputedStyle(elm);
+      const offset = elm.getBoundingClientRect();
+
+      parent.postMessage(
+        {
+          method: "MTBlockEditorInitSize",
+          blockId: body.dataset.blockId,
+          arguments: {
+            height: offset.top + offset.height + parseInt(style.marginBottom),
+          },
+        },
+        "*"
+      );
+      break;
+    }
+  }
+}
 
 function postMessageFunc(): void {
   const body = document.body;
@@ -266,7 +291,8 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       <head>
         <meta charset="utf-8">
         <script>
-          setInterval(${postMessageFunc.toString()}, 1000)
+          setTimeout(${InitSizeFunc.toString()}, 50);
+          setInterval(${postMessageFunc.toString()}, 1000);
           var MTBlockEditorSetCompiledHtml = (function() {
             return ${setCompiledHtmlFunc.toString()};
           })();
@@ -338,6 +364,13 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       const containerEl = containerElRef.current;
 
       switch (ev.data.method) {
+        case "MTBlockEditorInitSize":
+          if (!isDefaultSize(size)) {
+            break;
+          }
+
+          setSize({ size, ...ev.data.arguments });
+          break;
         case "MTBlockEditorSetSize":
           (Object.keys(size) as Array<keyof Size>).forEach((k) => {
             const oldValue = parseInt(size[k]);
