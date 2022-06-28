@@ -14,6 +14,13 @@ import {
 } from "../Context";
 import AddButton from "./AddButton";
 import { getBlocksByRange } from "../util";
+import { BlockEditorCommandEvent } from "../CommandManager";
+
+declare global {
+  interface WindowEventMap {
+    "mt-block-editor-command": BlockEditorCommandEvent;
+  }
+}
 
 interface AppProps {
   editor: Editor;
@@ -180,6 +187,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
               command: "core-deleteBlock",
               blockIds: focusedIds,
               editorContext,
+              event: ev,
             });
           }
         }
@@ -242,6 +250,13 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       startId = "";
     };
 
+    const onBlockEditorCommand = (ev: BlockEditorCommandEvent): void => {
+      editor.commandManager.execute({
+        ...ev.detail,
+        event: ev,
+      });
+    };
+
     editor.editorElement.addEventListener("mousedown", onEditorMousedown);
     editor.editorElement.addEventListener("mouseup", onEditorMouseup);
 
@@ -251,6 +266,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
     });
 
     window.addEventListener("keydown", onWindowKeydown);
+    window.addEventListener("mt-block-editor-command", onBlockEditorCommand);
 
     return () => {
       editor.editorElement.removeEventListener("mousedown", onEditorMousedown);
@@ -259,6 +275,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         capture: true,
       });
       window.removeEventListener("keydown", onWindowKeydown);
+      window.removeEventListener(
+        "mt-block-editor-command",
+        onBlockEditorCommand
+      );
     };
   }, []);
 

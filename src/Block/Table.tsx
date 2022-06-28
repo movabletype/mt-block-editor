@@ -17,6 +17,7 @@ import BlockContentEditablePreview, {
   HasEditorStyle,
 } from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
+import { commonSettings } from "./Text/tinymce";
 
 import {
   HasTinyMCE,
@@ -32,27 +33,18 @@ interface EditorProps extends EditorOptions {
 }
 
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
-  const { editor } = useEditorContext();
+  const editorContext = useEditorContext();
+  const { editor } = editorContext;
   const { addBlock } = useBlocksContext();
 
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
-      language: editor.opts.i18n.lng,
-      selector: `#${block.tinymceId()}`,
-      menubar: false,
+      ...commonSettings(editor, block, editorContext),
       plugins: "table code paste media textcolor link",
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
-
-      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      inline: true,
-
-      setup: (ed: TinyMCE) => {
-        block.tinymce = ed;
-      },
-
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
         if (focus) {

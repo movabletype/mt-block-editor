@@ -249,15 +249,15 @@ const BlockItem: React.FC<Props> = ({
     b instanceof Columns
   );
 
-  const [onClick, onCopy, onUp, onDown] = useMemo(
+  const [onClick, onCopy, onPaste, onUp, onDown] = useMemo(
     () => [
       function onClick(ev: React.MouseEvent) {
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
-        const focusedId = getFocusedIds();
+        const focusedIds = getFocusedIds();
 
-        if (focusedId.includes(b.id)) {
+        if (focusedIds.includes(b.id)) {
           return;
         }
 
@@ -266,9 +266,9 @@ const BlockItem: React.FC<Props> = ({
         if (clickBlockTargetRef.current) {
           clickBlockTargetRef.current.click();
         } else if (!ignoreClickEvent) {
-          if (focusedId && ev.shiftKey) {
+          if (focusedIds.length !== 0 && ev.shiftKey) {
             setFocusedIds(
-              getBlocksByRange(editor, focusedId[0], b.id).map((b) => b.id)
+              getBlocksByRange(editor, focusedIds[0], b.id).map((b) => b.id)
             );
           } else {
             setFocusedIds([b.id]);
@@ -276,15 +276,25 @@ const BlockItem: React.FC<Props> = ({
         }
       },
       function onCopy(ev: React.ClipboardEvent) {
-        ev.preventDefault();
-
+        const focusedIds = getFocusedIds();
         editor.commandManager.execute({
           command: "core-copyBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
+          event: ev.nativeEvent,
+        });
+      },
+      function onPaste(ev: React.ClipboardEvent) {
+        const focusedIds = getFocusedIds();
+        editor.commandManager.execute({
+          command: "core-pasteBlock",
+          blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
+          editorContext,
+          event: ev.nativeEvent,
         });
       },
       function onUp() {
+        const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
           for (let i = index, to = index + focusedIds.length; i < to; i++) {
             swapBlocks(i - 1, i);
@@ -295,6 +305,7 @@ const BlockItem: React.FC<Props> = ({
         swapBlocks(index, index - 1, true);
       },
       function onDown() {
+        const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
           for (let i = index + focusedIds.length; i >= index; i--) {
             swapBlocks(i + 1, i);
@@ -315,6 +326,7 @@ const BlockItem: React.FC<Props> = ({
       data-mt-block-editor-skip-focus-default={skipFocusDefault || undefined}
       onClick={onClick}
       onCopy={onCopy}
+      onPaste={onPaste}
       className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
         focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}

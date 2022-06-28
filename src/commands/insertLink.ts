@@ -4,13 +4,14 @@ const command: Command = {
   shortcut: "cmd+k",
   command: "core-insertLink",
   callback: ({
-    detail: {
       blocks,
       editorContext: {
         editor: { commandManager },
       },
-    },
+      event,
   }) => {
+    event?.preventDefault();
+
     commandManager.emit(blocks, "core-insertLink");
   },
 };

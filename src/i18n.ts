@@ -1,14 +1,11 @@
 import i18n, { TFunction, InitOptions } from "i18next";
 import { locales } from "../i18next-parser.config";
 import Backend from "i18next-xhr-backend";
-import { initReactI18next } from "react-i18next";
 
 i18n
   // load translation using xhr -> see /public/locales
   // learn more: https://github.com/i18next/i18next-xhr-backend
   .use(Backend)
-  // pass the i18n instance to react-i18next.
-  .use(initReactI18next)
   .on("initialized", () => {
     locales.forEach((lang) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
