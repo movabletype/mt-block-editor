@@ -54,7 +54,7 @@ export interface EditorOptions {
   i18n: InitOptionsI18n;
 }
 
-interface metadataMapData {
+interface MetadataMapData {
   id: string;
   blockIds: Set<string>;
 }
@@ -70,9 +70,9 @@ class Editor extends EventEmitter implements HasBlocks {
   public editorElement: HTMLElement;
 
   private inputElement: HTMLInputElement;
-  private metadataMap: Map<string, metadataMapData> = new Map<
+  private metadataMap: Map<string, MetadataMapData> = new Map<
     string,
-    metadataMapData
+    MetadataMapData
   >();
   private metadataMapSequence = 1;
   private keyboardShortcutCache?: Record<string, Command>;
