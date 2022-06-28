@@ -9,5 +9,8 @@ module.exports = {
     "/.vscode/",
     "/__tests__/helper.ts",
   ],
-  setupFiles: ["<rootDir>/__mocks__/matchMediaMock.ts"],
+  setupFiles: [
+    "<rootDir>/__mocks__/matchMediaMock.ts",
+    "<rootDir>/__mocks__/permissionsMock.ts",
+  ],
 };

@@ -23,7 +23,7 @@ const BlockCommand: React.FC<BlockCommandProps> = ({
       type="button"
       data-mt-be-command={command.command}
       className="mt-be-btn-command"
-      onClick={() => {
+      onClick={(ev) => {
         if (command.dialog) {
           setDialogOpen(true);
         } else {
@@ -32,6 +32,7 @@ const BlockCommand: React.FC<BlockCommandProps> = ({
             blockIds:
               getFocusedIds().length === 0 ? [block.id] : getFocusedIds(),
             editorContext,
+            event: ev.nativeEvent,
           });
         }
       }}

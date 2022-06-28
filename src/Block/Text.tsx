@@ -32,6 +32,7 @@ import {
   adjustToolbar,
 } from "./Text/util";
 import { editHandlers } from "./Text/edit";
+import { commonSettings } from "./Text/tinymce";
 
 declare const tinymce: EditorManager;
 
@@ -62,29 +63,20 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
-  const { editor, setFocusedIds } = useEditorContext();
+  const editorContext = useEditorContext();
+  const { editor, setFocusedIds } = editorContext;
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
     const settings: TinyMCESettings = {
-      language: editor.opts.i18n.lng,
-      selector: `#${block.tinymceId()}`,
-      menubar: false,
+      ...commonSettings(editor, block, editorContext),
       plugins: "lists paste media textcolor code hr link",
       toolbar: [
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
         "bullist numlist outdent indent | blockquote link unlink",
       ],
-
-      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      inline: true,
-
-      setup: (ed: TinyMCE) => {
-        block.tinymce = ed;
-      },
-
       init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
         if (focus) {
@@ -427,14 +419,6 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
       }
     }
     return this.text;
-  }
-
-  public async toClipboardItem(
-    ...args: Parameters<Block["toClipboardItem"]>
-  ): Promise<ClipboardItem[] | string> {
-    return this.metadata()
-      ? super.toClipboardItem(...args)
-      : this.html() || "<p></p>";
   }
 
   public static async newFromHtml({
