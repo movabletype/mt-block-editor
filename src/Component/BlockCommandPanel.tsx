@@ -1,6 +1,7 @@
-import React, { memo, ReactNode } from "react";
+import React, { memo, ReactNode, useEffect, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { useEditorContext } from "../Context";
+import type { Command } from "../CommandManager";
 import BlockCommand from "./BlockCommand";
 import type Block from "../Block";
 
@@ -16,12 +17,21 @@ const PANEL_CLASS_NAME = "mt-be-block-command-panel";
 
 const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
   function BlockCommandPanel(props: BlockCommandPanelProps) {
+    const [commands, setCommands] = useState<Command[]>([]);
     const editorContext = useEditorContext();
     const { editor } = editorContext;
 
     let className = PANEL_CLASS_NAME;
     if (props.className) {
       className += ` ${props.className}`;
+    }
+
+    useEffect(() => {
+      editor.commandManager.contextCommands().then(setCommands);
+    }, []);
+
+    if (commands.length === 0) {
+      return null;
     }
 
     return (
@@ -33,7 +43,7 @@ const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
       >
         <div id={props.id || ""} className={className}>
           {props.children}
-          {editor.commandManager.contextCommands().map((command) => (
+          {commands.map((command) => (
             <BlockCommand
               key={command.command}
               command={command}

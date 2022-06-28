@@ -5,6 +5,9 @@ import { tinymceFocus } from "../Block/Text/util";
 import Text from "../Block/Text";
 import Table from "../Block/Table";
 
+const isClipboardAPIAvailable: () => boolean = () =>
+  typeof navigator.clipboard?.write === "function" ||
+  typeof navigator.clipboard?.writeText === "function";
 const command: Command = {
   get label() {
     return t("Copy");
@@ -12,15 +15,23 @@ const command: Command = {
   icon,
   shortcut: "cmd+c",
   command: "core-copyBlock",
-  callback: async ({
-    detail: {
-      blocks,
-      editorContext: { editor },
-    },
-  }) => {
+  condition: isClipboardAPIAvailable,
+  callback: async ({ blocks, editorContext: { editor }, event }) => {
+    if (!isClipboardAPIAvailable()) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
+      // Prefer browser default behavior
+      return;
+    }
+
     if (blocks.length === 0) {
       return;
     }
+
+    event.preventDefault();
 
     if (blocks.length === 1) {
       const block = blocks[0];
@@ -61,10 +72,8 @@ const command: Command = {
       const plainBlob = new Blob([data], { type: "text/plain" });
       data = [
         new ClipboardItem({
-          "text/html": (htmlBlob as unknown) as Promise<ClipboardItemDataType>,
-          "text/plain": (plainBlob as unknown) as Promise<
-            ClipboardItemDataType
-          >,
+          "text/html": htmlBlob,
+          "text/plain": plainBlob,
         }),
       ];
     }

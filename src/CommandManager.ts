@@ -7,26 +7,36 @@ import { useEditorContext, EditorContextProps } from "./Context";
 import { findDescendantBlocks, toKeyboardShortcutKey } from "./util";
 import { DialogProps } from "./Component/Dialog";
 
+interface BlockEditorCommandArgs {
+  blocks: Readonly<Block[]>;
+  editorContext: EditorContextProps;
+  event: Event;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extra?: any;
+}
+
 export interface Command {
   command: string;
-  callback?: (event: BlockEditorCommandEvent) => void;
+  callback?: (args: BlockEditorCommandArgs) => void;
   label?: string;
   icon?: string;
   shortcut?: string;
   dialog?: React.FC<DialogProps>;
+  condition?: () => boolean | Promise<boolean>;
 }
 
-interface BlockEditorCommandEventDetail {
-  blocks: Readonly<Block[]>;
+interface BlockEditorCommandDetail {
+  command: string;
+  blockIds: Readonly<string[]>;
   editorContext: EditorContextProps;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
 }
 export class BlockEditorCommandEvent extends CustomEvent<
-  BlockEditorCommandEventDetail
+  BlockEditorCommandDetail
 > {
-  constructor(detail: BlockEditorCommandEventDetail) {
-    super("mt-be-command", { detail });
+  constructor(detail: BlockEditorCommandDetail) {
+    super("mt-block-editor-command", { detail });
   }
 }
 
@@ -56,18 +66,30 @@ export default class CommandManager {
     this.editor = init.editor;
   }
 
-  public contextCommands(): Command[] {
-    return CommandManager.allContextCommands;
+  public async contextCommands(): Promise<Command[]> {
+    return (
+      await Promise.all(
+        CommandManager.allContextCommands.map(async (c) => {
+          return (await c.condition?.()) ?? true ? c : undefined;
+        })
+      )
+    ).filter((c): c is Command => !!c);
   }
 
-  public commands(): Command[] {
-    return CommandManager.allCommands;
+  public async commands(): Promise<Command[]> {
+    return (
+      await Promise.all(
+        CommandManager.allCommands.map(async (c) => {
+          return (await c.condition?.()) ?? true ? c : undefined;
+        })
+      )
+    ).filter((c): c is Command => !!c);
   }
 
   public on(
     block: Block,
     command: string,
-    callback: (event: BlockEditorCommandEvent) => void
+    callback: (args: BlockEditorCommandArgs) => void
   ): void {
     let emitter = this.eventEmitters.get(block);
     if (!emitter) {
@@ -101,25 +123,13 @@ export default class CommandManager {
     editorContext: EditorContextProps;
   }): void {
     const key = toKeyboardShortcutKey(event);
-
-    if (key === "cmd+c") {
-      const s = window.getSelection();
-      if (s && !s.isCollapsed) {
-        // Prefer browser default behavior
-        return;
-      }
-    }
-
     const command = this.editor.keyboardShortcutMap()[key];
     if (command && command.callback) {
-      event.preventDefault();
-
-      command.callback(
-        new BlockEditorCommandEvent({
-          blocks: findDescendantBlocks(this.editor, blockIds),
-          editorContext,
-        })
-      );
+      command.callback({
+        blocks: findDescendantBlocks(this.editor, blockIds),
+        editorContext,
+        event: event,
+      });
     }
   }
 
@@ -127,19 +137,20 @@ export default class CommandManager {
     command,
     blockIds,
     editorContext,
+    event,
   }: {
     command: string;
-    blockIds: string[];
+    blockIds: Readonly<string[]>;
     editorContext: EditorContextProps;
+    event: Event;
   }): void {
-    this.commands().forEach((c) => {
+    CommandManager.allCommands.forEach((c) => {
       if (c.command === command && c.callback) {
-        c.callback(
-          new BlockEditorCommandEvent({
-            blocks: findDescendantBlocks(this.editor, blockIds),
-            editorContext,
-          })
-        );
+        c.callback({
+          blocks: findDescendantBlocks(this.editor, blockIds),
+          editorContext,
+          event,
+        });
       }
     });
   }
