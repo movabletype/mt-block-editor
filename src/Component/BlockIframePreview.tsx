@@ -43,26 +43,24 @@ const editHandlers: EditHistoryHandlers = {
 
 function InitSizeFunc(): void {
   const body = document.body;
-  const children = body.childNodes;
-  for (let i = children.length - 1; i >= 0; i--) {
-    if (children[i].nodeType === Node.ELEMENT_NODE) {
-      const elm = children[i] as HTMLElement;
-      const style = window.getComputedStyle(elm);
-      const offset = elm.getBoundingClientRect();
-
-      parent.postMessage(
-        {
-          method: "MTBlockEditorInitSize",
-          blockId: body.dataset.blockId,
-          arguments: {
-            height: offset.top + offset.height + parseInt(style.marginBottom),
-          },
-        },
-        "*"
-      );
-      break;
-    }
+  const lastElement = body.children[body.children.length - 1];
+  if (!lastElement) {
+    return;
   }
+
+  const style = window.getComputedStyle(lastElement);
+  const offset = lastElement.getBoundingClientRect();
+
+  parent.postMessage(
+    {
+      method: "MTBlockEditorInitSize",
+      blockId: body.dataset.blockId,
+      arguments: {
+        height: offset.top + offset.height + parseInt(style.marginBottom),
+      },
+    },
+    "*"
+  );
 }
 
 function postMessageFunc(): void {
