@@ -8,7 +8,6 @@ describe("escapeSingleQuoteAttribute()", () => {
     ${"\r"}             | ${"&#x0D;"}
     ${"&"}              | ${"&amp;"}
     ${"'"}              | ${"&#x27;"}
-    ${'"'}              | ${"&quot;"}
     ${"<"}              | ${"&lt;"}
     ${">"}              | ${"&gt;"}
     ${"‘"}              | ${"&#x2018;"}
@@ -19,5 +18,14 @@ describe("escapeSingleQuoteAttribute()", () => {
     ${"a & b or c & d"} | ${"a &amp; b or c &amp; d"}
   `("Should replace $input with $expected.", ({ input, expected }) => {
     expect(escapeSingleQuoteAttribute(input)).toBe(expected);
+  });
+
+  test("escape", () => {
+    expect(escapeSingleQuoteAttribute("&<>'\t\n\r")).toBe(
+      "&amp;&lt;&gt;&#x27;&#x08;&#x0A;&#x0D;"
+    );
+  });
+  test("preserve", async () => {
+    expect(escapeSingleQuoteAttribute('"')).toBe('"');
   });
 });
