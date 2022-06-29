@@ -366,7 +366,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             break;
           }
 
-          setSize({ size, ...ev.data.arguments });
+          setSize({ ...size, ...ev.data.arguments });
           break;
         case "MTBlockEditorSetSize":
           (Object.keys(size) as Array<keyof Size>).forEach((k) => {
