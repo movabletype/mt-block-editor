@@ -89,7 +89,11 @@ class Block {
     }
 
     const stripped = content.replace(/<!--.*?-->/g, "");
-    if (/^\s*<(?:h[1-6]|p)>[^<]+<\/(?:h[1-6]|p)>\s*$/.test(stripped)) {
+    if (
+      /^\s*(?:\s*|<(?:h[1-6]|p)>[^<]+<\/(?:h[1-6]|p)>|(\s*<span[^>]*>[^<]*<\/span>\s*)+)\s*$/.test(
+        stripped
+      )
+    ) {
       // Probably a single line content
       return defaultSinglelineSize;
     }
