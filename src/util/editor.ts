@@ -5,17 +5,39 @@ import Text from "../Block/Text";
 import Column from "../Block/Column";
 import ParserContext from "./ParserContext";
 
-export function preParseContent(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag) => {
-      return `<${tag
-        .replace(/&gt;/g, ">")
-        .replace(/&lt;/g, "<")
-        .replace(/&amp;/g, "&")}>`;
-    });
+export const preParseContent = (() => {
+  const entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+  } as { [key: string]: string };
+  const entityReverseMap = Object.fromEntries(
+    Object.entries(entityMap).map(([k, v]) => [v, k])
+  );
+  const entityRegExp = new RegExp(`[${Object.keys(entityMap).join("")}]`, "g");
+  const entityReverseRegExp = new RegExp(
+    `(?:${Object.keys(entityReverseMap).join("|")})`,
+    "g"
+  );
+
+  return (value: string): string => {
+    return value
+      .replace(entityRegExp, (match) => entityMap[match])
+      .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag: string) => {
+        return `<${tag.replace(
+          entityReverseRegExp,
+          (match) => entityReverseMap[match]
+        )}>`;
+      });
+  };
+})();
+
+export function removeControlCharacters(str: string): string {
+  return str.replace(
+    // eslint-disable-next-line no-control-regex,no-misleading-character-class
+    /&#(?:0*?(?:[0-8]|1[124-9]|2\d|3[01])?|x0*?(?:[0-8bcefBCEF]|1[0-9a-fA-F])?);|[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD\uD800-\uDBFF\uDC00-\uDFFF]/gm,
+    ""
+  );
 }
 
 export async function parseContent(
@@ -29,11 +51,7 @@ export async function parseContent(
 
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(
-    `<xml>${value.replace(
-      // eslint-disable-next-line no-control-regex,no-misleading-character-class
-      /[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD\uD800-\uDBFF\uDC00-\uDFFF]/gm,
-      ""
-    )}</xml>`,
+    `<xml>${removeControlCharacters(value)}</xml>`,
     "application/xml"
   );
 
