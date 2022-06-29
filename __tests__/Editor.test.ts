@@ -15,6 +15,23 @@ class TestBlock extends Block {
   }
 }
 
+class Test2Block extends Block {
+  public options = "";
+  constructor(init?: Partial<Test2Block>) {
+    super();
+    if (init) {
+      Object.assign(this, init);
+    }
+  }
+  public metadata() {
+    return this.metadataByOwnKeys();
+  }
+
+  html() {
+    return this.options.split("\n")[0];
+  }
+}
+
 describe("serialize()", () => {
   const input = document.createElement("input");
   input.id = "input-" + Math.random();
@@ -62,7 +79,7 @@ describe("serialize()", () => {
 describe("serialize()", () => {
   let input: HTMLInputElement;
   let editor: Editor;
-  let b1: TestBlock, b2: TestBlock;
+  let b1: TestBlock, b2: TestBlock, b3: Test2Block;
 
   beforeEach(() => {
     input = document.createElement("input");
@@ -73,6 +90,10 @@ describe("serialize()", () => {
 
     b1 = new TestBlock({ _html: "<p>1</p>", className: "b1" });
     b2 = new TestBlock({ _html: "<p>2</p>", className: "b2" });
+    b3 = new Test2Block({
+      className: "b3",
+      options: "a\nb\nc",
+    });
   });
 
   afterEach(() => {
@@ -126,5 +147,53 @@ describe("serialize()", () => {
     expect(input.value).toBe(
       `<!-- mt-beb t="core-context" m='{"2":{"className":"b2"},"3":{"className":"b3"}}' --><!-- /mt-beb --><!-- mt-beb m='3' --><p class="b3">1</p><!-- /mt-beb --><!-- mt-beb m='2' --><p class="b2">2</p><!-- /mt-beb -->`
     );
+  });
+
+  describe("metaSetup and meta", () => {
+    test("simple", async () => {
+      editor.addBlock(editor, b3, 0);
+      await editor.serialize();
+
+      expect(input.value).toBe(
+        `<!-- mt-beb t="core-context" m='{"1":{"className":"b3"},"2":{"options":"a\\nb\\nc"}}' --><!-- /mt-beb --><!-- mt-beb m='1,2' -->a<!-- /mt-beb -->`
+      );
+    });
+
+    test("reuse", async () => {
+      editor.addBlock(editor, b3, 0);
+      await editor.serialize();
+      b3.className = "b4";
+      await editor.serialize();
+
+      expect(input.value).toBe(
+        `<!-- mt-beb t="core-context" m='{"1":{"className":"b4"},"2":{"options":"a\\nb\\nc"}}' --><!-- /mt-beb --><!-- mt-beb m='1,2' -->a<!-- /mt-beb -->`
+      );
+    });
+
+    test("dedupe", async () => {
+      editor.addBlock(editor, b2, 0);
+      editor.addBlock(editor, b3, 1);
+      await editor.serialize();
+      b3.className = "b2";
+      await editor.serialize();
+
+      expect(input.value).toBe(
+        `<!-- mt-beb t="core-context" m='{"1":{"className":"b2"},"3":{"options":"a\\nb\\nc"}}' --><!-- /mt-beb --><!-- mt-beb m='1' --><p class="b2">2</p><!-- /mt-beb --><!-- mt-beb m='1,3' -->a<!-- /mt-beb -->`
+      );
+    });
+
+    test("dedupe", async () => {
+      editor.addBlock(editor, b2, 0);
+      editor.addBlock(editor, b3, 1);
+      await editor.serialize();
+      b3.className = "b2";
+      await editor.serialize();
+      b3.className = "b4";
+      await editor.serialize();
+
+      expect(input.value).toBe(
+        `<!-- mt-beb t="core-context" m='{"1":{"className":"b2"},"3":{"options":"a\\nb\\nc"},"4":{"className":"b4"}}' --><!-- /mt-beb --><!-- mt-beb m='1' --><p class="b2">2</p><!-- /mt-beb --><!-- mt-beb m='4,3' -->a<!-- /mt-beb -->`
+      );
+    });
   });
 });
