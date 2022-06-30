@@ -1,4 +1,10 @@
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
@@ -244,55 +250,56 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const [rawHtmlData, rawHtmlText, setHtmlData] = useHtmlDataState(html, block);
 
   const [, _setSize] = useState<Size | null>(null);
-  const setSize = (size: Size): void => {
+  const setSize = useCallback((size: Size): void => {
     block.setIframePreviewSize(size);
     _setSize(size);
-  };
-  const size = block.getIframePreviewSize(rawHtmlText);
+  }, []);
+  const size = useMemo(() => block.getIframePreviewSize(rawHtmlText), [
+    rawHtmlText,
+  ]);
 
-  const setCompiledHtml = (
-    res: string,
-    error: Error | null,
-    opts: SetCompiledHtmlOptions
-  ): void => {
-    if (onBeforeSetCompiledHtml && onBeforeSetCompiledHtml(error) === false) {
-      // canceled
-      return;
-    }
-
-    if (error) {
-      if (onSetCompiledHtml) {
-        onSetCompiledHtml(error);
-      } else {
-        // TODO: report error
+  const setCompiledHtml = useCallback(
+    (res: string, error: Error | null, opts: SetCompiledHtmlOptions): void => {
+      if (onBeforeSetCompiledHtml && onBeforeSetCompiledHtml(error) === false) {
+        // canceled
+        return;
       }
-      return;
-    }
 
-    const lastValue = block.compiledHtml;
-    block.compiledHtml = res;
+      if (error) {
+        if (onSetCompiledHtml) {
+          onSetCompiledHtml(error);
+        } else {
+          // TODO: report error
+        }
+        return;
+      }
 
-    if (opts && opts.addEditHistory) {
-      editor.editManager.add({
+      const lastValue = block.compiledHtml;
+      block.compiledHtml = res;
+
+      if (opts && opts.addEditHistory) {
+        editor.editManager.add({
+          block,
+          data: {
+            last: lastValue,
+            cur: res,
+          },
+          handlers: editHandlers,
+        });
+      }
+
+      editor.emit("setCompiledHtmlIframePreview", {
+        editor,
         block,
-        data: {
-          last: lastValue,
-          cur: res,
-        },
-        handlers: editHandlers,
       });
-    }
 
-    editor.emit("setCompiledHtmlIframePreview", {
-      editor,
-      block,
-    });
-
-    if (onSetCompiledHtml) {
-      onSetCompiledHtml(null);
-    }
-    setHtmlData((prev) => (typeof prev === "number" ? prev + 1 : 1));
-  };
+      if (onSetCompiledHtml) {
+        onSetCompiledHtml(null);
+      }
+      setHtmlData((prev) => (typeof prev === "number" ? prev + 1 : 1));
+    },
+    []
+  );
 
   if (typeof html !== "string" && rawHtmlData === null) {
     header = "";
