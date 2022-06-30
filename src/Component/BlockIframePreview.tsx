@@ -326,15 +326,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           <script>
             setTimeout(${InitSizeFunc.toString()}, 50);
             setInterval(${postMessageFunc.toString()}, 1000);
-            var MTBlockEditorSetCompiledHtml = (function() {
-              return ${setCompiledHtmlFunc.toString()};
-            })();
-            var MTBlockEditorAddDroppable = (function() {
-              return ${addDroppableFunc.toString()};
-            })();
-            (function() {
-              (${eventDelegationFunc.toString()})();
-            })();
+            var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
+            var MTBlockEditorAddDroppable = ${addDroppableFunc.toString()};
+            (${eventDelegationFunc.toString()})();
           </script>
           <style type="text/css">
           .mt-block-editor-mt-be-droppable:before {
