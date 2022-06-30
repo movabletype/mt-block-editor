@@ -366,11 +366,9 @@ const BlockIframePreview: React.FC<EditorProps> = ({
             })
             .join("")}
           ${header || ""}
-        </head>
-        <body data-block-id="${block.id}"${
+        </head><body data-block-id="${block.id}"${
           block.compiledHtml && ` data-has-compiled-html="1"`
-        } class="${editor.opts.rootClassName || ""}">${htmlText}</body>
-        </html>`,
+        } class="${editor.opts.rootClassName || ""}">${htmlText}</body></html>`,
       ],
       { type: "text/html" }
     );
