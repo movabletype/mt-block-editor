@@ -282,76 +282,76 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
 
-  const blob = new Blob(
-    [
-      `
-      <html${htmlText.match(/<amp-/) ? " amp" : ""}>
-      <head>
-        <meta charset="utf-8">
-        <script>
-          setTimeout(${InitSizeFunc.toString()}, 50);
-          setInterval(${postMessageFunc.toString()}, 1000);
-          var MTBlockEditorSetCompiledHtml = (function() {
-            return ${setCompiledHtmlFunc.toString()};
-          })();
-          var MTBlockEditorAddDroppable = (function() {
-            return ${addDroppableFunc.toString()};
-          })();
-          (function() {
-            (${eventDelegationFunc.toString()})();
-          })();
-        </script>
-        <style type="text/css">
-        .mt-block-editor-mt-be-droppable:before {
-          display: block;
-          position: absolute;
-          z-index: 200;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          content: " ";
-          text-align: center;
-          color: white;
-          background-color: rgba(21, 50, 76, 0.9);
-        }
+  const [src, setSrc] = useState("");
+  useEffect(() => {
+    const blob = new Blob(
+      [
+        `
+        <html${htmlText.match(/<amp-/) ? " amp" : ""}>
+        <head>
+          <meta charset="utf-8">
+          <script>
+            setTimeout(${InitSizeFunc.toString()}, 50);
+            setInterval(${postMessageFunc.toString()}, 1000);
+            var MTBlockEditorSetCompiledHtml = (function() {
+              return ${setCompiledHtmlFunc.toString()};
+            })();
+            var MTBlockEditorAddDroppable = (function() {
+              return ${addDroppableFunc.toString()};
+            })();
+            (function() {
+              (${eventDelegationFunc.toString()})();
+            })();
+          </script>
+          <style type="text/css">
+          .mt-block-editor-mt-be-droppable:before {
+            display: block;
+            position: absolute;
+            z-index: 200;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            content: " ";
+            text-align: center;
+            color: white;
+            background-color: rgba(21, 50, 76, 0.9);
+          }
 
-        /* FIXME */
-        .mt-be-column {
-          width: 100%;
-        }
-        </style>
-        ${editor.stylesheets
-          .map((s) => {
-            if (s.type === StylesheetType.css) {
-              return `<style type="text/css">${s.data}</style>`;
-            } else {
-              return `<link rel="stylesheet" href="${s.data}" />`;
-            }
-          })
-          .join("")}
-        ${header || ""}
-      </head>
-      <body data-block-id="${block.id}"${
-        block.compiledHtml && ` data-has-compiled-html="1"`
-      } class="${editor.opts.rootClassName || ""}">${htmlText}</body>
-      </html>`,
-    ],
-    { type: "text/html" }
-  );
+          /* FIXME */
+          .mt-be-column {
+            width: 100%;
+          }
+          </style>
+          ${editor.stylesheets
+            .map((s) => {
+              if (s.type === StylesheetType.css) {
+                return `<style type="text/css">${s.data}</style>`;
+              } else {
+                return `<link rel="stylesheet" href="${s.data}" />`;
+              }
+            })
+            .join("")}
+          ${header || ""}
+        </head>
+        <body data-block-id="${block.id}"${
+          block.compiledHtml && ` data-has-compiled-html="1"`
+        } class="${editor.opts.rootClassName || ""}">${htmlText}</body>
+        </html>`,
+      ],
+      { type: "text/html" }
+    );
 
-  const src = ((): string => {
     if (beforeRenderIframePreviewOpt.scheme === "blob") {
-      return URL.createObjectURL(blob);
+      setSrc(URL.createObjectURL(blob));
     } else {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onload = () => {
-        setSrc(reader.result as string);
+        setSrc(reader.result?.toString() || "");
       };
-      return _src;
     }
-  })();
+  }, [block.id, block.compiledHtml, htmlText]);
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
