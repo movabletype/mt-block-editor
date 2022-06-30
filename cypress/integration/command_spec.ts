@@ -237,9 +237,7 @@ context("Command", () => {
       });
 
       cy.window().then((win) => {
-        win.navigator.permissions.query = async () => {
-          throw new Error("Permission denied");
-        };
+        win.navigator.clipboard.read = undefined as any;
       });
 
       cy.get(
@@ -279,10 +277,9 @@ context("Command", () => {
       });
 
       cy.window().then((win) => {
-        win.navigator.permissions.query = async () =>
-          ({
-            state: "denied",
-          } as PermissionStatus);
+        ["read", "write", "writeText"].forEach((k) => {
+          win.navigator.clipboard[k] = undefined as any;
+        });
       });
 
       cy.get(
