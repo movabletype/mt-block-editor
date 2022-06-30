@@ -432,15 +432,13 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         src={src}
         frameBorder="0"
         sandbox={sandbox}
-        style={Object.assign(
-          {
-            maxWidth: MAX_WIDTH,
-            maxHeight: MAX_HEIGHT,
-            boxSizing: "border-box",
-            border: border || "1px solid #ccc",
-          } as Partial<CSSProperties>,
-          size
-        )}
+        style={{
+          maxWidth: MAX_WIDTH,
+          maxHeight: MAX_HEIGHT,
+          boxSizing: "border-box",
+          border: border || "1px solid #ccc",
+          ...size,
+        }}
       />
     </div>
   ) : (
