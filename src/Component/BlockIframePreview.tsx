@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, CSSProperties } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
@@ -193,6 +194,35 @@ function eventDelegationFunc(): void {
   );
 }
 
+type RawHtmlData =
+  | string // source HTML already retrieved
+  | number // compiled HTML
+  | null; // not yet retrieved
+function useHtmlDataState(
+  html: EditorProps["html"],
+  block: Block
+): [RawHtmlData, string, Dispatch<SetStateAction<RawHtmlData>>] {
+  const [_rawHtmlData, setHtmlText] = useState<RawHtmlData>(
+    typeof html === "string" ? html : null
+  );
+
+  const rawHtmlData =
+    typeof _rawHtmlData === "number" && block.compiledHtml
+      ? null // treat as not yet retrieved since it has been updated
+      : _rawHtmlData;
+
+  const rawHtmlText =
+    typeof rawHtmlData === "number"
+      ? block.compiledHtml
+      : typeof rawHtmlData === "string"
+      ? rawHtmlData
+      : typeof html === "string"
+      ? html
+      : "";
+
+  return [rawHtmlData, rawHtmlText, setHtmlText];
+}
+
 const BlockIframePreview: React.FC<EditorProps> = ({
   block,
   html,
@@ -211,11 +241,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   }
 
   const containerElRef = useRef(null);
-  const [_src, setSrc] = useState("");
-  const [_rawHtmlText, _setHtmlText] = useState<string | null>(
-    typeof html === "string" ? html : null
-  );
-  const rawHtmlText = _rawHtmlText || (typeof html === "string" ? html : "");
+  const [rawHtmlData, rawHtmlText, setHtmlData] = useHtmlDataState(html, block);
 
   const [, _setSize] = useState<Size | null>(null);
   const setSize = (size: Size): void => {
@@ -265,12 +291,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     if (onSetCompiledHtml) {
       onSetCompiledHtml(null);
     }
-    _setHtmlText(res);
+    setHtmlData((prev) => (typeof prev === "number" ? prev + 1 : 1));
   };
 
-  if (typeof html !== "string" && _rawHtmlText === null) {
+  if (typeof html !== "string" && rawHtmlData === null) {
     header = "";
-    html.then(_setHtmlText);
+    html.then(setHtmlData);
   }
 
   const beforeRenderIframePreviewOpt = {
