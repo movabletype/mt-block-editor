@@ -451,10 +451,10 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     };
   }, []);
 
-  return src ? (
+  return (
     <div ref={containerElRef}>
       <iframe
-        src={src}
+        src={src || "about:blank"}
         frameBorder="0"
         sandbox={sandbox}
         style={{
@@ -466,8 +466,6 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         }}
       />
     </div>
-  ) : (
-    <span />
   );
 };
 
