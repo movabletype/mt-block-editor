@@ -17,7 +17,7 @@ export const editHandlers: EditHistoryHandlers = {
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
       data.cur = data.cur || ed.getContent();
-      ed.fire("MTBlockEditorEdit", { html: data.last });
+      ed.dispatch("MTBlockEditorEdit", { html: data.last });
     } else {
       data.cur = data.cur || block.text;
       block.text = data.last;
@@ -30,7 +30,7 @@ export const editHandlers: EditHistoryHandlers = {
 
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
-      ed.fire("MTBlockEditorEdit", { html: data.cur });
+      ed.dispatch("MTBlockEditorEdit", { html: data.cur });
     } else {
       block.text = data.cur;
       setFocusedIds([block.id]);

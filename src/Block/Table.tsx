@@ -62,7 +62,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.fire("Change");
+          ed.dispatch("Change");
           return null;
         };
 
