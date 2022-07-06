@@ -79,42 +79,183 @@ context("Undo", () => {
         );
     });
 
-    it("Swap", () => {
-      cy.get(
-        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
-      ).click();
+    describe("Up", () => {
+      it("Single", () => {
+        cy.get(
+          `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
 
-      wait(1);
-      type("Hello!\n");
+        wait(1);
+        type("Hello!\n");
 
-      wait(1);
-      type("ALOHA!");
+        wait(1);
+        type("ALOHA!");
 
-      serializedTextarea(textareaId).should(
-        "have.value",
-        "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
-      );
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
 
-      cy.get(".mt-be-btn-up:visible").click();
+        cy.get(".mt-be-btn-up:visible").click();
 
-      serializedTextarea(textareaId).should(
-        "have.value",
-        "<!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
-      );
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+        );
 
-      type("{ctrl}z");
+        type("{ctrl}z");
 
-      serializedTextarea(textareaId).should(
-        "have.value",
-        "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
-      );
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
 
-      type("{ctrl}y");
+        type("{ctrl}y");
 
-      serializedTextarea(textareaId).should(
-        "have.value",
-        "<!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
-      );
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+        );
+      });
+
+      it("Multi", () => {
+        cy.get(
+          `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
+
+        wait(1);
+        type("Hello!\n");
+
+        wait(1);
+        type("こんにちは!\n");
+
+        wait(1);
+        type("你好!\n");
+
+        wait(1);
+        type("ALOHA!");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        cy.get(".mt-be-block").eq(1).click({ force: true });
+        cy.get(".mt-be-block").eq(2).click({
+          shiftKey: true,
+        });
+
+        cy.get(".mt-be-btn-up:visible").click();
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        type("{ctrl}z");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        type("{ctrl}y");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+      });
+    });
+
+    describe("Down", () => {
+      it("Single", () => {
+        cy.get(
+          `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
+
+        wait(1);
+        type("Hello!\n");
+
+        wait(1);
+        type("ALOHA!");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        cy.get(".mt-be-block").first().click({ force: true });
+        cy.get(".mt-be-btn-down:visible").first().click();
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+        );
+
+        type("{ctrl}z");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        type("{ctrl}y");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+        );
+      });
+
+      it("Multi", () => {
+        cy.get(
+          `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
+
+        wait(1);
+        type("Hello!\n");
+
+        wait(1);
+        type("こんにちは!\n");
+
+        wait(1);
+        type("你好!\n");
+
+        wait(1);
+        type("ALOHA!");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        cy.get(".mt-be-block").eq(1).click({ force: true });
+        cy.get(".mt-be-block").eq(2).click({
+          shiftKey: true,
+        });
+
+        cy.get(".mt-be-btn-down:visible").click();
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb -->"
+        );
+
+        type("{ctrl}z");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb -->"
+        );
+
+        type("{ctrl}y");
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>ALOHA!</p><!-- /mt-beb --><!-- mt-beb --><p>こんにちは!</p><!-- /mt-beb --><!-- mt-beb --><p>你好!</p><!-- /mt-beb -->"
+        );
+      });
     });
   });
 

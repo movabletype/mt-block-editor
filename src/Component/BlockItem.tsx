@@ -296,9 +296,11 @@ const BlockItem: React.FC<Props> = ({
       function onUp() {
         const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
+          editor.editManager.beginGrouping();
           for (let i = index, to = index + focusedIds.length; i < to; i++) {
             swapBlocks(i - 1, i);
           }
+          editor.editManager.endGrouping();
           return;
         }
 
@@ -307,9 +309,11 @@ const BlockItem: React.FC<Props> = ({
       function onDown() {
         const focusedIds = getFocusedIds();
         if (focusedIds.length >= 2) {
-          for (let i = index + focusedIds.length; i >= index; i--) {
+          editor.editManager.beginGrouping();
+          for (let i = index + focusedIds.length - 1; i >= index; i--) {
             swapBlocks(i + 1, i);
           }
+          editor.editManager.endGrouping();
           return;
         }
 
