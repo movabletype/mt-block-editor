@@ -17,7 +17,10 @@ import BlockContentEditablePreview, {
   HasEditorStyle,
 } from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
-import { commonSettings } from "./Text/tinymce";
+import {
+  installPlugins as installTinyMCEPlugins,
+  commonSettings,
+} from "./Text/tinymce";
 
 import {
   HasTinyMCE,
@@ -44,7 +47,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
 
     const settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext),
-      plugins: "table code paste media textcolor link",
+      plugins: "table code paste media textcolor link MTBlockEditor",
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
       init_instance_callback: (ed: TinyMCEEditor) => {

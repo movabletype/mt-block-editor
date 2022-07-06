@@ -469,4 +469,105 @@ context("Text", () => {
       );
     });
   });
+
+  context("Escape", () => {
+    it("onclick", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke(
+        "val",
+        `<a onclick="location.href = this.href" href="https://example.com">example.com</a>`
+      );
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      cy.wait(1);
+
+      cy.get(`.mt-be-block .mce-content-body a`).should(
+        "have.attr",
+        "onclick",
+        "javascript:void(0)"
+      );
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><p><a href="https://example.com" onclick="location.href = this.href">example.com</a></p><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context("Prohibited Tags", () => {
+    it("link", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke(
+        "val",
+        `<link rel="stylesheet" href="https://example.com/example.css">`
+      );
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      cy.wait(1);
+
+      cy.get(`.mt-be-block .mce-content-body link`).should("not.exist");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><!-- /mt-beb -->`
+      );
+    });
+
+    it("meta", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke("val", `<meta charset='utf-8'>`);
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      cy.wait(1);
+
+      cy.get(`.mt-be-block .mce-content-body meta`).should("not.exist");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><!-- /mt-beb -->`
+      );
+    });
+  });
 });

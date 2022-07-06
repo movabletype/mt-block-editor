@@ -1,10 +1,29 @@
 import type Editor from "../../Editor";
 import type Block from "../../Block";
 import type { HasTinyMCE } from "../Text/util";
-import type { Editor as TinyMCEEditor, RawEditorOptions } from "tinymce";
+import type {
+  Editor as TinyMCEEditor,
+  TinyMCE,
+  RawEditorOptions,
+} from "tinymce";
 import type { EditorContextProps } from "../../Context";
 import { decodeHtml } from "../../util";
 import { BlockEditorPasteCommandEvent } from "../../commands/pasteBlock";
+import MTBlockEditorPlugin from "./tinymce/MTBlockEditorPlugin";
+
+declare const tinymce: TinyMCE;
+
+export const installPlugins = (() => {
+  let pluginsInstalled = false;
+  return (): void => {
+    if (pluginsInstalled) {
+      return;
+    }
+    pluginsInstalled = true;
+
+    tinymce.PluginManager.add("MTBlockEditor", MTBlockEditorPlugin);
+  };
+})();
 
 export const commonSettings: (
   editor: Editor,

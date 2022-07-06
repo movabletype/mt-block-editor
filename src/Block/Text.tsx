@@ -32,7 +32,10 @@ import {
   adjustToolbar,
 } from "./Text/util";
 import { editHandlers } from "./Text/edit";
-import { commonSettings } from "./Text/tinymce";
+import {
+  installPlugins as installTinyMCEPlugins,
+  commonSettings,
+} from "./Text/tinymce";
 
 declare const tinymce: TinyMCE;
 
@@ -70,9 +73,11 @@ const Editor: React.FC<EditorProps> = ({
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
+    installTinyMCEPlugins();
+
     const settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext),
-      plugins: "lists paste media textcolor code hr link",
+      plugins: "lists paste media textcolor code hr link MTBlockEditor",
       toolbar: [
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
         "bullist numlist outdent indent | blockquote link unlink",
