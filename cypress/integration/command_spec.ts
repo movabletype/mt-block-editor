@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
-import { type, apply, serializedTextarea, blur, wait } from "../helpers";
-import { TRANSITION_TIMEOUT } from "../../src/Component/Overlay";
+import { type, apply, serializedTextarea, wait } from "../helpers";
 
 context("Command", () => {
   const textareaId = "text";
