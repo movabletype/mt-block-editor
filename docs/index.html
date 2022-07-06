@@ -143,7 +143,6 @@
             });
             ed.on("buildTinyMCESettings", ({ block, settings }) => {
               console.log(block.constructor.typeId);
-              settings.plugins += " mt_security";
               settings.extended_valid_elements = [
                 // we embed 'a[onclick]' by inserting image with popup
                 `a[id|class|style|title|accesskey|tabindex|lang|dir|draggable|dropzone|contextmenu|hidden|onclick|href|target|name]`,

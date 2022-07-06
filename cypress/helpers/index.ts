@@ -32,7 +32,6 @@ export function apply(opts): void {
       )
     ).then((ed) => {
       ed.on("buildTinyMCESettings", ({ settings }) => {
-        settings.plugins += " mt_security";
         settings.extended_valid_elements = [
           // we embed 'a[onclick]' by inserting image with popup
           "a[href|title|target|name|id|class|onclick]",
