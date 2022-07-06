@@ -2,10 +2,10 @@ import { t } from "../i18n";
 import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { sanitize, getShadowDomSelectorSet } from "../util";
-import {
-  Editor as TinyMCE,
-  EditorManager,
-  Settings as TinyMCESettings,
+import type {
+  Editor as TinyMCEEditor,
+  TinyMCE,
+  RawEditorOptions as TinyMCESettings,
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/table.svg";
@@ -26,7 +26,7 @@ import {
   adjustToolbar,
 } from "./Text/util";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
 interface EditorProps extends EditorOptions {
   block: Table;
@@ -40,12 +40,14 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
+    installTinyMCEPlugins();
+
     const settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext),
       plugins: "table code paste media textcolor link",
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
-      init_instance_callback: (ed: TinyMCE) => {
+      init_instance_callback: (ed: TinyMCEEditor) => {
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);
@@ -193,7 +195,7 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
   }
 
   public text = "";
-  public tinymce: TinyMCE | null = null;
+  public tinymce: TinyMCEEditor | null = null;
   public editorStyle: CSSProperties = {};
 
   public constructor(init?: Partial<Table>) {

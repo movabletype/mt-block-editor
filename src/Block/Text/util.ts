@@ -1,4 +1,4 @@
-import { Editor as TinyMCE, EditorManager } from "tinymce";
+import type { Editor as TinyMCEEditor, TinyMCE } from "tinymce";
 import {
   SelectorSet,
   selectorCmp,
@@ -6,18 +6,21 @@ import {
   mediaBreakPoint,
 } from "../../util";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
 export interface HasTinyMCE {
   text: string;
-  tinymce: TinyMCE | null;
+  tinymce: TinyMCEEditor | null;
   tinymceId(): string;
 }
 
 export const CARET_ATTR = "data-mt-block-editor-caret";
 export const CARET = `<br ${CARET_ATTR}="1">`;
 
-function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
+function _tinymceFocus(
+  ed: TinyMCEEditor,
+  selectorSet: SelectorSet | null
+): void {
   try {
     ed.focus(false);
   } catch (e) {
@@ -66,7 +69,7 @@ function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
 }
 
 export function tinymceFocus(
-  ed: TinyMCE,
+  ed: TinyMCEEditor,
   selectorSet: SelectorSet | null
 ): void {
   try {
@@ -99,7 +102,7 @@ export function removeTinyMCEFromBlock(block: HasTinyMCE): void {
 }
 
 export function adjustToolbar(
-  ed: TinyMCE,
+  ed: TinyMCEEditor,
   block: HasTinyMCE,
   editorElement: HTMLElement
 ): void {

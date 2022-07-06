@@ -1,10 +1,10 @@
 import { t } from "../i18n";
 import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import {
-  Editor as TinyMCE,
-  EditorManager,
-  Settings as TinyMCESettings,
+import type {
+  Editor as TinyMCEEditor,
+  TinyMCE,
+  RawEditorOptions as TinyMCESettings,
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
@@ -34,7 +34,7 @@ import {
 import { editHandlers } from "./Text/edit";
 import { commonSettings } from "./Text/tinymce";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
 interface EditorProps extends EditorOptions {
   block: Text;
@@ -77,7 +77,7 @@ const Editor: React.FC<EditorProps> = ({
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
         "bullist numlist outdent indent | blockquote link unlink",
       ],
-      init_instance_callback: (ed: TinyMCE) => {
+      init_instance_callback: (ed: TinyMCEEditor) => {
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);
@@ -306,7 +306,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
 
   public text = "";
   public editorStyle: CSSProperties = {};
-  public tinymce: TinyMCE | null = null;
+  public tinymce: TinyMCEEditor | null = null;
   public toolbarVisibleStatus: ToolbarVisibleStatus =
     ToolbarVisibleStatus.DependsOnContent;
 

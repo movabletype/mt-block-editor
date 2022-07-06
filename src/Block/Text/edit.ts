@@ -1,8 +1,8 @@
-import { EditorManager } from "tinymce";
+import type { TinyMCE } from "tinymce";
 import { EditHistoryHandlers } from "../../EditManager";
 import Text from "../Text";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
 export const editHandlers: EditHistoryHandlers = {
   id: Symbol("edit"),

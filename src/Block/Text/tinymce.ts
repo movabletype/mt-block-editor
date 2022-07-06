@@ -1,7 +1,7 @@
 import type Editor from "../../Editor";
 import type Block from "../../Block";
 import type { HasTinyMCE } from "../Text/util";
-import type { Editor as TinyMCE, Settings } from "tinymce";
+import type { Editor as TinyMCEEditor, RawEditorOptions } from "tinymce";
 import type { EditorContextProps } from "../../Context";
 import { decodeHtml } from "../../util";
 import { BlockEditorPasteCommandEvent } from "../../commands/pasteBlock";
@@ -10,16 +10,16 @@ export const commonSettings: (
   editor: Editor,
   block: Block & HasTinyMCE,
   editorContext: EditorContextProps
-) => Settings = (editor, block, editorContext) => ({
+) => RawEditorOptions = (editor, block, editorContext) => ({
   language: editor.opts.i18n.lng,
   selector: `#${block.tinymceId()}`,
   menubar: false,
   fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
   inline: true,
-  setup: (ed: TinyMCE) => {
+  setup: (ed: TinyMCEEditor) => {
     block.tinymce = ed;
   },
-  paste_preprocess: (_, ev: Event & { content: string }) => {
+  paste_preprocess: (_, ev) => {
     const content = ev.content.match(/^&lt;!-- mt-beb .* \/mt-beb --&gt;$/)
       ? decodeHtml(ev.content)
       : ev.content;
@@ -34,7 +34,8 @@ export const commonSettings: (
         })
       );
 
-      ev.preventDefault();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ev as any).preventDefault?.(); // PastePreProcessEvent probably has preventDefault
     }
   },
 });
