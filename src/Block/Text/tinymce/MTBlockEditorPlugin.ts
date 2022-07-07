@@ -115,8 +115,13 @@ function addCommentFilter(ed: TinyMCEEditor): void {
 }
 
 function plugin(ed: TinyMCEEditor): void {
-  ed.on("PreInit", ({ target }) => {
+  ed.on("PreInit", ({ target }: { target: TinyMCEEditor }) => {
     addEventHandlerFilter(target);
+
+    if (parseInt(target.editorManager.majorVersion) >= 6) {
+      return;
+    }
+
     addCommentFilter(target);
   });
 }
