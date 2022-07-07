@@ -1,10 +1,10 @@
 import { t } from "../i18n";
 import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import {
-  Editor as TinyMCE,
-  EditorManager,
-  Settings as TinyMCESettings,
+import type {
+  Editor as TinyMCEEditor,
+  TinyMCE,
+  RawEditorOptions as TinyMCESettings,
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
@@ -32,9 +32,12 @@ import {
   adjustToolbar,
 } from "./Text/util";
 import { editHandlers } from "./Text/edit";
-import { commonSettings } from "./Text/tinymce";
+import {
+  installPlugins as installTinyMCEPlugins,
+  commonSettings,
+} from "./Text/tinymce";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
 interface EditorProps extends EditorOptions {
   block: Text;
@@ -70,14 +73,16 @@ const Editor: React.FC<EditorProps> = ({
   const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
 
   useEffect(() => {
+    installTinyMCEPlugins();
+
     const settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext),
-      plugins: "lists paste media textcolor code hr link",
+      plugins: "lists paste media textcolor code hr link MTBlockEditor",
       toolbar: [
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
         "bullist numlist outdent indent | blockquote link unlink",
       ],
-      init_instance_callback: (ed: TinyMCE) => {
+      init_instance_callback: (ed: TinyMCEEditor) => {
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);
@@ -99,6 +104,10 @@ const Editor: React.FC<EditorProps> = ({
           last = ev.html;
         });
 
+        ed.on("SaveContent", (ev) => {
+          ev.content = sanitize(ev.content);
+        });
+
         const addEdit = (): void => {
           const cur = ed.getContent();
           if (last === cur) {
@@ -117,7 +126,7 @@ const Editor: React.FC<EditorProps> = ({
         };
 
         ed.on("NodeChange Change", () => {
-          const children = ([...root.childNodes] as HTMLElement[]).filter(
+          const children = [...root.children].filter(
             (e) => !e.classList.contains("mce-resizehandle")
           );
 
@@ -160,7 +169,7 @@ const Editor: React.FC<EditorProps> = ({
                 e.remove()
               );
               if (c.childNodes.length !== 0 && i === children.length - 1) {
-                let target: HTMLElement | null;
+                let target: Element | null;
                 if (["UL", "OL"].find((tn) => c.tagName === tn)) {
                   target = c.querySelector("LI");
                 } else if (
@@ -306,7 +315,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
 
   public text = "";
   public editorStyle: CSSProperties = {};
-  public tinymce: TinyMCE | null = null;
+  public tinymce: TinyMCEEditor | null = null;
   public toolbarVisibleStatus: ToolbarVisibleStatus =
     ToolbarVisibleStatus.DependsOnContent;
 
