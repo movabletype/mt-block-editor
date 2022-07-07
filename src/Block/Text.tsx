@@ -99,6 +99,10 @@ const Editor: React.FC<EditorProps> = ({
           last = ev.html;
         });
 
+        ed.on("SaveContent", (ev) => {
+          ev.content = sanitize(ev.content);
+        });
+
         const addEdit = (): void => {
           const cur = ed.getContent();
           if (last === cur) {
