@@ -117,7 +117,7 @@ const Editor: React.FC<EditorProps> = ({
         };
 
         ed.on("NodeChange Change", () => {
-          const children = ([...root.childNodes] as HTMLElement[]).filter(
+          const children = [...root.children].filter(
             (e) => !e.classList.contains("mce-resizehandle")
           );
 
@@ -160,7 +160,7 @@ const Editor: React.FC<EditorProps> = ({
                 e.remove()
               );
               if (c.childNodes.length !== 0 && i === children.length - 1) {
-                let target: HTMLElement | null;
+                let target: Element | null;
                 if (["UL", "OL"].find((tn) => c.tagName === tn)) {
                   target = c.querySelector("LI");
                 } else if (
