@@ -9,6 +9,7 @@ import {
 declare const tinymce: EditorManager;
 
 export interface HasTinyMCE {
+  id: string;
   text: string;
   tinymce: TinyMCE | null;
   tinymceId(): string;
@@ -107,7 +108,9 @@ export function adjustToolbar(
 
   for (let i = 0; i < 10; i++) {
     setTimeout(() => {
-      const toolbar = document.getElementById(`${block.tinymceId()}toolbar`);
+      const toolbar = document.querySelector<HTMLDivElement>(
+        `[data-mt-be-toolbar="${block.id}"]`
+      );
       if (!toolbar) {
         return;
       }
