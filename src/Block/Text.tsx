@@ -8,12 +8,7 @@ import type {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import {
-  getElementById,
-  sanitize,
-  isIos,
-  getShadowDomSelectorSet,
-} from "../util";
+import { sanitize, isIos, getShadowDomSelectorSet } from "../util";
 import EditorMode from "../Component/EditorMode";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -228,9 +223,9 @@ const Editor: React.FC<EditorProps> = ({
 
         ed.on("keydown", (e: KeyboardEvent) => {
           try {
-            getElementById(`${block.tinymceId()}toolbar`).classList.add(
-              "invisible"
-            );
+            document
+              .querySelector(`[data-mt-be-toolbar="${block.id}"]`)
+              ?.classList.add("invisible");
           } catch (e) {
             // ignore
           }
@@ -289,9 +284,9 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <div
       onClick={() => {
-        getElementById(`${block.tinymceId()}toolbar`).classList.remove(
-          "invisible"
-        );
+        document
+          .querySelector(`[data-mt-be-toolbar="${block.id}"]`)
+          ?.classList.remove("invisible");
       }}
       style={block.editorStyle}
     >
@@ -304,7 +299,6 @@ const Editor: React.FC<EditorProps> = ({
         ></div>
       </BlockLabel>
       <BlockToolbar
-        id={`${block.tinymceId()}toolbar`}
         rows={2}
         hasBorder={false}
         className={`mt-be-block-toolbar--tinymce ${

@@ -33,7 +33,7 @@ export const commonSettings: (
   language: editor.opts.i18n.lng,
   selector: `#${block.tinymceId()}`,
   menubar: false,
-  fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
+  fixed_toolbar_container: `[data-mt-be-toolbar="${block.id}"]`,
   inline: true,
   setup: (ed: TinyMCEEditor) => {
     block.tinymce = ed;
