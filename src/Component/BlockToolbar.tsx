@@ -11,7 +11,6 @@ import AddButton from "./AddButton";
 
 interface BlockToolbarProps {
   children?: ReactNode;
-  id?: string;
   className?: string;
   rows?: number;
   hasBorder?: boolean;
@@ -52,8 +51,8 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   return (
     <>
       <div
-        id={props.id || ""}
         className={`mt-be-block-toolbar ${className}`}
+        data-mt-be-toolbar={block.id}
         onMouseDown={onMouseDown}
       >
         {props.children}

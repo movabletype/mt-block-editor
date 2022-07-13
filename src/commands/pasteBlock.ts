@@ -54,7 +54,9 @@ const command: Command = {
     if (
       event instanceof KeyboardEvent &&
       event.target instanceof HTMLElement &&
-      event.target.closest("[data-mt-block-editor-block-id]")
+      event.target.closest(
+        "[data-mt-block-editor-block-id], [data-mt-be-toolbar]"
+      )
     ) {
       return;
     }
