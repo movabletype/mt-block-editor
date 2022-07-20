@@ -2,15 +2,16 @@ import type Editor from "../../Editor";
 import type Block from "../../Block";
 import type { HasTinyMCE } from "../Text/util";
 import type { Editor as TinyMCE, Settings } from "tinymce";
-import type { EditorContextProps } from "../../Context";
+import type { EditorContextProps, BlocksContextProps } from "../../Context";
 import { decodeHtml } from "../../util";
 import { BlockEditorPasteCommandEvent } from "../../commands/pasteBlock";
 
 export const commonSettings: (
   editor: Editor,
   block: Block & HasTinyMCE,
-  editorContext: EditorContextProps
-) => Settings = (editor, block, editorContext) => ({
+  editorContext: EditorContextProps,
+  blocksContext: BlocksContextProps
+) => Settings = (editor, block, editorContext, blocksContext) => ({
   language: editor.opts.i18n.lng,
   selector: `#${block.tinymceId()}`,
   menubar: false,
@@ -30,6 +31,7 @@ export const commonSettings: (
         new BlockEditorPasteCommandEvent({
           blockIds: [block.id],
           editorContext,
+          blocksContext,
           clipboardData,
         })
       );

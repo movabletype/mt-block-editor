@@ -58,6 +58,7 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
+  const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
   const { editor, setFocusedIds } = editorContext;
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
@@ -66,7 +67,7 @@ const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     const settings: TinyMCESettings = {
-      ...commonSettings(editor, block, editorContext),
+      ...commonSettings(editor, block, editorContext, blocksContext),
       plugins: "lists paste media textcolor code hr link",
       toolbar: [
         "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",

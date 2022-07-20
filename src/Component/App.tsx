@@ -187,6 +187,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
               command: "core-deleteBlock",
               blockIds: focusedIds,
               editorContext,
+              blocksContext,
               event: ev,
             });
           }
@@ -220,6 +221,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         event: ev,
         blockIds: focusedIds,
         editorContext,
+        blocksContext,
       });
     };
 

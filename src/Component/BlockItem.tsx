@@ -105,8 +105,9 @@ const BlockItem: React.FC<Props> = ({
   showButton,
   parentBlock,
 }: Props) => {
-  const { swapBlocks } = useBlocksContext();
+  const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
+  const { swapBlocks } = blocksContext;
   const { editor, getFocusedIds, setFocusedIds } = editorContext;
   const focusedIds = getFocusedIds();
   const b = block;
@@ -281,6 +282,7 @@ const BlockItem: React.FC<Props> = ({
           command: "core-copyBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
+          blocksContext,
           event: ev.nativeEvent,
         });
       },
@@ -290,6 +292,7 @@ const BlockItem: React.FC<Props> = ({
           command: "core-pasteBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
+          blocksContext,
           event: ev.nativeEvent,
         });
       },
