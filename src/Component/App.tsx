@@ -164,68 +164,6 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       setFocusedIds([]);
     };
 
-    const onWindowKeydown = (ev: KeyboardEvent): void => {
-      const editorEl = editor.editorElement;
-      const focusedIds = focusedIdsRef.current;
-
-      if (focusedIds.length === 0) {
-        return;
-      }
-
-      // stay focused but not edit
-      if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
-        return;
-      }
-
-      if (!(ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey)) {
-        if (focusedIds.length >= 2) {
-          const key = ev.key;
-
-          if (key === "Delete" || key === "Backspace") {
-            ev.preventDefault();
-
-            editor.commandManager.execute({
-              command: "core-deleteBlock",
-              blockIds: focusedIds,
-              editorContext,
-              blocksContext,
-              event: ev,
-            });
-          }
-        }
-
-        return;
-      }
-
-      const key = ev.key;
-
-      if (key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
-        ev.preventDefault();
-        editor.editManager.undo({
-          editor,
-          getFocusedIds: () => focusedIds,
-          setFocusedIds,
-        });
-      } else if (
-        (key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
-        (key === "y" && (ev.ctrlKey || ev.metaKey))
-      ) {
-        ev.preventDefault();
-        editor.editManager.redo({
-          editor,
-          getFocusedIds: () => focusedIds,
-          setFocusedIds,
-        });
-      }
-
-      editor.commandManager.dispatchKeydownEvent({
-        event: ev,
-        blockIds: focusedIds,
-        editorContext,
-        blocksContext,
-      });
-    };
-
     let startId = "";
     const onEditorMousedown = (ev: MouseEvent): void => {
       if (ev.target instanceof HTMLElement) {
@@ -268,7 +206,6 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       passive: true,
     });
 
-    window.addEventListener("keydown", onWindowKeydown);
     window.addEventListener("mt-block-editor-command", onBlockEditorCommand);
 
     return () => {
@@ -277,7 +214,6 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       window.removeEventListener("click", onWindowClick, {
         capture: true,
       });
-      window.removeEventListener("keydown", onWindowKeydown);
       window.removeEventListener(
         "mt-block-editor-command",
         onBlockEditorCommand

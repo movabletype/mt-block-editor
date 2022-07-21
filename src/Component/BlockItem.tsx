@@ -326,6 +326,89 @@ const BlockItem: React.FC<Props> = ({
     [index]
   );
 
+  useEffect(() => {
+    if (!focusLeader) {
+      return;
+    }
+
+    function onWindowKeydown(ev: KeyboardEvent): void {
+      // stay focused but not edit
+      if (
+        editor.editorElement.querySelector(
+          `[data-mt-block-editor-keep-focus="1"]`
+        )
+      ) {
+        return;
+      }
+
+      const key = ev.key;
+
+      if (
+        !(
+          ev.ctrlKey ||
+          ev.metaKey ||
+          ev.altKey ||
+          ev.shiftKey ||
+          key === "Delete" ||
+          key === "Backspace"
+        )
+      ) {
+        return;
+      }
+
+      const focusedIds = getFocusedIds();
+      if (focusedIds.length === 0) {
+        return;
+      }
+
+      if (key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
+        ev.preventDefault();
+
+        editor.editManager.undo({
+          editor,
+          getFocusedIds: () => focusedIds,
+          setFocusedIds,
+        });
+      } else if (
+        (key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
+        (key === "y" && (ev.ctrlKey || ev.metaKey))
+      ) {
+        ev.preventDefault();
+
+        editor.editManager.redo({
+          editor,
+          getFocusedIds: () => focusedIds,
+          setFocusedIds,
+        });
+      } else if (
+        focusedIds.length >= 2 &&
+        (key === "Delete" || key === "Backspace")
+      ) {
+        ev.preventDefault();
+
+        editor.commandManager.execute({
+          command: "core-deleteBlock",
+          blockIds: focusedIds,
+          editorContext,
+          blocksContext,
+          event: ev,
+        });
+      } else {
+        editor.commandManager.dispatchKeydownEvent({
+          event: ev,
+          blockIds: focusedIds,
+          editorContext,
+          blocksContext,
+        });
+      }
+    }
+
+    window.addEventListener("keydown", onWindowKeydown);
+    return () => {
+      window.removeEventListener("keydown", onWindowKeydown);
+    };
+  }, [focusLeader]);
+
   return (
     <div
       key={b.id}
