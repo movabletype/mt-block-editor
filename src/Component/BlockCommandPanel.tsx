@@ -27,7 +27,15 @@ const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
     }
 
     useEffect(() => {
-      editor.commandManager.contextCommands().then(setCommands);
+      let unloaded = false;
+      editor.commandManager.contextCommands().then((commands) => {
+        if (!unloaded) {
+          setCommands(commands);
+        }
+      });
+      return () => {
+        unloaded = true;
+      };
     }, []);
 
     if (commands.length === 0) {
