@@ -102,7 +102,11 @@ const command: Command = {
         // Prefer browser default behavior
         return;
       }
+
+      event.preventDefault();
     } else {
+      event.preventDefault();
+
       for (const clipboardItem of await navigator.clipboard.read()) {
         const types = clipboardItem.types;
         if (types.includes("text/html")) {
@@ -122,8 +126,6 @@ const command: Command = {
     if (html === "") {
       return;
     }
-
-    event?.preventDefault();
 
     const newBlocks = await parseContent(
       preParseContent(html),
