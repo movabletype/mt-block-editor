@@ -48,7 +48,7 @@ interface DragObject {
 
 interface Props {
   block: Block;
-  focus: boolean;
+  focus?: boolean;
   skipFocusDefault?: boolean;
   focusBlock?: boolean;
   ignoreClickEvent?: boolean;
@@ -113,12 +113,17 @@ const BlockItem: React.FC<Props> = ({
   const b = block;
   const i = index;
 
+  const focusLeader = focusedIds[0] === block.id;
+  if (typeof focus === "undefined") {
+    focus = focusLeader && focusedIds.length === 1;
+  }
+
   const [isCommandPanelShown, setCommandPanelShown] = useState(false);
   const toggleCommandPanelShown = useCallback(() => {
     setCommandPanelShown((prev) => !prev);
     block.focusEditor();
   }, []);
-  if (!focus && isCommandPanelShown) {
+  if (!(focus || focusLeader) && isCommandPanelShown) {
     setCommandPanelShown(false);
   }
 
@@ -417,7 +422,9 @@ const BlockItem: React.FC<Props> = ({
       onClick={onClick}
       onCopy={onCopy}
       onPaste={onPaste}
-      className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
+      className={`mt-be-block-wrapper ${
+        focusLeader ? "mt-be-focus-leader" : ""
+      } ${
         focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}
       style={style}

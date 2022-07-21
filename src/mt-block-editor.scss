@@ -276,7 +276,7 @@ $root-font-size: 16px;
         }
       }
     }
-    &.focus > .mt-be-btn-remove-wrapper {
+    &.mt-be-focus-leader > .mt-be-btn-remove-wrapper {
       visibility: visible;
       z-index: 50;
     }
@@ -300,7 +300,7 @@ $root-font-size: 16px;
       }
     }
 
-    &.focus > .mt-be-btn-move-wrapper {
+    &.mt-be-focus-leader > .mt-be-btn-move-wrapper {
       visibility: visible;
     }
 
@@ -547,9 +547,7 @@ $root-font-size: 16px;
 
   .mt-be-focus .mt-be-block {
     outline: 2px solid #337ab7;
-  }
 
-  .focus .mt-be-block {
     .mt-be-block {
       outline: none;
     }

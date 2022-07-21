@@ -158,8 +158,7 @@ const Editor: React.FC<EditorProps> = ({
       <BlockSetupCommon block={block} keys={["className"]} />
       {block.blocks.map((b, i) => {
         const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
-        const focusItem =
-          (focus && focusFirstBlock) || getFocusedIds().includes(b.id);
+        const focusItem = (focus && focusFirstBlock) || undefined;
         return (
           <BlockItem
             key={b.id}

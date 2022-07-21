@@ -227,13 +227,11 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         <DndProvider backend={DndBackend}>
           <div className="mt-be-app">
             {editor.blocks.map((b, i) => {
-              const focus = focusedIdsRef.current.indexOf(b.id) === 0;
               return (
                 <BlockItem
                   key={b.id}
                   id={b.id}
                   block={b}
-                  focus={focus}
                   index={i}
                   showButton={true}
                   canRemove={true}
