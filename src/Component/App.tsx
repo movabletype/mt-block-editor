@@ -55,7 +55,8 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         const focusedIds = focusedIdsRef.current;
         if (
           focusedIds.length >= 2 &&
-          ids.some((id) => focusedIds.includes(id))
+          ids.length === 1 &&
+          focusedIds.includes(ids[0])
         ) {
           // do nothing
           return;
