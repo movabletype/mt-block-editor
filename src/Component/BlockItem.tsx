@@ -269,7 +269,7 @@ const BlockItem: React.FC<Props> = ({
         } else if (!ignoreClickEvent) {
           if (focusedIds.length !== 0 && ev.shiftKey) {
             setFocusedIds(
-              getBlocksByRange(editor, focusedIds[0], b.id).map((b) => b.id)
+              getBlocksByRange(editor, [...focusedIds, b.id]).map((b) => b.id)
             );
           } else {
             setFocusedIds([b.id]);

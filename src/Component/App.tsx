@@ -180,7 +180,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
             ?.dataset.mtBlockEditorBlockId || "";
         if (startId && endId && startId !== endId) {
           setFocusedIds(
-            getBlocksByRange(editor, startId, endId).map((b) => b.id)
+            getBlocksByRange(editor, [startId, endId]).map((b) => b.id)
           );
 
           ev.preventDefault();
