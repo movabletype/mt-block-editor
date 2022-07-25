@@ -262,6 +262,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","helpText":"a\\nb","className":"color"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-bgcolor_contents" h='&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb t="core-html" --&gt;&lt;pre&gt;html content&lt;/pre&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;Hello!&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><!-- mt-beb m='1' --><!-- /mt-beb --><!-- mt-beb t="custom-contents" --><!-- mt-beb t="core-html" --><pre>html content</pre><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- /mt-beb --></div></div><!-- /mt-beb -->`
       );
     });
+
+    it("multiple selected", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-html"]`).click();
+        });
+      type("Test1");
+      blur();
+
+      cy.get(`.mt-be-btn-add-bottom`)
+        .last()
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-html"]`).click();
+        });
+      type("Test2");
+      blur();
+
+      cy.get(".mt-be-block").eq(0).click();
+      cy.get(`.mt-be-block textarea`).should("exist");
+
+      blur();
+
+      cy.get(".mt-be-block").eq(1).click();
+      cy.get(".mt-be-block").eq(0).click({
+        shiftKey: true,
+      });
+
+      cy.get(`.mt-be-block textarea`).should("not.exist");
+    });
   });
 
   context("custom-bgcolor_contents_without_preview", () => {
