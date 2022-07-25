@@ -205,7 +205,7 @@ function getBlocksByRangeInternal(
   state: GetBlocksByRangeState,
   parents: Readonly<Block[]> = []
 ): Readonly<Block[]> | undefined {
-  if (state.result) {
+  if (state.result && state.foundCount === state.ids.size) {
     return;
   }
   childBlocks.forEach((b) => {
