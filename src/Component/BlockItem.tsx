@@ -114,7 +114,7 @@ const BlockItem: React.FC<Props> = ({
   const i = index;
 
   const focusLeader = focusedIds[0] === block.id;
-  if (typeof focus === "undefined") {
+  if (focus === undefined) {
     focus = focusLeader && focusedIds.length === 1;
   }
 

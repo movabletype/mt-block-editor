@@ -52,7 +52,7 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   if (
     (block.constructor as typeof Block).typeId !== "core-column" ||
-    typeof canRemove === "undefined"
+    canRemove === undefined
   ) {
     canRemove = block.canRemoveBlock;
   }
