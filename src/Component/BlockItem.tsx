@@ -48,7 +48,7 @@ interface DragObject {
 
 interface Props {
   block: Block;
-  focus: boolean;
+  focus?: boolean;
   skipFocusDefault?: boolean;
   focusBlock?: boolean;
   ignoreClickEvent?: boolean;
@@ -105,19 +105,25 @@ const BlockItem: React.FC<Props> = ({
   showButton,
   parentBlock,
 }: Props) => {
-  const { swapBlocks } = useBlocksContext();
+  const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
+  const { swapBlocks } = blocksContext;
   const { editor, getFocusedIds, setFocusedIds } = editorContext;
   const focusedIds = getFocusedIds();
   const b = block;
   const i = index;
+
+  const focusLeader = focusedIds[0] === block.id;
+  if (focus === undefined) {
+    focus = focusLeader && focusedIds.length === 1;
+  }
 
   const [isCommandPanelShown, setCommandPanelShown] = useState(false);
   const toggleCommandPanelShown = useCallback(() => {
     setCommandPanelShown((prev) => !prev);
     block.focusEditor();
   }, []);
-  if (!focus && isCommandPanelShown) {
+  if (!(focus || focusLeader) && isCommandPanelShown) {
     setCommandPanelShown(false);
   }
 
@@ -268,7 +274,7 @@ const BlockItem: React.FC<Props> = ({
         } else if (!ignoreClickEvent) {
           if (focusedIds.length !== 0 && ev.shiftKey) {
             setFocusedIds(
-              getBlocksByRange(editor, focusedIds[0], b.id).map((b) => b.id)
+              getBlocksByRange(editor, [...focusedIds, b.id]).map((b) => b.id)
             );
           } else {
             setFocusedIds([b.id]);
@@ -281,6 +287,7 @@ const BlockItem: React.FC<Props> = ({
           command: "core-copyBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
+          blocksContext,
           event: ev.nativeEvent,
         });
       },
@@ -290,6 +297,7 @@ const BlockItem: React.FC<Props> = ({
           command: "core-pasteBlock",
           blockIds: focusedIds.length === 0 ? [b.id] : focusedIds,
           editorContext,
+          blocksContext,
           event: ev.nativeEvent,
         });
       },
@@ -323,6 +331,89 @@ const BlockItem: React.FC<Props> = ({
     [index]
   );
 
+  useEffect(() => {
+    if (!focusLeader) {
+      return;
+    }
+
+    function onWindowKeydown(ev: KeyboardEvent): void {
+      // stay focused but not edit
+      if (
+        editor.editorElement.querySelector(
+          `[data-mt-block-editor-keep-focus="1"]`
+        )
+      ) {
+        return;
+      }
+
+      const key = ev.key;
+
+      if (
+        !(
+          ev.ctrlKey ||
+          ev.metaKey ||
+          ev.altKey ||
+          ev.shiftKey ||
+          key === "Delete" ||
+          key === "Backspace"
+        )
+      ) {
+        return;
+      }
+
+      const focusedIds = getFocusedIds();
+      if (focusedIds.length === 0) {
+        return;
+      }
+
+      if (key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
+        ev.preventDefault();
+
+        editor.editManager.undo({
+          editor,
+          getFocusedIds: () => focusedIds,
+          setFocusedIds,
+        });
+      } else if (
+        (key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
+        (key === "y" && (ev.ctrlKey || ev.metaKey))
+      ) {
+        ev.preventDefault();
+
+        editor.editManager.redo({
+          editor,
+          getFocusedIds: () => focusedIds,
+          setFocusedIds,
+        });
+      } else if (
+        focusedIds.length >= 2 &&
+        (key === "Delete" || key === "Backspace")
+      ) {
+        ev.preventDefault();
+
+        editor.commandManager.execute({
+          command: "core-deleteBlock",
+          blockIds: focusedIds,
+          editorContext,
+          blocksContext,
+          event: ev,
+        });
+      } else {
+        editor.commandManager.dispatchKeydownEvent({
+          event: ev,
+          blockIds: focusedIds,
+          editorContext,
+          blocksContext,
+        });
+      }
+    }
+
+    window.addEventListener("keydown", onWindowKeydown);
+    return () => {
+      window.removeEventListener("keydown", onWindowKeydown);
+    };
+  }, [focusLeader]);
+
   return (
     <div
       key={b.id}
@@ -331,7 +422,9 @@ const BlockItem: React.FC<Props> = ({
       onClick={onClick}
       onCopy={onCopy}
       onPaste={onPaste}
-      className={`mt-be-block-wrapper ${focus ? "focus" : ""} ${
+      className={`mt-be-block-wrapper ${
+        focusLeader ? "mt-be-focus-leader" : ""
+      } ${
         focusedIds.length >= 2 && focusedIds.includes(b.id) ? "mt-be-focus" : ""
       }`}
       style={style}

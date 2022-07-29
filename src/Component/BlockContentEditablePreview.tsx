@@ -18,8 +18,10 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
   html,
   onMouseUp,
 }: EditorProps) => {
-  const { setFocusedIds } = useEditorContext();
+  const { getFocusedIds, setFocusedIds } = useEditorContext();
   const divElRef = useRef<HTMLDivElement>(null);
+  const focusedIds = getFocusedIds();
+  const inFocusGroup = focusedIds.length >= 2 && focusedIds.includes(block.id);
 
   useEffect(() => {
     const divEl = divElRef.current;
@@ -64,8 +66,10 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
     };
     divEl.addEventListener("mousedown", mousedownListener, { passive: true });
 
-    const keyupListener = (): void => {
-      setFocusedIds([block.id]);
+    const keyupListener = (ev: KeyboardEvent): void => {
+      if (!ev.shiftKey) {
+        setFocusedIds([block.id]);
+      }
     };
     divEl.addEventListener("keyup", keyupListener, { passive: true });
 
@@ -73,7 +77,17 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
       divEl.removeEventListener("mousedown", mousedownListener);
       divEl.removeEventListener("keyup", keyupListener);
     };
-  }, []);
+  }, [inFocusGroup]);
+
+  if (inFocusGroup) {
+    return (
+      <div
+        dangerouslySetInnerHTML={{
+          __html: sanitize(html),
+        }}
+      ></div>
+    );
+  }
 
   return (
     <div

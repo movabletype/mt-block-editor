@@ -1,13 +1,33 @@
 /// <reference types="cypress" />
 
-import { type, apply, serializedTextarea, blur, wait } from "../helpers";
-import { TRANSITION_TIMEOUT } from "../../src/Component/Overlay";
+import {
+  type,
+  apply,
+  serializedTextarea,
+  wait,
+  blur,
+  registerCustomBlock,
+} from "../helpers";
 
 context("Command", () => {
   const textareaId = "text";
 
   beforeEach(() => {
     cy.visit("./cypress/resources/editor.html");
+
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: true,
+      typeId: "custom-text-list",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["core-text"],
+      className: "",
+      html: "",
+      shouldBeCompiled: false,
+      previewHeader: "",
+      label: "text list",
+      rootBlock: "",
+    });
   });
 
   context("Delete", () => {
@@ -169,9 +189,48 @@ context("Command", () => {
 
       cy.get(`[data-mt-be-command="core-duplicateBlock"]`).click();
 
+      blur();
+
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb -->`
+      );
+    });
+
+    it("Inside custom block", () => {
+      apply({
+        id: textareaId,
+      });
+
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-text-list"]`).click();
+        });
+
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Movable Type!");
+
+      cy.get(".mt-be-btn-move:visible").click();
+
+      wait(1);
+
+      cy.get(`[data-mt-be-command="core-duplicateBlock"]`).click();
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-text-list" --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- /mt-beb -->`
       );
     });
   });
@@ -225,6 +284,44 @@ context("Command", () => {
         serializedTextarea(textareaId).should(
           "have.value",
           `<!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Block Editor!</p><!-- /mt-beb -->`
+        );
+      });
+
+      it("Inside custom block", () => {
+        apply({
+          id: textareaId,
+        });
+
+        cy.get(`.mt-be-btn-add-bottom`)
+          .click()
+          .within(() => {
+            cy.get(`[data-mt-be-type="custom-text-list"]`).click();
+          });
+
+        cy.get(
+          `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+        ).click();
+
+        wait(1);
+
+        type("Hello!\n");
+
+        wait(1);
+
+        type("Movable Type!");
+
+        cy.get(".mt-be-btn-move:visible").click();
+
+        wait(1);
+
+        cy.get(`[data-mt-be-command="core-copyBlock"]`).click();
+        cy.get(`[data-mt-be-command="core-pasteBlock"]`).click();
+
+        blur();
+
+        serializedTextarea(textareaId).should(
+          "have.value",
+          `<!-- mt-beb t="custom-text-list" --><!-- mt-beb --><p>Hello!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- mt-beb --><p>Movable Type!</p><!-- /mt-beb --><!-- /mt-beb -->`
         );
       });
     });
