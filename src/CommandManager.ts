@@ -3,13 +3,15 @@ import React, { useEffect } from "react";
 
 import type Editor from "./Editor";
 import type Block from "./Block";
-import { useEditorContext, EditorContextProps } from "./Context";
+import type { EditorContextProps, BlocksContextProps } from "./Context";
+import { useEditorContext } from "./Context";
 import { findDescendantBlocks, toKeyboardShortcutKey } from "./util";
 import { DialogProps } from "./Component/Dialog";
 
 interface BlockEditorCommandArgs {
   blocks: Readonly<Block[]>;
   editorContext: EditorContextProps;
+  blocksContext: BlocksContextProps;
   event: Event;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
@@ -29,6 +31,7 @@ interface BlockEditorCommandDetail {
   command: string;
   blockIds: Readonly<string[]>;
   editorContext: EditorContextProps;
+  blocksContext: BlocksContextProps;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
 }
@@ -117,10 +120,12 @@ export default class CommandManager {
     event,
     blockIds,
     editorContext,
+    blocksContext,
   }: {
     event: KeyboardEvent;
     blockIds: string[];
     editorContext: EditorContextProps;
+    blocksContext: BlocksContextProps;
   }): void {
     const key = toKeyboardShortcutKey(event);
     const command = this.editor.keyboardShortcutMap()[key];
@@ -128,6 +133,7 @@ export default class CommandManager {
       command.callback({
         blocks: findDescendantBlocks(this.editor, blockIds),
         editorContext,
+        blocksContext,
         event: event,
       });
     }
@@ -137,11 +143,13 @@ export default class CommandManager {
     command,
     blockIds,
     editorContext,
+    blocksContext,
     event,
   }: {
     command: string;
     blockIds: Readonly<string[]>;
     editorContext: EditorContextProps;
+    blocksContext: BlocksContextProps;
     event: Event;
   }): void {
     CommandManager.allCommands.forEach((c) => {
@@ -149,6 +157,7 @@ export default class CommandManager {
         c.callback({
           blocks: findDescendantBlocks(this.editor, blockIds),
           editorContext,
+          blocksContext,
           event,
         });
       }

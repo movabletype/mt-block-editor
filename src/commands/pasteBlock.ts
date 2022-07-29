@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import icon from "../img/paste.svg";
 import type { Command } from "../CommandManager";
-import type { EditorContextProps } from "../Context";
+import type { EditorContextProps, BlocksContextProps } from "../Context";
 import { BlockEditorCommandEvent } from "../CommandManager";
 import { parseContent, preParseContent, ParserContext } from "../util";
 
@@ -11,16 +11,19 @@ export class BlockEditorPasteCommandEvent extends BlockEditorCommandEvent {
   constructor({
     blockIds,
     editorContext,
+    blocksContext,
     clipboardData,
   }: {
     blockIds: string[];
     editorContext: EditorContextProps;
+    blocksContext: BlocksContextProps;
     clipboardData: DataTransfer;
   }) {
     super({
       command: commandId,
       blockIds,
       editorContext,
+      blocksContext,
       extra: {
         clipboardData,
       },
@@ -43,6 +46,7 @@ const command: Command = {
   callback: async ({
     blocks,
     editorContext: { editor, setFocusedIds },
+    blocksContext: { addBlock },
     event,
   }) => {
     if (blocks.length === 0) {
@@ -98,7 +102,11 @@ const command: Command = {
         // Prefer browser default behavior
         return;
       }
+
+      event.preventDefault();
     } else {
+      event.preventDefault();
+
       for (const clipboardItem of await navigator.clipboard.read()) {
         const types = clipboardItem.types;
         if (types.includes("text/html")) {
@@ -119,8 +127,6 @@ const command: Command = {
       return;
     }
 
-    event?.preventDefault();
-
     const newBlocks = await parseContent(
       preParseContent(html),
       editor.factory,
@@ -132,13 +138,9 @@ const command: Command = {
       return;
     }
 
-    const index = editor.blocks.findIndex(
-      (b) => b.id === blocks[blocks.length - 1].id
-    );
-
     editor.editManager.beginGrouping();
     for (const newBlock of newBlocks.reverse()) {
-      editor.addBlock(editor, newBlock, index + 1);
+      addBlock(newBlock, blocks[blocks.length - 1]);
     }
     editor.editManager.endGrouping();
     setFocusedIds([newBlocks[0].id]);

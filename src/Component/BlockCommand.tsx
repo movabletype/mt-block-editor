@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useEditorContext } from "../Context";
+import { useBlocksContext, useEditorContext } from "../Context";
 import type { Command } from "../CommandManager";
 import { toKeyboardShortcutLabel } from "../util";
 import type Block from "../Block";
@@ -15,6 +15,7 @@ const BlockCommand: React.FC<BlockCommandProps> = ({
   block,
 }: BlockCommandProps) => {
   const [isDialogOpen, setDialogOpen] = useState<DialogStatus>(undefined);
+  const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
   const { editor, getFocusedIds } = editorContext;
 
@@ -32,6 +33,7 @@ const BlockCommand: React.FC<BlockCommandProps> = ({
             blockIds:
               getFocusedIds().length === 0 ? [block.id] : getFocusedIds(),
             editorContext,
+            blocksContext,
             event: ev.nativeEvent,
           });
         }
