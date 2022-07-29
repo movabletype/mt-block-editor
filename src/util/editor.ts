@@ -221,27 +221,34 @@ function getBlocksByRangeInternal(
       if (state.ids.size === 1) {
         state.result = [b];
       } else if (state.startBlocks) {
-        let blocks: Readonly<Block[]>;
-        let start: string | undefined;
-        let end: string | undefined;
-        for (let i = state.startBlocks.length - 2; i >= 0 && !end; i--) {
-          for (let j = currentBlocks.length - 2; j >= 0 && !end; j--) {
+        let range: {
+          blocks: Readonly<Block[]>;
+          start: string;
+          end: string;
+        };
+        findRange: for (let i = state.startBlocks.length - 2; i >= 0; i--) {
+          for (let j = currentBlocks.length - 2; j >= 0; j--) {
             if (state.startBlocks[i] === currentBlocks[j]) {
-              blocks = state.startBlocks[i].childBlocks();
-              start = state.startBlocks[i + 1].id;
-              end = currentBlocks[j + 1].id;
+              range = {
+                blocks: state.startBlocks[i].childBlocks(),
+                start: state.startBlocks[i + 1].id,
+                end: currentBlocks[j + 1].id,
+              };
+              break findRange;
             }
           }
         }
 
-        blocks ||= state.rootBlocks;
-        start ||= state.startBlocks[0].id;
-        end ||= currentBlocks[0].id;
+        range ||= {
+          blocks: state.rootBlocks,
+          start: state.startBlocks[0].id,
+          end: currentBlocks[0].id,
+        };
 
-        const blockIds = blocks.map((b) => b.id);
-        state.result = blocks.slice(
-          blockIds.indexOf(start),
-          blockIds.indexOf(end) + 1
+        const blockIds = range.blocks.map((b) => b.id);
+        state.result = range.blocks.slice(
+          blockIds.indexOf(range.start),
+          blockIds.indexOf(range.end) + 1
         );
       } else {
         state.startBlocks = currentBlocks;
