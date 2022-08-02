@@ -13,6 +13,7 @@ const command: Command = {
   callback: async ({
     blocks,
     editorContext: { editor, setFocusedIds },
+    blocksContext: { addBlock },
     event,
   }) => {
     if (blocks.length === 0) {
@@ -33,13 +34,9 @@ const command: Command = {
       new ParserContext()
     );
 
-    const index = editor.blocks.findIndex(
-      (b) => b.id === blocks[blocks.length - 1].id
-    );
-
     editor.editManager.beginGrouping();
     for (const newBlock of newBlocks.reverse()) {
-      editor.addBlock(editor, newBlock, index + 1);
+      addBlock(newBlock, blocks[blocks.length - 1]);
     }
     editor.editManager.endGrouping();
     setFocusedIds([newBlocks[0].id]);
