@@ -61,6 +61,7 @@ const Editor: React.FC<EditorProps> = ({
   focus,
   canRemove,
 }: EditorProps) => {
+  const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
   const { editor, setFocusedIds } = editorContext;
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
@@ -88,7 +89,7 @@ const Editor: React.FC<EditorProps> = ({
           };
 
     const settings: TinyMCESettings = {
-      ...commonSettings(editor, block, editorContext),
+      ...commonSettings(editor, block, editorContext, blocksContext),
       ...pluginsToolbarSettings,
       init_instance_callback: (ed: TinyMCEEditor) => {
         ed.setContent(block.text);

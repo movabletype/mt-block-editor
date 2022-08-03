@@ -36,6 +36,7 @@ interface EditorProps extends EditorOptions {
 }
 
 const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
+  const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
   const { editor } = editorContext;
   const { addBlock } = useBlocksContext();
@@ -46,7 +47,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     installTinyMCEPlugins();
 
     const settings: TinyMCESettings = {
-      ...commonSettings(editor, block, editorContext),
+      ...commonSettings(editor, block, editorContext, blocksContext),
       plugins: "table code paste media textcolor link MTBlockEditor",
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",

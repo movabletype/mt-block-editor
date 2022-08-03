@@ -585,67 +585,88 @@ describe("getBlocksByRange", () => {
 
   describe("from Editor", () => {
     it("find a block", () => {
-      const blocks = getBlocksByRange(
-        editor,
+      const blocks = getBlocksByRange(editor, [
         textBlocks[0].id,
-        textBlocks[0].id
-      );
+        textBlocks[0].id,
+      ]);
       expect(blocks).toEqual([textBlocks[0]]);
     });
 
     it("find some blocks", () => {
-      const blocks = getBlocksByRange(
-        editor,
+      const blocks = getBlocksByRange(editor, [
         textBlocks[0].id,
-        textBlocks[1].id
-      );
+        textBlocks[1].id,
+      ]);
       expect(blocks).toEqual([textBlocks[0], textBlocks[1]]);
     });
 
     it("top level and child blocks", () => {
-      const blocks = getBlocksByRange(
-        editor,
+      const blocks = getBlocksByRange(editor, [
         textBlocks[0].id,
-        textBlocks[4].id
-      );
-      expect(blocks).toEqual([]);
+        textBlocks[4].id,
+      ]);
+      expect(blocks).toEqual([
+        textBlocks[0],
+        textBlocks[1],
+        textBlocks[2],
+        column,
+      ]);
+    });
+
+    it("extend", () => {
+      const blocks = getBlocksByRange(editor, [
+        textBlocks[0].id,
+        textBlocks[1].id,
+        textBlocks[2].id,
+      ]);
+      expect(blocks).toEqual([textBlocks[0], textBlocks[1], textBlocks[2]]);
     });
 
     it("not found", () => {
-      const blocks = getBlocksByRange(
-        editor,
+      const blocks = getBlocksByRange(editor, [
         textBlocks[8].id,
-        textBlocks[8].id
-      );
+        textBlocks[8].id,
+      ]);
       expect(blocks).toEqual([]);
     });
   });
 
   describe("from Column", () => {
     it("find a block", () => {
-      const blocks = getBlocksByRange(
-        column,
+      const blocks = getBlocksByRange(column, [
         textBlocks[3].id,
-        textBlocks[3].id
-      );
+        textBlocks[3].id,
+      ]);
       expect(blocks).toEqual([textBlocks[3]]);
     });
 
     it("find some blocks", () => {
-      const blocks = getBlocksByRange(
-        column,
+      const blocks = getBlocksByRange(column, [
         textBlocks[4].id,
-        textBlocks[5].id
-      );
+        textBlocks[5].id,
+      ]);
       expect(blocks).toEqual([textBlocks[4], textBlocks[5]]);
     });
 
-    it("not found", () => {
-      const blocks = getBlocksByRange(
-        column,
+    it("extend with column", () => {
+      const blocks = getBlocksByRange(editor, [
         textBlocks[0].id,
-        textBlocks[0].id
-      );
+        textBlocks[1].id,
+        textBlocks[4].id,
+      ]);
+      expect(blocks).toEqual([
+        textBlocks[0],
+        textBlocks[1],
+        textBlocks[2],
+        column,
+      ]);
+    });
+
+    it("not found", () => {
+      const blocks = getBlocksByRange(column, [
+        textBlocks[0].id,
+        textBlocks[0].id,
+      ]);
       expect(blocks).toEqual([]);
     });
   });

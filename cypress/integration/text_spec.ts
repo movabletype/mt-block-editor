@@ -576,4 +576,53 @@ context("Text", () => {
       );
     });
   });
+
+  context("content editable", () => {
+    it("not selected", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Block!");
+
+      wait(1);
+
+      blur();
+
+      cy.get(".mt-be-block div:last-child").then(($div) => {
+        expect($div[0].shadowRoot.querySelector("div[contenteditable]")).to.not.be.null;
+      });
+    });
+
+    it("multiple selected", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Block!");
+
+      cy.get(".mt-be-block").eq(0).click();
+      cy.get(".mt-be-block").eq(1).click({
+        shiftKey: true,
+      });
+
+      wait(1);
+
+      cy.get(".mt-be-block div:last-child").then(($div) => {
+        expect($div[0].shadowRoot.querySelector("div[contenteditable]")).to.be.null;
+      });
+    });
+  });
 });

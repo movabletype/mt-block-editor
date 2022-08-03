@@ -177,28 +177,82 @@ function findDescendantBlocksInternal(
   return result;
 }
 
+interface GetBlocksByRangeState {
+  ids: Readonly<Set<string>>;
+  rootBlocks: Readonly<Block[]>;
+  foundCount: number;
+  startBlocks?: Readonly<Block[]>;
+  endBlocks?: Readonly<Block[]>;
+  result?: Readonly<Block[]>;
+}
 export function getBlocksByRange(
   ancestor: Block | Editor,
-  start: string,
-  end: string
-): Block[] {
+  ids: Readonly<string[]>
+): Readonly<Block[]> {
   const childBlocks =
     ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
-  let started = false;
-  const blocks = [];
-  for (let i = 0; i < childBlocks.length; i++) {
-    const b = childBlocks[i];
-    if (b.id === start || b.id === end) {
-      blocks.push(b);
-      if (started || start === end) {
-        return blocks;
-      } else {
-        started = true;
-      }
-    } else if (started) {
-      blocks.push(b);
-    }
-  }
+  const state: GetBlocksByRangeState = {
+    ids: new Set<string>(ids),
+    rootBlocks: childBlocks,
+    foundCount: 0,
+  };
+  getBlocksByRangeInternal(childBlocks, state);
+  return state.result || emptyBlocks;
+}
 
-  return started ? [] : blocks;
+function getBlocksByRangeInternal(
+  childBlocks: Readonly<Block[]>,
+  state: GetBlocksByRangeState,
+  parents: Readonly<Block[]> = []
+): Readonly<Block[]> | undefined {
+  if (state.result && state.foundCount === state.ids.size) {
+    return;
+  }
+  childBlocks.forEach((b) => {
+    const currentBlocks = [...parents, b];
+
+    getBlocksByRangeInternal(b.childBlocks(), state, currentBlocks);
+    if (state.result && state.foundCount === state.ids.size) {
+      return;
+    }
+    if (state.ids.has(b.id)) {
+      state.foundCount++;
+
+      if (state.ids.size === 1) {
+        state.result = [b];
+      } else if (state.startBlocks) {
+        let range: {
+          blocks: Readonly<Block[]>;
+          start: string;
+          end: string;
+        };
+        findRange: for (let i = state.startBlocks.length - 2; i >= 0; i--) {
+          for (let j = currentBlocks.length - 2; j >= 0; j--) {
+            if (state.startBlocks[i] === currentBlocks[j]) {
+              range = {
+                blocks: state.startBlocks[i].childBlocks(),
+                start: state.startBlocks[i + 1].id,
+                end: currentBlocks[j + 1].id,
+              };
+              break findRange;
+            }
+          }
+        }
+
+        range ||= {
+          blocks: state.rootBlocks,
+          start: state.startBlocks[0].id,
+          end: currentBlocks[0].id,
+        };
+
+        const blockIds = range.blocks.map((b) => b.id);
+        state.result = range.blocks.slice(
+          blockIds.indexOf(range.start),
+          blockIds.indexOf(range.end) + 1
+        );
+      } else {
+        state.startBlocks = currentBlocks;
+      }
+    }
+  });
 }

@@ -6,7 +6,7 @@ import type {
   TinyMCE,
   RawEditorOptions,
 } from "tinymce";
-import type { EditorContextProps } from "../../Context";
+import type { EditorContextProps, BlocksContextProps } from "../../Context";
 import { decodeHtml } from "../../util";
 import { BlockEditorPasteCommandEvent } from "../../commands/pasteBlock";
 import MTBlockEditorPlugin from "./tinymce/MTBlockEditorPlugin";
@@ -28,8 +28,9 @@ export const installPlugins = (() => {
 export const commonSettings: (
   editor: Editor,
   block: Block & HasTinyMCE,
-  editorContext: EditorContextProps
-) => RawEditorOptions = (editor, block, editorContext) => ({
+  editorContext: EditorContextProps,
+  blocksContext: BlocksContextProps
+) => RawEditorOptions = (editor, block, editorContext, blocksContext) => ({
   language: editor.opts.i18n.lng,
   selector: `#${block.tinymceId()}`,
   menubar: false,
@@ -57,6 +58,7 @@ export const commonSettings: (
         new BlockEditorPasteCommandEvent({
           blockIds: [block.id],
           editorContext,
+          blocksContext,
           clipboardData,
         })
       );
