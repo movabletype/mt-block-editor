@@ -449,10 +449,6 @@ class Column extends Block implements HasBlocks {
     );
     const compiledHtml = node.hasAttribute("h") ? node.textContent : "";
 
-    if (html && blocks.length === 0) {
-      throw Error("This content is not for this block");
-    }
-
     return new this(
       Object.assign(
         { blocks, compiledHtml, _html: "" },
