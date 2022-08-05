@@ -8,7 +8,11 @@ import Block, {
 } from "../Block";
 import Column from "./Column";
 import { useEditorContext } from "../Context";
-import { parseContent, escapeSingleQuoteAttribute } from "../util";
+import {
+  parseContent,
+  NO_BLOCK_TYPE_FALLBACK,
+  escapeSingleQuoteAttribute,
+} from "../util";
 import icon from "../img/icon/columns.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockToolbarButton from "../Component/BlockToolbarButton";
@@ -187,11 +191,10 @@ class Columns extends Block implements HasBlocks {
     context,
   }: NewFromHtmlOptions): Promise<Block> {
     const blocks = (await parseContent(
-      node.innerHTML
-        .replace(/^&lt;div.*?&gt;/, "")
-        .replace(/&lt;\/div&gt;$/, ""),
+      node.innerHTML,
       factory,
-      context
+      context,
+      NO_BLOCK_TYPE_FALLBACK
     )) as Column[];
     blocks.forEach((b) => (b.showShortcuts = false));
     return new Columns(Object.assign({ blocks }, meta));

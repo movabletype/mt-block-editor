@@ -25,6 +25,7 @@ import BlockIframePreview from "../Component/BlockIframePreview";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import {
   parseContent,
+  NO_BLOCK_TYPE_FALLBACK,
   preParseContent,
   escapeSingleQuoteAttribute,
   ParserContext,
@@ -439,16 +440,13 @@ class Column extends Block implements HasBlocks {
   }: NewFromHtmlOptions): Promise<Block> {
     const html = node.hasAttribute("h")
       ? preParseContent(node.getAttribute("h") || "")
-      : node.innerHTML
-          .replace(/^&lt;div.*?&gt;(<!--\s+mt-beb\s+)/, "$1")
-          .replace(/&lt;\/div&gt;(<!--\s+\/mt-beb\s+--)>$/, "$1")
-          .replace(
-            new RegExp(
-              `^&lt;div\\s+class=["']${this.className}[^"']*["']&gt;&lt;/div&gt;$`
-            ),
-            ""
-          );
-    const blocks = await parseContent(html, factory, context);
+      : node.innerHTML;
+    const blocks = await parseContent(
+      html,
+      factory,
+      context,
+      NO_BLOCK_TYPE_FALLBACK
+    );
     const compiledHtml = node.hasAttribute("h") ? node.textContent : "";
 
     if (html && blocks.length === 0) {
