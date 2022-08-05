@@ -40,11 +40,13 @@ export function removeControlCharacters(str: string): string {
   );
 }
 
+export const NO_BLOCK_TYPE_FALLBACK = "";
+
 export async function parseContent(
   value: string,
   factory: BlockFactory,
   context: ParserContext,
-  fallbackBlockType = "core-html"
+  fallbackBlockType: string | typeof NO_BLOCK_TYPE_FALLBACK = "core-html"
 ): Promise<Block[]> {
   if (!value) {
     return [];
@@ -62,10 +64,14 @@ export async function parseContent(
 
   let children = [...doc.children[0].children];
   if (children.length === 0) {
-    const fallback = document.createElement("DIV");
-    fallback.setAttribute("t", fallbackBlockType);
-    fallback.innerHTML = value;
-    children = [fallback];
+    if (fallbackBlockType !== NO_BLOCK_TYPE_FALLBACK) {
+      const fallback = document.createElement("DIV");
+      fallback.setAttribute("t", fallbackBlockType);
+      fallback.innerHTML = value;
+      children = [fallback];
+    } else {
+      return [];
+    }
   }
 
   // TODO: verify
