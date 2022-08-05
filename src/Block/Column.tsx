@@ -364,7 +364,7 @@ class Column extends Block implements HasBlocks {
     return new Promise((resolve, reject) => {
       let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-      const div = document.createElement("DIV");
+      const div = document.createElement("div");
       Object.assign(div.style, STYLE_HIDDEN);
       document.body.appendChild(div);
 

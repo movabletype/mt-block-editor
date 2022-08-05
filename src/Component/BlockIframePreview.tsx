@@ -114,7 +114,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
 
         ev.preventDefault();
 
-        const input = document.createElement("INPUT") as HTMLInputElement;
+        const input = document.createElement("input");
         input.type = "file";
         input.style.display = "none";
         input.addEventListener("change", function (ev) {

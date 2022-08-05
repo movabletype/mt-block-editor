@@ -46,7 +46,7 @@
         [
           "./dist/mt-block-editor.css",
         ].forEach((url) => {
-          const link = window.document.createElement("LINK");
+          const link = window.document.createElement("link");
           link.rel = "stylesheet";
           link.href = `${url}?ts=${ts}`;
           window.document.querySelector("head").appendChild(link);
@@ -63,7 +63,7 @@
             id: "body",
             stylesheets: [
               (() => {
-                const a = document.createElement("A");
+                const a = document.createElement("a");
                 a.href = "./editor-content.css";
                 return a.href;
               })(),

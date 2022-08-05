@@ -65,7 +65,7 @@ export async function parseContent(
   let children = [...doc.children[0].children];
   if (children.length === 0) {
     if (fallbackBlockType !== NO_BLOCK_TYPE_FALLBACK) {
-      const fallback = document.createElement("DIV");
+      const fallback = document.createElement("div");
       fallback.setAttribute("t", fallbackBlockType);
       fallback.innerHTML = value;
       children = [fallback];

@@ -13,7 +13,7 @@ export function type(text, options?): void {
 
 export function apply(opts): void {
   cy.window().then((w) => {
-    const textarea = w.document.createElement("TEXTAREA");
+    const textarea = w.document.createElement("textarea");
     textarea.id = opts.id;
     w.document.body.appendChild(textarea);
 

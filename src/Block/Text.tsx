@@ -165,7 +165,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
               if (i === 0 && isIos()) {
                 const editorRect = editor.editorElement.getBoundingClientRect();
                 const rootRect = root.getBoundingClientRect();
-                const input = document.createElement("INPUT");
+                const input = document.createElement("input");
                 input.classList.add("mt-be-input--hidden");
                 input.style.top = rootRect.top - editorRect.top + "px";
                 editor.editorElement.appendChild(input);
@@ -197,7 +197,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
                   target = c;
                 }
                 if (target) {
-                  const caret = document.createElement("BR");
+                  const caret = document.createElement("br");
                   caret.setAttribute(CARET_ATTR, "1");
 
                   target.insertBefore(caret, target.firstChild);
