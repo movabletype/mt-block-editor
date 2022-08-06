@@ -260,9 +260,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     block.setIframePreviewSize(size);
     _setSize(size);
   }, []);
-  const size = useMemo(() => block.getIframePreviewSize(rawHtmlText), [
-    rawHtmlText,
-  ]);
+  const size = block.getIframePreviewSize(rawHtmlText);
 
   const setCompiledHtml = useCallback(
     (res: string, error: Error | null, opts: SetCompiledHtmlOptions): void => {
