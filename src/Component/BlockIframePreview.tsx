@@ -452,7 +452,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         capture: true,
       });
     };
-  }, []);
+  }, [size]);
 
   return src ? (
     <div ref={containerElRef}>
