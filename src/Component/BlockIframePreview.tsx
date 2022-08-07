@@ -321,6 +321,13 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const [src, setSrc] = useState("");
   useEffect(() => {
+    if (!header && !htmlText) {
+      if (src !== "") {
+        setSrc("");
+      }
+      return;
+    }
+
     const blob = new Blob(
       [
         `
@@ -380,7 +387,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         setSrc(reader.result?.toString() || "");
       };
     }
-  }, [block.id, block.compiledHtml, htmlText]);
+  }, [block.compiledHtml, header, htmlText]);
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
