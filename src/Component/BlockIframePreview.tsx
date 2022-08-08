@@ -260,9 +260,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     block.setIframePreviewSize(size);
     _setSize(size);
   }, []);
-  const size = useMemo(() => block.getIframePreviewSize(rawHtmlText), [
-    rawHtmlText,
-  ]);
+  const size = block.getIframePreviewSize(rawHtmlText);
 
   const setCompiledHtml = useCallback(
     (res: string, error: Error | null, opts: SetCompiledHtmlOptions): void => {
@@ -323,6 +321,13 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const [src, setSrc] = useState("");
   useEffect(() => {
+    if (!header && !htmlText) {
+      if (src !== "") {
+        setSrc("");
+      }
+      return;
+    }
+
     const blob = new Blob(
       [
         `
@@ -382,7 +387,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         setSrc(reader.result?.toString() || "");
       };
     }
-  }, [block.id, block.compiledHtml, htmlText]);
+  }, [block.compiledHtml, header, htmlText]);
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
