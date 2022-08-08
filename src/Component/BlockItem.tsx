@@ -337,15 +337,6 @@ const BlockItem: React.FC<Props> = ({
     }
 
     function onWindowKeydown(ev: KeyboardEvent): void {
-      // stay focused but not edit
-      if (
-        editor.editorElement.querySelector(
-          `[data-mt-block-editor-keep-focus="1"]`
-        )
-      ) {
-        return;
-      }
-
       const key = ev.key;
 
       if (
@@ -366,29 +357,16 @@ const BlockItem: React.FC<Props> = ({
         return;
       }
 
-      if (key === "z" && (ev.ctrlKey || ev.metaKey) && !ev.shiftKey) {
-        ev.preventDefault();
-
-        editor.editManager.undo({
-          editor,
-          getFocusedIds: () => focusedIds,
-          setFocusedIds,
-        });
-      } else if (
-        (key === "z" && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) ||
-        (key === "y" && (ev.ctrlKey || ev.metaKey))
+      // stay focused but not edit
+      if (
+        editor.editorElement.querySelector(
+          `[data-mt-block-editor-keep-focus="1"]`
+        )
       ) {
-        ev.preventDefault();
+        return;
+      }
 
-        editor.editManager.redo({
-          editor,
-          getFocusedIds: () => focusedIds,
-          setFocusedIds,
-        });
-      } else if (
-        focusedIds.length >= 2 &&
-        (key === "Delete" || key === "Backspace")
-      ) {
+      if (focusedIds.length >= 2 && (key === "Delete" || key === "Backspace")) {
         ev.preventDefault();
 
         editor.commandManager.execute({

@@ -1,4 +1,5 @@
 import { EditHistoryHandlers } from "../EditManager";
+import Block from "../Block";
 
 export const add: EditHistoryHandlers = {
   id: Symbol("add"),
@@ -6,9 +7,12 @@ export const add: EditHistoryHandlers = {
     const parent = hist.data.parent || editor;
     const index = parent.blocks.indexOf(hist.block);
     editor.removeBlock(parent, hist.block);
-    if (index > 0) {
-      setFocusedIds([parent.blocks[index - 1].id]);
-    }
+
+    const nextFocusBlock =
+      parent.blocks[Math.max(0, index - 1)] ||
+      (parent instanceof Block ? parent : null);
+
+    setFocusedIds([nextFocusBlock?.id ?? "editor"]);
   },
   redo(hist, { editor, setFocusedIds }) {
     const parent = hist.data.parent || editor;
