@@ -34,11 +34,8 @@ const AddButton: React.FC<AddButtonProps> = memo(
     showShortcuts,
   }: AddButtonProps) {
     const { editor } = useEditorContext();
-    const {
-      panelBlockTypes,
-      shortcutBlockTypes,
-      addBlock,
-    } = useBlocksContext();
+    const { panelBlockTypes, shortcutBlockTypes, addBlock } =
+      useBlocksContext();
     const [showList, setShowList] = useState(ListStatus.Hidden);
     const buttonElRef = useRef(null);
     const blockListElRef = useRef(null);
@@ -50,7 +47,7 @@ const AddButton: React.FC<AddButtonProps> = memo(
           return;
         }
 
-        const buttonEl = (buttonElRef.current as unknown) as HTMLElement;
+        const buttonEl = buttonElRef.current as unknown as HTMLElement;
         buttonEl.classList.remove("mt-be-droppable");
       };
 
@@ -59,7 +56,7 @@ const AddButton: React.FC<AddButtonProps> = memo(
           return;
         }
 
-        const blockListEl = (blockListElRef.current as unknown) as HTMLElement;
+        const blockListEl = blockListElRef.current as unknown as HTMLElement;
 
         let target = ev.target as HTMLElement;
         while (target.parentNode && target.parentNode !== target) {

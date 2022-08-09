@@ -35,9 +35,7 @@ interface BlockEditorCommandDetail {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra?: any;
 }
-export class BlockEditorCommandEvent extends CustomEvent<
-  BlockEditorCommandDetail
-> {
+export class BlockEditorCommandEvent extends CustomEvent<BlockEditorCommandDetail> {
   constructor(detail: BlockEditorCommandDetail) {
     super("mt-block-editor-command", { detail });
   }

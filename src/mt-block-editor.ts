@@ -190,7 +190,7 @@ export class EditorUtil {
 
     Object.setPrototypeOf(BoilerplateBlock, Column);
 
-    return (BoilerplateBlock as unknown) as typeof Block;
+    return BoilerplateBlock as unknown as typeof Block;
   }
 
   public static isSupportedEnvironment(): boolean {

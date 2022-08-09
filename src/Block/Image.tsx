@@ -234,9 +234,9 @@ class Image extends Block {
           alt: (doc.querySelector("IMG") as HTMLImageElement).alt || "",
           caption:
             (doc.querySelector("FIGCAPTION") &&
-              (doc.querySelector(
-                "FIGCAPTION"
-              ) as HTMLElement).innerHTML.replace(/<br[^>]*>/g, "\n")) ||
+              (
+                doc.querySelector("FIGCAPTION") as HTMLElement
+              ).innerHTML.replace(/<br[^>]*>/g, "\n")) ||
             "",
         },
         meta
