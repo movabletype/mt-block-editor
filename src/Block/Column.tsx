@@ -57,7 +57,7 @@ const Editor: React.FC<EditorProps> = ({
     canRemove = block.canRemoveBlock;
   }
 
-  const { editor, setFocusedIds, getFocusedIds } = useEditorContext();
+  const { editor, setFocusedIds } = useEditorContext();
 
   const blocksContext = useMemo<BlocksContextProps>(
     () => ({
