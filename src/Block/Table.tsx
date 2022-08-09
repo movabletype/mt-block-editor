@@ -63,7 +63,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.fire("Change");
+          ed.dispatch("Change");
           return null;
         };
 
@@ -90,9 +90,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           last = cur;
         };
 
-        ed.on("NodeChange Change", () => {
+        ed.on("NodeChange Change", (ev) => {
           if (root.childNodes.length <= 1) {
             addEdit();
+            return;
+          }
+
+          if (ev.type === "change") {
             return;
           }
 

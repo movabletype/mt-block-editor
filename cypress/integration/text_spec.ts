@@ -36,22 +36,22 @@ context("Text", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
     wait(1);
 
-    cy.get(".mt-be-block-toolbar").should('be.visible');
+    cy.get(".mt-be-block-toolbar").should("be.visible");
 
     type("Toolbar!");
 
-    cy.get(".mt-be-block-toolbar").should('not.be.visible');
+    cy.get(".mt-be-block-toolbar").should("not.be.visible");
 
     blur();
     wait(1);
 
-    cy.get(".mt-be-block-toolbar").should('not.exist');
+    cy.get(".mt-be-block-toolbar").should("not.exist");
 
     cy.get(".mt-be-block div:last-child").then(($div) => {
       const root = $div.get(0).shadowRoot;
       const editableDiv = root.querySelector("div[contenteditable]");
 
-      editableDiv.dispatchEvent(new Event('mousedown'));
+      editableDiv.dispatchEvent(new Event("mousedown"));
 
       const range = new Range();
       range.setStart(editableDiv.firstChild.firstChild, 0);
@@ -62,10 +62,10 @@ context("Text", () => {
         : document.getSelection(); // firefox
       selection.addRange(range);
 
-      $div.get(0).ownerDocument.dispatchEvent(new Event('mouseup'));
+      $div.get(0).ownerDocument.dispatchEvent(new Event("mouseup"));
     });
 
-    cy.get(".mt-be-block-toolbar").should('be.visible');
+    cy.get(".mt-be-block-toolbar").should("be.visible");
   });
 
   it("typo", () => {
@@ -99,7 +99,7 @@ context("Text", () => {
 
       type("{backspace}");
 
-      cy.get(".mt-be-block-toolbar").should('not.be.visible');
+      cy.get(".mt-be-block-toolbar").should("not.be.visible");
 
       serializedTextarea(textareaId)
         .should("have.value", "<!-- mt-beb --><p>b</p><!-- /mt-beb -->")
@@ -134,7 +134,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        "<!-- mt-beb --><p>a<br />b</p><!-- /mt-beb -->"
+        "<!-- mt-beb --><p>a<br>b</p><!-- /mt-beb -->"
       );
     });
 
@@ -190,7 +190,9 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Bold"] button, button[aria-label="太字"]`).click({ force: true });
+      cy.get(`[aria-label="Bold"] button, button[aria-label="太字"]`).click({
+        force: true,
+      });
       wait(1);
       type("a\n");
       wait(1);
@@ -208,9 +210,13 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Italic"] button, button[aria-label="斜体"]`).click({ force: true });
+      cy.get(`[aria-label="Italic"] button, button[aria-label="斜体"]`).click({
+        force: true,
+      });
       wait(1);
-      cy.get(`[aria-label="Text color"] button, [aria-label="テキストの色"] span.tox-split-button__chevron`).click({ multiple: true, force: true });
+      cy.get(
+        `[aria-label="Text color"] button, [aria-label="テキスト色"] span.tox-split-button__chevron`
+      ).click({ multiple: true, force: true });
       wait(1);
       cy.get(`div[data-mce-color="#000000"]`).click({ force: true });
       wait(1);
@@ -220,7 +226,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        `<!-- mt-beb --><p><span style="color: #000000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
+        `<!-- mt-beb --><p><span style="color: rgb(0, 0, 0);"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
       );
     });
   });

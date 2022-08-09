@@ -72,13 +72,26 @@ const Editor: React.FC<EditorProps> = ({
   useEffect(() => {
     installTinyMCEPlugins();
 
+    const pluginsToolbarSettings: TinyMCESettings =
+      parseInt(tinymce.majorVersion) >= 6
+        ? {
+            plugins: ["lists", "media", "code", "link", "MTBlockEditor"],
+            toolbar: [
+              "blocks | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
+              "bullist numlist outdent indent | blockquote link unlink",
+            ],
+          }
+        : {
+            plugins: "lists paste media textcolor code hr link MTBlockEditor",
+            toolbar: [
+              "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
+              "bullist numlist outdent indent | blockquote link unlink",
+            ],
+          };
+
     const settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext, blocksContext),
-      plugins: "lists paste media textcolor code hr link MTBlockEditor",
-      toolbar: [
-        "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
-        "bullist numlist outdent indent | blockquote link unlink",
-      ],
+      ...pluginsToolbarSettings,
       init_instance_callback: (ed: TinyMCEEditor) => {
         ed.setContent(block.text);
         if (focus) {
@@ -91,7 +104,7 @@ const Editor: React.FC<EditorProps> = ({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.fire("Change");
+          ed.dispatch("Change");
           return null;
         };
 
@@ -122,7 +135,7 @@ const Editor: React.FC<EditorProps> = ({
           last = cur;
         };
 
-        ed.on("NodeChange Change", () => {
+        ed.on("NodeChange Change", (ev) => {
           const children = [...root.children].filter(
             (e) => !e.classList.contains("mce-resizehandle")
           );
@@ -135,6 +148,10 @@ const Editor: React.FC<EditorProps> = ({
           const firstChild = children.shift();
           if (!firstChild) {
             addEdit();
+            return;
+          }
+
+          if (ev.type === "change") {
             return;
           }
 

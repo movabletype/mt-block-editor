@@ -34,6 +34,7 @@ export const commonSettings: (
   language: editor.opts.i18n.lng,
   selector: `#${block.tinymceId()}`,
   menubar: false,
+  contextmenu: false,
   fixed_toolbar_container: `[data-mt-be-toolbar="${block.id}"]`,
   inline: true,
   setup: (ed: TinyMCEEditor) => {
@@ -44,6 +45,13 @@ export const commonSettings: (
       ? decodeHtml(ev.content)
       : ev.content;
     if (content.match(/<!-- mt-beb .*? \/mt-beb -->$/)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ev as any).preventDefault?.(); // PastePreProcessEvent probably has preventDefault
+
+      if (parseInt(tinymce.majorVersion) >= 6) {
+        return;
+      }
+
       const clipboardData = new DataTransfer();
       clipboardData.setData("text/html", content);
       window.dispatchEvent(
@@ -54,9 +62,6 @@ export const commonSettings: (
           clipboardData,
         })
       );
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (ev as any).preventDefault?.(); // PastePreProcessEvent probably has preventDefault
     }
   },
 });
