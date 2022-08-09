@@ -119,16 +119,18 @@ export function getElementByNthOfTypeIndexes(
       return;
     }
 
-    node = ([...node.childNodes].filter((n) => {
-      if (
-        n instanceof HTMLElement &&
-        (n.getAttribute("data-mce-caret") || n.getAttribute("data-mce-bogus"))
-      ) {
-        return false;
-      }
+    node = (
+      [...node.childNodes].filter((n) => {
+        if (
+          n instanceof HTMLElement &&
+          (n.getAttribute("data-mce-caret") || n.getAttribute("data-mce-bogus"))
+        ) {
+          return false;
+        }
 
-      return n.nodeName === nodeName;
-    }) as HTMLElement[])[i];
+        return n.nodeName === nodeName;
+      }) as HTMLElement[]
+    )[i];
   });
   return node;
 }

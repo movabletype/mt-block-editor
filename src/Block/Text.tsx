@@ -54,7 +54,8 @@ const ToolbarVisibleStatus = {
   Visible: Symbol(),
   Invisible: Symbol(),
 } as const;
-type ToolbarVisibleStatus = typeof ToolbarVisibleStatus[keyof typeof ToolbarVisibleStatus];
+type ToolbarVisibleStatus =
+  typeof ToolbarVisibleStatus[keyof typeof ToolbarVisibleStatus];
 
 const Editor: React.FC<EditorProps> = ({
   block,
@@ -222,7 +223,7 @@ const Editor: React.FC<EditorProps> = ({
               e.preventDefault();
             } else {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const sel = (ed.selection.getSel() as any) as Selection;
+              const sel = ed.selection.getSel() as any as Selection;
               const start = ed.selection.getStart();
               const rng = ed.selection.getRng();
               if (
