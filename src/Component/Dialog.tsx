@@ -47,7 +47,7 @@ export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
   return (
     <Overlay open={props.open} onClose={props.onClose}>
       <DialogContext.Provider value={{ onClose: props.onClose }}>
-        <div className={className} ref={modalRef}>
+        <div className={className} data-mt-be-dialog ref={modalRef}>
           <div className="mt-be-dialog-content">{props.children}</div>
         </div>
       </DialogContext.Provider>
