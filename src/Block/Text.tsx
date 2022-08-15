@@ -223,6 +223,16 @@ const Editor: React.FC<EditorProps> = ({
           editor.editManager.endGrouping();
         });
 
+        let contentDeleted = false;
+        ed.on("beforeinput", (e: InputEvent) => {
+          if (e.inputType.startsWith("delete")) {
+            contentDeleted = true;
+            setTimeout(() => {
+              contentDeleted = false;
+            }, 50);
+          }
+        });
+
         ed.on("keydown", (e: KeyboardEvent) => {
           setTimeout(() => {
             const toolbar = document.querySelector(
@@ -241,10 +251,12 @@ const Editor: React.FC<EditorProps> = ({
 
           if (e.keyCode === 8 || e.keyCode === 46) {
             if (root.textContent === "" && ed.getContent() === "") {
-              if (canRemove) {
-                removeBlock(block);
+              if (!contentDeleted) {
+                if (canRemove) {
+                  removeBlock(block);
+                }
+                e.preventDefault();
               }
-              e.preventDefault();
             } else {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const sel = ed.selection.getSel() as any as Selection;
