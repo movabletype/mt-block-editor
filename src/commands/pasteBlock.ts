@@ -53,6 +53,10 @@ const command: Command = {
       return;
     }
 
+    if (document.querySelector("[data-mt-be-dialog]")) {
+      return;
+    }
+
     // Always ignore calls from keyboard shortcuts.
     // ClipboardEvent will be fired next, and it will be handled there.
     if (
