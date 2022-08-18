@@ -118,40 +118,35 @@ const Editor: React.FC<EditorProps> = ({
     []
   );
 
-  const onFocus = useCallback(() => block.resetCompiledHtml(), []);
+  const resetCompiledHtml = useCallback(() => {
+    block.resetCompiledHtml();
+  }, []);
   useEffect(() => {
-    if (focus || focusBlock || focusDescendant) {
-      block.resetCompiledHtml();
-    } else {
-      block.wrapperElement?.addEventListener("focus", onFocus, {
-        capture: true,
-        passive: true,
-        once: true,
+    const wrapperElement = block.wrapperRef.current;
+    if (wrapperElement) {
+      wrapperElement.addEventListener("input", resetCompiledHtml);
+    }
+
+    if (block._html !== "") {
+      parseContent(
+        preParseContent(block._html),
+        editor.factory,
+        new ParserContext()
+      ).then((blocks) => {
+        block._html = "";
+        block.blocks = blocks;
+        if (blocks[0]) {
+          setFocusedIds([blocks[0].id]);
+        }
       });
     }
-
-    if (block._html === "") {
-      return;
-    }
-
-    parseContent(
-      preParseContent(block._html),
-      editor.factory,
-      new ParserContext()
-    ).then((blocks) => {
-      block._html = "";
-      block.blocks = blocks;
-      if (blocks[0]) {
-        setFocusedIds([blocks[0].id]);
-      }
-    });
 
     return () => {
-      window.removeEventListener("focus", onFocus, {
-        capture: true,
-      });
+      if (wrapperElement) {
+        wrapperElement.removeEventListener("input", resetCompiledHtml);
+      }
     };
-  }, [focus || focusBlock || focusDescendant]);
+  }, [block.wrapperRef.current]);
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
