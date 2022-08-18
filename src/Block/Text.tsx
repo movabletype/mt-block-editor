@@ -93,6 +93,8 @@ const Editor: React.FC<EditorProps> = ({
       ...commonSettings(editor, block, editorContext, blocksContext),
       ...pluginsToolbarSettings,
       init_instance_callback: (ed: TinyMCEEditor) => {
+        block.tinymce = ed;
+
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);

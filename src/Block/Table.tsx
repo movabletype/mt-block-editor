@@ -52,6 +52,8 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
       init_instance_callback: (ed: TinyMCEEditor) => {
+        block.tinymce = ed;
+
         ed.setContent(block.text);
         if (focus) {
           tinymceFocus(ed, selectorSet);

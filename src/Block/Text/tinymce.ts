@@ -37,9 +37,6 @@ export const commonSettings: (
   contextmenu: false,
   fixed_toolbar_container: `[data-mt-be-toolbar="${block.id}"]`,
   inline: true,
-  setup: (ed: TinyMCEEditor) => {
-    block.tinymce = ed;
-  },
   paste_preprocess: (_, ev) => {
     const content = ev.content.match(/^&lt;!-- mt-beb .* \/mt-beb --&gt;$/)
       ? decodeHtml(ev.content)
