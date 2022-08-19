@@ -17,6 +17,7 @@ import Block, {
   NewFromHtmlOptions,
   EditorOptions,
   SerializeOptions,
+  CompileOptions,
   HasBlocks,
 } from "../Block";
 import AddButton from "../Component/AddButton";
@@ -148,6 +149,17 @@ const Editor: React.FC<EditorProps> = ({
     };
   }, [block.wrapperRef.current]);
 
+  useEffect(() => {
+    if (
+      (block.constructor as typeof Block).shouldBeCompiled &&
+      !block.compiledHtml &&
+      !focus &&
+      !focusDescendant
+    ) {
+      block.compile({ editor });
+    }
+  }, [focus || focusDescendant]);
+
   const res = (
     <BlocksContext.Provider value={blocksContext}>
       <BlockSetupCommon block={block} keys={["className"]} />
@@ -259,15 +271,16 @@ class Column extends Block implements HasBlocks {
     focusDescendant,
     canRemove,
   }: EditorOptions): JSX.Element {
-    let preview: null | JSX.Element = null;
-
     if (
+      this.showPreview &&
       (this.constructor as typeof Column).typeId !== "core-column" &&
       ((this._html === "" &&
         this.blocks.length === 0 &&
         this.effectiveAddableBlockTypes().length === 0) ||
         (!focus && !focusDescendant && !focusBlock))
     ) {
+      let preview: JSX.Element;
+
       const iframePreview = (
         <BlockIframePreview
           key={this.id}
@@ -293,16 +306,14 @@ class Column extends Block implements HasBlocks {
         preview = iframePreview;
       }
 
-      if (this.showPreview) {
-        // Reset only when edit mode -> preview mode, once.
-        // On before unload "Editor" and before start BlockIframePreview.
-        if (this.isInEditMode) {
-          this.isInEditMode = false;
-          this.resetCompiledHtml();
-        }
-
-        return preview;
+      // Reset only when edit mode -> preview mode, once.
+      // On before unload "Editor" and before start BlockIframePreview.
+      if (this.isInEditMode) {
+        this.isInEditMode = false;
+        this.resetCompiledHtml();
       }
+
+      return preview;
     }
 
     this.isInEditMode = true;
@@ -316,7 +327,6 @@ class Column extends Block implements HasBlocks {
           focusDescendant={focusDescendant}
           canRemove={canRemove}
         />
-        {preview && <div style={STYLE_HIDDEN}>{preview}</div>}
       </Fragment>
     );
   }
@@ -347,7 +357,7 @@ class Column extends Block implements HasBlocks {
     ].join("");
   }
 
-  public async compile({ editor }: SerializeOptions): Promise<void> {
+  public async compile({ editor }: CompileOptions): Promise<void> {
     let canceled = false;
     this.cancelOngoingCompilationHandlers.push(() => {
       canceled = true;
