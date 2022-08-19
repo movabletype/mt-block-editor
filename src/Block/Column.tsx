@@ -235,8 +235,6 @@ class Column extends Block implements HasBlocks {
   public panelBlockTypes: string[] | null = null;
   public shortcutBlockTypes: string[] | null = null;
 
-  private isInEditMode = false;
-
   public constructor(init?: Partial<Column>) {
     super();
     if (init) {
@@ -306,17 +304,9 @@ class Column extends Block implements HasBlocks {
         preview = iframePreview;
       }
 
-      // Reset only when edit mode -> preview mode, once.
-      // On before unload "Editor" and before start BlockIframePreview.
-      if (this.isInEditMode) {
-        this.isInEditMode = false;
-        this.resetCompiledHtml();
-      }
-
       return preview;
     }
 
-    this.isInEditMode = true;
     return (
       <Fragment key={this.id}>
         <Editor
