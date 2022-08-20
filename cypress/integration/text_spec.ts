@@ -42,6 +42,10 @@ context("Text", () => {
 
     cy.get(".mt-be-block-toolbar").should("not.be.visible");
 
+    type("{selectAll}{shift}");
+
+    cy.get(".mt-be-block-toolbar").should("be.visible");
+
     blur();
     wait(1);
 
@@ -66,6 +70,24 @@ context("Text", () => {
     });
 
     cy.get(".mt-be-block-toolbar").should("be.visible");
+  });
+
+  it.only("Editing a range of selections", () => {
+    cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+    wait(1);
+
+    cy.get(".mt-be-block-toolbar").should("be.visible");
+
+    type("Edit with ranges!");
+
+    type("{selectAll}{backspace}");
+    serializedTextarea(textareaId).should(
+      "have.value",
+      "<!-- mt-beb --><!-- /mt-beb -->"
+    );
+
+    type("{backspace}");
+    serializedTextarea(textareaId).should("have.value", "");
   });
 
   it("typo", () => {
