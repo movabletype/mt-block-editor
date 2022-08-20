@@ -31,17 +31,17 @@ import {
 
 declare const tinymce: TinyMCE;
 
-interface EditorProps extends EditorOptions {
+interface EditorProps extends Omit<EditorOptions, "focus"> {
   block: Table;
 }
 
-const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
   const { editor } = editorContext;
   const { addBlock } = useBlocksContext();
 
-  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
+  const selectorSet = getShadowDomSelectorSet(block.id);
 
   useEffect(() => {
     installTinyMCEPlugins();
@@ -52,10 +52,10 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
       init_instance_callback: (ed: TinyMCEEditor) => {
+        block.tinymce = ed;
+
         ed.setContent(block.text);
-        if (focus) {
-          tinymceFocus(ed, selectorSet);
-        }
+        tinymceFocus(ed, selectorSet);
 
         const root = ed.dom.getRoot();
 
@@ -163,7 +163,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     return () => {
       removeTinyMCEFromBlock(block);
     };
-  }, [focus]);
+  }, []);
 
   const isInSetupMode = editor.opts.mode === "setup";
 
@@ -224,7 +224,7 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
 
   public editor({ focus, focusBlock }: EditorOptions): JSX.Element {
     if (focus) {
-      return <Editor key={this.id} block={this} focus={focus} />;
+      return <Editor key={this.id} block={this} />;
     }
 
     if (focusBlock || this.htmlString()) {

@@ -34,7 +34,7 @@ import {
 
 declare const tinymce: TinyMCE;
 
-interface EditorProps extends EditorOptions {
+interface EditorProps extends Omit<EditorOptions, "focus"> {
   block: Text;
 }
 
@@ -57,17 +57,13 @@ const ToolbarVisibleStatus = {
 type ToolbarVisibleStatus =
   typeof ToolbarVisibleStatus[keyof typeof ToolbarVisibleStatus];
 
-const Editor: React.FC<EditorProps> = ({
-  block,
-  focus,
-  canRemove,
-}: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   const blocksContext = useBlocksContext();
   const editorContext = useEditorContext();
   const { editor, setFocusedIds } = editorContext;
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
-  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
+  const selectorSet = getShadowDomSelectorSet(block.id);
 
   useEffect(() => {
     installTinyMCEPlugins();
@@ -93,10 +89,10 @@ const Editor: React.FC<EditorProps> = ({
       ...commonSettings(editor, block, editorContext, blocksContext),
       ...pluginsToolbarSettings,
       init_instance_callback: (ed: TinyMCEEditor) => {
+        block.tinymce = ed;
+
         ed.setContent(block.text);
-        if (focus) {
-          tinymceFocus(ed, selectorSet);
-        }
+        tinymceFocus(ed, selectorSet);
 
         const root = ed.dom.getRoot();
 
@@ -273,7 +269,7 @@ const Editor: React.FC<EditorProps> = ({
     return () => {
       removeTinyMCEFromBlock(block);
     };
-  }, [focus]);
+  }, []);
 
   const html = block.html();
   const isInSetupMode = editor.opts.mode === "setup";
@@ -372,14 +368,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
 
   public editor({ focus, focusBlock, canRemove }: EditorOptions): JSX.Element {
     if (focus) {
-      return (
-        <Editor
-          key={this.id}
-          block={this}
-          focus={focus}
-          canRemove={canRemove}
-        />
-      );
+      return <Editor key={this.id} block={this} canRemove={canRemove} />;
     }
 
     if (focusBlock || this.htmlString()) {
