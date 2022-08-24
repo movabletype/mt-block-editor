@@ -46,8 +46,11 @@ export interface NewFromHtmlOptions {
   context: ParserContext;
 }
 
-export interface SerializeOptions {
+export interface CompileOptions {
   editor: Editor;
+}
+
+export interface SerializeOptions extends CompileOptions {
   external: boolean;
 }
 
@@ -273,7 +276,7 @@ class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async compile(opts: SerializeOptions): Promise<void> {
+  public async compile(opts: CompileOptions): Promise<void> {
     throw "Should be implemented for each concrete class";
   }
 
