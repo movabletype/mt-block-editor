@@ -252,7 +252,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       block.compiledHtml || block.serializedString({ editor, external: false });
   }
 
-  const containerElRef = useRef(null);
+  const containerElRef = useRef<HTMLDivElement>(null);
   const [rawHtmlData, rawHtmlText, setHtmlData] = useHtmlDataState(html, block);
 
   const [, _setSize] = useState<Size | null>(null);
@@ -445,7 +445,10 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           break;
         case "MTBlockEditorOnClick":
           if (containerEl) {
-            (containerEl as HTMLElement).dispatchEvent(
+            (
+              containerEl.closest("[data-mt-block-editor-block-id]") ||
+              (containerEl.getRootNode() as ShadowRoot)?.host
+            )?.dispatchEvent(
               new MouseEvent("click", {
                 bubbles: true,
                 cancelable: true,
