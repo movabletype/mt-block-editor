@@ -72,10 +72,10 @@ export default function blockProperty<T extends EditorProps>(
     useEffect(() => {
       // focus
       setTimeout(function () {
-        if (!block.wrapperElement) {
+        if (!block.wrapperRef.current) {
           return;
         }
-        const wrapperElement = block.wrapperElement as HTMLElement;
+        const wrapperElement = block.wrapperRef.current as HTMLElement;
 
         const focusEl = wrapperElement.querySelector<HTMLElement>(
           `[data-mt-block-editor-focus-default]`

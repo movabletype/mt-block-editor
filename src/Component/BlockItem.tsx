@@ -128,6 +128,7 @@ const BlockItem: React.FC<Props> = ({
   }
 
   const ref = useRef<HTMLDivElement>(null);
+  block.wrapperRef = ref;
   const [, drop] = useDrop(
     useMemo(
       () => ({
@@ -196,8 +197,6 @@ const BlockItem: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    block.wrapperElement = ref.current;
-
     return () => {
       block.isNewlyAdded = false;
     };

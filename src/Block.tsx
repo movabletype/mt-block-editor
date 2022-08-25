@@ -46,8 +46,11 @@ export interface NewFromHtmlOptions {
   context: ParserContext;
 }
 
-export interface SerializeOptions {
+export interface CompileOptions {
   editor: Editor;
+}
+
+export interface SerializeOptions extends CompileOptions {
   external: boolean;
 }
 
@@ -60,7 +63,7 @@ class Block {
   public static shouldBeCompiled = false;
   public id: string;
   public isNewlyAdded = false;
-  public wrapperElement: null | HTMLDivElement = null;
+  public wrapperRef: RefObject<HTMLDivElement>;
   public compiledHtml = "";
   public label = "";
   public helpText = "";
@@ -133,6 +136,7 @@ class Block {
       Math.round(Math.random() * 46656)
         .toString(36)
         .padStart(3, "0") + (idSequence++).toString(36).padStart(3, "0");
+    this.wrapperRef = React.createRef();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -146,15 +150,15 @@ class Block {
   }
 
   public focusEditor(): void {
-    if (!this.wrapperElement) {
+    if (!this.wrapperRef.current) {
       return;
     }
 
+    const wrapperElement = this.wrapperRef.current;
     const inputElm =
-      this.wrapperElement.querySelector<HTMLElement>(
+      wrapperElement.querySelector<HTMLElement>(
         "[data-mt-block-editor-focus-default]"
-      ) ||
-      this.wrapperElement.querySelector<HTMLElement>("input, textarea, select");
+      ) || wrapperElement.querySelector<HTMLElement>("input, textarea, select");
     if (!inputElm) {
       return;
     }
@@ -272,7 +276,7 @@ class Block {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async compile(opts: SerializeOptions): Promise<void> {
+  public async compile(opts: CompileOptions): Promise<void> {
     throw "Should be implemented for each concrete class";
   }
 
