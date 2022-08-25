@@ -119,39 +119,53 @@ export function getElementByNthOfTypeIndexes(
       return;
     }
 
-    node = ([...node.childNodes].filter((n) => {
-      if (
-        n instanceof HTMLElement &&
-        (n.getAttribute("data-mce-caret") || n.getAttribute("data-mce-bogus"))
-      ) {
-        return false;
-      }
+    node = (
+      [...node.childNodes].filter((n) => {
+        if (
+          n instanceof HTMLElement &&
+          (n.getAttribute("data-mce-caret") || n.getAttribute("data-mce-bogus"))
+        ) {
+          return false;
+        }
 
-      return n.nodeName === nodeName;
-    }) as HTMLElement[])[i];
+        return n.nodeName === nodeName;
+      }) as HTMLElement[]
+    )[i];
   });
   return node;
 }
 
-const _entityMap = {
-  "\t": "&#x08;",
-  "\n": "&#x0A;",
-  "\r": "&#x0D;",
-  "&": "&amp;",
-  "'": "&#x27;",
-  "`": "&#x60;",
-  '"': "&quot;",
-  "<": "&lt;",
-  ">": "&gt;",
-} as { [key: string]: string };
-export function escapeSingleQuoteAttribute(string: string): string {
-  if (typeof string !== "string") {
-    return string;
-  }
-  return string.replace(/[&<>'\t\n\r]/g, (match) => _entityMap[match]);
-}
+export const escapeSingleQuoteAttribute = (() => {
+  const entityMap: Record<string, string> = {
+    "\t": "&#x08;",
+    "\n": "&#x0A;",
+    "\r": "&#x0D;",
+    "&": "&amp;",
+    "'": "&#x27;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\u2018": "&#x2018;", // left single quotation mark
+    "\u2019": "&#x2019;", // right single quotation mark
+    "\u201c": "&#x201c;", // left double quotation mark
+    "\u201d": "&#x201d;", // right double quotation mark
+  };
+  const entityRegExp = new RegExp(`[${Object.keys(entityMap).join("")}]`, "g");
+
+  return (string: string): string => {
+    if (typeof string !== "string") {
+      return string;
+    }
+    return string.replace(entityRegExp, (match) => entityMap[match]);
+  };
+})();
 
 const DOMPurify = createDOMPurify(window);
 export function sanitize(str: string): string {
   return DOMPurify.sanitize(str);
+}
+
+export function decodeHtml(html: string): string {
+  const e = document.createElement("textarea");
+  e.innerHTML = html;
+  return e.value;
 }

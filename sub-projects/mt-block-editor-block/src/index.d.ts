@@ -133,6 +133,7 @@ export class EditorUtil {
   public static util: Map;
   public static React: Map;
   public static Context: Map;
+  public static Hook: Map;
   public static Block: typeof Block;
   public static apply(opts: EditorOptions): Promise<Editor>;
   public static get({ id }: { id: string }): Editor | undefined;

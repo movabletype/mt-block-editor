@@ -16,6 +16,7 @@ import Block, { HasBlocks, DEFAULT_KEYS_FOR_SETUP } from "./Block";
 import App from "./Component/App";
 import BlockFactory from "./BlockFactory";
 import EditManager from "./EditManager";
+import CommandManager, { Command } from "./CommandManager";
 import {
   add as editHandlersAdd,
   remove as editHandlersRemove,
@@ -23,6 +24,7 @@ import {
 } from "./Editor/edit";
 
 import "./import-default-blocks";
+import "./import-default-commands";
 
 export enum StylesheetType {
   url,
@@ -53,17 +55,28 @@ export interface EditorOptions {
   i18n: InitOptionsI18n;
 }
 
+interface MetadataMapData {
+  id: string;
+  blockIds: Set<string>;
+}
+
 class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
   public editManager: EditManager;
+  public commandManager: CommandManager;
   public blocks: Block[] = [];
   public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
 
   private inputElement: HTMLInputElement;
-  private metadataMap: Map<string, string> = new Map<string, string>();
+  private metadataMap: Map<string, MetadataMapData> = new Map<
+    string,
+    MetadataMapData
+  >();
+  private metadataMapSequence = 1;
+  private keyboardShortcutCache: Record<string, Command> = {};
 
   public constructor(opts: EditorOptions) {
     super();
@@ -80,6 +93,7 @@ class Editor extends EventEmitter implements HasBlocks {
     this.editManager = new EditManager(
       Object.assign({ editor: this }, opts.editManager || {})
     );
+    this.commandManager = new CommandManager({ editor: this });
 
     this.inputElement = getElementById(this.id) as HTMLInputElement;
     this.inputElement.style.display = "none";
@@ -87,7 +101,7 @@ class Editor extends EventEmitter implements HasBlocks {
       throw "error";
     }
 
-    this.editorElement = document.createElement("DIV");
+    this.editorElement = document.createElement("div");
     this.editorElement.setAttribute("data-mt-be-id", this.id);
     this.editorElement.classList.add("mt-block-editor");
 
@@ -97,6 +111,7 @@ class Editor extends EventEmitter implements HasBlocks {
     );
 
     setTimeout(async () => {
+      this.keyboardShortcutCache = await this.buildKeyboardShortcutCache();
       this.stylesheets = await Promise.all(this.buildStylesheets());
       const blocks = await parseContent(
         preParseContent(this.inputElement.value),
@@ -127,6 +142,20 @@ class Editor extends EventEmitter implements HasBlocks {
     return this.opts.shortcutBlockTypes
       ? this.selectableTypes(this.opts.shortcutBlockTypes)
       : [];
+  }
+
+  public async buildKeyboardShortcutCache(): Promise<Record<string, Command>> {
+    const cache: Record<string, Command> = {};
+    for (const command of await this.commandManager.commands()) {
+      if (command.shortcut) {
+        cache[command.shortcut] = command;
+      }
+    }
+    return cache;
+  }
+
+  public keyboardShortcutMap(): Record<string, Command> {
+    return this.keyboardShortcutCache;
   }
 
   public addBlock(parent: HasBlocks, block: Block, index: number): void {
@@ -239,12 +268,12 @@ class Editor extends EventEmitter implements HasBlocks {
     });
 
     const values = await Promise.all(
-      blocks.map((b) => b.serialize({ editor: this }))
+      blocks.map((b) => b.serialize({ editor: this, external: false }))
     );
 
     const metadataReverseMap: Metadata = {};
-    this.metadataMap.forEach((k, v) => {
-      metadataReverseMap[k] = JSON.parse(v);
+    this.metadataMap.forEach(({ id }, v) => {
+      metadataReverseMap[id] = JSON.parse(v);
     });
 
     this.inputElement.value =
@@ -255,21 +284,56 @@ class Editor extends EventEmitter implements HasBlocks {
         : "") + values.join("");
   }
 
-  private getMetadataMapIndex(str: string): string {
-    return (
-      this.metadataMap.get(str) ||
-      ((): string => {
-        const id = (this.metadataMap.size + 1).toString(36);
-        this.metadataMap.set(str, id);
-        return id;
-      })()
-    );
+  private getMetadataMapIndexes(
+    blockId: string,
+    stringArray: string[]
+  ): string[] {
+    const targetMap: Record<string, MetadataMapData | undefined> = {};
+    stringArray.forEach((str) => {
+      targetMap[str] = this.metadataMap.get(str);
+    });
+
+    const reusableIds = [];
+    for (const [k, data] of this.metadataMap) {
+      if (targetMap[k]) {
+        continue;
+      }
+
+      if (data.blockIds.has(blockId)) {
+        if (data.blockIds.size === 1) {
+          this.metadataMap.delete(k);
+          reusableIds.push(data.id);
+        } else {
+          data.blockIds.delete(blockId);
+        }
+      }
+    }
+
+    for (const str of Object.keys(targetMap)) {
+      const data = (targetMap[str] ||= {
+        id: reusableIds.shift() || (this.metadataMapSequence++).toString(36),
+        blockIds: new Set(),
+      });
+
+      data.blockIds.add(blockId);
+      if (!this.metadataMap.has(str)) {
+        this.metadataMap.set(str, data);
+      }
+    }
+
+    return Object.values(targetMap)
+      .filter((td): td is MetadataMapData => !!td)
+      .map((td) => td.id);
   }
 
-  public serializeMeta(block: Block): string | null {
+  public serializeMeta(block: Block, external: boolean): string | null {
     const meta = block.metadata();
     if (!meta) {
       return null;
+    }
+
+    if (external) {
+      return JSON.stringify(meta);
     }
 
     const metaSetup: Metadata = {};
@@ -280,11 +344,11 @@ class Editor extends EventEmitter implements HasBlocks {
       }
     });
 
-    return [metaSetup, meta]
+    const metaStrings = [metaSetup, meta]
       .map((m) => (Object.keys(m).length > 0 ? JSON.stringify(m) : null))
-      .filter((s): s is string => !!s)
-      .map((s) => this.getMetadataMapIndex(s))
-      .join(",");
+      .filter((s): s is string => !!s);
+
+    return this.getMetadataMapIndexes(block.id, metaStrings).join(",");
   }
 
   public unload(): void {

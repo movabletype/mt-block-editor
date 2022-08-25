@@ -1,6 +1,6 @@
 {
   "name": "mt-block-editor",
-  "version": "1.1.24",
+  "version": "1.1.34",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,14 +15,6 @@
     "cypress:build": "npm run build && npm run build-mt-block-editor-block && npm run build-test-blocks",
     "cypress:open": "npm run cypress:build && cypress open",
     "cypress:run": "npm run cypress:build && cypress run"
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "(\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|scss)|\\?raw)$": "<rootDir>/__mocks__/fileMock.js"
-    },
-    "testPathIgnorePatterns": [
-      "<rootDir>/sub-projects/generator-mt-block-editor-block/"
-    ]
   },
   "husky": {
     "hooks": {
@@ -39,21 +31,22 @@
     "@babel/preset-react": "^7.12.1",
     "@babel/preset-typescript": "^7.12.1",
     "@types/dompurify": "^2.0.4",
+    "@types/jest": "^28.1.1",
+    "@types/platform": "^1.3.4",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-transition-group": "^4.4.0",
-    "@types/tinymce": "^4.6.4",
-    "@typescript-eslint/eslint-plugin": "^5.3.1",
-    "@typescript-eslint/parser": "^5.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^5.2.6",
     "css-minimizer-webpack-plugin": "^3.0.1",
     "cypress": "^9.0.0",
-    "eslint": "^8.2.0",
-    "eslint-config-prettier": "^6.14.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.21.5",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
     "husky": "^4.3.0",
     "i18next-parser": "^5.4.0",
     "jest": "^27.3.1",
@@ -67,13 +60,15 @@
     "postcss-nested": "^5.0.5",
     "postcss-preset-env": "^7.3.1",
     "postcss-simple-vars": "^6.0.3",
-    "prettier": "^2.1.2",
-    "react-dnd": "^10.0.2",
-    "react-dnd-html5-backend": "^10.0.2",
+    "prettier": "^2.7.1",
+    "react-dnd": "^14.0.3",
+    "react-dnd-html5-backend": "^14.0.1",
+    "react-dnd-touch-backend": "^14.1.0",
     "rimraf": "^3.0.2",
     "style-loader": "^1.3.0",
     "terser-webpack-plugin": "^2.3.8",
-    "typescript": "^4.4.4",
+    "tinymce": "^6.1.0",
+    "typescript": "^4.7.4",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^4.0.0"
@@ -84,10 +79,9 @@
     "eventemitter3": "^4.0.7",
     "i18next": "^19.8.2",
     "i18next-xhr-backend": "^3.2.2",
+    "platform": "^1.3.6",
     "react": "^16.14.0",
-    "react-dnd-touch-backend": "^10.0.2",
     "react-dom": "^16.14.0",
-    "react-i18next": "^11.7.3",
     "react-shadow": "^19.0.2",
     "react-transition-group": "^4.4.1"
   }

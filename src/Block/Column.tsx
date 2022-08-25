@@ -1,11 +1,23 @@
 import { t } from "../i18n";
-import React, { Fragment, useEffect, CSSProperties } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  CSSProperties,
+} from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { EditorContext, useEditorContext, BlocksContext } from "../Context";
+import {
+  EditorContext,
+  useEditorContext,
+  BlocksContext,
+  BlocksContextProps,
+} from "../Context";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
   SerializeOptions,
+  CompileOptions,
   HasBlocks,
 } from "../Block";
 import AddButton from "../Component/AddButton";
@@ -14,6 +26,7 @@ import BlockIframePreview from "../Component/BlockIframePreview";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
 import {
   parseContent,
+  NO_BLOCK_TYPE_FALLBACK,
   preParseContent,
   escapeSingleQuoteAttribute,
   ParserContext,
@@ -41,95 +54,119 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   if (
     (block.constructor as typeof Block).typeId !== "core-column" ||
-    typeof canRemove === "undefined"
+    canRemove === undefined
   ) {
     canRemove = block.canRemoveBlock;
   }
 
-  const { editor, setFocusedId, getFocusedId } = useEditorContext();
+  const { editor, setFocusedIds } = useEditorContext();
 
-  const blocksContext = {
-    panelBlockTypes: block.panelBlockTypes,
-    shortcutBlockTypes: block.shortcutBlockTypes,
-    addBlock: (b: Block, index: number | Block) => {
-      if (index instanceof Block) {
-        index = block.blocks.indexOf(index) + 1;
-      }
-      editor.addBlock(block, b, index);
-      setFocusedId(b.id);
-    },
-    mergeBlock: (b: Block) => {
-      const index = block.blocks.indexOf(b);
-      if (editor.mergeBlock(block, b)) {
-        setFocusedId(block.blocks[index - 1].id);
-      }
-    },
-    removeBlock: (b: Block) => {
-      const index = block.blocks.indexOf(b);
-      editor.removeBlock(block, b);
-      if (index > 0) {
-        setFocusedId(block.blocks[index - 1].id);
-      }
-    },
-    swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
-      if (
-        dragIndex === undefined ||
-        hoverIndex === undefined ||
-        !block.blocks[dragIndex] ||
-        !block.blocks[hoverIndex]
-      ) {
-        return;
-      }
-
-      if (scroll) {
-        const destEl = document.querySelector(
-          `[data-mt-block-editor-block-id="${block.blocks[dragIndex].id}"]`
-        );
-        if (!destEl) {
+  const blocksContext = useMemo<BlocksContextProps>(
+    () => ({
+      panelBlockTypes: block.panelBlockTypes,
+      shortcutBlockTypes: block.shortcutBlockTypes,
+      addBlock: (b: Block, index: number | Block) => {
+        if (index instanceof Block) {
+          index = block.blocks.indexOf(index) + 1;
+        }
+        editor.addBlock(block, b, index);
+        setFocusedIds([b.id]);
+      },
+      mergeBlock: (b: Block) => {
+        const index = block.blocks.indexOf(b);
+        if (editor.mergeBlock(block, b)) {
+          setFocusedIds([block.blocks[index - 1].id]);
+        }
+      },
+      removeBlock: (b: Block) => {
+        const index = block.blocks.indexOf(b);
+        editor.removeBlock(block, b);
+        if (index > 0) {
+          setFocusedIds([block.blocks[index - 1].id]);
+        }
+      },
+      swapBlocks: (dragIndex: number, hoverIndex: number, scroll?: boolean) => {
+        if (
+          dragIndex === undefined ||
+          hoverIndex === undefined ||
+          !block.blocks[dragIndex] ||
+          !block.blocks[hoverIndex]
+        ) {
           return;
         }
 
-        const rect = destEl.getBoundingClientRect();
-        const scrollTop =
-          window.pageYOffset || document.documentElement.scrollTop;
-        const offsetTop = rect.height + 22;
+        if (scroll) {
+          const destEl = document.querySelector(
+            `[data-mt-block-editor-block-id="${block.blocks[dragIndex].id}"]`
+          );
+          if (!destEl) {
+            return;
+          }
 
-        window.scrollTo({
-          top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
-          behavior: "smooth",
-        });
-      }
+          const rect = destEl.getBoundingClientRect();
+          const scrollTop =
+            window.pageYOffset || document.documentElement.scrollTop;
+          const offsetTop = rect.height + 22;
 
-      editor.swapBlocks(block, dragIndex, hoverIndex);
-    },
-  };
+          window.scrollTo({
+            top: scrollTop + (dragIndex > hoverIndex ? -offsetTop : offsetTop),
+            behavior: "smooth",
+          });
+        }
 
-  useEffect(() => {
+        editor.swapBlocks(block, dragIndex, hoverIndex);
+      },
+    }),
+    []
+  );
+
+  const resetCompiledHtml = useCallback(() => {
     block.resetCompiledHtml();
-
-    if (block._html === "") {
-      return;
+  }, []);
+  useEffect(() => {
+    const wrapperElement = block.wrapperRef.current;
+    if (wrapperElement) {
+      wrapperElement.addEventListener("input", resetCompiledHtml);
     }
 
-    parseContent(
-      preParseContent(block._html),
-      editor.factory,
-      new ParserContext()
-    ).then((blocks) => {
-      block._html = "";
-      block.blocks = blocks;
-      if (blocks[0]) {
-        setFocusedId(blocks[0].id);
+    if (block._html !== "") {
+      parseContent(
+        preParseContent(block._html),
+        editor.factory,
+        new ParserContext()
+      ).then((blocks) => {
+        block._html = "";
+        block.blocks = blocks;
+        if (blocks[0]) {
+          setFocusedIds([blocks[0].id]);
+        }
+      });
+    }
+
+    return () => {
+      if (wrapperElement) {
+        wrapperElement.removeEventListener("input", resetCompiledHtml);
       }
-    });
-  });
+    };
+  }, [block.wrapperRef.current]);
+
+  useEffect(() => {
+    if (
+      (block.constructor as typeof Block).shouldBeCompiled &&
+      !block.compiledHtml &&
+      !focus &&
+      !focusDescendant
+    ) {
+      block.compile({ editor });
+    }
+  }, [focus || focusDescendant]);
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
       <BlockSetupCommon block={block} keys={["className"]} />
       {block.blocks.map((b, i) => {
         const focusFirstBlock = canRemove !== true && block.blocks.length === 1;
-        const focusItem = (focus && focusFirstBlock) || getFocusedId() === b.id;
+        const focusItem = (focus && focusFirstBlock) || undefined;
         return (
           <BlockItem
             key={b.id}
@@ -199,8 +236,6 @@ class Column extends Block implements HasBlocks {
   public panelBlockTypes: string[] | null = null;
   public shortcutBlockTypes: string[] | null = null;
 
-  private isInEditMode = false;
-
   public constructor(init?: Partial<Column>) {
     super();
     if (init) {
@@ -235,15 +270,16 @@ class Column extends Block implements HasBlocks {
     focusDescendant,
     canRemove,
   }: EditorOptions): JSX.Element {
-    let preview: null | JSX.Element = null;
-
     if (
+      this.showPreview &&
       (this.constructor as typeof Column).typeId !== "core-column" &&
       ((this._html === "" &&
         this.blocks.length === 0 &&
         this.effectiveAddableBlockTypes().length === 0) ||
         (!focus && !focusDescendant && !focusBlock))
     ) {
+      let preview: JSX.Element;
+
       const iframePreview = (
         <BlockIframePreview
           key={this.id}
@@ -269,19 +305,9 @@ class Column extends Block implements HasBlocks {
         preview = iframePreview;
       }
 
-      if (this.showPreview) {
-        // Reset only when edit mode -> preview mode, once.
-        // On before unload "Editor" and before start BlockIframePreview.
-        if (this.isInEditMode) {
-          this.isInEditMode = false;
-          this.resetCompiledHtml();
-        }
-
-        return preview;
-      }
+      return preview;
     }
 
-    this.isInEditMode = true;
     return (
       <Fragment key={this.id}>
         <Editor
@@ -292,7 +318,6 @@ class Column extends Block implements HasBlocks {
           focusDescendant={focusDescendant}
           canRemove={canRemove}
         />
-        {preview && <div style={STYLE_HIDDEN}>{preview}</div>}
       </Fragment>
     );
   }
@@ -323,18 +348,18 @@ class Column extends Block implements HasBlocks {
     ].join("");
   }
 
-  public async compile({ editor }: SerializeOptions): Promise<void> {
+  public async compile({ editor }: CompileOptions): Promise<void> {
     let canceled = false;
     this.cancelOngoingCompilationHandlers.push(() => {
       canceled = true;
     });
     const onBeforeSetCompiledHtml = (): boolean => !canceled;
 
-    const sourceHtml = await this.serializedString({ editor });
+    const sourceHtml = await this.serializedString({ editor, external: false });
     return new Promise((resolve, reject) => {
       let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-      const div = document.createElement("DIV");
+      const div = document.createElement("div");
       Object.assign(div.style, STYLE_HIDDEN);
       document.body.appendChild(div);
 
@@ -355,8 +380,8 @@ class Column extends Block implements HasBlocks {
 
       const editorContext = {
         editor,
-        setFocusedId: () => null,
-        getFocusedId: () => null,
+        setFocusedIds: () => undefined,
+        getFocusedIds: () => [],
       };
 
       render(
@@ -391,7 +416,7 @@ class Column extends Block implements HasBlocks {
       return super.serialize(opts);
     }
 
-    const m = opts.editor.serializeMeta(this);
+    const m = opts.editor.serializeMeta(this, opts.external);
     const typeId = (this.constructor as typeof Column).typeId;
     return [
       `<!-- mt-beb t="${typeId}"${
@@ -410,21 +435,14 @@ class Column extends Block implements HasBlocks {
   }: NewFromHtmlOptions): Promise<Block> {
     const html = node.hasAttribute("h")
       ? preParseContent(node.getAttribute("h") || "")
-      : node.innerHTML
-          .replace(/^&lt;div.*?&gt;(<!--\s+mt-beb\s+)/, "$1")
-          .replace(/&lt;\/div&gt;(<!--\s+\/mt-beb\s+--)>$/, "$1")
-          .replace(
-            new RegExp(
-              `^&lt;div\\s+class=["']${this.className}[^"']*["']&gt;&lt;/div&gt;$`
-            ),
-            ""
-          );
-    const blocks = await parseContent(html, factory, context);
+      : node.innerHTML;
+    const blocks = await parseContent(
+      html,
+      factory,
+      context,
+      NO_BLOCK_TYPE_FALLBACK
+    );
     const compiledHtml = node.hasAttribute("h") ? node.textContent : "";
-
-    if (html && blocks.length === 0) {
-      throw Error("This content is not for this block");
-    }
 
     return new this(
       Object.assign(

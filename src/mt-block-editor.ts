@@ -23,8 +23,15 @@ import BlockSetup from "./Component/BlockSetup";
 import BlockSetupCommon from "./Component/BlockSetupCommon";
 import BlockLabel from "./Component/BlockLabel";
 import EditorMode from "./Component/EditorMode";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "./Component/Dialog";
 
 import * as Context from "./Context";
+import * as Hook from "./Hook";
 import * as icon from "./icon";
 import * as util from "./util";
 import * as decorator from "./decorator";
@@ -70,11 +77,16 @@ export class EditorUtil {
     BlockSetupCommon,
     BlockLabel,
     EditorMode,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
   };
   public static decorator = decorator;
   public static React = React;
   public static Block = Block;
   public static Context = Context;
+  public static Hook = Hook;
   public static icon = icon;
   public static util = util;
 
@@ -178,7 +190,7 @@ export class EditorUtil {
 
     Object.setPrototypeOf(BoilerplateBlock, Column);
 
-    return (BoilerplateBlock as unknown) as typeof Block;
+    return BoilerplateBlock as unknown as typeof Block;
   }
 
   public static isSupportedEnvironment(): boolean {

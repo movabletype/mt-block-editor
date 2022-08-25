@@ -1,12 +1,25 @@
-export function type(...args) {
-  cy.get("body").type(...args);
+/// <reference types="cypress" />
+import type { EditorUtil } from "../../src/mt-block-editor";
+
+declare global {
+  interface Window {
+    MTBlockEditor: typeof EditorUtil;
+  }
 }
 
-export function apply(opts) {
+export function type(text, options?): void {
+  cy.get("body").type(text, options);
+}
+
+export function apply(opts): void {
   cy.window().then((w) => {
-    const textarea = w.document.createElement("TEXTAREA");
-    textarea.id = opts.id;
-    w.document.body.appendChild(textarea);
+    const textarea =
+      w.document.querySelector<HTMLTextAreaElement>(`[id="${opts.id}"]`) ||
+      w.document.createElement("textarea");
+    if (!textarea.id) {
+      textarea.id = opts.id;
+      w.document.body.appendChild(textarea);
+    }
 
     return w.MTBlockEditor.apply(
       Object.assign(
@@ -22,8 +35,7 @@ export function apply(opts) {
         opts
       )
     ).then((ed) => {
-      ed.on("buildTinyMCESettings", ({ block, settings }) => {
-        settings.plugins += " mt_security";
+      ed.on("buildTinyMCESettings", ({ settings }) => {
         settings.extended_valid_elements = [
           // we embed 'a[onclick]' by inserting image with popup
           "a[href|title|target|name|id|class|onclick]",
@@ -37,16 +49,22 @@ export function apply(opts) {
         settings.valid_children = "+a[div]";
       });
 
-      ed.on("change", ({ editor }) => {
-        let count = textarea.dataset.mtBlockEditorChangeCount || 0;
+      ed.on("change", () => {
+        let count = parseInt(textarea.dataset.mtBlockEditorChangeCount || "0");
         count++;
-        textarea.dataset.mtBlockEditorChangeCount = count;
+        textarea.dataset.mtBlockEditorChangeCount = count.toString();
       });
     });
   });
 }
 
-export function registerCustomBlock(block) {
+export function unload(opts): void {
+  cy.window().then((w) => {
+    return w.MTBlockEditor.unload(opts);
+  });
+}
+
+export function registerCustomBlock(block): void {
   cy.window().then((w) => {
     return w.MTBlockEditor.registerBlockType(
       w.MTBlockEditor.createBoilerplateBlock(block)
@@ -54,18 +72,21 @@ export function registerCustomBlock(block) {
   });
 }
 
-export function registerBlockType(block) {
+export function registerBlockType(block): void {
   cy.window().then((w) => {
     return w.MTBlockEditor.registerBlockType(block);
   });
 }
 
-export function serializedTextarea(id, opts = {}) {
+export function serializedTextarea(
+  id: string,
+  opts = {}
+): Cypress.Chainable<JQuery<HTMLElement>> {
   cy.window().then(opts, (w) => w.MTBlockEditor.serialize());
   return cy.get(`#${id}`);
 }
 
-export function blur() {
+export function blur(): void {
   cy.window().then((w) => {
     const footer = w.document.createElement("a");
     w.document.body.appendChild(footer);
@@ -74,7 +95,7 @@ export function blur() {
   });
 }
 
-export function wait(count) {
+export function wait(count): void {
   count = count || 1;
   cy.wait((Cypress.env("wait_unit_time") || 100) * count);
 }

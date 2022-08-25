@@ -2,19 +2,19 @@ import { createContext, useContext } from "react";
 import Editor from "./Editor";
 import Block from "./Block";
 
-interface SetFocusedIdOptions {
+interface SetFocusedIdsOptions {
   forceUpdate: boolean;
 }
 
-export type SetFocusedId = (
-  id: string | null,
-  opts?: SetFocusedIdOptions
+export type SetFocusedIds = (
+  ids: string[],
+  opts?: SetFocusedIdsOptions
 ) => void;
 
 export interface EditorContextProps {
   editor: Editor;
-  setFocusedId: SetFocusedId;
-  getFocusedId: () => string | null;
+  setFocusedIds: SetFocusedIds;
+  getFocusedIds: () => string[];
 }
 export const EditorContext = createContext<EditorContextProps | null>(null);
 export function useEditorContext(): EditorContextProps {
@@ -25,7 +25,7 @@ export function useEditorContext(): EditorContextProps {
   return c;
 }
 
-interface BlocksContextProps {
+export interface BlocksContextProps {
   panelBlockTypes: string[] | null;
   shortcutBlockTypes: string[] | null;
   addBlock: (b: Block, index: number | Block) => void;
@@ -51,7 +51,7 @@ export const BlockContext = createContext<BlockContextProps | null>(null);
 export function useBlockContext(): BlockContextProps {
   const c = useContext(BlockContext);
   if (!c) {
-    throw Error("BlocksContext is not initialized");
+    throw Error("BlockContext is not initialized");
   }
   return c;
 }

@@ -2,10 +2,10 @@ import { t } from "../i18n";
 import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { sanitize, getShadowDomSelectorSet } from "../util";
-import {
-  Editor as TinyMCE,
-  EditorManager,
-  Settings as TinyMCESettings,
+import type {
+  Editor as TinyMCEEditor,
+  TinyMCE,
+  RawEditorOptions as TinyMCESettings,
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/table.svg";
@@ -17,6 +17,10 @@ import BlockContentEditablePreview, {
   HasEditorStyle,
 } from "../Component/BlockContentEditablePreview";
 import { editHandlers } from "./Text/edit";
+import {
+  installPlugins as installTinyMCEPlugins,
+  commonSettings,
+} from "./Text/tinymce";
 
 import {
   HasTinyMCE,
@@ -25,39 +29,33 @@ import {
   adjustToolbar,
 } from "./Text/util";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
-interface EditorProps extends EditorOptions {
+interface EditorProps extends Omit<EditorOptions, "focus"> {
   block: Table;
 }
 
-const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
-  const { editor } = useEditorContext();
+const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
+  const blocksContext = useBlocksContext();
+  const editorContext = useEditorContext();
+  const { editor } = editorContext;
   const { addBlock } = useBlocksContext();
 
-  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
+  const selectorSet = getShadowDomSelectorSet(block.id);
 
   useEffect(() => {
+    installTinyMCEPlugins();
+
     const settings: TinyMCESettings = {
-      language: editor.opts.i18n.lng,
-      selector: `#${block.tinymceId()}`,
-      menubar: false,
-      plugins: "table code paste media textcolor link",
+      ...commonSettings(editor, block, editorContext, blocksContext),
+      plugins: "table code paste media textcolor link MTBlockEditor",
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
-
-      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      inline: true,
-
-      setup: (ed: TinyMCE) => {
+      init_instance_callback: (ed: TinyMCEEditor) => {
         block.tinymce = ed;
-      },
 
-      init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
-        if (focus) {
-          tinymceFocus(ed, selectorSet);
-        }
+        tinymceFocus(ed, selectorSet);
 
         const root = ed.dom.getRoot();
 
@@ -65,7 +63,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.fire("Change");
+          ed.dispatch("Change");
           return null;
         };
 
@@ -92,9 +90,13 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
           last = cur;
         };
 
-        ed.on("NodeChange Change", () => {
+        ed.on("NodeChange Change", (ev) => {
           if (root.childNodes.length <= 1) {
             addEdit();
+            return;
+          }
+
+          if (ev.type === "change") {
             return;
           }
 
@@ -161,7 +163,7 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
     return () => {
       removeTinyMCEFromBlock(block);
     };
-  });
+  }, []);
 
   const isInSetupMode = editor.opts.mode === "setup";
 
@@ -176,7 +178,6 @@ const Editor: React.FC<EditorProps> = ({ block, focus }: EditorProps) => {
         ></div>
       </BlockLabel>
       <BlockToolbar
-        id={`${block.tinymceId()}toolbar`}
         fullWidth={true}
         hasBorder={false}
         className="mt-be-block-toolbar--tinymce"
@@ -201,7 +202,7 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
   }
 
   public text = "";
-  public tinymce: TinyMCE | null = null;
+  public tinymce: TinyMCEEditor | null = null;
   public editorStyle: CSSProperties = {};
 
   public constructor(init?: Partial<Table>) {
@@ -223,7 +224,7 @@ class Table extends Block implements HasTinyMCE, HasEditorStyle {
 
   public editor({ focus, focusBlock }: EditorOptions): JSX.Element {
     if (focus) {
-      return <Editor key={this.id} block={this} focus={focus} />;
+      return <Editor key={this.id} block={this} />;
     }
 
     if (focusBlock || this.htmlString()) {

@@ -18,8 +18,10 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
   html,
   onMouseUp,
 }: EditorProps) => {
-  const { setFocusedId } = useEditorContext();
+  const { getFocusedIds, setFocusedIds } = useEditorContext();
   const divElRef = useRef<HTMLDivElement>(null);
+  const focusedIds = getFocusedIds();
+  const inFocusGroup = focusedIds.length >= 2 && focusedIds.includes(block.id);
 
   useEffect(() => {
     const divEl = divElRef.current;
@@ -42,35 +44,50 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
       };
     }, 10);
 
-    divEl.addEventListener(
-      "mousedown",
-      () => {
-        document.addEventListener(
-          "mouseup",
-          (ev: MouseEvent) => {
-            if (!getShadowDomSelectorSet(block.id)) {
-              return;
-            }
+    const mousedownListener = (ev: MouseEvent): void => {
+      if (ev.shiftKey || ev.ctrlKey || ev.metaKey || ev.altKey) {
+        return;
+      }
 
-            if (onMouseUp) {
-              onMouseUp(ev);
-            }
-            setFocusedId(block.id);
-          },
-          { once: true, passive: true }
-        );
-      },
-      { passive: true }
-    );
+      document.addEventListener(
+        "mouseup",
+        (ev: MouseEvent) => {
+          if (!getShadowDomSelectorSet(block.id)) {
+            return;
+          }
 
-    divEl.addEventListener(
-      "keyup",
-      () => {
-        setFocusedId(block.id);
-      },
-      { passive: true }
+          if (onMouseUp) {
+            onMouseUp(ev);
+          }
+          setFocusedIds([block.id]);
+        },
+        { once: true, passive: true }
+      );
+    };
+    divEl.addEventListener("mousedown", mousedownListener, { passive: true });
+
+    const keyupListener = (ev: KeyboardEvent): void => {
+      if (!ev.shiftKey) {
+        setFocusedIds([block.id]);
+      }
+    };
+    divEl.addEventListener("keyup", keyupListener, { passive: true });
+
+    return () => {
+      divEl.removeEventListener("mousedown", mousedownListener);
+      divEl.removeEventListener("keyup", keyupListener);
+    };
+  }, [inFocusGroup]);
+
+  if (inFocusGroup) {
+    return (
+      <div
+        dangerouslySetInnerHTML={{
+          __html: sanitize(html),
+        }}
+      ></div>
     );
-  });
+  }
 
   return (
     <div

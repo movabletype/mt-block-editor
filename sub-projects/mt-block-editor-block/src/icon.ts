@@ -1,3 +1,3 @@
-const { edit } = window.MTBlockEditor.icon;
+const { edit, link } = window.MTBlockEditor.icon;
 
-export { edit };
+export { edit, link };

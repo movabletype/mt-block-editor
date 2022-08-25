@@ -1,19 +1,14 @@
 import { t } from "../i18n";
 import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import {
-  Editor as TinyMCE,
-  EditorManager,
-  Settings as TinyMCESettings,
+import type {
+  Editor as TinyMCEEditor,
+  TinyMCE,
+  RawEditorOptions as TinyMCESettings,
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import {
-  getElementById,
-  sanitize,
-  isIos,
-  getShadowDomSelectorSet,
-} from "../util";
+import { sanitize, isIos, getShadowDomSelectorSet } from "../util";
 import EditorMode from "../Component/EditorMode";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -32,10 +27,14 @@ import {
   adjustToolbar,
 } from "./Text/util";
 import { editHandlers } from "./Text/edit";
+import {
+  installPlugins as installTinyMCEPlugins,
+  commonSettings,
+} from "./Text/tinymce";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
-interface EditorProps extends EditorOptions {
+interface EditorProps extends Omit<EditorOptions, "focus"> {
   block: Text;
 }
 
@@ -55,41 +54,45 @@ const ToolbarVisibleStatus = {
   Visible: Symbol(),
   Invisible: Symbol(),
 } as const;
-type ToolbarVisibleStatus = typeof ToolbarVisibleStatus[keyof typeof ToolbarVisibleStatus];
+type ToolbarVisibleStatus =
+  typeof ToolbarVisibleStatus[keyof typeof ToolbarVisibleStatus];
 
-const Editor: React.FC<EditorProps> = ({
-  block,
-  focus,
-  canRemove,
-}: EditorProps) => {
-  const { editor, setFocusedId } = useEditorContext();
+const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
+  const blocksContext = useBlocksContext();
+  const editorContext = useEditorContext();
+  const { editor, setFocusedIds } = editorContext;
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
-  const selectorSet = focus ? getShadowDomSelectorSet(block.id) : null;
+  const selectorSet = getShadowDomSelectorSet(block.id);
 
   useEffect(() => {
+    installTinyMCEPlugins();
+
+    const pluginsToolbarSettings: TinyMCESettings =
+      parseInt(tinymce.majorVersion) >= 6
+        ? {
+            plugins: ["lists", "media", "code", "link", "MTBlockEditor"],
+            toolbar: [
+              "blocks | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
+              "bullist numlist outdent indent | blockquote link unlink",
+            ],
+          }
+        : {
+            plugins: "lists paste media textcolor code hr link MTBlockEditor",
+            toolbar: [
+              "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
+              "bullist numlist outdent indent | blockquote link unlink",
+            ],
+          };
+
     const settings: TinyMCESettings = {
-      language: editor.opts.i18n.lng,
-      selector: `#${block.tinymceId()}`,
-      menubar: false,
-      plugins: "lists paste media textcolor code hr link",
-      toolbar: [
-        "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
-        "bullist numlist outdent indent | blockquote link unlink",
-      ],
-
-      fixed_toolbar_container: `#${block.tinymceId()}toolbar`,
-      inline: true,
-
-      setup: (ed: TinyMCE) => {
+      ...commonSettings(editor, block, editorContext, blocksContext),
+      ...pluginsToolbarSettings,
+      init_instance_callback: (ed: TinyMCEEditor) => {
         block.tinymce = ed;
-      },
 
-      init_instance_callback: (ed: TinyMCE) => {
         ed.setContent(block.text);
-        if (focus) {
-          tinymceFocus(ed, selectorSet);
-        }
+        tinymceFocus(ed, selectorSet);
 
         const root = ed.dom.getRoot();
 
@@ -97,7 +100,7 @@ const Editor: React.FC<EditorProps> = ({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.fire("Change");
+          ed.dispatch("Change");
           return null;
         };
 
@@ -105,6 +108,10 @@ const Editor: React.FC<EditorProps> = ({
         ed.on("MTBlockEditorEdit", (ev) => {
           ed.dom.setHTML(ed.getBody(), ev.html);
           last = ev.html;
+        });
+
+        ed.on("SaveContent", (ev) => {
+          ev.content = sanitize(ev.content);
         });
 
         const addEdit = (): void => {
@@ -124,8 +131,8 @@ const Editor: React.FC<EditorProps> = ({
           last = cur;
         };
 
-        ed.on("NodeChange Change", () => {
-          const children = ([...root.childNodes] as HTMLElement[]).filter(
+        ed.on("NodeChange Change", (ev) => {
+          const children = [...root.children].filter(
             (e) => !e.classList.contains("mce-resizehandle")
           );
 
@@ -137,6 +144,10 @@ const Editor: React.FC<EditorProps> = ({
           const firstChild = children.shift();
           if (!firstChild) {
             addEdit();
+            return;
+          }
+
+          if (ev.type === "change") {
             return;
           }
 
@@ -154,7 +165,7 @@ const Editor: React.FC<EditorProps> = ({
               if (i === 0 && isIos()) {
                 const editorRect = editor.editorElement.getBoundingClientRect();
                 const rootRect = root.getBoundingClientRect();
-                const input = document.createElement("INPUT");
+                const input = document.createElement("input");
                 input.classList.add("mt-be-input--hidden");
                 input.style.top = rootRect.top - editorRect.top + "px";
                 editor.editorElement.appendChild(input);
@@ -168,7 +179,7 @@ const Editor: React.FC<EditorProps> = ({
                 e.remove()
               );
               if (c.childNodes.length !== 0 && i === children.length - 1) {
-                let target: HTMLElement | null;
+                let target: Element | null;
                 if (["UL", "OL"].find((tn) => c.tagName === tn)) {
                   target = c.querySelector("LI");
                 } else if (
@@ -186,7 +197,7 @@ const Editor: React.FC<EditorProps> = ({
                   target = c;
                 }
                 if (target) {
-                  const caret = document.createElement("BR");
+                  const caret = document.createElement("br");
                   caret.setAttribute(CARET_ATTR, "1");
 
                   target.insertBefore(caret, target.firstChild);
@@ -202,30 +213,49 @@ const Editor: React.FC<EditorProps> = ({
               addBlock(textBlock, block);
             });
           } else {
-            setFocusedId(null);
+            setFocusedIds([]);
           }
 
           editor.editManager.endGrouping();
         });
 
-        ed.on("keydown", (e: KeyboardEvent) => {
-          try {
-            getElementById(`${block.tinymceId()}toolbar`).classList.add(
-              "invisible"
-            );
-          } catch (e) {
-            // ignore
+        let contentDeleted = false;
+        ed.on("beforeinput", (e: InputEvent) => {
+          if (e.inputType.startsWith("delete")) {
+            contentDeleted = true;
+            setTimeout(() => {
+              contentDeleted = false;
+            }, 50);
           }
+        });
+
+        ed.on("keydown", (e: KeyboardEvent) => {
+          setTimeout(() => {
+            const toolbar = document.querySelector(
+              `[data-mt-be-toolbar="${block.id}"]`
+            );
+            if (!toolbar) {
+              return;
+            }
+
+            if (ed.selection.getRng().collapsed) {
+              toolbar.classList.add("invisible");
+            } else {
+              toolbar.classList.remove("invisible");
+            }
+          });
 
           if (e.keyCode === 8 || e.keyCode === 46) {
             if (root.textContent === "" && ed.getContent() === "") {
-              if (canRemove) {
-                removeBlock(block);
+              if (!contentDeleted) {
+                if (canRemove) {
+                  removeBlock(block);
+                }
+                e.preventDefault();
               }
-              e.preventDefault();
             } else {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const sel = (ed.selection.getSel() as any) as Selection;
+              const sel = ed.selection.getSel() as any as Selection;
               const start = ed.selection.getStart();
               const rng = ed.selection.getRng();
               if (
@@ -258,7 +288,7 @@ const Editor: React.FC<EditorProps> = ({
     return () => {
       removeTinyMCEFromBlock(block);
     };
-  });
+  }, []);
 
   const html = block.html();
   const isInSetupMode = editor.opts.mode === "setup";
@@ -271,9 +301,9 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <div
       onClick={() => {
-        getElementById(`${block.tinymceId()}toolbar`).classList.remove(
-          "invisible"
-        );
+        document
+          .querySelector(`[data-mt-be-toolbar="${block.id}"]`)
+          ?.classList.remove("invisible");
       }}
       style={block.editorStyle}
     >
@@ -286,7 +316,6 @@ const Editor: React.FC<EditorProps> = ({
         ></div>
       </BlockLabel>
       <BlockToolbar
-        id={`${block.tinymceId()}toolbar`}
         rows={2}
         hasBorder={false}
         className={`mt-be-block-toolbar--tinymce ${
@@ -314,7 +343,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
 
   public text = "";
   public editorStyle: CSSProperties = {};
-  public tinymce: TinyMCE | null = null;
+  public tinymce: TinyMCEEditor | null = null;
   public toolbarVisibleStatus: ToolbarVisibleStatus =
     ToolbarVisibleStatus.DependsOnContent;
 
@@ -358,14 +387,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
 
   public editor({ focus, focusBlock, canRemove }: EditorOptions): JSX.Element {
     if (focus) {
-      return (
-        <Editor
-          key={this.id}
-          block={this}
-          focus={focus}
-          canRemove={canRemove}
-        />
-      );
+      return <Editor key={this.id} block={this} canRemove={canRemove} />;
     }
 
     if (focusBlock || this.htmlString()) {

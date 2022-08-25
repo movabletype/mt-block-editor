@@ -36,22 +36,26 @@ context("Text", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
     wait(1);
 
-    cy.get(".mt-be-block-toolbar").should('be.visible');
+    cy.get(".mt-be-block-toolbar").should("be.visible");
 
     type("Toolbar!");
 
-    cy.get(".mt-be-block-toolbar").should('not.be.visible');
+    cy.get(".mt-be-block-toolbar").should("not.be.visible");
+
+    type("{selectAll}{shift}");
+
+    cy.get(".mt-be-block-toolbar").should("be.visible");
 
     blur();
     wait(1);
 
-    cy.get(".mt-be-block-toolbar").should('not.exist');
+    cy.get(".mt-be-block-toolbar").should("not.exist");
 
     cy.get(".mt-be-block div:last-child").then(($div) => {
       const root = $div.get(0).shadowRoot;
       const editableDiv = root.querySelector("div[contenteditable]");
 
-      editableDiv.dispatchEvent(new Event('mousedown'));
+      editableDiv.dispatchEvent(new Event("mousedown"));
 
       const range = new Range();
       range.setStart(editableDiv.firstChild.firstChild, 0);
@@ -62,10 +66,28 @@ context("Text", () => {
         : document.getSelection(); // firefox
       selection.addRange(range);
 
-      $div.get(0).ownerDocument.dispatchEvent(new Event('mouseup'));
+      $div.get(0).ownerDocument.dispatchEvent(new Event("mouseup"));
     });
 
-    cy.get(".mt-be-block-toolbar").should('be.visible');
+    cy.get(".mt-be-block-toolbar").should("be.visible");
+  });
+
+  it.only("Editing a range of selections", () => {
+    cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
+    wait(1);
+
+    cy.get(".mt-be-block-toolbar").should("be.visible");
+
+    type("Edit with ranges!");
+
+    type("{selectAll}{backspace}");
+    serializedTextarea(textareaId).should(
+      "have.value",
+      "<!-- mt-beb --><!-- /mt-beb -->"
+    );
+
+    type("{backspace}");
+    serializedTextarea(textareaId).should("have.value", "");
   });
 
   it("typo", () => {
@@ -99,7 +121,7 @@ context("Text", () => {
 
       type("{backspace}");
 
-      cy.get(".mt-be-block-toolbar").should('not.be.visible');
+      cy.get(".mt-be-block-toolbar").should("not.be.visible");
 
       serializedTextarea(textareaId)
         .should("have.value", "<!-- mt-beb --><p>b</p><!-- /mt-beb -->")
@@ -134,7 +156,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        "<!-- mt-beb --><p>a<br />b</p><!-- /mt-beb -->"
+        "<!-- mt-beb --><p>a<br>b</p><!-- /mt-beb -->"
       );
     });
 
@@ -190,7 +212,9 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Bold"] button, button[aria-label="太字"]`).click({ force: true });
+      cy.get(`[aria-label="Bold"] button, button[aria-label="太字"]`).click({
+        force: true,
+      });
       wait(1);
       type("a\n");
       wait(1);
@@ -208,9 +232,13 @@ context("Text", () => {
       ).click();
 
       wait(1);
-      cy.get(`[aria-label="Italic"] button, button[aria-label="斜体"]`).click({ force: true });
+      cy.get(`[aria-label="Italic"] button, button[aria-label="斜体"]`).click({
+        force: true,
+      });
       wait(1);
-      cy.get(`[aria-label="Text color"] button, [aria-label="テキストの色"] span.tox-split-button__chevron`).click({ multiple: true, force: true });
+      cy.get(
+        `[aria-label="Text color"] button, [aria-label="テキスト色"] span.tox-split-button__chevron`
+      ).click({ multiple: true, force: true });
       wait(1);
       cy.get(`div[data-mce-color="#000000"]`).click({ force: true });
       wait(1);
@@ -220,7 +248,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        `<!-- mt-beb --><p><span style="color: #000000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
+        `<!-- mt-beb --><p><span style="color: rgb(0, 0, 0);"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
       );
     });
   });
@@ -451,11 +479,15 @@ context("Text", () => {
         `button[aria-label="Source code"], button[aria-label="ソースコード"]`
       ).click({ force: true });
       cy.wait(50);
-      cy.get(".mce-window textarea").invoke(
+      cy.get(".tox-dialog textarea").invoke(
         "val",
         "<table><tr><td>test</td></tr></table>"
       );
-      cy.get(".mce-window .mce-primary button:first-child").click();
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
 
       blur();
 
@@ -463,6 +495,156 @@ context("Text", () => {
         "have.value",
         "<!-- mt-beb --><table>\n<tbody>\n<tr>\n<td>test</td>\n</tr>\n</tbody>\n</table><!-- /mt-beb -->"
       );
+    });
+  });
+
+  context("Escape", () => {
+    it("onclick", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke(
+        "val",
+        `<a onclick="location.href = this.href" href="https://example.com">example.com</a>`
+      );
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      cy.wait(1);
+
+      cy.get(`.mt-be-block .mce-content-body a`).should(
+        "have.attr",
+        "onclick",
+        "javascript:void(0)"
+      );
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><p><a href="https://example.com" onclick="location.href = this.href">example.com</a></p><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context("Prohibited Tags", () => {
+    it("link", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke(
+        "val",
+        `<link rel="stylesheet" href="https://example.com/example.css">`
+      );
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      cy.wait(1);
+
+      cy.get(`.mt-be-block .mce-content-body link`).should("not.exist");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><!-- /mt-beb -->`
+      );
+    });
+
+    it("meta", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke("val", `<meta charset='utf-8'>`);
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      cy.wait(1);
+
+      cy.get(`.mt-be-block .mce-content-body meta`).should("not.exist");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb --><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context("content editable", () => {
+    it("not selected", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Block!");
+
+      wait(1);
+
+      blur();
+
+      cy.get(".mt-be-block div:last-child").then(($div) => {
+        expect($div[0].shadowRoot.querySelector("div[contenteditable]")).to.not.be.null;
+      });
+    });
+
+    it("multiple selected", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+
+      type("Hello!\n");
+
+      wait(1);
+
+      type("Block!");
+
+      cy.get(".mt-be-block").eq(0).click();
+      cy.get(".mt-be-block").eq(1).click({
+        shiftKey: true,
+      });
+
+      wait(1);
+
+      cy.get(".mt-be-block div:last-child").then(($div) => {
+        expect($div[0].shadowRoot.querySelector("div[contenteditable]")).to.be.null;
+      });
     });
   });
 });

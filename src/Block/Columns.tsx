@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import React, { useState, MouseEvent } from "react";
+import React, { useState, useCallback, MouseEvent } from "react";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
@@ -8,7 +8,11 @@ import Block, {
 } from "../Block";
 import Column from "./Column";
 import { useEditorContext } from "../Context";
-import { parseContent, escapeSingleQuoteAttribute } from "../util";
+import {
+  parseContent,
+  NO_BLOCK_TYPE_FALLBACK,
+  escapeSingleQuoteAttribute,
+} from "../util";
 import icon from "../img/icon/columns.svg";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockToolbarButton from "../Component/BlockToolbarButton";
@@ -27,11 +31,11 @@ const Editor: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor } = useEditorContext();
   const [showConfigPanel, setConfigPanel] = useState(false);
-  function toggleConfigPanel(): void {
-    setConfigPanel(!showConfigPanel);
-  }
+  const toggleConfigPanel = useCallback(() => {
+    setConfigPanel((prev) => !prev);
+  }, []);
 
-  function changeLayout(ev: MouseEvent): void {
+  const changeLayout = useCallback((ev: MouseEvent) => {
     const inputEl = ev.currentTarget.querySelector("input");
     if (!inputEl) {
       throw "error";
@@ -60,7 +64,7 @@ const Editor: React.FC<EditorProps> = ({
     editor.editManager.endGrouping();
 
     setConfigPanel(false);
-  }
+  }, []);
 
   const curLayout = block.getColumnLayout();
   return (
@@ -167,7 +171,7 @@ class Columns extends Block implements HasBlocks {
   }
 
   public async serialize(opts: SerializeOptions): Promise<string> {
-    const m = opts.editor.serializeMeta(this);
+    const m = opts.editor.serializeMeta(this, opts.external);
     const serializedColumns = await Promise.all(
       this.blocks.map((c) => c.serialize(opts))
     );
@@ -187,11 +191,10 @@ class Columns extends Block implements HasBlocks {
     context,
   }: NewFromHtmlOptions): Promise<Block> {
     const blocks = (await parseContent(
-      node.innerHTML
-        .replace(/^&lt;div.*?&gt;/, "")
-        .replace(/&lt;\/div&gt;$/, ""),
+      node.innerHTML,
       factory,
-      context
+      context,
+      NO_BLOCK_TYPE_FALLBACK
     )) as Column[];
     blocks.forEach((b) => (b.showShortcuts = false));
     return new Columns(Object.assign({ blocks }, meta));

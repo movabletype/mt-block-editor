@@ -1,9 +1,17 @@
-import React, { useState, useEffect, useRef, CSSProperties } from "react";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEditorContext } from "../Context";
 import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import { EditHistoryHandlers } from "../EditManager";
-import { Size } from "./BlockIframePreview/size";
+import type { Size } from "./BlockIframePreview/size";
+import { isDefaultSize } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "5000px";
@@ -30,15 +38,37 @@ const editHandlers: EditHistoryHandlers = {
   merge(a, b) {
     return a.data.last === b.data.last ? a : undefined;
   },
-  undo(hist, { setFocusedId }) {
+  undo(hist, { setFocusedIds }) {
     hist.block.compiledHtml = hist.data.last;
-    setFocusedId(hist.block.id, { forceUpdate: true });
+    setFocusedIds([hist.block.id], { forceUpdate: true });
   },
-  redo(hist, { setFocusedId }) {
+  redo(hist, { setFocusedIds }) {
     hist.block.compiledHtml = hist.data.cur;
-    setFocusedId(hist.block.id, { forceUpdate: true });
+    setFocusedIds([hist.block.id], { forceUpdate: true });
   },
 };
+
+function InitSizeFunc(): void {
+  const body = document.body;
+  const lastElement = body.children[body.children.length - 1];
+  if (!lastElement) {
+    return;
+  }
+
+  const style = window.getComputedStyle(lastElement);
+  const offset = lastElement.getBoundingClientRect();
+
+  parent.postMessage(
+    {
+      method: "MTBlockEditorInitSize",
+      blockId: body.dataset.blockId,
+      arguments: {
+        height: offset.top + offset.height + parseInt(style.marginBottom),
+      },
+    },
+    "*"
+  );
+}
 
 function postMessageFunc(): void {
   const body = document.body;
@@ -84,7 +114,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
 
         ev.preventDefault();
 
-        const input = document.createElement("INPUT") as HTMLInputElement;
+        const input = document.createElement("input");
         input.type = "file";
         input.style.display = "none";
         input.addEventListener("change", function (ev) {
@@ -138,16 +168,21 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
 function eventDelegationFunc(): void {
   document.addEventListener(
     "click",
-    function () {
+    function (ev) {
       parent.postMessage(
         {
           method: "MTBlockEditorOnClick",
           blockId: document.body.dataset.blockId,
+          arguments: {
+            ctrlKey: ev.ctrlKey,
+            metaKey: ev.metaKey,
+            shiftKey: ev.shiftKey,
+          },
         },
         "*"
       );
     },
-    { capture: true }
+    { capture: true, passive: true }
   );
 
   document.addEventListener(
@@ -159,15 +194,45 @@ function eventDelegationFunc(): void {
           blockId: document.body.dataset.blockId,
           arguments: {
             key: ev.key,
-            ctrlKey: ev.ctrlKey || ev.metaKey,
+            ctrlKey: ev.ctrlKey,
+            metaKey: ev.metaKey,
             shiftKey: ev.shiftKey,
           },
         },
         "*"
       );
     },
-    { capture: true }
+    { capture: true, passive: true }
   );
+}
+
+type RawHtmlData =
+  | string // source HTML already retrieved
+  | number // compiled HTML
+  | null; // not yet retrieved
+function useHtmlDataState(
+  html: EditorProps["html"],
+  block: Block
+): [RawHtmlData, string, Dispatch<SetStateAction<RawHtmlData>>] {
+  const [_rawHtmlData, setHtmlText] = useState<RawHtmlData>(
+    typeof html === "string" ? html : null
+  );
+
+  const rawHtmlData =
+    typeof _rawHtmlData === "number" && block.compiledHtml
+      ? null // treat as not yet retrieved since it has been updated
+      : _rawHtmlData;
+
+  const rawHtmlText =
+    typeof rawHtmlData === "number"
+      ? block.compiledHtml
+      : typeof rawHtmlData === "string"
+      ? rawHtmlData
+      : typeof html === "string"
+      ? html
+      : "";
+
+  return [rawHtmlData, rawHtmlText, setHtmlText];
 }
 
 const BlockIframePreview: React.FC<EditorProps> = ({
@@ -182,71 +247,67 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 }: EditorProps) => {
   const { editor } = useEditorContext();
 
-  if (typeof html === "undefined") {
-    html = block.compiledHtml || block.serializedString({ editor });
+  if (html === undefined) {
+    html =
+      block.compiledHtml || block.serializedString({ editor, external: false });
   }
 
-  const containerElRef = useRef(null);
-  const [_src, setSrc] = useState("");
-  const [_rawHtmlText, _setHtmlText] = useState<string | null>(
-    typeof html === "string" ? html : null
-  );
-  const rawHtmlText = _rawHtmlText || (typeof html === "string" ? html : "");
+  const containerElRef = useRef<HTMLDivElement>(null);
+  const [rawHtmlData, rawHtmlText, setHtmlData] = useHtmlDataState(html, block);
 
   const [, _setSize] = useState<Size | null>(null);
-  const setSize = (size: Size): void => {
+  const setSize = useCallback((size: Size): void => {
     block.setIframePreviewSize(size);
     _setSize(size);
-  };
+  }, []);
   const size = block.getIframePreviewSize(rawHtmlText);
 
-  const setCompiledHtml = (
-    res: string,
-    error: Error | null,
-    opts: SetCompiledHtmlOptions
-  ): void => {
-    if (onBeforeSetCompiledHtml && onBeforeSetCompiledHtml(error) === false) {
-      // canceled
-      return;
-    }
-
-    if (error) {
-      if (onSetCompiledHtml) {
-        onSetCompiledHtml(error);
-      } else {
-        // TODO: report error
+  const setCompiledHtml = useCallback(
+    (res: string, error: Error | null, opts: SetCompiledHtmlOptions): void => {
+      if (onBeforeSetCompiledHtml && onBeforeSetCompiledHtml(error) === false) {
+        // canceled
+        return;
       }
-      return;
-    }
 
-    const lastValue = block.compiledHtml;
-    block.compiledHtml = res;
+      if (error) {
+        if (onSetCompiledHtml) {
+          onSetCompiledHtml(error);
+        } else {
+          // TODO: report error
+        }
+        return;
+      }
 
-    if (opts && opts.addEditHistory) {
-      editor.editManager.add({
+      const lastValue = block.compiledHtml;
+      block.compiledHtml = res;
+
+      if (opts && opts.addEditHistory) {
+        editor.editManager.add({
+          block,
+          data: {
+            last: lastValue,
+            cur: res,
+          },
+          handlers: editHandlers,
+        });
+      }
+
+      editor.emit("setCompiledHtmlIframePreview", {
+        editor,
         block,
-        data: {
-          last: lastValue,
-          cur: res,
-        },
-        handlers: editHandlers,
       });
-    }
 
-    editor.emit("setCompiledHtmlIframePreview", {
-      editor,
-      block,
-    });
+      if (onSetCompiledHtml) {
+        onSetCompiledHtml(null);
+      }
+      setHtmlData((prev) => (typeof prev === "number" ? prev + 1 : 1));
+    },
+    []
+  );
 
-    if (onSetCompiledHtml) {
-      onSetCompiledHtml(null);
-    }
-    _setHtmlText(res);
-  };
-
-  if (typeof html !== "string" && _rawHtmlText === null) {
+  if (typeof html !== "string" && rawHtmlData === null) {
     header = "";
-    html.then(_setHtmlText);
+    html.then(setHtmlData);
   }
 
   const beforeRenderIframePreviewOpt = {
@@ -258,91 +319,92 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
 
-  const rootAttributesObj = editor.opts.rootAttributes as Record<
-    string,
-    string
-  >;
-  const rootAttributes = Object.keys(rootAttributesObj)
-    .map((k) => {
-      const map: Record<string, string> = { "&": "&amp;", '"': "&quot;" };
-      const v = rootAttributesObj[k].replace(/[&"]/g, (m) => map[m]);
-      return `${k}="${v}"`;
-    })
-    .join(" ");
-  const blob = new Blob(
-    [
-      `
-      <html${htmlText.match(/<amp-/) ? " amp" : ""}>
-      <head>
-        <meta charset="utf-8">
-        <script>
-          ["alert", "confirm", "prompt"].forEach(function(name) {
-            window[name] = function() { console.log(name + " is disabled in a preview iframe") };
-          });
-          setInterval(${postMessageFunc.toString()}, 1000)
-          var MTBlockEditorSetCompiledHtml = (function() {
-            return ${setCompiledHtmlFunc.toString()};
-          })();
-          var MTBlockEditorAddDroppable = (function() {
-            return ${addDroppableFunc.toString()};
-          })();
-          (function() {
+  const [src, setSrc] = useState("");
+  useEffect(() => {
+    if (!header && !htmlText) {
+      if (src !== "") {
+        setSrc("");
+      }
+      return;
+    }
+
+    const rootAttributesObj = editor.opts.rootAttributes as Record<
+      string,
+      string
+    >;
+    const rootAttributes = Object.keys(rootAttributesObj)
+      .map((k) => {
+        const map: Record<string, string> = { "&": "&amp;", '"': "&quot;" };
+        const v = rootAttributesObj[k].replace(/[&"]/g, (m) => map[m]);
+        return `${k}="${v}"`;
+      })
+      .join(" ");
+
+    const blob = new Blob(
+      [
+        `
+        <html${htmlText.match(/<amp-/) ? " amp" : ""}>
+        <head>
+          <meta charset="utf-8">
+          <script>
+            ["alert", "confirm", "prompt"].forEach(function(name) {
+              window[name] = function() { console.log(name + " is disabled in a preview iframe") };
+            });
+            setTimeout(${InitSizeFunc.toString()}, 50);
+            setInterval(${postMessageFunc.toString()}, 1000);
+            var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
+            var MTBlockEditorAddDroppable = ${addDroppableFunc.toString()};
             (${eventDelegationFunc.toString()})();
-          })();
-        </script>
-        <style type="text/css">
-        .mt-block-editor-mt-be-droppable:before {
-          display: block;
-          position: absolute;
-          z-index: 200;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          content: " ";
-          text-align: center;
-          color: white;
-          background-color: rgba(21, 50, 76, 0.9);
-        }
+          </script>
+          <style type="text/css">
+          .mt-block-editor-mt-be-droppable:before {
+            display: block;
+            position: absolute;
+            z-index: 200;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            content: " ";
+            text-align: center;
+            color: white;
+            background-color: rgba(21, 50, 76, 0.9);
+          }
 
-        /* FIXME */
-        .mt-be-column {
-          width: 100%;
-        }
-        </style>
-        ${editor.stylesheets
-          .map((s) => {
-            if (s.type === StylesheetType.css) {
-              return `<style type="text/css">${s.data}</style>`;
-            } else {
-              return `<link rel="stylesheet" href="${s.data}" />`;
-            }
-          })
-          .join("")}
-        ${header || ""}
-      </head>
-      <body data-block-id="${block.id}"${
-        block.compiledHtml && ` data-has-compiled-html="1"`
-      } class="${
-        editor.opts.rootClassName
-      }" ${rootAttributes}>${htmlText}</body>
-      </html>`,
-    ],
-    { type: "text/html" }
-  );
+          /* FIXME */
+          .mt-be-column {
+            width: 100%;
+          }
+          </style>
+          ${editor.stylesheets
+            .map((s) => {
+              if (s.type === StylesheetType.css) {
+                return `<style type="text/css">${s.data}</style>`;
+              } else {
+                return `<link rel="stylesheet" href="${s.data}" />`;
+              }
+            })
+            .join("")}
+          ${header || ""}
+        </head><body data-block-id="${block.id}"${
+          block.compiledHtml && ` data-has-compiled-html="1"`
+        } class="${
+          editor.opts.rootClassName || ""
+        }" ${rootAttributes}>${htmlText}</body></html>`,
+      ],
+      { type: "text/html" }
+    );
 
-  const src = ((): string => {
     if (beforeRenderIframePreviewOpt.scheme === "blob") {
-      return URL.createObjectURL(blob);
+      setSrc(URL.createObjectURL(blob));
     } else {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onload = () => {
-        setSrc(reader.result as string);
+        setSrc(reader.result?.toString() || "");
       };
-      return _src;
     }
-  })();
+  }, [block.compiledHtml, header, htmlText]);
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
@@ -353,6 +415,13 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       const containerEl = containerElRef.current;
 
       switch (ev.data.method) {
+        case "MTBlockEditorInitSize":
+          if (!isDefaultSize(size)) {
+            break;
+          }
+
+          setSize({ ...size, ...ev.data.arguments });
+          break;
         case "MTBlockEditorSetSize":
           (Object.keys(size) as Array<keyof Size>).forEach((k) => {
             const oldValue = parseInt(size[k]);
@@ -376,7 +445,16 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           break;
         case "MTBlockEditorOnClick":
           if (containerEl) {
-            (containerEl as HTMLElement).click();
+            (
+              containerEl.closest("[data-mt-block-editor-block-id]") ||
+              (containerEl.getRootNode() as ShadowRoot)?.host
+            )?.dispatchEvent(
+              new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true,
+                ...ev.data.arguments,
+              })
+            );
           }
           break;
         case "MTBlockEditorOnKeydown":
@@ -408,27 +486,23 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         capture: true,
       });
     };
-  });
+  }, [size]);
 
-  return src ? (
+  return (
     <div ref={containerElRef}>
       <iframe
-        src={src}
+        src={src || "about:blank"}
         frameBorder="0"
         sandbox={sandbox}
-        style={Object.assign(
-          {
-            maxWidth: MAX_WIDTH,
-            maxHeight: MAX_HEIGHT,
-            boxSizing: "border-box",
-            border: border || "1px solid #ccc",
-          } as Partial<CSSProperties>,
-          size
-        )}
+        style={{
+          maxWidth: MAX_WIDTH,
+          maxHeight: MAX_HEIGHT,
+          boxSizing: "border-box",
+          border: border || "1px solid #ccc",
+          ...size,
+        }}
       />
     </div>
-  ) : (
-    <span />
   );
 };
 

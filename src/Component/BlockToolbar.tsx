@@ -1,13 +1,16 @@
-import React, { useState, ReactNode, MouseEventHandler } from "react";
+import React, {
+  useState,
+  useCallback,
+  ReactNode,
+  MouseEventHandler,
+} from "react";
 import { t } from "../i18n";
 import { useBlocksContext, useBlockContext } from "../Context";
 import BlockCommandPanel from "./BlockCommandPanel";
 import AddButton from "./AddButton";
-import RemoveButton from "./RemoveButton";
 
 interface BlockToolbarProps {
   children?: ReactNode;
-  id?: string;
   className?: string;
   rows?: number;
   hasBorder?: boolean;
@@ -23,11 +26,11 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   const { block, index } = blockContext;
 
   const { swapBlocks } = useBlocksContext();
-  const [showCommandPanel, setCommandPanel] = useState(false);
-  function toggleCommandPanel(): void {
-    setCommandPanel(!showCommandPanel);
+  const [isCommandPanelShown, setCommandPanelShown] = useState(false);
+  const toggleCommandPanelShown = useCallback(() => {
+    setCommandPanelShown((prev) => !prev);
     block.focusEditor();
-  }
+  }, []);
 
   let className = "mt-be-block-toolbar--block";
   if (props.className) {
@@ -48,8 +51,8 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
   return (
     <>
       <div
-        id={props.id || ""}
         className={`mt-be-block-toolbar ${className}`}
+        data-mt-be-toolbar={block.id}
         onMouseDown={onMouseDown}
       >
         {props.children}
@@ -66,27 +69,14 @@ const BlockToolbar: React.FC<BlockToolbarProps> = (
           ></button>
           <button
             type="button"
-            className="mt-be-btn-command"
-            onClick={toggleCommandPanel}
+            className="mt-be-btn-command-panel"
+            onClick={toggleCommandPanelShown}
           ></button>
         </div>
       </div>
-      <BlockCommandPanel in={showCommandPanel}>
-        <ul className="mt-be-command-list">
-          <li>
-            <AddButton index={index} label={t("Insert before")} />
-          </li>
-          <li>
-            <AddButton index={index + 1} label={t("Insert after")} />
-          </li>
-          <li>
-            <RemoveButton
-              block={block}
-              confirm={true}
-              label={t("Remove block")}
-            />
-          </li>
-        </ul>
+      <BlockCommandPanel in={isCommandPanelShown} block={block}>
+        <AddButton index={index} label={t("Insert before")} />
+        <AddButton index={index + 1} label={t("Insert after")} />
       </BlockCommandPanel>
     </>
   );

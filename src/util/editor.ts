@@ -5,23 +5,48 @@ import Text from "../Block/Text";
 import Column from "../Block/Column";
 import ParserContext from "./ParserContext";
 
-export function preParseContent(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag) => {
-      return `<${tag
-        .replace(/&gt;/g, ">")
-        .replace(/&lt;/g, "<")
-        .replace(/&amp;/g, "&")}>`;
-    });
+export const preParseContent = (() => {
+  const entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+  } as { [key: string]: string };
+  const entityReverseMap = Object.fromEntries(
+    Object.entries(entityMap).map(([k, v]) => [v, k])
+  );
+  const entityRegExp = new RegExp(`[${Object.keys(entityMap).join("")}]`, "g");
+  const entityReverseRegExp = new RegExp(
+    `(?:${Object.keys(entityReverseMap).join("|")})`,
+    "g"
+  );
+
+  return (value: string): string => {
+    return value
+      .replace(entityRegExp, (match) => entityMap[match])
+      .replace(/&lt;!--\s+(\/?mt-beb.*?)--&gt;/g, (all, tag: string) => {
+        return `<${tag.replace(
+          entityReverseRegExp,
+          (match) => entityReverseMap[match]
+        )}>`;
+      });
+  };
+})();
+
+export function removeControlCharacters(str: string): string {
+  return str.replace(
+    // eslint-disable-next-line no-control-regex,no-misleading-character-class
+    /&#(?:0*?(?:[0-8]|1[124-9]|2\d|3[01])?|x0*?(?:[0-8bcefBCEF]|1[0-9a-fA-F])?);|[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD\uD800-\uDBFF\uDC00-\uDFFF]/gm,
+    ""
+  );
 }
+
+export const NO_BLOCK_TYPE_FALLBACK = "";
 
 export async function parseContent(
   value: string,
   factory: BlockFactory,
-  context: ParserContext
+  context: ParserContext,
+  fallbackBlockType: string | typeof NO_BLOCK_TYPE_FALLBACK = "core-html"
 ): Promise<Block[]> {
   if (!value) {
     return [];
@@ -29,11 +54,7 @@ export async function parseContent(
 
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(
-    `<xml>${value.replace(
-      // eslint-disable-next-line no-control-regex,no-misleading-character-class
-      /[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD\uD800-\uDBFF\uDC00-\uDFFF]/gm,
-      ""
-    )}</xml>`,
+    `<xml>${removeControlCharacters(value)}</xml>`,
     "application/xml"
   );
 
@@ -43,10 +64,14 @@ export async function parseContent(
 
   let children = [...doc.children[0].children];
   if (children.length === 0) {
-    const fallback = document.createElement("DIV");
-    fallback.setAttribute("t", "core-html");
-    fallback.innerHTML = value;
-    children = [fallback];
+    if (fallbackBlockType !== NO_BLOCK_TYPE_FALLBACK) {
+      const fallback = document.createElement("div");
+      fallback.setAttribute("t", fallbackBlockType);
+      fallback.innerHTML = value;
+      children = [fallback];
+    } else {
+      return [];
+    }
   }
 
   // TODO: verify
@@ -115,27 +140,125 @@ export async function parseContent(
   return blocks;
 }
 
-export function findDescendantBlock(
+const emptyBlocks: Block[] = [];
+export function findDescendantBlocks(
   ancestor: Block | Editor,
-  id: string | null | undefined
-): Block | null {
-  if (!id) {
-    return null;
+  ids: Readonly<string[]>
+): Readonly<Block[]> {
+  if (ids.length === 0) {
+    return emptyBlocks;
   }
 
   const childBlocks =
     ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
-  for (let i = 0; i < childBlocks.length; i++) {
+  if (childBlocks.length === 0) {
+    return emptyBlocks;
+  }
+
+  return findDescendantBlocksInternal([...ids], childBlocks);
+}
+
+function findDescendantBlocksInternal(
+  ids: string[],
+  childBlocks: Readonly<Block[]>
+): Readonly<Block[]> {
+  const result: Block[] = [];
+  for (let i = 0, len = childBlocks.length; i < len; i++) {
     const b = childBlocks[i];
-    if (b.id === id) {
-      return b;
+    const index = ids.indexOf(b.id);
+    if (index !== -1) {
+      result.push(b);
+      ids.splice(index, 1);
+      if (ids.length === 0) {
+        return result;
+      }
     }
 
-    const cb = findDescendantBlock(b, id);
-    if (cb) {
-      return cb;
+    result.push(...findDescendantBlocksInternal(ids, b.childBlocks()));
+    if (ids.length === 0) {
+      return result;
     }
   }
 
-  return null;
+  return result;
+}
+
+interface GetBlocksByRangeState {
+  ids: Readonly<Set<string>>;
+  rootBlocks: Readonly<Block[]>;
+  foundCount: number;
+  startBlocks?: Readonly<Block[]>;
+  endBlocks?: Readonly<Block[]>;
+  result?: Readonly<Block[]>;
+}
+export function getBlocksByRange(
+  ancestor: Block | Editor,
+  ids: Readonly<string[]>
+): Readonly<Block[]> {
+  const childBlocks =
+    ancestor instanceof Editor ? ancestor.blocks : ancestor.childBlocks();
+  const state: GetBlocksByRangeState = {
+    ids: new Set<string>(ids),
+    rootBlocks: childBlocks,
+    foundCount: 0,
+  };
+  getBlocksByRangeInternal(childBlocks, state);
+  return state.result || emptyBlocks;
+}
+
+function getBlocksByRangeInternal(
+  childBlocks: Readonly<Block[]>,
+  state: GetBlocksByRangeState,
+  parents: Readonly<Block[]> = []
+): Readonly<Block[]> | undefined {
+  if (state.result && state.foundCount === state.ids.size) {
+    return;
+  }
+  childBlocks.forEach((b) => {
+    const currentBlocks = [...parents, b];
+
+    getBlocksByRangeInternal(b.childBlocks(), state, currentBlocks);
+    if (state.result && state.foundCount === state.ids.size) {
+      return;
+    }
+    if (state.ids.has(b.id)) {
+      state.foundCount++;
+
+      if (state.ids.size === 1) {
+        state.result = [b];
+      } else if (state.startBlocks) {
+        let range: {
+          blocks: Readonly<Block[]>;
+          start: string;
+          end: string;
+        };
+        findRange: for (let i = state.startBlocks.length - 2; i >= 0; i--) {
+          for (let j = currentBlocks.length - 2; j >= 0; j--) {
+            if (state.startBlocks[i] === currentBlocks[j]) {
+              range = {
+                blocks: state.startBlocks[i].childBlocks(),
+                start: state.startBlocks[i + 1].id,
+                end: currentBlocks[j + 1].id,
+              };
+              break findRange;
+            }
+          }
+        }
+
+        range ||= {
+          blocks: state.rootBlocks,
+          start: state.startBlocks[0].id,
+          end: currentBlocks[0].id,
+        };
+
+        const blockIds = range.blocks.map((b) => b.id);
+        state.result = range.blocks.slice(
+          blockIds.indexOf(range.start),
+          blockIds.indexOf(range.end) + 1
+        );
+      } else {
+        state.startBlocks = currentBlocks;
+      }
+    }
+  });
 }

@@ -1,4 +1,4 @@
-import { Editor as TinyMCE, EditorManager } from "tinymce";
+import type { Editor as TinyMCEEditor, TinyMCE } from "tinymce";
 import {
   SelectorSet,
   selectorCmp,
@@ -6,19 +6,28 @@ import {
   mediaBreakPoint,
 } from "../../util";
 
-declare const tinymce: EditorManager;
+declare const tinymce: TinyMCE;
 
 export interface HasTinyMCE {
+  id: string;
   text: string;
-  tinymce: TinyMCE | null;
+  tinymce: TinyMCEEditor | null;
   tinymceId(): string;
 }
 
 export const CARET_ATTR = "data-mt-block-editor-caret";
 export const CARET = `<br ${CARET_ATTR}="1">`;
 
-function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
-  ed.focus(false);
+function _tinymceFocus(
+  ed: TinyMCEEditor,
+  selectorSet: SelectorSet | null
+): void {
+  try {
+    ed.focus(false);
+  } catch (e) {
+    // Probably unloaded.
+    return;
+  }
 
   if (!ed.selection) {
     return;
@@ -61,7 +70,7 @@ function _tinymceFocus(ed: TinyMCE, selectorSet: SelectorSet | null): void {
 }
 
 export function tinymceFocus(
-  ed: TinyMCE,
+  ed: TinyMCEEditor,
   selectorSet: SelectorSet | null
 ): void {
   try {
@@ -94,7 +103,7 @@ export function removeTinyMCEFromBlock(block: HasTinyMCE): void {
 }
 
 export function adjustToolbar(
-  ed: TinyMCE,
+  ed: TinyMCEEditor,
   block: HasTinyMCE,
   editorElement: HTMLElement
 ): void {
@@ -102,7 +111,9 @@ export function adjustToolbar(
 
   for (let i = 0; i < 10; i++) {
     setTimeout(() => {
-      const toolbar = document.getElementById(`${block.tinymceId()}toolbar`);
+      const toolbar = document.querySelector<HTMLDivElement>(
+        `[data-mt-be-toolbar="${block.id}"]`
+      );
       if (!toolbar) {
         return;
       }

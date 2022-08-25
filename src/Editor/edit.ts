@@ -1,19 +1,23 @@
 import { EditHistoryHandlers } from "../EditManager";
+import Block from "../Block";
 
 export const add: EditHistoryHandlers = {
   id: Symbol("add"),
-  undo(hist, { editor, setFocusedId }) {
+  undo(hist, { editor, setFocusedIds }) {
     const parent = hist.data.parent || editor;
     const index = parent.blocks.indexOf(hist.block);
     editor.removeBlock(parent, hist.block);
-    if (index > 0) {
-      setFocusedId(parent.blocks[index - 1].id);
-    }
+
+    const nextFocusBlock =
+      parent.blocks[Math.max(0, index - 1)] ||
+      (parent instanceof Block ? parent : null);
+
+    setFocusedIds([nextFocusBlock?.id ?? "editor"]);
   },
-  redo(hist, { editor, setFocusedId }) {
+  redo(hist, { editor, setFocusedIds }) {
     const parent = hist.data.parent || editor;
     editor.addBlock(parent, hist.block, hist.data.index);
-    setFocusedId(hist.block.id);
+    setFocusedIds([hist.block.id]);
 
     // You need to force a re-render to see the block
     if (parent.blocks.length === 1) {
@@ -24,16 +28,16 @@ export const add: EditHistoryHandlers = {
 
 export const remove: EditHistoryHandlers = {
   id: Symbol("remove"),
-  undo(hist, { editor, setFocusedId }) {
+  undo(hist, { editor, setFocusedIds }) {
     editor.addBlock(hist.data.parent || editor, hist.block, hist.data.index);
-    setFocusedId(hist.block.id, { forceUpdate: true });
+    setFocusedIds([hist.block.id], { forceUpdate: true });
   },
-  redo(hist, { editor, setFocusedId }) {
+  redo(hist, { editor, setFocusedIds }) {
     const parent = hist.data.parent || editor;
     const index = parent.blocks.indexOf(hist.block);
     editor.removeBlock(parent, hist.block);
     if (index > 0) {
-      setFocusedId(parent.blocks[index - 1].id);
+      setFocusedIds([parent.blocks[index - 1].id]);
     }
   },
 };

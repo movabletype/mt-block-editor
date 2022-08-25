@@ -52,7 +52,7 @@
           "./dist/mt-block-editor.css",
           "https://cdn.movabletype.net/libs/mt-block-editor-block-oembed/1.0.1/mt-block-editor-block-oembed.css",
         ].forEach((url) => {
-          const link = window.document.createElement("LINK");
+          const link = window.document.createElement("link");
           link.rel = "stylesheet";
           link.href = `${url}?ts=${ts}`;
           window.document.querySelector("head").appendChild(link);
@@ -69,7 +69,7 @@
             id: "body",
             stylesheets: [
               (() => {
-                const a = document.createElement("A");
+                const a = document.createElement("a");
                 a.href = "./editor-content.css";
                 return a.href;
               })(),
