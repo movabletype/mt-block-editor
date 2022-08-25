@@ -14,9 +14,9 @@ import { newEditor } from "../helper";
 import Text from "../../src/Block/Text";
 import Column from "../../src/Block/Column";
 
-const mockEditor = ({
+const mockEditor = {
   serializeMeta,
-} as unknown) as Editor;
+} as unknown as Editor;
 function serializeMeta(block): string | null {
   const meta = block.metadata();
   if (!meta) {
@@ -49,6 +49,28 @@ describe("parseContent()", () => {
   test("text block", async () => {
     const blocks = await parseContent(
       preParseContent(`<!-- mt-beb -->test<!-- /mt-beb -->`),
+      new BlockFactory(),
+      new ParserContext()
+    );
+
+    const block = blocks[0];
+    expect(block).toBeInstanceOf(Text);
+
+    return block
+      .serialize({
+        editor: mockEditor,
+        external: false,
+      })
+      .then((str) => {
+        expect(str).toBe(`<!-- mt-beb -->test<!-- /mt-beb -->`);
+      });
+  });
+
+  test("ignore wrapper element", async () => {
+    const blocks = await parseContent(
+      preParseContent(
+        `<div class="test"><!-- mt-beb -->test<!-- /mt-beb --></div>`
+      ),
       new BlockFactory(),
       new ParserContext()
     );

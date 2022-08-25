@@ -13,9 +13,13 @@ export function type(text, options?): void {
 
 export function apply(opts): void {
   cy.window().then((w) => {
-    const textarea = w.document.createElement("TEXTAREA");
-    textarea.id = opts.id;
-    w.document.body.appendChild(textarea);
+    const textarea =
+      w.document.querySelector<HTMLTextAreaElement>(`[id="${opts.id}"]`) ||
+      w.document.createElement("textarea");
+    if (!textarea.id) {
+      textarea.id = opts.id;
+      w.document.body.appendChild(textarea);
+    }
 
     return w.MTBlockEditor.apply(
       Object.assign(
@@ -51,6 +55,12 @@ export function apply(opts): void {
         textarea.dataset.mtBlockEditorChangeCount = count.toString();
       });
     });
+  });
+}
+
+export function unload(opts): void {
+  cy.window().then((w) => {
+    return w.MTBlockEditor.unload(opts);
   });
 }
 

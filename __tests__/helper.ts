@@ -1,7 +1,7 @@
 import Editor, { EditorOptions } from "../src/Editor";
 
 export function newEditor(opts: Partial<EditorOptions> = {}): Editor {
-  const input = document.createElement("INPUT");
+  const input = document.createElement("input");
   input.id = "input-" + Math.random();
   document.body.appendChild(input);
   return new Editor({

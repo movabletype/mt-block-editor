@@ -3,6 +3,7 @@
 import {
   type,
   apply,
+  unload,
   blur,
   wait,
   registerCustomBlock,
@@ -81,7 +82,7 @@ context("CustomBlock", () => {
       panelBlockTypes: [],
       shortcutBlockTypes: ["custom-bgcolor_contents"],
       className: "",
-      html: '',
+      html: "",
       shouldBeCompiled: 1,
       previewHeader: `
 <script>
@@ -152,6 +153,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       shouldBeCompiled: 1,
       previewHeader: "<style type='text/css'>div { margin-top: -10px }</style>",
       label: "styled",
+      rootBlock: "div",
+    });
+
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: 1,
+      typeId: "custom-root_block_with_header",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["custom-html"],
+      className: "root_block_with_header",
+      html: "",
+      shouldBeCompiled: 1,
+      previewHeader: `
+      <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (document.body.dataset.hasCompiledHtml) {
+          // 処理済み
+          return;
+        }
+      
+        MTBlockEditorSetCompiledHtml('test');
+      });
+      </script>
+      `,
+      label: "root_block_with_header",
       rootBlock: "div",
     });
 
@@ -251,7 +277,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       wait(1);
       cy.get(`.mt-be-block .mt-be-block`).last().click();
       wait(1);
-      type("{backspace}{backspace}");
+      type("{backspace}{backspace}", { delay: 100 });
       wait(1);
       type("!");
 
@@ -453,15 +479,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       blur();
       cy.wait(1000);
-      cy.get("iframe")
-        .then(($e) => {
-          const before = $e.css("height");
-          cy.wait(1500);
-          cy.get("iframe").then(($e) => {
-            const after = $e.css("height");
-            expect(before).to.equal(after);
-          });
+      cy.get("iframe").then(($e) => {
+        const before = $e.css("height");
+        cy.wait(1500);
+        cy.get("iframe").then(($e) => {
+          const after = $e.css("height");
+          expect(before).to.equal(after);
         });
+      });
     });
   });
 
@@ -479,9 +504,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       ).click();
 
       wait(1);
-      cy.get(
-        `.mt-be-block .mt-be-btn-add-bottom`
-      )
+      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
         .first()
         .click()
         .within(() => {
@@ -497,9 +520,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       ).click();
 
       wait(1);
-      cy.get(
-        `.mt-be-block .mt-be-btn-add-bottom`
-      )
+      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
         .eq(1)
         .click()
         .within(() => {
@@ -521,7 +542,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         expect(html).to.equal(expectedResult);
       });
 
-      cy.get(`.mt-be-btn-add-bottom`).click()
+      cy.get(`.mt-be-btn-add-bottom`).click();
       blur();
 
       // No change.
@@ -530,6 +551,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         const html = value.replace(/<!--.*?-->/g, "");
         expect(html).to.equal(expectedResult);
       });
+    });
+  });
+
+  context("custom-root_block_with_header", () => {
+    it("parse", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-root_block_with_header"]`).click();
+        });
+
+      blur();
+
+      serializedTextarea(textareaId, { timeout: 10000 }).should(
+        "have.value",
+        `<!-- mt-beb t="custom-root_block_with_header" h='&lt;div class=&#x27;root_block_with_header&#x27;&gt;&lt;/div&gt;' -->test<!-- /mt-beb -->`
+      );
+
+      unload({ id: textareaId });
+      apply({ id: textareaId });
+
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-root_block_with_header"]`).click();
+        });
+
+      blur();
+
+      serializedTextarea(textareaId, { timeout: 10000 }).should(
+        "have.value",
+        `<!-- mt-beb t="custom-root_block_with_header" h='&lt;div class=&#x27;root_block_with_header&#x27;&gt;&lt;/div&gt;' -->test<!-- /mt-beb --><!-- mt-beb t="custom-root_block_with_header" h='&lt;div class=&#x27;root_block_with_header&#x27;&gt;&lt;/div&gt;' -->test<!-- /mt-beb -->`
+      );
     });
   });
 });

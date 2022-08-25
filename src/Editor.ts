@@ -101,7 +101,7 @@ class Editor extends EventEmitter implements HasBlocks {
       throw "error";
     }
 
-    this.editorElement = document.createElement("DIV");
+    this.editorElement = document.createElement("div");
     this.editorElement.setAttribute("data-mt-be-id", this.id);
     this.editorElement.classList.add("mt-block-editor");
 
