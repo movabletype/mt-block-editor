@@ -151,6 +151,11 @@ const Editor: React.FC<EditorProps> = ({
   }, [block.wrapperRef.current]);
 
   useEffect(() => {
+    if (focusDescendant) {
+      resetCompiledHtml();
+      return;
+    }
+
     if (
       (block.constructor as typeof Block).shouldBeCompiled &&
       !block.compiledHtml &&
@@ -159,7 +164,7 @@ const Editor: React.FC<EditorProps> = ({
     ) {
       block.compile({ editor });
     }
-  }, [focus || focusDescendant]);
+  }, [focus, focusDescendant]);
 
   const res = (
     <BlocksContext.Provider value={blocksContext}>
