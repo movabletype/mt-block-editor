@@ -181,6 +181,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       rootBlock: "div",
     });
 
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: 1,
+      typeId: "custom-images",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["core-image"],
+      className: "wrap",
+      html: "",
+      shouldBeCompiled: 1,
+      previewHeader: `
+      <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (document.body.dataset.hasCompiledHtml) {
+          // 処理済み
+          return;
+        }
+      
+        MTBlockEditorSetCompiledHtml('<div class="custom-images">' + document.body.innerHTML + '</div>');
+      });
+      </script>
+      `,
+      label: "images",
+      rootBlock: "",
+    });
+
     apply({
       id: textareaId,
     });
@@ -583,6 +608,44 @@ document.addEventListener("DOMContentLoaded", async () => {
       serializedTextarea(textareaId, { timeout: 10000 }).should(
         "have.value",
         `<!-- mt-beb t="custom-root_block_with_header" h='&lt;div class=&#x27;root_block_with_header&#x27;&gt;&lt;/div&gt;' -->test<!-- /mt-beb --><!-- mt-beb t="custom-root_block_with_header" h='&lt;div class=&#x27;root_block_with_header&#x27;&gt;&lt;/div&gt;' -->test<!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context("custom-images", () => {
+    it("parse", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-images"]`).click();
+        });
+
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-image"]`
+      ).click();
+
+      type("https://example.com/1.jpg");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-images" h='&lt;!-- mt-beb t="core-image" --&gt;&lt;p&gt;&lt;img src="https://example.com/1.jpg" class="" alt=""/&gt;&lt;/p&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-images"><!-- mt-beb t="core-image" --><p><img src="https://example.com/1.jpg" class="" alt=""></p><!-- /mt-beb --></div><!-- /mt-beb -->`
+      );
+
+      cy.get(`.mt-be-block`).click();
+      cy.get(".mt-be-block-toolbar--block button").first().click();
+
+      cy.get(`input[name="linkUrl"]`).focus();
+
+      type("https://example.com/page.html");
+      cy.get(".mt-be-btn-primary").click();
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-images" h='&lt;!-- mt-beb t="core-image" --&gt;&lt;p&gt;&lt;a href="https://example.com/page.html" target="_self"&gt;&lt;img src="https://example.com/1.jpg" class="" alt=""/&gt;&lt;/a&gt;&lt;/p&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-images"><!-- mt-beb t="core-image" --><p><a href="https://example.com/page.html" target="_self"><img src="https://example.com/1.jpg" class="" alt=""></a></p><!-- /mt-beb --></div><!-- /mt-beb -->`
       );
     });
   });
