@@ -5,6 +5,8 @@ deploy: BRANCH:=$(shell git symbolic-ref -q --short HEAD 2>/dev/null)
 deploy: build
 	if [ "${TAG}" != "" ]; then \
 		aws s3 cp --acl public-read --recursive docs/dist/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/${TAG}/'; \
+	elif [ "${BRANCH}" = "develop" ]; then \
+		aws s3 cp --acl public-read --recursive docs/dist/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/${BRANCH}/'; \
 	elif [ "${BRANCH}" != "" ]; then \
 		aws s3 cp --acl public-read --recursive docs/dist/ 's3://${CDN_S3_BUCKET}/libs/mt-block-editor/branch/${BRANCH}/'; \
 	else \
