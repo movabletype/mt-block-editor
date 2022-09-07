@@ -110,9 +110,7 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
         }
 
         if (scroll) {
-          const destEl = document.querySelector(
-            `[data-mt-block-editor-block-id="${editor.blocks[hoverIndex].id}"]`
-          );
+          const destEl = editor.blocks[hoverIndex].wrapperRef.current;
           if (!destEl) {
             return;
           }

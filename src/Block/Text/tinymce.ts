@@ -1,11 +1,7 @@
 import type Editor from "../../Editor";
 import type Block from "../../Block";
 import type { HasTinyMCE } from "../Text/util";
-import type {
-  Editor as TinyMCEEditor,
-  TinyMCE,
-  RawEditorOptions,
-} from "tinymce";
+import type { TinyMCE, RawEditorOptions } from "tinymce";
 import type { EditorContextProps, BlocksContextProps } from "../../Context";
 import { decodeHtml } from "../../util";
 import { BlockEditorPasteCommandEvent } from "../../commands/pasteBlock";

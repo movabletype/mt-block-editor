@@ -35,14 +35,9 @@ const command: Command = {
 
     if (blocks.length === 1) {
       const block = blocks[0];
-      const blockId = block.id;
-      document
-        .querySelector(`[data-mt-block-editor-block-id="${blockId}"]`)
-        ?.classList.add("mt-be-focus");
+      block.wrapperRef.current?.classList.add("mt-be-focus");
       setTimeout(() => {
-        document
-          .querySelector(`[data-mt-block-editor-block-id="${blockId}"]`)
-          ?.classList.remove("mt-be-focus");
+        block.wrapperRef.current?.classList.remove("mt-be-focus");
       }, 100);
       if ((block instanceof Text || block instanceof Table) && block.tinymce) {
         tinymceFocus(block.tinymce, null);
