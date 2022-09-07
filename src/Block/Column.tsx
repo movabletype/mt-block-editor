@@ -96,9 +96,7 @@ const Editor: React.FC<EditorProps> = ({
         }
 
         if (scroll) {
-          const destEl = document.querySelector(
-            `[data-mt-block-editor-block-id="${block.blocks[dragIndex].id}"]`
-          );
+          const destEl = block.blocks[dragIndex].wrapperRef.current;
           if (!destEl) {
             return;
           }
