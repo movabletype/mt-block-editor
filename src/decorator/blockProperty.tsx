@@ -62,6 +62,7 @@ export default function blockProperty<T extends EditorProps>(
 ): React.FC<T> {
   return (props: T) => {
     const block: MapObject = props.block as MapObject;
+    const { wrapperRef } = props.block;
     const [, setBlock] = useState(Object.assign({}, block));
     const [editGroups, setEditGroups] = useState<MapObject>({});
     const children = editor(props);
@@ -72,10 +73,10 @@ export default function blockProperty<T extends EditorProps>(
     useEffect(() => {
       // focus
       setTimeout(function () {
-        if (!block.wrapperRef.current) {
+        const wrapperElement = wrapperRef.current;
+        if (!wrapperElement) {
           return;
         }
-        const wrapperElement = block.wrapperRef.current as HTMLElement;
 
         const focusEl = wrapperElement.querySelector<HTMLElement>(
           `[data-mt-block-editor-focus-default]`
@@ -114,15 +115,13 @@ export default function blockProperty<T extends EditorProps>(
       }, 10);
 
       // adjust height
-      [
-        ...document.querySelectorAll<HTMLTextAreaElement>(
-          `[data-mt-block-editor-block-id="${block.id}"] textarea[data-min-rows]`
-        ),
-      ].forEach((target) => {
-        if (target.scrollHeight > target.offsetHeight) {
-          target.style.height = target.scrollHeight + "px";
-        }
-      });
+      wrapperRef.current
+        ?.querySelectorAll<HTMLTextAreaElement>(`textarea[data-min-rows]`)
+        .forEach((target) => {
+          if (target.scrollHeight > target.offsetHeight) {
+            target.style.height = target.scrollHeight + "px";
+          }
+        });
     }, []);
 
     return recursiveMap(children, (child: JSX.Element) => {
