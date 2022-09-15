@@ -42,11 +42,7 @@ context("Command", () => {
 
       wait(1);
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove:visible").click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -89,11 +85,7 @@ context("Command", () => {
 
       wait(1);
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove:visible").click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -136,11 +128,7 @@ context("Command", () => {
 
       wait(1);
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove:visible").click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -180,11 +168,7 @@ context("Command", () => {
 
       wait(1);
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove:visible").click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -222,11 +206,7 @@ context("Command", () => {
 
       wait(2);
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove:visible").click();
 
       serializedTextarea(textareaId).should(
         "have.value",
@@ -264,11 +244,7 @@ context("Command", () => {
 
       wait(2);
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove:visible").click();
 
       serializedTextarea(textareaId).should(
         "have.value",

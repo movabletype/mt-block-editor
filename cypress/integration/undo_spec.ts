@@ -54,11 +54,7 @@ context("Undo", () => {
         "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
       );
 
-      cy.get(".mt-be-btn-move:visible").click();
-
-      wait(1);
-
-      cy.get(`[data-mt-be-command="core-deleteBlock"]`).click();
+      cy.get(".mt-be-btn-remove").click();
 
       serializedTextarea(textareaId)
         .should("have.value", "")
