@@ -31,6 +31,7 @@ import Block from "../Block";
 import Columns from "../Block/Columns";
 import Column from "../Block/Column";
 import AddButton from "./AddButton";
+import RemoveButton from "./RemoveButton";
 import BlockToolbar from "./BlockToolbar";
 import BlockCommandPanel from "./BlockCommandPanel";
 import {
@@ -431,6 +432,9 @@ const BlockItem: React.FC<Props> = ({
             <div style={{ position: "relative" }}>
               <AddButton index={i} />
             </div>
+          </div>
+          <div className="mt-be-btn-remove-wrapper">
+            <RemoveButton />
           </div>
         </>
       )}
