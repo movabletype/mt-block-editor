@@ -78,7 +78,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
             ],
           }
         : {
-            plugins: "lists paste media textcolor code hr link MTBlockEditor",
+            plugins: "lists paste media code hr link MTBlockEditor",
             toolbar: [
               "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
               "bullist numlist outdent indent | blockquote link unlink",
