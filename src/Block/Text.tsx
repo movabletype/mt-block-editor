@@ -225,14 +225,32 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         });
 
         let contentDeleted = false;
-        ed.on("beforeinput", (e: InputEvent) => {
-          if (e.inputType.startsWith("delete")) {
-            contentDeleted = true;
-            setTimeout(() => {
-              contentDeleted = false;
-            }, 50);
-          }
-        });
+        if (tinymceMajorVersion >= 6) {
+          ed.on("beforeinput", (e: InputEvent) => {
+            if (e.inputType.startsWith("delete")) {
+              contentDeleted = true;
+              setTimeout(() => {
+                contentDeleted = false;
+              }, 50);
+            }
+          });
+        } else {
+          root.addEventListener(
+            "keydown",
+            (e) => {
+              if (
+                (e.keyCode === 8 || e.keyCode === 46) &&
+                !(root.textContent === "" && ed.getContent() === "")
+              ) {
+                contentDeleted = true;
+                setTimeout(() => {
+                  contentDeleted = false;
+                }, 50);
+              }
+            },
+            { capture: true }
+          );
+        }
 
         ed.on("keydown", (e: KeyboardEvent) => {
           setTimeout(() => {
