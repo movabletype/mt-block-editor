@@ -30,6 +30,7 @@ import { editHandlers } from "./Text/edit";
 import {
   installPlugins as installTinyMCEPlugins,
   commonSettings,
+  tinymceMajorVersion,
 } from "./Text/tinymce";
 
 declare const tinymce: TinyMCE;
@@ -69,7 +70,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     installTinyMCEPlugins();
 
     const pluginsToolbarSettings: TinyMCESettings =
-      parseInt(tinymce.majorVersion) >= 6
+      tinymceMajorVersion >= 6
         ? {
             plugins: ["lists", "media", "code", "link", "MTBlockEditor"],
             toolbar: [
@@ -100,7 +101,11 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.dispatch("Change");
+          if (tinymceMajorVersion >= 6) {
+            ed.dispatch("Change");
+          } else {
+            ed.fire("Change");
+          }
           return null;
         };
 
