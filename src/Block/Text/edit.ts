@@ -1,6 +1,7 @@
 import type { TinyMCE } from "tinymce";
 import { EditHistoryHandlers } from "../../EditManager";
 import Text from "../Text";
+import { tinymceMajorVersion } from "./tinymce";
 
 declare const tinymce: TinyMCE;
 
@@ -17,7 +18,11 @@ export const editHandlers: EditHistoryHandlers = {
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
       data.cur = data.cur || ed.getContent();
-      ed.dispatch("MTBlockEditorEdit", { html: data.last });
+      if (tinymceMajorVersion >= 6) {
+        ed.dispatch("MTBlockEditorEdit", { html: data.last });
+      } else {
+        ed.fire("MTBlockEditorEdit", { html: data.last });
+      }
     } else {
       data.cur = data.cur || block.text;
       block.text = data.last;
@@ -30,7 +35,11 @@ export const editHandlers: EditHistoryHandlers = {
 
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
-      ed.dispatch("MTBlockEditorEdit", { html: data.cur });
+      if (tinymceMajorVersion >= 6) {
+        ed.dispatch("MTBlockEditorEdit", { html: data.cur });
+      } else {
+        ed.fire("MTBlockEditorEdit", { html: data.cur });
+      }
     } else {
       block.text = data.cur;
       setFocusedIds([block.id]);

@@ -9,6 +9,8 @@ import MTBlockEditorPlugin from "./tinymce/MTBlockEditorPlugin";
 
 declare const tinymce: TinyMCE;
 
+export const tinymceMajorVersion = parseInt(tinymce.majorVersion);
+
 export const installPlugins = (() => {
   let pluginsInstalled = false;
   return (): void => {
