@@ -20,6 +20,7 @@ import { editHandlers } from "./Text/edit";
 import {
   installPlugins as installTinyMCEPlugins,
   commonSettings,
+  tinymceMajorVersion,
 } from "./Text/tinymce";
 
 import {
@@ -63,7 +64,11 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.dispatch("Change");
+          if (tinymceMajorVersion >= 6) {
+            ed.dispatch("Change");
+          } else {
+            ed.fire("Change");
+          }
           return null;
         };
 

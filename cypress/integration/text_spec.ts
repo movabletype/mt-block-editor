@@ -72,7 +72,7 @@ context("Text", () => {
     cy.get(".mt-be-block-toolbar").should("be.visible");
   });
 
-  it.only("Editing a range of selections", () => {
+  it("Editing a range of selections", () => {
     cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`).click();
     wait(1);
 

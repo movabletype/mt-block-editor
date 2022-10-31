@@ -30,6 +30,7 @@ import { editHandlers } from "./Text/edit";
 import {
   installPlugins as installTinyMCEPlugins,
   commonSettings,
+  tinymceMajorVersion,
 } from "./Text/tinymce";
 
 declare const tinymce: TinyMCE;
@@ -69,7 +70,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     installTinyMCEPlugins();
 
     const pluginsToolbarSettings: TinyMCESettings =
-      parseInt(tinymce.majorVersion) >= 6
+      tinymceMajorVersion >= 6
         ? {
             plugins: ["lists", "media", "code", "link", "MTBlockEditor"],
             toolbar: [
@@ -78,7 +79,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
             ],
           }
         : {
-            plugins: "lists paste media textcolor code hr link MTBlockEditor",
+            plugins: "lists paste media code hr link MTBlockEditor",
             toolbar: [
               "formatselect | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | code",
               "bullist numlist outdent indent | blockquote link unlink",
@@ -100,7 +101,11 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          ed.dispatch("Change");
+          if (tinymceMajorVersion >= 6) {
+            ed.dispatch("Change");
+          } else {
+            ed.fire("Change");
+          }
           return null;
         };
 
@@ -220,14 +225,32 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         });
 
         let contentDeleted = false;
-        ed.on("beforeinput", (e: InputEvent) => {
-          if (e.inputType.startsWith("delete")) {
-            contentDeleted = true;
-            setTimeout(() => {
-              contentDeleted = false;
-            }, 50);
-          }
-        });
+        if (tinymceMajorVersion >= 6) {
+          ed.on("beforeinput", (e: InputEvent) => {
+            if (e.inputType.startsWith("delete")) {
+              contentDeleted = true;
+              setTimeout(() => {
+                contentDeleted = false;
+              }, 50);
+            }
+          });
+        } else {
+          root.addEventListener(
+            "keydown",
+            (e) => {
+              if (
+                (e.keyCode === 8 || e.keyCode === 46) &&
+                !(root.textContent === "" && ed.getContent() === "")
+              ) {
+                contentDeleted = true;
+                setTimeout(() => {
+                  contentDeleted = false;
+                }, 50);
+              }
+            },
+            { capture: true }
+          );
+        }
 
         ed.on("keydown", (e: KeyboardEvent) => {
           setTimeout(() => {
