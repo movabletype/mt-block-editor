@@ -5,7 +5,7 @@ import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import { EditHistoryHandlers } from "../EditManager";
 import type { Size } from "./BlockIframePreview/size";
-import { isDefaultSize } from "./BlockIframePreview/size";
+import { isDefaultSize, isEqualSize } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "5000px";
@@ -249,10 +249,54 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const containerElRef = useRef<HTMLDivElement>(null);
   const [rawHtmlData, rawHtmlText, setHtmlData] = useHtmlDataState(html, block);
 
-  const [, _setSize] = useState<Size | null>(null);
+  const [, _setSize] = useState<Size[]>(
+    block.iframePreviewSize ? [block.iframePreviewSize] : []
+  );
   const setSize = useCallback((size: Size): void => {
-    block.setIframePreviewSize(size);
-    _setSize(size);
+    _setSize((history) => {
+      if (history.length >= 1 && isEqualSize(history[0], size)) {
+        // not changed
+        if (history.length >= 2) {
+          return [history[0]]; // truncate
+        } else {
+          return history;
+        }
+      }
+
+      if (history.length >= 2) {
+        const [hist0, hist1] = history;
+        if (
+          (size.width === hist0.width &&
+            hist0.width === hist1.width &&
+            typeof size.height === "number" &&
+            typeof hist0.height === "number" &&
+            typeof hist1.height === "number" &&
+            size.height - hist0.height === hist0.height - hist1.height) ||
+          (size.height === hist0.height &&
+            hist0.height === hist1.height &&
+            typeof size.width === "number" &&
+            typeof hist0.width === "number" &&
+            typeof hist1.width === "number" &&
+            size.width - hist0.width === hist0.width - hist1.width)
+        ) {
+          // The same amount of change continues.
+          if (
+            block.iframePreviewSize &&
+            isEqualSize(block.iframePreviewSize, history[1])
+          ) {
+            return history;
+          } else {
+            block.setIframePreviewSize(history[1]);
+            return [...history];
+          }
+        }
+
+        // changed
+      }
+
+      block.setIframePreviewSize(size);
+      return [size, history[0]];
+    });
   }, []);
   const size = block.getIframePreviewSize(rawHtmlText);
 
