@@ -418,8 +418,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           break;
         case "MTBlockEditorSetSize":
           (Object.keys(size) as Array<keyof Size>).forEach((k) => {
-            const oldValue = parseInt(size[k]);
-            const newValue = parseInt(ev.data.arguments[k]);
+            const oldValue =
+              typeof size[k] === "number"
+                ? (size[k] as number)
+                : parseFloat(size[k] as string);
+            const newValue =
+              typeof ev.data.arguments[k] === "number"
+                ? (ev.data.arguments[k] as number)
+                : parseFloat(ev.data.arguments[k] as string);
             if (
               oldValue &&
               newValue &&

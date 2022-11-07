@@ -1,6 +1,6 @@
 export interface Size {
-  width: string;
-  height: string;
+  width: string | number;
+  height: string | number;
 }
 
 export const defaultSize = { width: "100%", height: "100px" };
