@@ -139,7 +139,6 @@ function apply(opts) {
         )
       ).then((ed) => {
         ed.on("buildTinyMCESettings", ({ block, settings }) => {
-          settings.plugins += " mt_security";
           settings.extended_valid_elements = [
             // we embed 'a[onclick]' by inserting image with popup
             `a[${GLOBAL_ATTRIBUTES}|${ALLOWED_EVENT_ATTRIBUTES}|href|target|name]`,
