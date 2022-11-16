@@ -295,7 +295,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       }
 
       block.setIframePreviewSize(size);
-      return [size, history[0]];
+      return history.length === 0 ? [size] : [size, history[0]];
     });
   }, []);
   const size = block.getIframePreviewSize(rawHtmlText);
