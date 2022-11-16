@@ -446,11 +446,19 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
-      if (!(typeof ev.data === "object" && ev.data.blockId === block.id)) {
+      const containerEl = containerElRef.current;
+
+      if (
+        !(
+          containerEl &&
+          ev.source ===
+            (containerEl.firstChild as HTMLIFrameElement).contentWindow &&
+          ev.data &&
+          ev.data.blockId === block.id
+        )
+      ) {
         return;
       }
-
-      const containerEl = containerElRef.current;
 
       switch (ev.data.method) {
         case "MTBlockEditorInitSize":
@@ -488,25 +496,19 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           }
           break;
         case "MTBlockEditorOnClick":
-          if (containerEl) {
-            (
-              containerEl.closest("[data-mt-block-editor-block-id]") ||
-              (containerEl.getRootNode() as ShadowRoot)?.host
-            )?.dispatchEvent(
-              new MouseEvent("click", {
-                bubbles: true,
-                cancelable: true,
-                ...ev.data.arguments,
-              })
-            );
-          }
+          (
+            containerEl.closest("[data-mt-block-editor-block-id]") ||
+            (containerEl.getRootNode() as ShadowRoot)?.host
+          )?.dispatchEvent(
+            new MouseEvent("click", {
+              bubbles: true,
+              cancelable: true,
+              ...ev.data.arguments,
+            })
+          );
           break;
         case "MTBlockEditorOnKeydown":
-          if (containerEl) {
-            window.dispatchEvent(
-              new KeyboardEvent("keydown", ev.data.arguments)
-            );
-          }
+          window.dispatchEvent(new KeyboardEvent("keydown", ev.data.arguments));
           break;
         case "MTBlockEditorSetCompiledHtml":
           setCompiledHtml(
