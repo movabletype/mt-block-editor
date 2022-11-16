@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>カスタムブロック - Movable Type Block Editor</title>
+    <meta
+      name="description"
+      content="MovableType.net と Movable Type で利用可能な「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!--
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; script-src 'self' https://cdnjs.cloudflare.com https://cdn.movabletype.net https://gist.github.com; connect-src 'self' https://noembed.com;img-src * data: blob: 'unsafe-inline'; frame-src * data: blob:; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline'">
+    -->
+
+    <link rel="canonical" href="https://movabletype.github.io/mt-block-editor/demo/custom-block.html">
+
+    <!-- 共通設定 -->
+    <meta property="og:title" content="カスタムブロック - Movable Type Block Editor" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://movabletype.github.io/mt-block-editor/demo/custom-block.html" />
+    <meta property="og:image" content="https://movabletype.github.io/mt-block-editor/demo/images/ogimage.png" />
+    <meta property="og:site_name" content="Movable Type Block Editor" />
+    <meta
+      property="og:description"
+      content="MovableType.net と Movable Type で利用可能な「ブロックエディタ」をこのページでお試しいただけます。"
+    />
+    <meta property="og:locale" content="ja_JP" />
+    <!-- Facebookの設定 -->
+    <meta property="fb:app_id" content="1382941401998962" />
+    <!-- Twitterの設定 -->
+    <meta name="twitter:card" content="summary" />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"
+      integrity="sha256-Xt8pc4G0CdcRvI0nZ2lRpZ4VHng0EoUDMlGcBSQ9HiQ="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="/mt-block-editor/tinymce6/js/tinymce/tinymce.min.js"
+      referrerpolicy="origin"
+      defer
+    ></script>
+    <script type="module" src="/mt-block-editor/demo/apply.js?ts=3131796fbd8820b4c7175651d49aa695901cac66" defer></script>
+    <script type="application/json" id="mt-block-editor-options">
+      {
+        "shortcutBlockTypes": [
+          "custom-gallery",
+          "custom-syntax_highlighting",
+          "custom-excel"
+        ],
+        "panelBlockTypes": [
+          "core-text",
+          "core-image",
+          "core-file",
+          "core-html",
+          "sixapart-oembed",
+          "core-horizontalrule",
+          "core-table",
+          "core-columns"
+        ],
+        "stylesheets": [
+          "./editor-content.css",
+          "./editor-content-custom-block.css"
+        ]
+      }
+    </script>
+    <script src="/mt-block-editor/demo/fallback.js?ts=3131796fbd8820b4c7175651d49aa695901cac66" defer></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha256-aAr2Zpq8MZ+YA/D6JtRD3xtrwpEz2IqOS+pWD/7XKIw="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"
+      integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o="
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/mt-block-editor/demo/index.css" />
+    <link rel="shortcut icon" href="/mt-block-editor/demo/images/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      href="/mt-block-editor/demo/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/mt-block-editor/demo/images/favicon/android-chrome-256x256.png"
+    />
+    <link rel="stylesheet" href="/mt-block-editor/demo/index.css?ts=3131796fbd8820b4c7175651d49aa695901cac66" />
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-light bg-light justify-content-between"
+    >
+      <!--
+        <a class="navbar-brand" href="/mt-block-editor/">Movable Type Block Editor</a>
+      -->
+      <div class="control-buttons">
+        <button
+          type="button"
+          id="undo"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="取り消す"
+          disabled
+        >
+          <i class="undo" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          id="redo"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="やり直す"
+          disabled
+        >
+          <i class="redo" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          id="export"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="出力HTMLをダウンロード"
+        >
+          <i class="file-export" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="blockeditorlogo">
+        <img
+          src="/mt-block-editor/demo/images/blockeditorlogo.svg"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_pc"
+        />
+        <img
+          src="/mt-block-editor/demo/images/logo.png"
+          alt="Movable Type Block Editor"
+          class="blockeditorlogo_sp"
+        />
+      </p>
+      <div class="customize-buttons">
+        <ul>
+          <li>
+            <a href="/mt-block-editor/">標準</a>
+          </li>
+          <li>
+            <a class="active" href="/mt-block-editor/demo/custom-block.html"
+              >カスタムブロック</a
+            >
+          </li>
+          <li>
+            <a href="/mt-block-editor/demo/strict.html">定形入力</a>
+          </li>
+          <li>
+            <a href="/mt-block-editor/demo/markdown.html">Markdownエディタ</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="mt-5">
+            <textarea id="body" class="d-none">
+            &lt;!-- mt-beb --&gt;&lt;h1&gt;カスタムブロック&lt;/h1&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;カスタムブロックを定義することができます。&lt;br&gt;&lt;br&gt;カスタムブロックではJavaScriptを利用した表現も実現することもできますが、JavaScriptはiframeのサンドボックス内で実行されるため、MovableType.netのようなサービス型のCMSでも利用することができます。&lt;br&gt;&lt;br&gt;ここでは3つの例を紹介します。&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;h2&gt;画像ギャラリー&lt;/h2&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-gallery&quot; h=&#039;&amp;lt;!-- mt-beb t=&quot;core-image&quot; --&amp;gt;&amp;lt;p&amp;gt;&amp;lt;img src=&quot;/mt-block-editor/demo/images/custom-block/slide1.png&quot; style=&quot;max-width:100%;height:auto&quot;/&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&amp;lt;!-- mt-beb t=&quot;core-image&quot; --&amp;gt;&amp;lt;p&amp;gt;&amp;lt;img src=&quot;/mt-block-editor/demo/images/custom-block/slide2.png&quot; style=&quot;max-width:100%;height:auto&quot;/&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&amp;lt;!-- mt-beb t=&quot;core-image&quot; --&amp;gt;&amp;lt;p&amp;gt;&amp;lt;img src=&quot;/mt-block-editor/demo/images/custom-block/slide3.png&quot; style=&quot;max-width:100%;height:auto&quot;/&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&#039; --&gt;
+&lt;div class=&quot;swiper-container&quot;&gt;
+ &lt;div class=&quot;swiper-wrapper&quot;&gt;
+   &lt;div class=&quot;swiper-slide&quot;&gt;&lt;img src=&quot;https://movabletype.github.io/mt-block-editor/demo/images/custom-block/slide1.png&quot; style=&quot;&quot;&gt;&lt;/div&gt;&lt;div class=&quot;swiper-slide&quot;&gt;&lt;img src=&quot;https://movabletype.github.io/mt-block-editor/demo/images/custom-block/slide2.png&quot; style=&quot;&quot;&gt;&lt;/div&gt;&lt;div class=&quot;swiper-slide&quot;&gt;&lt;img src=&quot;https://movabletype.github.io/mt-block-editor/demo/images/custom-block/slide3.png&quot; style=&quot;&quot;&gt;&lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;swiper-pagination&quot;&gt;&lt;/div&gt;
+
+ &lt;div class=&quot;swiper-button-prev&quot;&gt;&lt;/div&gt;
+ &lt;div class=&quot;swiper-button-next&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;h2&gt;ソースコードブロック&lt;/h2&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-syntax_highlighting&quot; h=&#039;&amp;lt;!-- mt-beb t=&quot;sixapart-textarea&quot; m=&amp;#x27;{&quot;blockElement&quot;:&quot;pre&quot;,&quot;formatter&quot;:&quot;none&quot;,&quot;text&quot;:&quot;&amp;amp;lt;html\n  &amp;amp;lt;head&amp;amp;gt;\n    &amp;amp;lt;script type=\&quot;module\&quot;&amp;amp;gt;\n      // こんにちはMTBlockEditor\n      MTBlockEditor.apply(id: \&quot;text\&quot;);\n    &amp;amp;lt;/script&amp;amp;gt;\n  &amp;amp;lt;/head&amp;amp;gt;\n&amp;amp;lt;/html&amp;amp;gt;&quot;,&quot;label&quot;:&quot;ソースコード&quot;,&quot;className&quot;:&quot;source&quot;}&amp;#x27; --&amp;gt;&amp;lt;pre class=&quot;source&quot;&amp;gt;&amp;amp;lt;html&amp;#x0A;  &amp;amp;lt;head&amp;amp;gt;&amp;#x0A;    &amp;amp;lt;script type=&amp;amp;quot;module&amp;amp;quot;&amp;amp;gt;&amp;#x0A;      // こんにちはMTBlockEditor&amp;#x0A;      MTBlockEditor.apply(id: &amp;amp;quot;text&amp;amp;quot;);&amp;#x0A;    &amp;amp;lt;/script&amp;amp;gt;&amp;#x0A;  &amp;amp;lt;/head&amp;amp;gt;&amp;#x0A;&amp;amp;lt;/html&amp;amp;gt;&amp;lt;/pre&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&amp;lt;!-- mt-beb t=&quot;sixapart-select&quot; m=&amp;#x27;{&quot;options&quot;:&quot;html\njavascript&quot;,&quot;blockElement&quot;:&quot;p&quot;,&quot;text&quot;:&quot;html&quot;,&quot;label&quot;:&quot;言語&quot;,&quot;className&quot;:&quot;language&quot;}&amp;#x27; --&amp;gt;&amp;lt;p class=&quot;language&quot;&amp;gt;html&amp;lt;/p&amp;gt;&amp;lt;!-- /mt-beb --&amp;gt;&#039; --&gt;&lt;pre&gt;&lt;code class=&quot;html&quot;&gt;&amp;lt;html
+  &amp;lt;head&amp;gt;
+    &amp;lt;script type=&quot;module&quot;&amp;gt;
+      // こんにちはMTBlockEditor
+      MTBlockEditor.apply(id: &quot;text&quot;);
+    &amp;lt;/script&amp;gt;
+  &amp;lt;/head&amp;gt;
+&amp;lt;/html&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb --&gt;&lt;h2&gt;エクセルファイルの読み込み&lt;/h2&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t=&quot;custom-excel&quot; h=&#039;&#039; --&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;ヘッダー1&lt;/th&gt;&lt;th&gt;ヘッダー2&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;値1&lt;/td&gt;&lt;td&gt;値2&lt;/td&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;!-- /mt-beb --&gt;
+          </textarea
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-muted bg-light">
+      <div class="p-3 p-md-5 text-center">
+        Copyright © Six Apart Ltd. All Rights Reserved.
+      </div>
+    </footer>
+  </body>
+</html>
