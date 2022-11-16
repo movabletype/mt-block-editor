@@ -47,9 +47,18 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   useEffect(() => {
     installTinyMCEPlugins();
 
+    const pluginsSettings: TinyMCESettings =
+      tinymceMajorVersion >= 6
+        ? {
+            plugins: ["table", "code", "media", "link", "MTBlockEditor"],
+          }
+        : {
+            plugins: "table code paste media textcolor link MTBlockEditor",
+          };
+
     const settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext, blocksContext),
-      plugins: "table code paste media textcolor link MTBlockEditor",
+      ...pluginsSettings,
       toolbar:
         "table | bold italic underline strikethrough forecolor backcolor removeformat | alignleft aligncenter alignright | link unlink | code",
       init_instance_callback: (ed: TinyMCEEditor) => {
