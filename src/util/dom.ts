@@ -142,6 +142,7 @@ export const escapeSingleQuoteAttribute = (() => {
     "\r": "&#x0D;",
     "&": "&amp;",
     "'": "&#x27;",
+    "!": "&#x21;",
     "<": "&lt;",
     ">": "&gt;",
     "\u2018": "&#x2018;", // left single quotation mark
