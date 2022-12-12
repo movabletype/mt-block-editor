@@ -5,7 +5,7 @@ import { StylesheetType } from "../Editor";
 import Block from "../Block";
 import { EditHistoryHandlers } from "../EditManager";
 import type { Size } from "./BlockIframePreview/size";
-import { isDefaultSize } from "./BlockIframePreview/size";
+import { isDefaultSize, isEqualSize } from "./BlockIframePreview/size";
 
 const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "5000px";
@@ -249,10 +249,54 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   const containerElRef = useRef<HTMLDivElement>(null);
   const [rawHtmlData, rawHtmlText, setHtmlData] = useHtmlDataState(html, block);
 
-  const [, _setSize] = useState<Size | null>(null);
+  const [, _setSize] = useState<Size[]>(
+    block.iframePreviewSize ? [block.iframePreviewSize] : []
+  );
   const setSize = useCallback((size: Size): void => {
-    block.setIframePreviewSize(size);
-    _setSize(size);
+    _setSize((history) => {
+      if (history.length >= 1 && isEqualSize(history[0], size)) {
+        // not changed
+        if (history.length >= 2) {
+          return [history[0]]; // truncate
+        } else {
+          return history;
+        }
+      }
+
+      if (history.length >= 2) {
+        const [hist0, hist1] = history;
+        if (
+          (size.width === hist0.width &&
+            hist0.width === hist1.width &&
+            typeof size.height === "number" &&
+            typeof hist0.height === "number" &&
+            typeof hist1.height === "number" &&
+            size.height - hist0.height === hist0.height - hist1.height) ||
+          (size.height === hist0.height &&
+            hist0.height === hist1.height &&
+            typeof size.width === "number" &&
+            typeof hist0.width === "number" &&
+            typeof hist1.width === "number" &&
+            size.width - hist0.width === hist0.width - hist1.width)
+        ) {
+          // The same amount of change continues.
+          if (
+            block.iframePreviewSize &&
+            isEqualSize(block.iframePreviewSize, history[1])
+          ) {
+            return history;
+          } else {
+            block.setIframePreviewSize(history[1]);
+            return [...history];
+          }
+        }
+
+        // changed
+      }
+
+      block.setIframePreviewSize(size);
+      return history.length === 0 ? [size] : [size, history[0]];
+    });
   }, []);
   const size = block.getIframePreviewSize(rawHtmlText);
 
@@ -402,11 +446,19 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   useEffect(() => {
     const onMessage = (ev: MessageEvent): void => {
-      if (!(typeof ev.data === "object" && ev.data.blockId === block.id)) {
+      const containerEl = containerElRef.current;
+
+      if (
+        !(
+          containerEl &&
+          ev.source ===
+            (containerEl.firstChild as HTMLIFrameElement).contentWindow &&
+          ev.data &&
+          ev.data.blockId === block.id
+        )
+      ) {
         return;
       }
-
-      const containerEl = containerElRef.current;
 
       switch (ev.data.method) {
         case "MTBlockEditorInitSize":
@@ -418,8 +470,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           break;
         case "MTBlockEditorSetSize":
           (Object.keys(size) as Array<keyof Size>).forEach((k) => {
-            const oldValue = parseInt(size[k]);
-            const newValue = parseInt(ev.data.arguments[k]);
+            const oldValue =
+              typeof size[k] === "number"
+                ? (size[k] as number)
+                : parseFloat(size[k] as string);
+            const newValue =
+              typeof ev.data.arguments[k] === "number"
+                ? (ev.data.arguments[k] as number)
+                : parseFloat(ev.data.arguments[k] as string);
             if (
               oldValue &&
               newValue &&
@@ -438,25 +496,19 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           }
           break;
         case "MTBlockEditorOnClick":
-          if (containerEl) {
-            (
-              containerEl.closest("[data-mt-block-editor-block-id]") ||
-              (containerEl.getRootNode() as ShadowRoot)?.host
-            )?.dispatchEvent(
-              new MouseEvent("click", {
-                bubbles: true,
-                cancelable: true,
-                ...ev.data.arguments,
-              })
-            );
-          }
+          (
+            containerEl.closest("[data-mt-block-editor-block-id]") ||
+            (containerEl.getRootNode() as ShadowRoot)?.host
+          )?.dispatchEvent(
+            new MouseEvent("click", {
+              bubbles: true,
+              cancelable: true,
+              ...ev.data.arguments,
+            })
+          );
           break;
         case "MTBlockEditorOnKeydown":
-          if (containerEl) {
-            window.dispatchEvent(
-              new KeyboardEvent("keydown", ev.data.arguments)
-            );
-          }
+          window.dispatchEvent(new KeyboardEvent("keydown", ev.data.arguments));
           break;
         case "MTBlockEditorSetCompiledHtml":
           setCompiledHtml(

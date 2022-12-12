@@ -16,7 +16,7 @@
       crossorigin="anonymous"
     />
     <script
-      src="./tinymce5/js/tinymce/tinymce.min.js"
+      src="./tinymce6/js/tinymce/tinymce.min.js"
       referrerpolicy="origin"
     ></script>
   </head>
@@ -93,7 +93,6 @@
             ed.on("buildTinyMCESettings", ({ block, settings }) => {
               console.log(block.constructor.typeId);
               console.log(settings);
-              settings.plugins += " mt_security";
               settings.extended_valid_elements = [
                 // we embed 'a[onclick]' by inserting image with popup
                 `a[id|class|style|title|accesskey|tabindex|lang|dir|draggable|dropzone|contextmenu|hidden|onclick|href|target|name]`,
