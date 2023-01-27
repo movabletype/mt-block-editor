@@ -122,10 +122,7 @@ const Editor: React.FC<EditorProps> = ({
     block.resetCompiledHtml();
   }, []);
   useEffect(() => {
-    const wrapperElement = block.wrapperRef.current;
-    if (wrapperElement) {
-      wrapperElement.addEventListener("input", resetCompiledHtml);
-    }
+    editor.on("change", resetCompiledHtml);
 
     if (block._html !== "") {
       parseContent(
@@ -142,11 +139,9 @@ const Editor: React.FC<EditorProps> = ({
     }
 
     return () => {
-      if (wrapperElement) {
-        wrapperElement.removeEventListener("input", resetCompiledHtml);
-      }
+      editor.off("change", resetCompiledHtml);
     };
-  }, [block.wrapperRef.current]);
+  }, []);
 
   useEffect(() => {
     if (focusDescendant) {
