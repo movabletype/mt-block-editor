@@ -204,6 +204,7 @@ export default function blockProperty<T extends EditorProps>(
       };
 
       return React.cloneElement(child, {
+        name: undefined,
         value: value,
         rows: minRows,
         "data-min-rows": minRows,
