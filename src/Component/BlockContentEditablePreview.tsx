@@ -56,6 +56,8 @@ const BlockContentEditablePreview: React.FC<EditorProps> = ({
             return;
           }
 
+          window.dispatchEvent(new CustomEvent("mt-block-editor-click-block"));
+
           if (onMouseUp) {
             onMouseUp(ev);
           }

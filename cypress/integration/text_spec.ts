@@ -412,6 +412,33 @@ context("Text", () => {
         "<!-- mt-beb --><p>aa<strong>b</strong><strong>d</strong></p><!-- /mt-beb -->"
       );
     });
+
+    it("hide panel", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      type("Rich Editor!");
+
+      blur();
+
+      cy.get(".mt-be-btn-add").first().click();
+
+      cy.get(".mt-be-block div:last-child").then(($div) => {
+        const el = $div[0].shadowRoot.querySelector("div[contenteditable]");
+        const document = el.ownerDocument;
+        const range = document.createRange();
+        range.setStart(el.childNodes[0].childNodes[0], 4);
+        document.getSelection().removeAllRanges(range);
+        document.getSelection().addRange(range);
+        el.click();
+      });
+
+      wait(1);
+
+      cy.get(`.mt-be-block-list`).should("not.exist");
+    });
   });
 
   context("devide blocks", () => {
