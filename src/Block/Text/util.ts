@@ -102,44 +102,43 @@ export function removeTinyMCEFromBlock(block: HasTinyMCE): void {
   }
 }
 
-export function adjustToolbar(
+export async function adjustToolbar(
   ed: TinyMCEEditor,
   block: HasTinyMCE,
   editorElement: HTMLElement
-): void {
+): Promise<void> {
   const root = ed.dom.getRoot();
-
-  for (let i = 0; i < 10; i++) {
-    setTimeout(() => {
+  const toolbar = await new Promise<HTMLDivElement>((resolve, reject) => {
+    const lookup = (count: number): void => {
       const toolbar = document.querySelector<HTMLDivElement>(
         `[data-mt-be-toolbar="${block.id}"]`
       );
-      if (!toolbar) {
-        return;
+      if (toolbar) {
+        resolve(toolbar);
+      } else if (count > 100) {
+        // timeout 10s passed
+        reject();
+      } else {
+        setTimeout(() => lookup(count + 1), 100);
       }
+    };
+    lookup(0);
+  });
 
-      toolbar.style.top = `-${toolbar.offsetHeight}px`;
-
-      if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
-        const blockEl = root.closest(".block");
-        if (!blockEl) {
-          return;
-        }
-
-        // Set width property only when this block in inside .column
-        if (!blockEl.closest(".column")) {
-          return;
-        }
-
-        const editorRect = editorElement.getBoundingClientRect();
-        const blockRect = blockEl.getBoundingClientRect();
-        toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
-        toolbar.style.setProperty(
-          "width",
-          `calc(100vw - ${editorRect.left}px)`,
-          "important"
-        );
-      }
-    }, i * 100);
+  if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
+    const blockEl = root.closest(".block");
+    // Set width property only when this block in inside .column
+    if (blockEl?.closest(".column")) {
+      const editorRect = editorElement.getBoundingClientRect();
+      const blockRect = blockEl.getBoundingClientRect();
+      toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
+      toolbar.style.setProperty(
+        "width",
+        `calc(100vw - ${editorRect.left}px)`,
+        "important"
+      );
+    }
   }
+
+  toolbar.style.top = `-${toolbar.offsetHeight}px`;
 }
