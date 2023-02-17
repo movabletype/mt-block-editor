@@ -141,7 +141,7 @@ export default function blockProperty<T extends EditorProps>(
         return child;
       }
 
-      const n = child.props.name;
+      const n = child.props["data-property-name"] ?? child.props.name;
 
       if (!(n in block)) {
         return child;
@@ -204,6 +204,7 @@ export default function blockProperty<T extends EditorProps>(
       };
 
       return React.cloneElement(child, {
+        name: undefined,
         value: value,
         rows: minRows,
         "data-min-rows": minRows,

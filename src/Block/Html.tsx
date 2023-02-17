@@ -17,7 +17,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
       <BlockSetupCommon block={block} keys={["label", "helpText"]} />
       <BlockLabel block={block}>
         <textarea
-          name="text"
+          data-property-name="text"
           className="mt-be-input mt-be-input--full-width"
           data-mt-block-editor-focus-default
         />

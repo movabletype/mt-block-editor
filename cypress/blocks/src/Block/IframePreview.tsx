@@ -29,7 +29,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
       <BlockSetupCommon block={block} />
       <label className="mt-be-label-name">
         <div>{t("scheme")}</div>
-        <select className="mt-be-input" name="scheme">
+        <select className="mt-be-input" data-property-name="scheme">
           <option value="data">data</option>
           <option value="blob">blob</option>
         </select>
@@ -38,7 +38,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
         <div>{t("iframe sandbox")}</div>
         <input
           type="text"
-          name="sandbox"
+          data-property-name="sandbox"
           className="mt-be-input mt-be-input--full-width"
           data-mt-block-editor-focus-default
         />
@@ -46,7 +46,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
       <BlockLabel block={block}>
         <input
           type="text"
-          name="text"
+          data-property-name="text"
           className="mt-be-input mt-be-input--full-width"
           data-mt-block-editor-focus-default
         />
@@ -56,12 +56,14 @@ const Editor: React.FC<EditorProps> = blockProperty(
 );
 
 const Html: React.FC<HtmlProps> = ({ block }: HtmlProps) => {
-  return <BlockIframePreview
-    block={block}
-    html="test"
-    scheme={block.scheme}
-    sandbox={block.sandbox === "null" ? null : block.sandbox}
-  />;
+  return (
+    <BlockIframePreview
+      block={block}
+      html="test"
+      scheme={block.scheme}
+      sandbox={block.sandbox === "null" ? null : block.sandbox}
+    />
+  );
 };
 
 class IframePreview extends Block {
