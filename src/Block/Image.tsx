@@ -88,7 +88,7 @@ const Editor: React.FC<EditorProps> = blockProperty(
                 <input
                   type="url"
                   className="mt-be-input"
-                  name="linkUrl"
+                  data-property-name="linkUrl"
                   defaultValue={block.linkUrl}
                   data-mt-block-editor-focus-default
                 />
@@ -97,14 +97,14 @@ const Editor: React.FC<EditorProps> = blockProperty(
                 <div className="mt-be-label-block">{t("Title")}</div>
                 <input
                   className="mt-be-input"
-                  name="linkTitle"
+                  data-property-name="linkTitle"
                   defaultValue={block.linkTitle}
                 />
               </label>
               <label className="mt-be-label-name">
                 <div className="mt-be-label-block">{t("Target Attribute")}</div>
                 <select
-                  name="linkTarget"
+                  data-property-name="linkTarget"
                   className="mt-be-input"
                   defaultValue={block.linkTarget}
                 >
@@ -150,20 +150,24 @@ const Editor: React.FC<EditorProps> = blockProperty(
         <BlockLabel block={block}>
           <label className="mt-be-label-name">
             <div>{t("Image URL")}</div>
-            <input type="url" name="url" data-mt-block-editor-focus-default />
+            <input
+              type="url"
+              data-property-name="url"
+              data-mt-block-editor-focus-default
+            />
           </label>
           <label className="mt-be-label-name">
             <div>{t("Class Name")}</div>
-            <input name="className" />
+            <input data-property-name="className" />
           </label>
           <label className="mt-be-label-name">
             <div>{t("Alternative Text")}</div>
-            <input name="alt" />
+            <input data-property-name="alt" />
           </label>
           <label className="mt-be-label-name">
             <div>{t("Caption")}</div>
             <textarea
-              name="caption"
+              data-property-name="caption"
               data-min-rows="1"
               style={{ width: "100%" }}
             ></textarea>

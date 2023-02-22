@@ -19,6 +19,7 @@ import { BlockEditorCommandEvent } from "../CommandManager";
 declare global {
   interface WindowEventMap {
     "mt-block-editor-command": BlockEditorCommandEvent;
+    "mt-block-editor-click-block": CustomEvent;
   }
 }
 

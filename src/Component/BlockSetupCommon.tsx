@@ -27,14 +27,14 @@ const BlockSetupCommon: React.FC<EditorProps> = blockProperty(
             <div>{t(labelMap[k])}</div>
             {k === "helpText" ? (
               <textarea
-                name={k}
+                data-property-name={k}
                 className="mt-be-input mt-be-input--full-width"
                 data-min-rows="1"
               />
             ) : (
               <input
                 type="text"
-                name={k}
+                data-property-name={k}
                 className="mt-be-input mt-be-input--full-width"
               />
             )}

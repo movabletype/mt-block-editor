@@ -22,11 +22,15 @@ const Editor: React.FC<EditorProps> = blockProperty(
       <BlockLabel block={block}>
         <label className="mt-be-label-name">
           <div>{t("Link URL")}</div>
-          <input type="url" name="url" data-mt-block-editor-focus-default />
+          <input
+            type="url"
+            data-property-name="url"
+            data-mt-block-editor-focus-default
+          />
         </label>
         <label className="mt-be-label-name">
           <div>{t("Text to display")}</div>
-          <input name="text" />
+          <input data-property-name="text" />
         </label>
       </BlockLabel>
     </div>
