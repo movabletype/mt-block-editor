@@ -51,19 +51,21 @@ const AddButton: React.FC<AddButtonProps> = memo(
         buttonEl.classList.remove("mt-be-droppable");
       };
 
-      const onWindowClick = (ev: MouseEvent): void => {
+      const onWindowClick = (ev: MouseEvent | CustomEvent): void => {
         if (blockListElRef.current === null) {
           return;
         }
 
         const blockListEl = blockListElRef.current as unknown as HTMLElement;
 
-        let target = ev.target as HTMLElement;
-        while (target.parentNode && target.parentNode !== target) {
-          if (target === blockListEl) {
-            return;
+        let target = ev.target as HTMLElement | Window;
+        if (target instanceof HTMLElement) {
+          while (target.parentNode && target.parentNode !== target) {
+            if (target === blockListEl) {
+              return;
+            }
+            target = target.parentNode as HTMLElement;
           }
-          target = target.parentNode as HTMLElement;
         }
 
         setShowList(ListStatus.Hidden);
@@ -77,6 +79,7 @@ const AddButton: React.FC<AddButtonProps> = memo(
         capture: true,
         passive: true,
       });
+      window.addEventListener("mt-block-editor-click-block", onWindowClick);
 
       return () => {
         document.removeEventListener("drop", onDrop, {
