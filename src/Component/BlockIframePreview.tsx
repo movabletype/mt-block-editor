@@ -237,7 +237,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   onBeforeSetCompiledHtml,
   border,
   scheme = "data",
-  sandbox,
+  sandbox = "allow-scripts allow-same-origin",
 }: EditorProps) => {
   const { editor } = useEditorContext();
 
@@ -385,9 +385,6 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         <head>
           <meta charset="utf-8">
           <script>
-            ["alert", "confirm", "prompt"].forEach(function(name) {
-              window[name] = function() { console.log(name + " is disabled in a preview iframe") };
-            });
             setTimeout(${InitSizeFunc.toString()}, 50);
             setInterval(${postMessageFunc.toString()}, 1000);
             var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
