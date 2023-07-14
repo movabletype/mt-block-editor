@@ -143,6 +143,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
       elm.addEventListener("drop", (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
+        elm.classList.remove("mt-block-editor-mt-be-droppable");
         listener(ev);
       });
 
