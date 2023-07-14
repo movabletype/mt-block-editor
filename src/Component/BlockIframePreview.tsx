@@ -102,7 +102,10 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
       elm.classList.add("mt-block-editor-mt-be-droppable-area");
 
       elm.addEventListener("click", (ev) => {
-        if (ev.target instanceof HTMLInputElement) {
+        if (
+          ev.target instanceof HTMLElement &&
+          ev.target.closest("input, textarea, select, label, button")
+        ) {
           return;
         }
 
