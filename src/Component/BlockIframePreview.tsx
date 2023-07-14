@@ -102,7 +102,10 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
       elm.classList.add("mt-block-editor-mt-be-droppable-area");
 
       elm.addEventListener("click", (ev) => {
-        if (ev.target instanceof HTMLInputElement) {
+        if (
+          ev.target instanceof HTMLElement &&
+          ev.target.closest("input, textarea, select, label, button")
+        ) {
           return;
         }
 
@@ -140,6 +143,7 @@ function addDroppableFunc(listener: (ev: Event) => void): Promise<void> {
       elm.addEventListener("drop", (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
+        elm.classList.remove("mt-block-editor-mt-be-droppable");
         listener(ev);
       });
 
@@ -237,7 +241,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   onBeforeSetCompiledHtml,
   border,
   scheme = "data",
-  sandbox,
+  sandbox = "allow-scripts allow-same-origin",
 }: EditorProps) => {
   const { editor } = useEditorContext();
 
@@ -385,9 +389,6 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         <head>
           <meta charset="utf-8">
           <script>
-            ["alert", "confirm", "prompt"].forEach(function(name) {
-              window[name] = function() { console.log(name + " is disabled in a preview iframe") };
-            });
             setTimeout(${InitSizeFunc.toString()}, 50);
             setInterval(${postMessageFunc.toString()}, 1000);
             var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
