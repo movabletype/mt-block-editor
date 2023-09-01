@@ -416,12 +416,11 @@ const BlockItem: React.FC<Props> = ({
               className="mt-be-btn-up"
               onClick={onUp}
             ></button>
-            <button
-              type="button"
+            <span
               className="mt-be-btn-move"
               onClick={toggleCommandPanelShown}
               ref={drag}
-            ></button>
+            ></span>
             <button
               type="button"
               className="mt-be-btn-down"
