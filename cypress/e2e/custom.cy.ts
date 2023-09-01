@@ -636,7 +636,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       cy.get(`.mt-be-block`).click();
       cy.get(".mt-be-block-toolbar--block button").first().click();
 
-      cy.get(`input[name="linkUrl"]`).focus();
+      cy.get(`input[data-property-name="linkUrl"]`).focus();
 
       type("https://example.com/page.html");
       cy.get(".mt-be-btn-primary").click();

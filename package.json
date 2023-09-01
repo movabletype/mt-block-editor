@@ -42,7 +42,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^5.2.6",
     "css-minimizer-webpack-plugin": "^3.0.1",
-    "cypress": "^9.0.0",
+    "cypress": "^13.0.0",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
