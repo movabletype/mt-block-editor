@@ -1,13 +1,6 @@
 /// <reference types="cypress" />
 
-import {
-  type,
-  apply,
-  blur,
-  wait,
-  registerBlockType,
-  serializedTextarea,
-} from "../helpers";
+import { apply, blur, wait } from "../helpers";
 
 context("Block", () => {
   const textareaId = "text";
@@ -30,8 +23,7 @@ context("Block", () => {
 
       wait(1);
 
-      cy.get("input[name=text]")
-        .type("test");
+      cy.get(`input[data-property-name="text"]`).type("test");
 
       blur();
       wait(1);
@@ -47,8 +39,7 @@ context("Block", () => {
 
       wait(1);
 
-      cy.get("select[name=scheme]")
-        .select("blob");
+      cy.get(`select[data-property-name="scheme"]`).select("blob");
 
       blur();
       wait(1);
@@ -70,8 +61,7 @@ context("Block", () => {
 
       wait(1);
 
-      cy.get("input[name=text]")
-        .type("test");
+      cy.get(`input[data-property-name="text"]`).type("test");
 
       blur();
       wait(1);
@@ -87,9 +77,7 @@ context("Block", () => {
 
       wait(1);
 
-      cy.get("input[name=sandbox]")
-        .clear()
-        .type("allow-scripts");
+      cy.get(`input[data-property-name="sandbox"]`).clear().type("allow-scripts");
 
       blur();
       wait(1);
@@ -105,8 +93,7 @@ context("Block", () => {
 
       wait(1);
 
-      cy.get("input[name=sandbox]")
-        .clear();
+      cy.get(`input[data-property-name="sandbox"]`).clear();
 
       blur();
       wait(1);

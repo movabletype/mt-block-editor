@@ -33,7 +33,7 @@ context("Editor", () => {
 
     cy.get(`.mt-be-block .mt-be-column:nth-child(1) .mt-be-block`).click();
     cy.get(
-      `.mt-be-block .mt-be-column:nth-child(1) .mt-be-block input[name="className"]`
+      `.mt-be-block .mt-be-column:nth-child(1) .mt-be-block input[data-property-name="className"]`
     ).click();
     type("custom-class-name");
 
