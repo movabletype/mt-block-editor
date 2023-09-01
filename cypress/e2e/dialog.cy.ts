@@ -25,7 +25,7 @@ context("Dialog", () => {
     cy.wait(TRANSITION_TIMEOUT);
     cy.get(".mt-be-dialog").should("be.visible");
     cy.get("body").should("have.class", "mt-block-editor-overlay-open");
-    cy.focused().should("have.attr", "name", "linkUrl");
+    cy.focused().should("have.attr", "data-property-name", "linkUrl");
     type("https://example.com/");
 
     cy.get(".mt-be-btn-primary").click();

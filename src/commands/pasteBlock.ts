@@ -115,6 +115,14 @@ const command: Command = {
         const types = clipboardItem.types;
         if (types.includes("text/html")) {
           html = await (await clipboardItem.getType("text/html")).text();
+          if (
+            html.match(/<!-- mt-beb .*? \/mt-beb -->/) &&
+            types.includes("text/plain")
+          ) {
+            // If copied from MTBlockEditor, text/plain is more suitable for pasting.
+            html = await (await clipboardItem.getType("text/plain")).text();
+          }
+
           break;
         }
 

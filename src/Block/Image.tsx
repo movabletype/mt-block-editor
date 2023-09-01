@@ -135,7 +135,10 @@ const Editor: React.FC<EditorProps> = blockProperty(
 
                   const keys = ["linkUrl", "linkTitle", "linkTarget"] as const;
                   keys.forEach((name) => {
-                    block[name] = (form[name] as HTMLInputElement).value;
+                    block[name] =
+                      form.querySelector<HTMLInputElement>(
+                        `[data-property-name="${name}"]`
+                      )?.value || "";
                   });
 
                   setLinkDialogOpen(false);

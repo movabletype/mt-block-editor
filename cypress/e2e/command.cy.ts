@@ -333,25 +333,25 @@ context("Command", () => {
         cy.get(`.mt-be-btn-add-bottom`)
           .click()
           .within(() => {
-            cy.get(`[data-mt-be-type="custom-text-list"]`).click();
+            cy.get(`[data-mt-be-type="core-html"]`).click();
           });
-
-        cy.get(
-          `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="core-html"]`
-        ).click();
 
         wait(1);
 
         type("<A>text</A><custom-element>");
 
-        blur();
+        cy.get(".mt-be-btn-move:visible").click();
+        wait(1);
 
         cy.get(`[data-mt-be-command="core-copyBlock"]`).click();
         cy.get(`[data-mt-be-command="core-pasteBlock"]`).click();
 
         blur();
 
-        serializedTextarea(textareaId).should("have.value", `sss`);
+        serializedTextarea(textareaId).should(
+          "have.value",
+          `<!-- mt-beb t="core-html" --><A>text</A><custom-element><!-- /mt-beb --><!-- mt-beb t="core-html" --><A>text</A><custom-element><!-- /mt-beb -->`
+        );
       });
     });
   }
