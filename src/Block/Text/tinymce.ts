@@ -9,7 +9,11 @@ import MTBlockEditorPlugin from "./tinymce/MTBlockEditorPlugin";
 
 declare const tinymce: TinyMCE;
 
-export const tinymceMajorVersion = parseInt(tinymce.majorVersion);
+let tinymceMajorVersion = undefined;
+export const getTinymceMajorVersion = () => {
+  tinymceMajorVersion ||= parseInt(tinymce.majorVersion);
+  return tinymceMajorVersion;
+};
 
 export const installPlugins = (() => {
   let pluginsInstalled = false;
@@ -43,7 +47,7 @@ export const commonSettings: (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ev as any).preventDefault?.(); // PastePreProcessEvent probably has preventDefault
 
-      if (parseInt(tinymce.majorVersion) >= 6) {
+      if (getTinymceMajorVersion() >= 6) {
         return;
       }
 

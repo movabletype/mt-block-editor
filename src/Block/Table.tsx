@@ -20,7 +20,7 @@ import { editHandlers } from "./Text/edit";
 import {
   installPlugins as installTinyMCEPlugins,
   commonSettings,
-  tinymceMajorVersion,
+  getTinymceMajorVersion,
 } from "./Text/tinymce";
 
 import {
@@ -48,7 +48,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
     installTinyMCEPlugins();
 
     const pluginsSettings: TinyMCESettings =
-      tinymceMajorVersion >= 6
+      getTinymceMajorVersion() >= 6
         ? {
             plugins: ["table", "code", "media", "link", "MTBlockEditor"],
           }
@@ -73,7 +73,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ed.undoManager.add = (): any => {
           // XXX: improve performance
-          if (tinymceMajorVersion >= 6) {
+          if (getTinymceMajorVersion() >= 6) {
             ed.dispatch("Change");
           } else {
             ed.fire("Change");
