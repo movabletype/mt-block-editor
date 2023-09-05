@@ -1,7 +1,7 @@
 import type { TinyMCE } from "tinymce";
 import { EditHistoryHandlers } from "../../EditManager";
 import Text from "../Text";
-import { tinymceMajorVersion } from "./tinymce";
+import { getTinymceMajorVersion } from "./tinymce";
 
 declare const tinymce: TinyMCE;
 
@@ -18,7 +18,7 @@ export const editHandlers: EditHistoryHandlers = {
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
       data.cur = data.cur || ed.getContent();
-      if (tinymceMajorVersion >= 6) {
+      if (getTinymceMajorVersion() >= 6) {
         ed.dispatch("MTBlockEditorEdit", { html: data.last });
       } else {
         ed.fire("MTBlockEditorEdit", { html: data.last });
@@ -35,7 +35,7 @@ export const editHandlers: EditHistoryHandlers = {
 
     const ed = tinymce.get(block.tinymceId());
     if (ed) {
-      if (tinymceMajorVersion >= 6) {
+      if (getTinymceMajorVersion() >= 6) {
         ed.dispatch("MTBlockEditorEdit", { html: data.cur });
       } else {
         ed.fire("MTBlockEditorEdit", { html: data.cur });
