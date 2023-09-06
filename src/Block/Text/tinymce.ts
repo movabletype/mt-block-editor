@@ -9,8 +9,8 @@ import MTBlockEditorPlugin from "./tinymce/MTBlockEditorPlugin";
 
 declare const tinymce: TinyMCE;
 
-let tinymceMajorVersion = undefined;
-export const getTinymceMajorVersion = () => {
+let tinymceMajorVersion: number | undefined = undefined;
+export const getTinymceMajorVersion = (): number => {
   tinymceMajorVersion ||= parseInt(tinymce.majorVersion);
   return tinymceMajorVersion;
 };
