@@ -577,6 +577,60 @@ document.addEventListener("DOMContentLoaded", async () => {
         expect(html).to.equal(expectedResult);
       });
     });
+
+    it("nested : has lots of blocks", () => {
+      const list = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-wrap"]`).click();
+        });
+
+      list.forEach((char, index) => {
+        wait(1);
+        cy.get(
+          `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
+        ).click();
+
+        wait(Math.round(index / 2) + 1);
+        cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
+          .eq(index)
+          .click()
+          .within(() => {
+            cy.get(`[data-mt-be-type="core-text"]`).click();
+          });
+
+        wait(Math.round(index / 2) + 1);
+        type(char);
+      });
+
+      blur();
+
+      wait(1);
+
+      const expectedResult = `<div class="custom-wrap">${list
+        .map(
+          (char) =>
+            `<div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>${char}</p></div></div>`
+        )
+        .join("")}</div>`;
+
+      serializedTextarea(textareaId).should(($input) => {
+        const value = $input.val();
+        const html = value.replace(/<!--.*?-->/g, "");
+        expect(html).to.equal(expectedResult);
+      });
+
+      cy.get(`.mt-be-btn-add-bottom`).click();
+      blur();
+
+      // No change.
+      serializedTextarea(textareaId).should(($input) => {
+        const value = $input.val();
+        const html = value.replace(/<!--.*?-->/g, "");
+        expect(html).to.equal(expectedResult);
+      });
+    });
   });
 
   context("custom-root_block_with_header", () => {
