@@ -37,6 +37,7 @@ interface EditorProps extends EditorOptions {
 }
 
 const COMPILE_TIMEOUT = 2000;
+const SERIALIZATION_PARALLELISM = 4;
 
 const STYLE_HIDDEN: CSSProperties = {
   position: "absolute",
@@ -324,14 +325,31 @@ class Column extends Block implements HasBlocks {
     return this.blocks.length === 0;
   }
 
+  private async serializeChildBlocks(
+    opts: SerializeOptions
+  ): Promise<string[]> {
+    if (this.blocks.length <= SERIALIZATION_PARALLELISM) {
+      return Promise.all(this.blocks.map((c) => c.serialize(opts)));
+    }
+
+    const res: string[] = [];
+    const indexes = Object.keys(this.blocks).map((i) => Number(i));
+    await Promise.all(
+      [...Array(SERIALIZATION_PARALLELISM)].map(async () => {
+        for (let i = indexes.shift(); i !== undefined; i = indexes.shift()) {
+          res[i] = await this.blocks[i].serialize(opts);
+        }
+      })
+    );
+    return res;
+  }
+
   public async serializedString(opts: SerializeOptions): Promise<string> {
     const classNames = [
       (this.constructor as typeof Column).className,
       this.className,
     ].filter((c) => c);
-    const serializedBlocks = await Promise.all(
-      this.blocks.map((c) => c.serialize(opts))
-    );
+    const serializedBlocks = await this.serializeChildBlocks(opts);
 
     return [
       this.rootBlock
