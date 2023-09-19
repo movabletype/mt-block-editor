@@ -206,6 +206,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       rootBlock: "",
     });
 
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: "",
+      typeId: "custom-set-compile-html-body",
+      panelBlockTypes: [],
+      shortcutBlockTypes: [],
+      className: "",
+      html: '<!-- mt-beb t="core-html" --><!-- /mt-beb -->',
+      shouldBeCompiled: 1,
+      previewHeader: `
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  if (document.body.dataset.hasCompiledHtml) {
+    return;
+  }
+
+  MTBlockEditorSetCompiledHtml(document.body.innerHTML, {
+    preserveBlockData: !!document.body.innerHTML.match(/preserveBlockData/),
+  });
+});
+</script>`,
+      label: "set-compile-html-body",
+      rootBlock: "",
+    });
+
     apply({
       id: textareaId,
     });
@@ -577,6 +602,60 @@ document.addEventListener("DOMContentLoaded", async () => {
         expect(html).to.equal(expectedResult);
       });
     });
+
+    it("nested : has lots of blocks", () => {
+      const list = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-wrap"]`).click();
+        });
+
+      list.forEach((char, index) => {
+        wait(1);
+        cy.get(
+          `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
+        ).click();
+
+        wait(Math.round(index / 2) + 1);
+        cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
+          .eq(index)
+          .click()
+          .within(() => {
+            cy.get(`[data-mt-be-type="core-text"]`).click();
+          });
+
+        wait(Math.round(index / 2) + 1);
+        type(char);
+      });
+
+      blur();
+
+      wait(1);
+
+      const expectedResult = `<div class="custom-wrap">${list
+        .map(
+          (char) =>
+            `<div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>${char}</p></div></div>`
+        )
+        .join("")}</div>`;
+
+      serializedTextarea(textareaId).should(($input) => {
+        const value = $input.val();
+        const html = value.replace(/<!--.*?-->/g, "");
+        expect(html).to.equal(expectedResult);
+      });
+
+      cy.get(`.mt-be-btn-add-bottom`).click();
+      blur();
+
+      // No change.
+      serializedTextarea(textareaId).should(($input) => {
+        const value = $input.val();
+        const html = value.replace(/<!--.*?-->/g, "");
+        expect(html).to.equal(expectedResult);
+      });
+    });
   });
 
   context("custom-root_block_with_header", () => {
@@ -646,6 +725,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb t="custom-images" h='&lt;!-- mt-beb t="core-image" --&gt;&lt;p&gt;&lt;a href="https://example.com/page.html" target="_self"&gt;&lt;img src="https://example.com/1.jpg" class="" alt=""/&gt;&lt;/a&gt;&lt;/p&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-images"><!-- mt-beb t="core-image" --><p><a href="https://example.com/page.html" target="_self"><img src="https://example.com/1.jpg" class="" alt=""></a></p><!-- /mt-beb --></div><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context.only("custom-multicolumns", () => {
+    it("default", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-set-compile-html-body"]`).click();
+        });
+
+      type("test");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-set-compile-html-body" h='&lt;!-- mt-beb t="core-html" --&gt;test&lt;!-- /mt-beb --&gt;' -->test<!-- /mt-beb -->`
+      );
+    });
+
+    it("preserveBlockData", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-set-compile-html-body"]`).click();
+        });
+
+      type("preserveBlockData");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-set-compile-html-body" h='&lt;!-- mt-beb t="core-html" --&gt;preserveBlockData&lt;!-- /mt-beb --&gt;' --><!-- mt-beb t="core-html" -->preserveBlockData<!-- /mt-beb --><!-- /mt-beb -->`
       );
     });
   });
