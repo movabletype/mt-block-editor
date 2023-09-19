@@ -206,6 +206,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       rootBlock: "",
     });
 
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: "",
+      typeId: "custom-set-compile-html-body",
+      panelBlockTypes: [],
+      shortcutBlockTypes: [],
+      className: "",
+      html: '<!-- mt-beb t="core-html" --><!-- /mt-beb -->',
+      shouldBeCompiled: 1,
+      previewHeader: `
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  if (document.body.dataset.hasCompiledHtml) {
+    return;
+  }
+
+  MTBlockEditorSetCompiledHtml(document.body.innerHTML, {
+    preserveBlockData: !!document.body.innerHTML.match(/preserveBlockData/),
+  });
+});
+</script>`,
+      label: "set-compile-html-body",
+      rootBlock: "",
+    });
+
     apply({
       id: textareaId,
     });
@@ -646,6 +671,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb t="custom-images" h='&lt;!-- mt-beb t="core-image" --&gt;&lt;p&gt;&lt;a href="https://example.com/page.html" target="_self"&gt;&lt;img src="https://example.com/1.jpg" class="" alt=""/&gt;&lt;/a&gt;&lt;/p&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-images"><!-- mt-beb t="core-image" --><p><a href="https://example.com/page.html" target="_self"><img src="https://example.com/1.jpg" class="" alt=""></a></p><!-- /mt-beb --></div><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context.only("custom-multicolumns", () => {
+    it("default", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-set-compile-html-body"]`).click();
+        });
+
+      type("test");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-set-compile-html-body" h='&lt;!-- mt-beb t="core-html" --&gt;test&lt;!-- /mt-beb --&gt;' -->test<!-- /mt-beb -->`
+      );
+    });
+
+    it("preserveBlockData", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-set-compile-html-body"]`).click();
+        });
+
+      type("preserveBlockData");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-set-compile-html-body" h='&lt;!-- mt-beb t="core-html" --&gt;preserveBlockData&lt;!-- /mt-beb --&gt;' --><!-- mt-beb t="core-html" -->preserveBlockData<!-- /mt-beb --><!-- /mt-beb -->`
       );
     });
   });

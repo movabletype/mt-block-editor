@@ -24,7 +24,8 @@ interface EditorProps {
 }
 
 interface SetCompiledHtmlOptions {
-  addEditHistory: boolean;
+  addEditHistory?: boolean;
+  preserveBlockData?: boolean;
 }
 
 const editHandlers: EditHistoryHandlers = {
@@ -82,14 +83,18 @@ function postMessageFunc(): void {
   );
 }
 
-function setCompiledHtmlFunc(html: string, opts: SetCompiledHtmlOptions): void {
+function setCompiledHtmlFunc(
+  html: string,
+  opts?: SetCompiledHtmlOptions
+): void {
   parent.postMessage(
     {
       method: "MTBlockEditorSetCompiledHtml",
       blockId: document.body.dataset.blockId,
       html,
       arguments: {
-        addEditHistory: opts && opts.addEditHistory,
+        addEditHistory: !!opts?.addEditHistory,
+        preserveBlockData: !!opts?.preserveBlockData,
       },
     },
     "*"
@@ -320,10 +325,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         return;
       }
 
+      if (!opts.preserveBlockData) {
+        res = res.replace(/<!--\s+\/?mt-beb.*?-->/g, "");
+      }
+
       const lastValue = block.compiledHtml;
       block.compiledHtml = res;
 
-      if (opts && opts.addEditHistory) {
+      if (opts.addEditHistory) {
         editor.editManager.add({
           block,
           data: {
@@ -515,10 +524,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
           setCompiledHtml(
             ev.data.html,
             ev.data.html ? null : new Error(ev.data.error || "Error"),
-            {
-              addEditHistory:
-                ev.data.arguments && ev.data.arguments.addEditHistory,
-            }
+            ev.data.arguments as SetCompiledHtmlOptions
           );
           break;
       }
