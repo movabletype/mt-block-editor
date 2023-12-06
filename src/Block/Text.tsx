@@ -8,7 +8,12 @@ import type {
 } from "tinymce";
 import { useBlocksContext, useEditorContext } from "../Context";
 import icon from "../img/icon/text-block.svg";
-import { sanitize, isIos, getShadowDomSelectorSet } from "../util";
+import {
+  sanitize,
+  isIos,
+  getShadowDomSelectorSet,
+  isPassThroughNativeEvent,
+} from "../util";
 import EditorMode from "../Component/EditorMode";
 import BlockToolbar from "../Component/BlockToolbar";
 import BlockSetupCommon from "../Component/BlockSetupCommon";
@@ -345,7 +350,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
           toolbarVisible ? "" : "invisible"
         }`}
         onMouseDown={(ev) => {
-          if (ev.target instanceof HTMLElement && ev.target.closest(".tox")) {
+          if (isPassThroughNativeEvent(ev.nativeEvent)) {
             return;
           }
 

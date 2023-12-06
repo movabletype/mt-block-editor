@@ -1,7 +1,11 @@
 import { t } from "../i18n";
 import React, { useEffect, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
-import { sanitize, getShadowDomSelectorSet } from "../util";
+import {
+  sanitize,
+  getShadowDomSelectorSet,
+  isPassThroughNativeEvent,
+} from "../util";
 import type {
   Editor as TinyMCEEditor,
   TinyMCE,
@@ -196,7 +200,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         hasBorder={false}
         className="mt-be-block-toolbar--tinymce"
         onMouseDown={(ev) => {
-          if (ev.target instanceof HTMLElement && ev.target.closest(".tox")) {
+          if (isPassThroughNativeEvent(ev.nativeEvent)) {
             return;
           }
 

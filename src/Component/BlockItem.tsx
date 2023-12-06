@@ -38,6 +38,7 @@ import {
   findDescendantBlocks,
   getBlocksByRange,
   isNarrowScreen,
+  isPassThroughNativeEvent,
 } from "../util";
 
 interface DragObject {
@@ -257,6 +258,10 @@ const BlockItem: React.FC<Props> = ({
   const [onClick, onCopy, onPaste, onUp, onDown] = useMemo(
     () => [
       function onClick(ev: React.MouseEvent) {
+        if (isPassThroughNativeEvent(ev.nativeEvent)) {
+          return;
+        }
+
         ev.stopPropagation();
         ev.nativeEvent.stopImmediatePropagation();
 
