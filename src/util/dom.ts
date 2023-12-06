@@ -169,3 +169,7 @@ export function decodeHtml(html: string): string {
   e.innerHTML = html;
   return e.value;
 }
+
+export function isPassThroughNativeEvent(ev: Event): boolean {
+  return !!(ev.target instanceof Element && ev.target.closest(".tox"));
+}
