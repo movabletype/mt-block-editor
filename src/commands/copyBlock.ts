@@ -5,9 +5,35 @@ import { tinymceFocus } from "../Block/Text/util";
 import Text from "../Block/Text";
 import Table from "../Block/Table";
 
+const isTextSelected = (): boolean => {
+  const selection = window.getSelection();
+  if (!selection) {
+    return false;
+  }
+  if (!selection.isCollapsed || selection.toString() !== "") {
+    return true;
+  }
+
+  // get selected text from HTMLInputElement or HTMLTextAreaElement for firefox
+  const element = selection.anchorNode;
+  if (!element) {
+    return false;
+  }
+  if (
+    (element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement) &&
+    element.selectionStart !== element.selectionEnd
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 const isClipboardAPIAvailable: () => boolean = () =>
   typeof navigator.clipboard?.write === "function" ||
   typeof navigator.clipboard?.writeText === "function";
+
 const command: Command = {
   get label() {
     return t("Copy");
@@ -21,8 +47,7 @@ const command: Command = {
       return;
     }
 
-    const selection = window.getSelection();
-    if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
+    if (isTextSelected()) {
       // Prefer browser default behavior
       return;
     }
