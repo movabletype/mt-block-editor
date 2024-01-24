@@ -15,16 +15,17 @@ const isTextSelected = (): boolean => {
   }
 
   // get selected text from HTMLInputElement or HTMLTextAreaElement for firefox
-  const element = selection.anchorNode;
-  if (!element) {
-    return false;
-  }
-  if (
-    (element instanceof HTMLInputElement ||
-      element instanceof HTMLTextAreaElement) &&
-    element.selectionStart !== element.selectionEnd
-  ) {
-    return true;
+  for (let i = 0; i < selection.rangeCount; i++) {
+    const range = selection.getRangeAt(i);
+    for (const element of [range.startContainer, range.endContainer]) {
+      if (
+        (element instanceof HTMLInputElement ||
+          element instanceof HTMLTextAreaElement) &&
+        element.selectionStart !== element.selectionEnd
+      ) {
+        return true;
+      }
+    }
   }
 
   return false;
