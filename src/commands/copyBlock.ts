@@ -6,26 +6,21 @@ import Text from "../Block/Text";
 import Table from "../Block/Table";
 
 const isTextSelected = (): boolean => {
+  // Some content is selected in the HTMLElement or Text.
+  // In Firefox, even if text in HTMLInputElement is selected, the value cannot be retrieved.
   const selection = window.getSelection();
-  if (!selection) {
-    return false;
-  }
-  if (!selection.isCollapsed || selection.toString() !== "") {
+  if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
     return true;
   }
 
-  // get selected text from HTMLInputElement or HTMLTextAreaElement for firefox
-  for (let i = 0; i < selection.rangeCount; i++) {
-    const range = selection.getRangeAt(i);
-    for (const element of [range.startContainer, range.endContainer]) {
-      if (
-        (element instanceof HTMLInputElement ||
-          element instanceof HTMLTextAreaElement) &&
-        element.selectionStart !== element.selectionEnd
-      ) {
-        return true;
-      }
-    }
+  // In Firefox, look for the selected text in document.activeElement.
+  const element = document.activeElement;
+  if (
+    (element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement) &&
+    element.selectionStart !== element.selectionEnd
+  ) {
+    return true;
   }
 
   return false;
