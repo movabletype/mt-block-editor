@@ -5,9 +5,31 @@ import { tinymceFocus } from "../Block/Text/util";
 import Text from "../Block/Text";
 import Table from "../Block/Table";
 
+const isTextSelected = (): boolean => {
+  // Some content is selected in the HTMLElement or Text.
+  // In Firefox, even if text in HTMLInputElement is selected, the value cannot be retrieved.
+  const selection = window.getSelection();
+  if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
+    return true;
+  }
+
+  // In Firefox, look for the selected text in document.activeElement.
+  const element = document.activeElement;
+  if (
+    (element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement) &&
+    element.selectionStart !== element.selectionEnd
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 const isClipboardAPIAvailable: () => boolean = () =>
   typeof navigator.clipboard?.write === "function" ||
   typeof navigator.clipboard?.writeText === "function";
+
 const command: Command = {
   get label() {
     return t("Copy");
@@ -21,8 +43,7 @@ const command: Command = {
       return;
     }
 
-    const selection = window.getSelection();
-    if (selection && (!selection.isCollapsed || selection.toString() !== "")) {
+    if (isTextSelected()) {
       // Prefer browser default behavior
       return;
     }
