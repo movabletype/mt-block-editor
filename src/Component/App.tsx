@@ -13,7 +13,7 @@ import {
   BlocksContextProps,
 } from "../Context";
 import AddButton from "./AddButton";
-import { getBlocksByRange } from "../util";
+import { getBlocksByRange, isPassThroughNativeEvent } from "../util";
 import { BlockEditorCommandEvent } from "../CommandManager";
 
 declare global {
@@ -176,7 +176,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       }
 
       // stay focused but not edit
-      if (editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)) {
+      if (
+        isPassThroughNativeEvent(ev) ||
+        editorEl.querySelector(`[data-mt-block-editor-keep-focus="1"]`)
+      ) {
         return;
       }
 
