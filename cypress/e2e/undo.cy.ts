@@ -299,6 +299,33 @@ context("Undo", () => {
       );
     });
 
+    it("Ignore if in TinyMCE modal", !Cypress.env("ci") && {}, () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      type("Hello!");
+
+      blur();
+      wait(1);
+      cy.get(`.mt-be-block`).first().click();
+
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      wait(1);
+      cy.get(".tox-dialog textarea").type("Hello2!");
+      type("{ctrl}z");
+      wait(1);
+      cy.get(".tox-dialog .tox-button--secondary").click(); // cancel
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>Hello!</p><!-- /mt-beb -->"
+      );
+    });
+
     it("Table", !Cypress.env("ci") && {}, () => {
       cy.get(`.mt-be-btn-add-bottom`)
         .click()
