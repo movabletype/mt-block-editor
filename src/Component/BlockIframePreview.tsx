@@ -523,7 +523,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         case "MTBlockEditorSetCompiledHtml":
           setCompiledHtml(
             ev.data.html,
-            ev.data.html ? null : new Error(ev.data.error || "Error"),
+            ev.data.html == null ? new Error(ev.data.error || "Error") : null,
             ev.data.arguments as SetCompiledHtmlOptions
           );
           break;
