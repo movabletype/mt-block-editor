@@ -231,6 +231,31 @@ document.addEventListener('DOMContentLoaded', async () => {
       rootBlock: "",
     });
 
+    registerCustomBlock({
+      icon: "",
+      canRemoveBlock: 1,
+      typeId: "custom-blank-string",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["custom-html"],
+      className: "",
+      html: `<!-- mt-beb t="core-html" --><!-- /mt-beb -->`,
+      shouldBeCompiled: 1,
+      previewHeader: `
+      <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (document.body.dataset.hasCompiledHtml) {
+          // 処理済み
+          return;
+        }
+
+        MTBlockEditorSetCompiledHtml('');
+      });
+      </script>
+      `,
+      label: "blank-string",
+      rootBlock: "",
+    });
+
     apply({
       id: textareaId,
     });
@@ -765,6 +790,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       serializedTextarea(textareaId).should(
         "have.value",
         `<!-- mt-beb t="custom-set-compile-html-body" h='&lt;!-- mt-beb t="core-html" --&gt;preserveBlockData&lt;!-- /mt-beb --&gt;' --><!-- mt-beb t="core-html" -->preserveBlockData<!-- /mt-beb --><!-- /mt-beb -->`
+      );
+    });
+  });
+
+  context("custom-blank-string", () => {
+    it("no error", () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-blank-string"]`).click();
+        });
+
+      type("custom-blank-string");
+
+      blur();
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        `<!-- mt-beb t="custom-blank-string" h='&lt;!-- mt-beb t="core-html" --&gt;custom-blank-string&lt;!-- /mt-beb --&gt;' --><!-- /mt-beb -->`
       );
     });
   });
