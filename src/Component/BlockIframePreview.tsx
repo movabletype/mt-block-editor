@@ -222,13 +222,13 @@ function useHtmlDataState(
   );
 
   const rawHtmlData =
-    typeof _rawHtmlData === "number" && block.compiledHtml
+    typeof _rawHtmlData === "number" && block.compiledHtml !== undefined
       ? null // treat as not yet retrieved since it has been updated
       : _rawHtmlData;
 
   const rawHtmlText =
     typeof rawHtmlData === "number"
-      ? block.compiledHtml
+      ? block.compiledHtml ?? ""
       : typeof rawHtmlData === "string"
       ? rawHtmlData
       : typeof html === "string"
@@ -252,7 +252,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   if (html === undefined) {
     html =
-      block.compiledHtml || block.serializedString({ editor, external: false });
+      block.compiledHtml ?? block.serializedString({ editor, external: false });
   }
 
   const containerElRef = useRef<HTMLDivElement>(null);

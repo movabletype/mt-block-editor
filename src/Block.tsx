@@ -64,7 +64,7 @@ class Block {
   public id: string;
   public isNewlyAdded = false;
   public wrapperRef: RefObject<HTMLDivElement>;
-  public compiledHtml = "";
+  public compiledHtml: string | undefined = undefined;
   public label = "";
   public helpText = "";
   public className = "";
@@ -283,7 +283,7 @@ class Block {
   public async serialize(opts: SerializeOptions): Promise<string> {
     if (
       (this.constructor as typeof Block).shouldBeCompiled &&
-      !this.compiledHtml
+      this.compiledHtml === undefined
     ) {
       await this.compile(opts);
     }
@@ -299,8 +299,10 @@ class Block {
     return `<!-- mt-beb${typeId ? ` t="${typeId}"` : ""}${
       m ? ` m='${escapeSingleQuoteAttribute(m)}'` : ""
     }${
-      this.compiledHtml ? ` h='${escapeSingleQuoteAttribute(html)}'` : ""
-    } -->${this.compiledHtml || html}<!-- /mt-beb -->`;
+      this.compiledHtml !== undefined
+        ? ` h='${escapeSingleQuoteAttribute(html)}'`
+        : ""
+    } -->${this.compiledHtml ?? html}<!-- /mt-beb -->`;
   }
 
   public async toClipboardItem(
