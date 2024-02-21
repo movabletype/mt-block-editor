@@ -115,7 +115,7 @@ export class Block {
   public static selectable: boolean;
   public static shouldBeCompiled: boolean;
   public id: string;
-  public compiledHtml: string;
+  public compiledHtml: string | undefined;
   public placeholderLabel(): string;
   public placeholder(): JSX.Element;
   public metadata(): Metadata | null;
