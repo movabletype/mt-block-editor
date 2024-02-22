@@ -397,9 +397,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         <html${htmlText.match(/<amp-/) ? " amp" : ""}>
         <head>
           <meta charset="utf-8">
-          <script>
-            setTimeout(${InitSizeFunc.toString()}, 50);
+          <script type="module">
+            (${InitSizeFunc.toString()})();
             setInterval(${postMessageFunc.toString()}, 1000);
+          </script>
+          <script>
             var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
             var MTBlockEditorAddDroppable = ${addDroppableFunc.toString()};
             (${eventDelegationFunc.toString()})();
