@@ -222,13 +222,13 @@ function useHtmlDataState(
   );
 
   const rawHtmlData =
-    typeof _rawHtmlData === "number" && block.compiledHtml
+    typeof _rawHtmlData === "number" && block.compiledHtml !== undefined
       ? null // treat as not yet retrieved since it has been updated
       : _rawHtmlData;
 
   const rawHtmlText =
     typeof rawHtmlData === "number"
-      ? block.compiledHtml
+      ? block.compiledHtml ?? ""
       : typeof rawHtmlData === "string"
       ? rawHtmlData
       : typeof html === "string"
@@ -252,7 +252,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   if (html === undefined) {
     html =
-      block.compiledHtml || block.serializedString({ editor, external: false });
+      block.compiledHtml ?? block.serializedString({ editor, external: false });
   }
 
   const containerElRef = useRef<HTMLDivElement>(null);
@@ -397,9 +397,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         <html${htmlText.match(/<amp-/) ? " amp" : ""}>
         <head>
           <meta charset="utf-8">
-          <script>
-            setTimeout(${InitSizeFunc.toString()}, 50);
+          <script type="module">
+            (${InitSizeFunc.toString()})();
             setInterval(${postMessageFunc.toString()}, 1000);
+          </script>
+          <script>
             var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
             var MTBlockEditorAddDroppable = ${addDroppableFunc.toString()};
             (${eventDelegationFunc.toString()})();
@@ -523,7 +525,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
         case "MTBlockEditorSetCompiledHtml":
           setCompiledHtml(
             ev.data.html,
-            ev.data.html ? null : new Error(ev.data.error || "Error"),
+            ev.data.html == null ? new Error(ev.data.error || "Error") : null,
             ev.data.arguments as SetCompiledHtmlOptions
           );
           break;
