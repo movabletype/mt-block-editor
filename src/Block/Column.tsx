@@ -152,7 +152,7 @@ const Editor: React.FC<EditorProps> = ({
 
     if (
       (block.constructor as typeof Block).shouldBeCompiled &&
-      !block.compiledHtml &&
+      block.compiledHtml === undefined &&
       !focus &&
       !focusDescendant
     ) {
@@ -255,7 +255,7 @@ class Column extends Block implements HasBlocks {
   }
 
   public resetCompiledHtml(): void {
-    this.compiledHtml = "";
+    this.compiledHtml = undefined;
 
     this.cancelOngoingCompilationHandlers.map((h) => {
       h();
@@ -427,7 +427,7 @@ class Column extends Block implements HasBlocks {
   public async serialize(opts: SerializeOptions): Promise<string> {
     if (
       (this.constructor as typeof Block).shouldBeCompiled ||
-      this.compiledHtml
+      this.compiledHtml !== undefined
     ) {
       return super.serialize(opts);
     }
@@ -458,7 +458,8 @@ class Column extends Block implements HasBlocks {
       context,
       NO_BLOCK_TYPE_FALLBACK
     );
-    const compiledHtml = node.hasAttribute("h") ? node.textContent : "";
+    const compiledHtml =
+      (node.hasAttribute("h") ? node.textContent : undefined) ?? undefined;
 
     return new this(
       Object.assign(
