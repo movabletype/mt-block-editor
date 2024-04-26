@@ -26,7 +26,6 @@ context("Block", () => {
       cy.get(`input[data-property-name="text"]`).type("test");
 
       blur();
-      cy.wait(1000);
 
       cy.get(".mt-be-block div:last-child").then(($div) => {
         const root = $div.get(0).shadowRoot;
