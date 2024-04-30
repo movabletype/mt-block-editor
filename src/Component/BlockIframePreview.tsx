@@ -262,6 +262,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
     block.iframePreviewSize ? [block.iframePreviewSize] : []
   );
   const setSize = useCallback((size: Size): void => {
+    if (
+      ("width" in size && !size.width) ||
+      ("height" in size && !size.height)
+    ) {
+      // No updates to size to be hidden.
+      return;
+    }
+
     _setSize((history) => {
       if (history.length >= 1 && isEqualSize(history[0], size)) {
         // not changed
