@@ -263,11 +263,11 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   );
   const setSize = useCallback((size: Size): void => {
     if (
-      (typeof size.width === "number" &&
-        (!size.width ||
-          (size.width < 30 &&
-            containerElRef.current?.getBoundingClientRect().width === 0))) ||
-      (typeof size.height === "number" && !size.height)
+      (typeof size.width === "number" && !size.width) || // zero width
+      (typeof size.height === "number" && !size.height) || // zero height
+      (((typeof size.width === "number" && size.width < 30) ||
+        typeof size.width === "string") && // maybe "100%"
+        containerElRef.current?.getBoundingClientRect().width === 0) // container is hidden
     ) {
       // No updates to size to be hidden.
       return;
