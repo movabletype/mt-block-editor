@@ -374,12 +374,55 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
   const beforeRenderIframePreviewOpt = {
     editor,
-    html: rawHtmlText,
     scheme: scheme,
     sandbox: sandbox,
+    html: rawHtmlText,
+    head: `
+    <meta charset="utf-8">
+    <script type="module">
+      (${InitSizeFunc.toString()})();
+      setInterval(${postMessageFunc.toString()}, 1000);
+    </script>
+    <script>
+      var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
+      var MTBlockEditorAddDroppable = ${addDroppableFunc.toString()};
+      (${eventDelegationFunc.toString()})();
+    </script>
+    <style type="text/css">
+    .mt-block-editor-mt-be-droppable:before {
+      display: block;
+      position: absolute;
+      z-index: 200;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      content: " ";
+      text-align: center;
+      color: white;
+      background-color: rgba(21, 50, 76, 0.9);
+    }
+
+    /* FIXME */
+    .mt-be-column {
+      width: 100%;
+    }
+    </style>
+    ${editor.stylesheets
+      .map((s) => {
+        if (s.type === StylesheetType.css) {
+          return `<style type="text/css">${s.data}</style>`;
+        } else {
+          return `<link rel="stylesheet" href="${s.data}" />`;
+        }
+      })
+      .join("")}
+    ${header || ""}
+    `,
   };
   editor.emit("beforeRenderIframePreview", beforeRenderIframePreviewOpt);
   const htmlText = beforeRenderIframePreviewOpt.html;
+  const head = beforeRenderIframePreviewOpt.head;
 
   const [src, setSrc] = useState("");
   useEffect(() => {
@@ -406,48 +449,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       [
         `
         <html${htmlText.match(/<amp-/) ? " amp" : ""}>
-        <head>
-          <meta charset="utf-8">
-          <script type="module">
-            (${InitSizeFunc.toString()})();
-            setInterval(${postMessageFunc.toString()}, 1000);
-          </script>
-          <script>
-            var MTBlockEditorSetCompiledHtml = ${setCompiledHtmlFunc.toString()};
-            var MTBlockEditorAddDroppable = ${addDroppableFunc.toString()};
-            (${eventDelegationFunc.toString()})();
-          </script>
-          <style type="text/css">
-          .mt-block-editor-mt-be-droppable:before {
-            display: block;
-            position: absolute;
-            z-index: 200;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            content: " ";
-            text-align: center;
-            color: white;
-            background-color: rgba(21, 50, 76, 0.9);
-          }
-
-          /* FIXME */
-          .mt-be-column {
-            width: 100%;
-          }
-          </style>
-          ${editor.stylesheets
-            .map((s) => {
-              if (s.type === StylesheetType.css) {
-                return `<style type="text/css">${s.data}</style>`;
-              } else {
-                return `<link rel="stylesheet" href="${s.data}" />`;
-              }
-            })
-            .join("")}
-          ${header || ""}
-        </head><body data-block-id="${block.id}"${
+        <head>${head}</head><body data-block-id="${block.id}"${
           block.compiledHtml && ` data-has-compiled-html="1"`
         } class="${
           editor.opts.rootClassName || ""
