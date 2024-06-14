@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import type { Editor } from "../../src/Editor";
 import type { EditorUtil } from "../../src/mt-block-editor";
 
 declare global {
@@ -11,7 +12,11 @@ export function type(text, options?): void {
   cy.get("body").type(text, options);
 }
 
-export function apply(opts): void {
+export function apply(opts): Promise<Editor> {
+  let resolve: (ed: Editor) => void;
+  const promise = new Promise<Editor>((_resolve) => {
+    resolve = _resolve;
+  });
   cy.window().then((w) => {
     const textarea =
       w.document.querySelector<HTMLTextAreaElement>(`[id="${opts.id}"]`) ||
@@ -21,7 +26,7 @@ export function apply(opts): void {
       w.document.body.appendChild(textarea);
     }
 
-    return w.MTBlockEditor.apply(
+    w.MTBlockEditor.apply(
       Object.assign(
         {
           mode: "composition",
@@ -34,28 +39,36 @@ export function apply(opts): void {
         },
         opts
       )
-    ).then((ed) => {
-      ed.on("buildTinyMCESettings", ({ settings }) => {
-        settings.extended_valid_elements = [
-          // we embed 'a[onclick]' by inserting image with popup
-          "a[href|title|target|name|id|class|onclick]",
-          // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
-          "+p[style|class]",
-          // allow SCRIPT element
-          "script[id|name|type|src]",
-          // allow SPAN element without attributes
-          "+span[*]",
-        ].join(",");
-        settings.valid_children = "+a[div]";
-      });
+    )
+      .then((ed) => {
+        ed.on("buildTinyMCESettings", ({ settings }) => {
+          settings.extended_valid_elements = [
+            // we embed 'a[onclick]' by inserting image with popup
+            "a[href|title|target|name|id|class|onclick]",
+            // preserve the P elements that have no text nodes (`<p></p>`) for backward compatibility
+            "+p[style|class]",
+            // allow SCRIPT element
+            "script[id|name|type|src]",
+            // allow SPAN element without attributes
+            "+span[*]",
+          ].join(",");
+          settings.valid_children = "+a[div]";
+        });
 
-      ed.on("change", () => {
-        let count = parseInt(textarea.dataset.mtBlockEditorChangeCount || "0");
-        count++;
-        textarea.dataset.mtBlockEditorChangeCount = count.toString();
-      });
-    });
+        ed.on("change", () => {
+          let count = parseInt(
+            textarea.dataset.mtBlockEditorChangeCount || "0"
+          );
+          count++;
+          textarea.dataset.mtBlockEditorChangeCount = count.toString();
+        });
+
+        return ed;
+      })
+      .then(resolve);
   });
+
+  return promise;
 }
 
 export function unload(opts): void {

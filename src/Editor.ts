@@ -60,7 +60,7 @@ interface MetadataMapData {
   blockIds: Set<string>;
 }
 
-class Editor extends EventEmitter implements HasBlocks {
+export class Editor extends EventEmitter implements HasBlocks {
   public id: string;
   public opts: EditorOptions;
   public factory: BlockFactory;
