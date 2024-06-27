@@ -237,7 +237,7 @@ context("Text", () => {
       });
       wait(1);
       cy.get(
-        `[aria-label="Text color"] button, [aria-label="テキスト色"] span.tox-split-button__chevron`
+        `[aria-label="Text color"] button, [data-mce-name="forecolor"] span.tox-split-button__chevron`
       ).click({ multiple: true, force: true });
       wait(1);
       cy.get(`div[data-mce-color="#000000"]`).click({ force: true });
@@ -248,7 +248,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        `<!-- mt-beb --><p><span style="color: rgb(0, 0, 0);"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
+        `<!-- mt-beb --><p><span style="color: #000000;"><em>a</em></span></p><!-- /mt-beb --><!-- mt-beb --><p>b</p><!-- /mt-beb -->`
       );
     });
   });
