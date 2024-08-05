@@ -40,7 +40,6 @@ context("setCompiledHtmlIframePreview", () => {
     const ed = await apply({
       id: textareaId,
     });
-    console.log(ed.on);
     ed.on("beforeRenderIframePreview", (ev) => {
       ev.head += `<base href="https://movabletype.net/">`;
     });
