@@ -71,10 +71,16 @@ export function apply(opts): Promise<Editor> {
   return promise;
 }
 
-export function unload(opts): void {
-  cy.window().then((w) => {
-    return w.MTBlockEditor.unload(opts);
+export function unload(opts): Promise<void> {
+  let resolve: () => void;
+  const promise = new Promise<void>((_resolve) => {
+    resolve = _resolve;
   });
+  cy.window().then(async (w) => {
+    await w.MTBlockEditor.unload(opts);
+    resolve();
+  });
+  return promise;
 }
 
 export function registerCustomBlock(block): void {

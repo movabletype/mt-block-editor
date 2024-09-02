@@ -4,7 +4,10 @@ import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
 import { EditHistory } from "./EditManager";
-import { escapeSingleQuoteAttribute } from "./util/dom";
+import {
+  escapeSingleQuoteAttribute,
+  unescapeSingleQuoteAttribute,
+} from "./util/dom";
 import ParserContext from "./util/ParserContext";
 import icon from "./img/icon/default-block.svg";
 import {
@@ -56,6 +59,15 @@ export interface SerializeOptions extends CompileOptions {
 
 export const DEFAULT_KEYS_FOR_SETUP = ["label", "helpText", "className"];
 
+const removeIntermediateProduct = (html: string): string =>
+  html.replace(
+    /(<!-- mt-beb[^>]*?) h='([^']+)' -->.*?<!-- \/mt-beb -->/g,
+    (_, p1, p2) =>
+      `${p1} -->${removeIntermediateProduct(
+        unescapeSingleQuoteAttribute(p2)
+      )}<!-- /mt-beb -->`
+  );
+
 class Block {
   public static typeId: string;
   public static label: string;
@@ -65,6 +77,7 @@ class Block {
   public isNewlyAdded = false;
   public wrapperRef: RefObject<HTMLDivElement>;
   public compiledHtml: string | undefined = undefined;
+  public removeIntermediateProduct = false;
   public label = "";
   public helpText = "";
   public className = "";
@@ -300,9 +313,17 @@ class Block {
       m ? ` m='${escapeSingleQuoteAttribute(m)}'` : ""
     }${
       this.compiledHtml !== undefined
-        ? ` h='${escapeSingleQuoteAttribute(html)}'`
+        ? ` h='${escapeSingleQuoteAttribute(
+            this.removeIntermediateProduct
+              ? removeIntermediateProduct(html)
+              : html
+          )}'`
         : ""
-    } -->${this.compiledHtml ?? html}<!-- /mt-beb -->`;
+    } -->${
+      this.removeIntermediateProduct
+        ? this.compiledHtml || html
+        : this.compiledHtml ?? html
+    }<!-- /mt-beb -->`;
   }
 
   public async toClipboardItem(

@@ -26,6 +26,7 @@ interface EditorProps {
 interface SetCompiledHtmlOptions {
   addEditHistory?: boolean;
   preserveBlockData?: boolean;
+  removeIntermediateProduct?: boolean;
 }
 
 const editHandlers: EditHistoryHandlers = {
@@ -95,6 +96,7 @@ function setCompiledHtmlFunc(
       arguments: {
         addEditHistory: !!opts?.addEditHistory,
         preserveBlockData: !!opts?.preserveBlockData,
+        removeIntermediateProduct: !!opts?.removeIntermediateProduct,
       },
     },
     "*"
@@ -342,6 +344,7 @@ const BlockIframePreview: React.FC<EditorProps> = ({
 
       const lastValue = block.compiledHtml;
       block.compiledHtml = res;
+      block.removeIntermediateProduct = !!opts.removeIntermediateProduct;
 
       if (opts.addEditHistory) {
         editor.editManager.add({

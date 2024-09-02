@@ -102,6 +102,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     registerCustomBlock({
       icon: "",
+      canRemoveBlock: 1,
+      typeId: "custom-wrap_remove_intermediate",
+      panelBlockTypes: [],
+      shortcutBlockTypes: ["custom-wrap"],
+      className: "",
+      html: "",
+      shouldBeCompiled: 1,
+      previewHeader: `
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  if (document.body.dataset.hasCompiledHtml) {
+    // 処理済み
+    return;
+  }
+
+  MTBlockEditorSetCompiledHtml('<div class="custom-wrap-remove-intermediate">' + document.body.innerHTML + '</div>', {
+    removeIntermediateProduct: true,
+  });
+});
+</script>
+      `,
+      label: "Wrap remove intermediate",
+      rootBlock: "",
+    });
+
+    registerCustomBlock({
+      icon: "",
       canRemoveBlock: "",
       typeId: "custom-html",
       panelBlockTypes: [],
@@ -682,6 +709,78 @@ document.addEventListener('DOMContentLoaded', async () => {
         const html = value.replace(/<!--.*?-->/g, "");
         expect(html).to.equal(expectedResult);
       });
+    });
+  });
+
+  context("custom-wrap_remove_intermediate", () => {
+    it("nested", async () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-wrap_remove_intermediate"]`).click();
+        });
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-wrap"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
+      ).click();
+
+      wait(1);
+      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
+        .first()
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="core-text"]`).click();
+        });
+
+      wait(1);
+      type("a");
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
+      ).click();
+
+      wait(1);
+      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
+        .eq(1)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="core-text"]`).click();
+        });
+
+      wait(1);
+      type("b");
+
+      blur();
+
+      wait(1);
+
+      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","helpText":"a\\nb","className":"color"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" h='&lt;!-- mt-beb t="custom-wrap" --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;a&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;b&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div></div></div><!-- /mt-beb -->`;
+
+      serializedTextarea(textareaId).should(async ($input) => {
+        const value = $input.val();
+        await expect(value).to.equal(expectedResult);
+      })
+
+      await unload({ id: textareaId });
+      await apply({ id: textareaId });
+
+      cy.get(`.mt-be-block`).click();
+
+      wait(1);
+      blur();
+
+      // No change.
+      serializedTextarea(textareaId).should(async ($input) => {
+        const value = $input.val();
+        await expect(value).to.equal(expectedResult);
+      })
     });
   });
 
