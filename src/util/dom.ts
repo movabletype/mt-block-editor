@@ -135,20 +135,20 @@ export function getElementByNthOfTypeIndexes(
   return node;
 }
 
+const entityMap: Record<string, string> = {
+  "\t": "&#x08;",
+  "\n": "&#x0A;",
+  "\r": "&#x0D;",
+  "&": "&amp;",
+  "'": "&#x27;",
+  "<": "&lt;",
+  ">": "&gt;",
+  "\u2018": "&#x2018;", // left single quotation mark
+  "\u2019": "&#x2019;", // right single quotation mark
+  "\u201c": "&#x201c;", // left double quotation mark
+  "\u201d": "&#x201d;", // right double quotation mark
+};
 export const escapeSingleQuoteAttribute = (() => {
-  const entityMap: Record<string, string> = {
-    "\t": "&#x08;",
-    "\n": "&#x0A;",
-    "\r": "&#x0D;",
-    "&": "&amp;",
-    "'": "&#x27;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\u2018": "&#x2018;", // left single quotation mark
-    "\u2019": "&#x2019;", // right single quotation mark
-    "\u201c": "&#x201c;", // left double quotation mark
-    "\u201d": "&#x201d;", // right double quotation mark
-  };
   const entityRegExp = new RegExp(`[${Object.keys(entityMap).join("")}]`, "g");
 
   return (string: string): string => {
@@ -156,6 +156,25 @@ export const escapeSingleQuoteAttribute = (() => {
       return string;
     }
     return string.replace(entityRegExp, (match) => entityMap[match]);
+  };
+})();
+
+export const unescapeSingleQuoteAttribute = (() => {
+  const entityReverseMap = Object.fromEntries(
+    Object.entries(entityMap).map(([k, v]) => [v, k])
+  );
+  const entityRegExp = new RegExp(
+    `(${Object.keys(entityReverseMap).join("|")})`,
+    "g"
+  );
+
+  return (string: string): string => {
+    if (typeof string !== "string") {
+      return string;
+    }
+    return string.replace(entityRegExp, (_, match) => {
+      return entityReverseMap[match];
+    });
   };
 })();
 
