@@ -199,16 +199,11 @@ const Editor: React.FC<EditorProps> = ({
     </BlocksContext.Provider>
   );
 
-  if (block.rootBlock) {
-    return React.createElement(
-      block.rootBlock,
-      {
-        className: "mt-be-column",
-        style: {
-          width: "100%",
-        },
-      },
-      res
+  if ((block.constructor as typeof Column).typeId === "core-column") {
+    return (
+      <div className="mt-be-column" style={{ width: "100%" }}>
+        {res}
+      </div>
     );
   } else {
     return res;
@@ -277,9 +272,7 @@ class Column extends Block implements HasBlocks {
         this.effectiveAddableBlockTypes().length === 0) ||
         (!focus && !focusDescendant && !focusBlock))
     ) {
-      let preview: JSX.Element;
-
-      const iframePreview = (
+      return (
         <BlockIframePreview
           key={this.id}
           block={this}
@@ -287,24 +280,6 @@ class Column extends Block implements HasBlocks {
           border="none"
         />
       );
-
-      if (this.rootBlock) {
-        preview = React.createElement(
-          this.rootBlock,
-          {
-            key: this.id,
-            className: "mt-be-column",
-            style: {
-              width: "100%",
-            },
-          },
-          iframePreview
-        );
-      } else {
-        preview = iframePreview;
-      }
-
-      return preview;
     }
 
     return (
