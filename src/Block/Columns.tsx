@@ -1,10 +1,12 @@
 import { t } from "../i18n";
 import React, { useState, useCallback, MouseEvent } from "react";
+import type { Editor as EditorType } from "../Editor";
 import Block, {
   NewFromHtmlOptions,
   EditorOptions,
   SerializeOptions,
   HasBlocks,
+  NewOptions,
 } from "../Block";
 import Column from "./Column";
 import { useEditorContext } from "../Context";
@@ -23,6 +25,22 @@ interface EditorProps extends EditorOptions {
   block: Columns;
 }
 
+const getSelectableColumns = (
+  editor: EditorType
+): {
+  selectableColumns: number[];
+  defaultColumns: number;
+} => {
+  const opts = editor.opts.block["core-columns"] || {};
+  const selectableColumns = Array.isArray(opts.selectableColumns)
+    ? opts.selectableColumns
+    : [2, 3, 4];
+  return {
+    selectableColumns,
+    defaultColumns: opts.defaultColumns || selectableColumns[0] || 2,
+  };
+};
+
 const Editor: React.FC<EditorProps> = ({
   block,
   focus,
@@ -30,6 +48,8 @@ const Editor: React.FC<EditorProps> = ({
   canRemove,
 }: EditorProps) => {
   const { editor } = useEditorContext();
+  const { selectableColumns } = getSelectableColumns(editor);
+
   const [showConfigPanel, setConfigPanel] = useState(false);
   const toggleConfigPanel = useCallback(() => {
     setConfigPanel((prev) => !prev);
@@ -73,7 +93,7 @@ const Editor: React.FC<EditorProps> = ({
       <div className="mt-be-columns" style={{ display: "flex" }}>
         {block.blocks.map((c) => c.editor({ focus, focusBlock, canRemove }))}
       </div>
-      {focus && canRemove && (
+      {selectableColumns.length > 1 && focus && canRemove && (
         <BlockToolbar>
           <BlockToolbarButton
             icon={icon}
@@ -84,36 +104,21 @@ const Editor: React.FC<EditorProps> = ({
       )}
       <BlockConfigPanel in={focus && showConfigPanel}>
         <ul style={{ display: "flex", listStyle: "none" }}>
-          <li>
-            <label onClick={changeLayout}>
-              <input
-                type="radio"
-                value="2"
-                defaultChecked={curLayout === "2"}
-              />
-              {t("Two columns")}
-            </label>
-          </li>
-          <li>
-            <label onClick={changeLayout}>
-              <input
-                type="radio"
-                value="3"
-                defaultChecked={curLayout === "3"}
-              />
-              {t("Three columns")}
-            </label>
-          </li>
-          <li>
-            <label onClick={changeLayout}>
-              <input
-                type="radio"
-                value="4"
-                defaultChecked={curLayout === "4"}
-              />
-              {t("Four columns")}
-            </label>
-          </li>
+          {selectableColumns.map((columns: number) => {
+            const columnString = columns.toString();
+            return (
+              <li key={columnString}>
+                <label onClick={changeLayout}>
+                  <input
+                    type="radio"
+                    value={columnString}
+                    defaultChecked={curLayout === columnString}
+                  />
+                  {t("{{columns}} columns", { columns: columnString })}
+                </label>
+              </li>
+            );
+          })}
         </ul>
       </BlockConfigPanel>
     </>
@@ -136,6 +141,16 @@ class Columns extends Block implements HasBlocks {
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static async new(opts: NewOptions): Promise<Block> {
+    const block = (await super.new(opts)) as Columns;
+    const { defaultColumns } = getSelectableColumns(opts.editor);
+    block.blocks = Array(defaultColumns)
+      .fill(null)
+      .map(() => block.newColumn());
+    return block;
   }
 
   public newColumn(): Column {
