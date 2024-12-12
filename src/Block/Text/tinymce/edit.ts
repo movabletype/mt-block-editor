@@ -1,6 +1,6 @@
 import type { TinyMCE } from "tinymce";
-import { EditHistoryHandlers } from "../../EditManager";
-import Text from "../Text";
+import { EditHistoryHandlers } from "../../../EditManager";
+import type Text from "./Text";
 import { getTinymceMajorVersion } from "./tinymce";
 
 declare const tinymce: TinyMCE;

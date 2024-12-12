@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import icon from "../img/copy.svg";
 import type { Command } from "../CommandManager";
-import { tinymceFocus } from "../Block/Text/util";
+import { focus } from "../Block/Text/util";
 import Text from "../Block/Text";
 import Table from "../Block/Table";
 
@@ -61,7 +61,7 @@ const command: Command = {
         block.wrapperRef.current?.classList.remove("mt-be-focus");
       }, 100);
       if ((block instanceof Text || block instanceof Table) && block.tinymce) {
-        tinymceFocus(block.tinymce, null);
+        focus(block.tinymce as any, null);
       }
     }
 

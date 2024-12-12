@@ -1,11 +1,11 @@
-import type Editor from "../../Editor";
-import type Block from "../../Block";
-import type { HasTinyMCE } from "../Text/util";
+import type Editor from "../../../Editor";
+import type Block from "../../../Block";
+import type { HasTinyMCE } from "./util";
 import type { TinyMCE, RawEditorOptions } from "tinymce";
-import type { EditorContextProps, BlocksContextProps } from "../../Context";
-import { decodeHtml } from "../../util";
-import { BlockEditorPasteCommandEvent } from "../../commands/pasteBlock";
-import MTBlockEditorPlugin from "./tinymce/MTBlockEditorPlugin";
+import type { EditorContextProps, BlocksContextProps } from "../../../Context";
+import { decodeHtml } from "../../../util";
+import { BlockEditorPasteCommandEvent } from "../../../commands/pasteBlock";
+import MTBlockEditorPlugin from "./MTBlockEditorPlugin";
 
 declare const tinymce: TinyMCE;
 

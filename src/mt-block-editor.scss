@@ -646,6 +646,16 @@ $root-font-size: 16px;
     &.mt-be-block-toolbar--default {
       display: none;
     }
+
+    &.mt-be-block-toolbar--mt-rich-text-editor {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      left: -1px;
+      top: -43px;
+      &.mt-be-block-toolbar--x2 {
+        top: -85px;
+      }
+    }
   }
 
   .mt-be-block-toolbar-default-items {
