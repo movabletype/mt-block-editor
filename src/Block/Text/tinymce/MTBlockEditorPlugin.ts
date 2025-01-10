@@ -133,22 +133,21 @@ function plugin(ed: TinyMCEEditor): void {
       if (item.kind === "string" && item.type === "text/plain") {
         const plainTextContent = dataTransfer.getData("text/plain");
         if (plainTextContent && !plainTextContent.startsWith("file://")) {
-          return true; // paste as text
+          return; // paste as text
         }
       } else if (/text\/(html|plain)/.test(item.type)) {
-        return true; // paste as text
+        return; // paste as text
       } else if (item.kind === "file" && /^image\//.test(item.type)) {
         files.push(item.getAsFile());
       }
     }
 
     if (files.length !== 0) {
-      // prevent pasting as an image
+      // ignore this paste event to prevent pasting as an image.
       return false;
-    } else {
-      // paste as text by TinyMCE
-      return true;
     }
+
+    // paste as text
   });
 }
 
