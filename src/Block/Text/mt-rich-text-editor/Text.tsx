@@ -214,7 +214,6 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
               }
             }
             const text = c.childNodes.length === 0 ? "" : c.outerHTML;
-            console.log(text);
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             const textBlock = new Text({
               text,
