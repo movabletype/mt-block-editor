@@ -69,9 +69,9 @@
     "terser-webpack-plugin": "^5.3.11",
     "tinymce": "^6.8.4",
     "typescript": "^4.7.4",
-    "webpack": "^5.94.0",
-    "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.11.1"
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
   },
   "dependencies": {
     "core-js": "^3.6.5",
