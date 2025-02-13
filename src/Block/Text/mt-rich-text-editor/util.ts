@@ -1,11 +1,6 @@
 import type EditorManager from "@movabletype/mt-rich-text-editor";
 import type { Editor as MTRichTextEditorEditor } from "@movabletype/mt-rich-text-editor";
-import {
-  SelectorSet,
-  selectorCmp,
-  getElementByNthOfTypeIndexes,
-  mediaBreakPoint,
-} from "../../../util";
+import { SelectorSet, getElementByNthOfTypeIndexes } from "../../../util";
 
 declare const MTRichTextEditor: typeof EditorManager;
 
