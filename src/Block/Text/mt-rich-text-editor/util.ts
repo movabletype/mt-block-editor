@@ -1,13 +1,11 @@
 import type EditorManager from "@movabletype/mt-rich-text-editor";
 import type { Editor as MTRichTextEditorEditor } from "@movabletype/mt-rich-text-editor";
-import {
-  SelectorSet,
-  selectorCmp,
-  getElementByNthOfTypeIndexes,
-  mediaBreakPoint,
-} from "../../../util";
+import { SelectorSet, getElementByNthOfTypeIndexes } from "../../../util";
 
 declare const MTRichTextEditor: typeof EditorManager;
+
+// FIXME it will be resolved with the correct type
+type TextSelection = any;
 
 export interface HasTinyMCE {
   id: string;
@@ -40,11 +38,9 @@ function _mtRichTextEditorFocus(
   if (caret) {
     const pos = ed.tiptap.view.posAtDOM(caret, 0);
     const resolvedPos = ed.tiptap.state.doc.resolve(pos);
-    const selection = ed.tiptap.state.selection.constructor.create(
-      ed.tiptap.state.doc,
-      resolvedPos.pos,
-      resolvedPos.pos + 1
-    );
+    const selection = (
+      ed.tiptap.state.selection.constructor as TextSelection
+    ).create(ed.tiptap.state.doc, resolvedPos.pos, resolvedPos.pos + 1);
 
     ed.tiptap.view.dispatch(
       ed.tiptap.state.tr.setSelection(selection).deleteSelection()
@@ -70,11 +66,9 @@ function _mtRichTextEditorFocus(
           selectorSet.focus.offset
         );
 
-        const selection = ed.tiptap.state.selection.constructor.create(
-          ed.tiptap.state.doc,
-          startPos,
-          endPos
-        );
+        const selection = (
+          ed.tiptap.state.selection.constructor as TextSelection
+        ).create(ed.tiptap.state.doc, startPos, endPos);
 
         ed.tiptap.view.dispatch(ed.tiptap.state.tr.setSelection(selection));
       }
