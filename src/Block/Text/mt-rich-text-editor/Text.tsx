@@ -143,7 +143,11 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       };
 
       const root = ed.tiptap.view.dom;
-      ed.tiptap.on("update", () => {
+      ed.tiptap.on("update", (ev) => {
+        if (ev.transaction.getMeta("paste")) {
+          return;
+        }
+
         const children = [...root.children];
         // const children = [...root.children].filter(
         //   (e) => !e.classList.contains("mce-resizehandle")
