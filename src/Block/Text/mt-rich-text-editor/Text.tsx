@@ -248,15 +248,19 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
           });
 
           if (e.keyCode === 8 || e.keyCode === 46) {
-            if (root.textContent === "" && ed.getContent() === "<p></p>") {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              removeBlock(block);
-              return;
+            if (root.textContent === "") {
+              const content = ed.getContent();
+              if (content === "" || content === "<p></p>") {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                removeBlock(block);
+                return;
+              }
             }
 
-            const cursorIsAtTheBeginning = true;
+            const cursorIsAtTheBeginning =
+              ed.tiptap.state.selection.$from.pos === 1;
             if (cursorIsAtTheBeginning) {
               e.preventDefault();
               mergeBlock(block);
