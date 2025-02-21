@@ -124,6 +124,31 @@ function plugin(ed: TinyMCEEditor): void {
 
     addCommentFilter(target);
   });
+
+  ed.on("drop paste", function (e) {
+    const files: File[] = [];
+    const dataTransfer = e.dataTransfer || e.clipboardData;
+    for (let i = 0; i < dataTransfer.items.length; i++) {
+      const item = dataTransfer.items[i];
+      if (item.kind === "string" && item.type === "text/plain") {
+        const plainTextContent = dataTransfer.getData("text/plain");
+        if (plainTextContent && !plainTextContent.startsWith("file://")) {
+          return; // paste as text
+        }
+      } else if (/text\/(html|plain)/.test(item.type)) {
+        return; // paste as text
+      } else if (item.kind === "file" && /^image\//.test(item.type)) {
+        files.push(item.getAsFile());
+      }
+    }
+
+    if (files.length !== 0) {
+      // ignore this paste event to prevent pasting as an image.
+      return false;
+    }
+
+    // paste as text
+  });
 }
 
 export default plugin;
