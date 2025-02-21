@@ -25,10 +25,7 @@
         }
       }
     </style>
-    <link
-      rel="stylesheet"
-      href="./mt-rich-text-editor/style.css"
-    />
+    <link rel="stylesheet" href="./mt-rich-text-editor/style.css" />
     <script
       src="./mt-rich-text-editor/mt-rich-text-editor.js"
       type="module"
@@ -37,7 +34,7 @@
   </head>
   <body>
     <div class="editor-container">
-      <form style="margin-top: 80px;">
+      <form style="margin-top: 80px">
         <textarea id="body"></textarea>
         <input type="submit" id="submit" />
         <input type="reset" id="reset" />
@@ -79,19 +76,19 @@
         ],
         block: {
           "core-text": {
-            resolver: async ({ url, maxwidth, maxheight }) => {
+            embedObjectResolver: async ({ url, maxwidth, maxheight }) => {
               try {
                 const res = await fetch(
                   `https://noembed.com/embed?url=${url}&maxwidth=${
                     maxwidth || "400"
                   }&maxheight=${maxheight || "400"}`
-                )
+                );
                 return await res.json();
               } catch (e) {
                 return {
                   html: ``,
                   inline: `<a href="http://example.com">dummy inline link</a>`,
-                }
+                };
               }
             },
           },

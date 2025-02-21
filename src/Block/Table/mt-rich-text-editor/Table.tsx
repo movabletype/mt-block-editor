@@ -82,9 +82,6 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
           ],
         ],
       ],
-      extensionOptions: {
-        history: false,
-      },
     }).then((ed) => {
       block.tinymce = ed;
       ed.setContent(block.text);

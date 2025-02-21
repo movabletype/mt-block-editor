@@ -33,4 +33,18 @@ export const commonSettings: (
     p { margin: 0; }
     `,
   ],
+  pasteMenu: ["embedInline", "html", "link", "text", "markdown"],
+  extensionOptions: {
+    history: {
+      depth: 1,
+      registerShortcuts: false,
+    },
+    embedObject: {
+      resolver:
+        editor.opts.block["core-text"]?.embedObjectResolver ||
+        (() => {
+          throw "Requires embedObjectResolver option for core-text.";
+        }),
+    },
+  },
 });
