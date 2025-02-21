@@ -32,7 +32,7 @@ export interface EditorOptions {
      *   // more rows...
      * ]
      */
-    toolbar: string[][][][];
+    toolbar?: string[][][][];
     toolbarContainer?: HTMLDivElement | null;
     toolbarOptions?: Record<string, any>;
     /**

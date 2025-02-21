@@ -1,4 +1,4 @@
-import { b9 as a, ba as m, b7 as n, a$ as s } from "./component-Dl1Gp1UC.js";
+import { b9 as a, ba as m, b7 as n, a$ as s } from "./component-DpxOQywH.js";
 export {
   a as PasteMenuItemElement,
   m as QuickActionItemElement,

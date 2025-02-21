@@ -2278,14 +2278,18 @@ function As(e, t, n, r, s, i) {
 const Ss = (e) => {
   const r = new DOMParser().parseFromString(`<body>${e}</body>`, "text/html").body;
   return r.querySelectorAll("a").forEach((s) => {
-    s.querySelector("div") && (s.dataset.mtRichTextEditorBlock = "true");
+    s.querySelector(
+      "address, article, aside, blockquote, details, dialog, div, dl, figure, footer, header, h1, h2, h3, h4, h5, h6, hr, main, nav, ol, p, pre, section, table, td, thead, tr, ul"
+    ) && (s.dataset.mtRichTextEditorBlock = "true");
   }), r.querySelectorAll("script").forEach((s) => {
     var o;
     const i = document.createElement("mt-rich-text-editor-script");
     i.textContent = s.textContent, Array.from(s.attributes).forEach((a) => {
       i.setAttribute(a.name, a.value);
     }), (o = s.parentNode) == null || o.replaceChild(i, s);
-  }), r.querySelectorAll("div, blockquote, main, article").forEach((s) => {
+  }), r.querySelectorAll(
+    "div, blockquote, main, article, ul, ol, section, aside, nav, header, footer, figure, details, dialog"
+  ).forEach((s) => {
     if (Array.from(s.childNodes).some(
       (o) => {
         var a;
@@ -2326,6 +2330,12 @@ const Ss = (e) => {
     }), s.removeAttribute("data-mt-rich-text-editor-event-attributes");
   }), n.body.querySelectorAll("[data-mt-rich-text-editor-content]").forEach((s) => {
     s.innerHTML = s.getAttribute("data-mt-rich-text-editor-content") ?? "", s.removeAttribute("data-mt-rich-text-editor-content");
+  }), n.body.querySelectorAll("mt-rich-text-editor-script").forEach((s) => {
+    var o;
+    const i = document.createElement("script");
+    i.textContent = s.textContent, Array.from(s.attributes).forEach((a) => {
+      i.setAttribute(a.name, a.value);
+    }), (o = s.parentNode) == null || o.replaceChild(i, s);
   });
   const r = n.body.innerHTML;
   return /^<p[^>]*><\/p>$/i.test(r) ? "" : r;
@@ -2623,9 +2633,9 @@ export {
   oi as az,
   Jr as b,
   Ot as b0,
-  Ri as b1,
-  Ss as b2,
-  Fn as b3,
+  Ss as b1,
+  Fn as b2,
+  Ri as b3,
   Rs as b4,
   pe as b5,
   Is as b6,
@@ -2659,4 +2669,4 @@ export {
   K as y,
   w as z
 };
-//# sourceMappingURL=component-Dl1Gp1UC.js.map
+//# sourceMappingURL=component-DpxOQywH.js.map

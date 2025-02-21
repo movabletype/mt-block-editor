@@ -1,9 +1,8 @@
 import { Editor, EditorOptions } from './editor';
 import * as Component from "./component";
-export interface EditorCreateOptions extends Omit<EditorOptions, "toolbar"> {
+export interface EditorCreateOptions extends EditorOptions {
     id: string;
     language?: string;
-    toolbar?: EditorOptions["toolbar"];
 }
 export declare class EditorManager {
     #private;

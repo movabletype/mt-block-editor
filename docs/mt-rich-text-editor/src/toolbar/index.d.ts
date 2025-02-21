@@ -2,7 +2,7 @@ import { Editor } from '../editor';
 interface ToolbarOptions {
     target: HTMLDivElement;
     editor: Editor;
-    toolbar: string[][][][];
+    toolbar?: string[][][][];
     options: Record<string, any>;
     inline: boolean;
 }
