@@ -40,11 +40,7 @@ export const commonSettings: (
       registerShortcuts: false,
     },
     embedObject: {
-      resolver:
-        editor.opts.block["core-text"]?.embedObjectResolver ||
-        (() => {
-          throw "Requires embedObjectResolver option for core-text.";
-        }),
+      resolver: editor.opts.block["core-text"]?.embedObjectResolver,
     },
   },
 });
