@@ -16,11 +16,11 @@
       crossorigin="anonymous"
     />
     <style type="text/css">
-      body > div {
+      .editor-container {
         margin: 10px 200px;
       }
       @media (max-width: 991.5px) {
-        body > div {
+        .editor-container {
           margin: 0;
         }
       }
@@ -36,7 +36,7 @@
     ></script>
   </head>
   <body>
-    <div>
+    <div class="editor-container">
       <form style="margin-top: 80px;">
         <textarea id="body"></textarea>
         <input type="submit" id="submit" />
