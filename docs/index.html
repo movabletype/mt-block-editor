@@ -77,6 +77,25 @@
           "custom-excel",
           "custom-text",
         ],
+        block: {
+          "core-text": {
+            resolver: async ({ url, maxwidth, maxheight }) => {
+              try {
+                const res = await fetch(
+                  `https://noembed.com/embed?url=${url}&maxwidth=${
+                    maxwidth || "400"
+                  }&maxheight=${maxheight || "400"}`
+                )
+                return await res.json();
+              } catch (e) {
+                return {
+                  html: ``,
+                  inline: `<a href="http://example.com">dummy inline link</a>`,
+                }
+              }
+            },
+          },
+        },
       };
 
       window.document.getElementById("body").value =
