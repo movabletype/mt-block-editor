@@ -33,7 +33,4 @@ export const commonSettings: (
     p { margin: 0; }
     `,
   ],
-  paste_preprocess: () => {
-    // TODO: Implement paste_preprocess
-  },
 });
