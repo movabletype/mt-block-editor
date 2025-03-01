@@ -60,8 +60,13 @@ const command: Command = {
       setTimeout(() => {
         block.wrapperRef.current?.classList.remove("mt-be-focus");
       }, 100);
-      if ((block instanceof Text || block instanceof Table) && block.tinymce) {
-        focus(block.tinymce as any, null);
+      if (block instanceof Text || block instanceof Table) {
+        const editor =
+          "mtRichTextEditor" in block ? block.mtRichTextEditor : block.tinymce;
+        if (editor) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          focus(editor as any, null);
+        }
       }
     }
 
