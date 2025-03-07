@@ -41,19 +41,16 @@ export interface SerializeOptions {
   editor: Editor;
 }
 
-interface SetFocusedIdOptions {
+interface SetFocusedIdsOptions {
   forceUpdate: boolean;
 }
 
-type SetFocusedId = (
-  id: string | null,
-  opts?: SetFocusedIdOptions
-) => void;
+type SetFocusedIds = (ids: string[], opts?: SetFocusedIdsOptions) => void;
 
 interface EditorContextProps {
   editor: Editor;
-  setFocusedId: SetFocusedId;
-  getFocusedId: () => string | null;
+  setFocusedIds: SetFocusedIds;
+  getFocusedIds: () => string[];
 }
 
 export interface EditHistoryHandlers {
