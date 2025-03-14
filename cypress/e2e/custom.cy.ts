@@ -80,7 +80,7 @@ context("CustomBlock", () => {
       canRemoveBlock: 1,
       typeId: "custom-wrap",
       panelBlockTypes: [],
-      shortcutBlockTypes: ["custom-bgcolor_contents"],
+      shortcutBlockTypes: ["custom-bgcolor_contents", "sixapart-oembed"],
       className: "",
       html: "",
       shouldBeCompiled: 1,
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       canRemoveBlock: 1,
       typeId: "custom-wrap_remove_intermediate",
       panelBlockTypes: [],
-      shortcutBlockTypes: ["custom-wrap"],
+      shortcutBlockTypes: ["custom-wrap", "sixapart-oembed"],
       className: "",
       html: "",
       shouldBeCompiled: 1,
@@ -710,6 +710,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         expect(html).to.equal(expectedResult);
       });
     });
+
+    it("oembed", async () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-wrap"]`).click();
+        });
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="sixapart-oembed"]`
+      ).click();
+
+      type("https://www.youtube.com/watch?v=NsXejoHIjOU");
+      type("{enter}");
+
+      let youtubeLoaded: () => void;
+      const waitForYoutubePromise = new Promise<void>((resolve) => {
+        youtubeLoaded = resolve;
+      });
+
+      cy.get("iframe").then(async ($e) => {
+        const iframe = $e.get(0);
+        // wait for iframe[src^="https://www.youtube.com/"] inside iframe.contentWindow
+        await new Promise<void>((resolve) => {
+          const interval = setInterval(() => {
+            const el = iframe.contentWindow?.document.querySelector(
+              "iframe[src^='https://www.youtube.com/']"
+            );
+            if (el) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, 100);
+        });
+        youtubeLoaded();
+      });
+
+      await waitForYoutubePromise;
+
+      blur();
+      wait(1);
+
+      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"url":"https://www.youtube.com/watch?v=NsXejoHIjOU","width":200,"height":150,"providerName":"YouTube"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap" h='&lt;!-- mt-beb t="sixapart-oembed" m=&#x27;1&#x27; h=&#x27;&#x27; --&gt;&lt;iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="mt-custom-block-builder"&gt;&lt;/iframe&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap"><iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="mt-custom-block-builder"></iframe></div><!-- /mt-beb -->`;
+
+      serializedTextarea(textareaId).should(async ($input) => {
+        const value = $input.val();
+        await expect(value).to.equal(expectedResult);
+      });
+
+      await unload({ id: textareaId });
+    });
   });
 
   context("custom-wrap_remove_intermediate", () => {
@@ -779,6 +831,58 @@ document.addEventListener('DOMContentLoaded', async () => {
       blur();
 
       // No change.
+      serializedTextarea(textareaId).should(async ($input) => {
+        const value = $input.val();
+        await expect(value).to.equal(expectedResult);
+      });
+
+      await unload({ id: textareaId });
+    });
+
+    it("oembed", async () => {
+      cy.get(`.mt-be-btn-add-bottom`)
+        .click()
+        .within(() => {
+          cy.get(`[data-mt-be-type="custom-wrap_remove_intermediate"]`).click();
+        });
+
+      wait(1);
+      cy.get(
+        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="sixapart-oembed"]`
+      ).click();
+
+      type("https://www.youtube.com/watch?v=NsXejoHIjOU");
+      type("{enter}");
+
+      let youtubeLoaded: () => void;
+      const waitForYoutubePromise = new Promise<void>((resolve) => {
+        youtubeLoaded = resolve;
+      });
+
+      cy.get("iframe").then(async ($e) => {
+        const iframe = $e.get(0);
+        // wait for iframe[src^="https://www.youtube.com/"] inside iframe.contentWindow
+        await new Promise<void>((resolve) => {
+          const interval = setInterval(() => {
+            const el = iframe.contentWindow?.document.querySelector(
+              "iframe[src^='https://www.youtube.com/']"
+            );
+            if (el) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, 100);
+        });
+        youtubeLoaded();
+      });
+
+      await waitForYoutubePromise;
+
+      blur();
+      wait(1);
+
+      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"url":"https://www.youtube.com/watch?v=NsXejoHIjOU","width":200,"height":150,"providerName":"YouTube"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" h='&lt;!-- mt-beb t="sixapart-oembed" m=&#x27;1&#x27; h=&#x27;&#x27; --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="mt-custom-block-builder"></iframe></div><!-- /mt-beb -->`;
+
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
         await expect(value).to.equal(expectedResult);
