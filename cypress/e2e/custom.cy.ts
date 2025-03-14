@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const expectedResult = `<div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div></div>`;
 
       serializedTextarea(textareaId).should(($input) => {
-        const value = $input.val();
+        const value = $input.val() as string;
         const html = value.replace(/<!--.*?-->/g, "");
         expect(html).to.equal(expectedResult);
       });
@@ -651,7 +651,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // No change.
       serializedTextarea(textareaId).should(($input) => {
-        const value = $input.val();
+        const value = $input.val() as string;
         const html = value.replace(/<!--.*?-->/g, "");
         expect(html).to.equal(expectedResult);
       });
@@ -695,7 +695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         .join("")}</div>`;
 
       serializedTextarea(textareaId).should(($input) => {
-        const value = $input.val();
+        const value = $input.val() as string;
         const html = value.replace(/<!--.*?-->/g, "");
         expect(html).to.equal(expectedResult);
       });
@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // No change.
       serializedTextarea(textareaId).should(($input) => {
-        const value = $input.val();
+        const value = $input.val() as string;
         const html = value.replace(/<!--.*?-->/g, "");
         expect(html).to.equal(expectedResult);
       });
@@ -766,7 +766,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
         await expect(value).to.equal(expectedResult);
-      })
+      });
 
       await unload({ id: textareaId });
       await apply({ id: textareaId });
