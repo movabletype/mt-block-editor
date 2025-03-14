@@ -772,6 +772,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       await apply({ id: textareaId });
 
       cy.get(`.mt-be-block`).click();
+      wait(1);
+      cy.get(`.mt-be-block div[contenteditable]`).first().click();
 
       wait(1);
       blur();
