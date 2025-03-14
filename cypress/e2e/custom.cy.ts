@@ -780,7 +780,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
         await expect(value).to.equal(expectedResult);
-      })
+      });
+
+      await unload({ id: textareaId });
     });
   });
 
