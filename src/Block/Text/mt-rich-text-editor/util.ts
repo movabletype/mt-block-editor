@@ -7,11 +7,11 @@ declare const MTRichTextEditor: typeof EditorManager;
 // FIXME it will be resolved with the correct type
 type TextSelection = any;
 
-export interface HasTinyMCE {
+export interface HasMTRichTextEditor {
   id: string;
   text: string;
-  tinymce: MTRichTextEditorEditor | null;
-  tinymceId(): string;
+  mtRichTextEditor: MTRichTextEditorEditor | null;
+  mtRichTextEditorId(): string;
 }
 
 export const CARET_ATTR = "data-mt-block-editor-caret";
@@ -27,12 +27,6 @@ function _mtRichTextEditorFocus(
     // Probably unloaded.
     return;
   }
-
-  // if (!ed.selection) {
-  //   return;
-  // }
-
-  // const body = ed.getBody();
 
   const caret = ed.tiptap.view.dom.querySelector(`[${CARET_ATTR}="1"]`);
   if (caret) {
@@ -76,10 +70,6 @@ function _mtRichTextEditorFocus(
       console.warn("Failed to set selection:", e);
     }
   }
-
-  // // fallback
-  // ed.selection.select(body, true);
-  // ed.selection.collapse(false);
 }
 
 export function mtRichTextEditorFocus(
@@ -93,56 +83,19 @@ export function mtRichTextEditorFocus(
   }
 }
 
-export function removeTinyMCEFromBlock(block: HasTinyMCE): void {
-  if (block.tinymce) {
+export function removeMTRichTextEditorFromBlock(
+  block: HasMTRichTextEditor
+): void {
+  if (block.mtRichTextEditor) {
     try {
-      block.text = block.tinymce.getContent();
+      block.text = block.mtRichTextEditor.getContent();
     } catch (e) {
       console.log(e);
     }
   }
 
-  block.tinymce = null;
-  MTRichTextEditor.unload({ id: block.tinymceId() });
-}
-
-export async function adjustToolbar(
-  ed: MTRichTextEditorEditor,
-  block: HasTinyMCE,
-  editorElement: HTMLElement
-): Promise<void> {
-  // const root = ed.dom.getRoot();
-  // const toolbar = await new Promise<HTMLDivElement>((resolve, reject) => {
-  //   const lookup = (count: number): void => {
-  //     const toolbar = document.querySelector<HTMLDivElement>(
-  //       `[data-mt-be-toolbar="${block.id}"]`
-  //     );
-  //     if (toolbar) {
-  //       resolve(toolbar);
-  //     } else if (count > 100) {
-  //       // timeout 10s passed
-  //       reject();
-  //     } else {
-  //       setTimeout(() => lookup(count + 1), 100);
-  //     }
-  //   };
-  //   lookup(0);
-  // });
-  // if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
-  //   const blockEl = root.closest(".block");
-  //   // Set width property only when this block in inside .column
-  //   if (blockEl?.closest(".column")) {
-  //     const editorRect = editorElement.getBoundingClientRect();
-  //     const blockRect = blockEl.getBoundingClientRect();
-  //     toolbar.style.left = `-${blockRect.left - editorRect.left}px`;
-  //     toolbar.style.setProperty(
-  //       "width",
-  //       `calc(100vw - ${editorRect.left}px)`,
-  //       "important"
-  //     );
-  //   }
-  // }
-  // toolbar.style.top = `-${toolbar.offsetHeight}px`;
+  block.mtRichTextEditor = null;
+  MTRichTextEditor.unload({ id: block.mtRichTextEditorId() });
 }
 
 export function isEmptyContentNode(node: Element): boolean {

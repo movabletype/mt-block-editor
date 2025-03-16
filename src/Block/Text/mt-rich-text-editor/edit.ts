@@ -14,7 +14,7 @@ export const editHandlers: EditHistoryHandlers = {
     const block = hist.block as Text;
     const data = hist.data;
 
-    const ed = MTRichTextEditor.get({ id: block.tinymceId() });
+    const ed = MTRichTextEditor.get({ id: block.mtRichTextEditorId() });
     if (ed) {
       data.cur ||= ed.getContent();
       ed.setContent(data.last);
@@ -29,7 +29,7 @@ export const editHandlers: EditHistoryHandlers = {
     const block = hist.block as Text;
     const data = hist.data;
 
-    const ed = MTRichTextEditor.get({ id: block.tinymceId() });
+    const ed = MTRichTextEditor.get({ id: block.mtRichTextEditorId() });
     if (ed) {
       data.cur ||= ed.getContent();
       ed.setContent(data.cur);

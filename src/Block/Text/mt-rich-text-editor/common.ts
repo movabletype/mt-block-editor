@@ -1,24 +1,15 @@
 import type Editor from "../../../Editor";
 import type Block from "../../../Block";
-import type { HasTinyMCE } from "./util";
-import type { TinyMCE, RawEditorOptions } from "tinymce";
+import type { HasMTRichTextEditor } from "./util";
 import type { EditorCreateOptions } from "@movabletype/mt-rich-text-editor";
-
-declare const tinymce: TinyMCE;
-
-let tinymceMajorVersion: number | undefined = undefined;
-export const getTinymceMajorVersion = (): number => {
-  tinymceMajorVersion ||= parseInt(tinymce.majorVersion);
-  return tinymceMajorVersion;
-};
 
 export const commonSettings: (
   editor: Editor,
-  block: Block & HasTinyMCE
+  block: Block & HasMTRichTextEditor
 ) => EditorCreateOptions = (editor, block) => ({
   height: "auto",
   language: editor.opts.i18n.lng ?? "en",
-  id: block.tinymceId(),
+  id: block.mtRichTextEditorId(),
   fixed_toolbar_container: `[data-mt-be-toolbar="${block.id}"]`,
   inline: true,
   editorStylesheets: [

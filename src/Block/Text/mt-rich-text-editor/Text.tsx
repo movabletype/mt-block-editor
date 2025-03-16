@@ -25,12 +25,11 @@ import BlockContentEditablePreview, {
 
 import { EditHistory } from "../../../EditManager";
 import {
-  HasTinyMCE,
+  HasMTRichTextEditor,
   CARET,
   CARET_ATTR,
   mtRichTextEditorFocus,
-  removeTinyMCEFromBlock,
-  adjustToolbar,
+  removeMTRichTextEditorFromBlock,
 } from "./util";
 import { editHandlers } from "./edit";
 import { commonSettings } from "./common";
@@ -108,7 +107,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         ],
       ],
     }).then((ed) => {
-      block.tinymce = ed;
+      block.mtRichTextEditor = ed;
       ed.setContent(block.text);
       mtRichTextEditorFocus(ed, selectorSet);
 
@@ -273,7 +272,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     });
 
     return () => {
-      removeTinyMCEFromBlock(block);
+      removeMTRichTextEditorFromBlock(block);
     };
   }, []);
 
@@ -297,7 +296,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       <BlockSetupCommon block={block} />
       <BlockLabel block={block}>
         <div
-          id={block.tinymceId()}
+          id={block.mtRichTextEditorId()}
           className={isInSetupMode ? "mt-be-input-container" : ""}
           dangerouslySetInnerHTML={{ __html: sanitize(html) }}
         ></div>
@@ -321,7 +320,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   );
 };
 
-class Text extends Block implements HasTinyMCE, HasEditorStyle {
+class Text extends Block implements HasMTRichTextEditor, HasEditorStyle {
   public static typeId = "core-text";
   public static selectable = true;
   public static icon = icon;
@@ -331,7 +330,7 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
 
   public text = "";
   public editorStyle: CSSProperties = {};
-  public tinymce: MTRichTextEditorEditor | null = null;
+  public mtRichTextEditor: MTRichTextEditorEditor | null = null;
   public toolbarVisibleStatus: ToolbarVisibleStatus =
     ToolbarVisibleStatus.DependsOnContent;
 
@@ -364,12 +363,12 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   }
 
   public focusEditor(): void {
-    if (this.tinymce) {
-      this.tinymce.focus();
+    if (this.mtRichTextEditor) {
+      this.mtRichTextEditor.focus();
     }
   }
 
-  public tinymceId(): string {
+  public mtRichTextEditorId(): string {
     return `textarea-${this.id}`;
   }
 
@@ -429,9 +428,9 @@ class Text extends Block implements HasTinyMCE, HasEditorStyle {
   }
 
   public html(): string {
-    if (this.tinymce) {
+    if (this.mtRichTextEditor) {
       try {
-        return this.tinymce.getContent();
+        return this.mtRichTextEditor.getContent();
       } catch (e) {
         console.log(e);
       }
