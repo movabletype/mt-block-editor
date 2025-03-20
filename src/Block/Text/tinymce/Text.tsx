@@ -1,28 +1,28 @@
-import { t } from "../i18n";
+import { t } from "../../../i18n";
 import React, { useEffect, CSSProperties } from "react";
-import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
+import Block, { NewFromHtmlOptions, EditorOptions } from "../../../Block";
 import type {
   Editor as TinyMCEEditor,
   TinyMCE,
   RawEditorOptions as TinyMCESettings,
 } from "tinymce";
-import { useBlocksContext, useEditorContext } from "../Context";
-import icon from "../img/icon/text-block.svg";
+import { useBlocksContext, useEditorContext } from "../../../Context";
+import icon from "../../../img/icon/text-block.svg";
 import {
   sanitize,
   isIos,
   getShadowDomSelectorSet,
   isPassThroughNativeEvent,
-} from "../util";
-import EditorMode from "../Component/EditorMode";
-import BlockToolbar from "../Component/BlockToolbar";
-import BlockSetupCommon from "../Component/BlockSetupCommon";
-import BlockLabel from "../Component/BlockLabel";
+} from "../../../util";
+import EditorMode from "../../../Component/EditorMode";
+import BlockToolbar from "../../../Component/BlockToolbar";
+import BlockSetupCommon from "../../../Component/BlockSetupCommon";
+import BlockLabel from "../../../Component/BlockLabel";
 import BlockContentEditablePreview, {
   HasEditorStyle,
-} from "../Component/BlockContentEditablePreview";
+} from "../../../Component/BlockContentEditablePreview";
 
-import { EditHistory } from "../EditManager";
+import { EditHistory } from "../../../EditManager";
 import {
   HasTinyMCE,
   CARET,
@@ -30,13 +30,13 @@ import {
   tinymceFocus,
   removeTinyMCEFromBlock,
   adjustToolbar,
-} from "./Text/util";
-import { editHandlers } from "./Text/edit";
+} from "./util";
+import { editHandlers } from "./edit";
 import {
   installPlugins as installTinyMCEPlugins,
   commonSettings,
   getTinymceMajorVersion,
-} from "./Text/tinymce";
+} from "./tinymce";
 
 declare const tinymce: TinyMCE;
 

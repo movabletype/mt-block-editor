@@ -1,7 +1,7 @@
 import { t } from "../i18n";
 import icon from "../img/copy.svg";
 import type { Command } from "../CommandManager";
-import { tinymceFocus } from "../Block/Text/util";
+import { focus } from "../Block/Text/util";
 import Text from "../Block/Text";
 import Table from "../Block/Table";
 
@@ -60,8 +60,13 @@ const command: Command = {
       setTimeout(() => {
         block.wrapperRef.current?.classList.remove("mt-be-focus");
       }, 100);
-      if ((block instanceof Text || block instanceof Table) && block.tinymce) {
-        tinymceFocus(block.tinymce, null);
+      if (block instanceof Text || block instanceof Table) {
+        const editor =
+          "mtRichTextEditor" in block ? block.mtRichTextEditor : block.tinymce;
+        if (editor) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          focus(editor as any, null);
+        }
       }
     }
 
