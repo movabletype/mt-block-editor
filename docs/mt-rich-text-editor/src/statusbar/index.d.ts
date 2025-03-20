@@ -3,7 +3,7 @@ interface StatusbarOptions {
     target: HTMLDivElement;
     editor: Editor;
     statusbar: string[][];
-    options: Record<string, any>;
+    options: Record<string, unknown>;
     inline: boolean;
 }
 export declare class Statusbar {

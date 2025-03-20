@@ -24,7 +24,7 @@ import { PanelItemElement } from '../../ui/item/element';
  *    }
  *  );
  */
-export declare class ToolbarItemElement<Options extends Record<string, any> = Record<string, any>> extends PanelItemElement<Options> {
+export declare class ToolbarItemElement<Options extends Record<string, any> = Record<string, unknown>> extends PanelItemElement<Options> {
     constructor();
     connectedCallback(): void;
 }

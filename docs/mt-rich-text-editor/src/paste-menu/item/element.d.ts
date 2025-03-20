@@ -35,7 +35,7 @@ export type PasteMenuItemPriorityValue = (typeof PasteMenuItemPriority)[keyof ty
  *    }
  *  );
  */
-export declare abstract class PasteMenuItemElement<Options extends Record<string, any> = Record<string, any>> extends PanelItemElement<Options> {
+export declare abstract class PasteMenuItemElement<Options extends Record<string, unknown> = Record<string, unknown>> extends PanelItemElement<Options> {
     static Priority: {
         readonly Default: 1;
         readonly High: 2;
@@ -61,7 +61,7 @@ export declare abstract class PasteMenuItemElement<Options extends Record<string
 }
 declare global {
     namespace svelteHTML {
-        interface HTMLAttributes<T> {
+        interface HTMLAttributes {
             "onpaste-menu-item-applied"?: (event: CustomEvent) => void;
         }
     }

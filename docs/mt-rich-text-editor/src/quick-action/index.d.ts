@@ -3,7 +3,7 @@ interface QuickActionOptions {
     target: HTMLDivElement;
     editor: Editor;
     quickAction: string[];
-    options: Record<string, any>;
+    options: Record<string, Record<string, unknown> | undefined | false>;
 }
 export declare class QuickAction {
     #private;

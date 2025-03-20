@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core';
 export interface BlockLinkOptions {
-    HTMLAttributes: Record<string, any>;
+    HTMLAttributes: Record<string, unknown>;
 }
 declare module "@tiptap/core" {
     interface Commands<ReturnType> {

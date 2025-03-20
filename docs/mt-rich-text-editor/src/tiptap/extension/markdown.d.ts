@@ -3,7 +3,7 @@ interface MarkdownData {
     content: string;
 }
 export interface MarkdownOptions {
-    HTMLAttributes: Record<string, any>;
+    HTMLAttributes: Record<string, unknown>;
     toHtml: (data: MarkdownData) => Promise<{
         content: string;
     }>;

@@ -2411,6 +2411,7 @@ const Rs = `:host > button {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
+  font-size: 14px;
 
   & svg {
     width: 24px;
@@ -2420,6 +2421,14 @@ const Rs = `:host > button {
   &:not(.is-disabled):hover,
   &.is-active {
     background: #dee0e2;
+  }
+
+  &.button-with-text-label {
+    width: auto;
+
+    & svg + span {
+      padding: 0 0.25rem;
+    }
   }
 }
 
@@ -2669,4 +2678,4 @@ export {
   K as y,
   w as z
 };
-//# sourceMappingURL=component-DpxOQywH.js.map
+//# sourceMappingURL=component-B0A4uxRg.js.map

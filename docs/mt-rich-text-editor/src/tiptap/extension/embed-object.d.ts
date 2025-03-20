@@ -5,7 +5,7 @@ interface EmbedData {
     maxheight?: number;
 }
 export interface EmbedObjectOptions {
-    HTMLAttributes: Record<string, any>;
+    HTMLAttributes: Record<string, unknown>;
     resolver: (params: EmbedData) => Promise<{
         html: string;
     }>;

@@ -1,6 +1,6 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { Editor } from '../../editor';
-export declare class PanelItemElement<Options extends Record<string, any> = Record<string, any>> extends HTMLElement {
+export declare class PanelItemElement<Options extends Record<string, unknown> = Record<string, unknown>> extends HTMLElement {
     get shadowRoot(): ShadowRoot;
     editor: Editor | undefined;
     options: Options;
