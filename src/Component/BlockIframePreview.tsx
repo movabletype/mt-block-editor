@@ -224,7 +224,7 @@ function useHtmlDataState(
   );
 
   const rawHtmlData =
-    typeof _rawHtmlData === "number" && block.compiledHtml !== undefined
+    typeof _rawHtmlData === "number" && block.compiledHtml === undefined
       ? null // treat as not yet retrieved since it has been updated
       : _rawHtmlData;
 

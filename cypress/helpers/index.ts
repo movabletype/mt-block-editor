@@ -36,6 +36,29 @@ export function apply(opts): Promise<Editor> {
             debug: true,
           },
           shortcutBlockTypes: ["core-text", "core-image", "core-file"],
+          block: {
+            "sixapart-oembed": {
+              resolver: async ({ url, maxwidth, maxheight }) => {
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                return {
+                  title: "mt-custom-block-builder",
+                  author_name: "Taku Amano",
+                  author_url: "https://www.youtube.com/@takuamano540",
+                  type: "video",
+                  height: 150,
+                  width: 200,
+                  version: "1.0",
+                  provider_name: "YouTube",
+                  provider_url: "https://www.youtube.com/",
+                  thumbnail_height: 360,
+                  thumbnail_width: 480,
+                  thumbnail_url:
+                    "https://i.ytimg.com/vi/NsXejoHIjOU/hqdefault.jpg",
+                  html: '<iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="mt-custom-block-builder"></iframe>',
+                };
+              },
+            },
+          },
         },
         opts
       )

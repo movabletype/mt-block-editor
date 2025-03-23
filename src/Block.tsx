@@ -59,14 +59,24 @@ export interface SerializeOptions extends CompileOptions {
 
 export const DEFAULT_KEYS_FOR_SETUP = ["label", "helpText", "className"];
 
+const contentRemovableBlockTypes = ["sixapart-oembed"];
 const removeIntermediateProduct = (html: string): string =>
-  html.replace(
-    /(<!-- mt-beb[^>]*?) h='([^']+)' -->.*?<!-- \/mt-beb -->/g,
-    (_, p1, p2) =>
-      `${p1} -->${removeIntermediateProduct(
-        unescapeSingleQuoteAttribute(p2)
-      )}<!-- /mt-beb -->`
-  );
+  html
+    .replace(
+      /(<!-- mt-beb[^>]*?) h='([^']+)' -->.*?<!-- \/mt-beb -->/g,
+      (_, p1, p2) =>
+        `${p1} -->${removeIntermediateProduct(
+          unescapeSingleQuoteAttribute(p2)
+        )}<!-- /mt-beb -->`
+    )
+    .replace(
+      new RegExp(
+        `(<!-- mt-beb t="(?:${contentRemovableBlockTypes.join(
+          "|"
+        )})"[^>]*?>).*?(?=<!-- \\/mt-beb -->)`
+      ),
+      "$1"
+    );
 
 class Block {
   public static typeId: string;
