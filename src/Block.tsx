@@ -73,7 +73,8 @@ const removeIntermediateProduct = (html: string): string =>
       new RegExp(
         `(<!-- mt-beb t="(?:${contentRemovableBlockTypes.join(
           "|"
-        )})"[^>]*?>).*?(?=<!-- \\/mt-beb -->)`
+        )})"[^>]*?>).*?(?=<!-- \\/mt-beb -->)`,
+        "gs"
       ),
       "$1"
     );
