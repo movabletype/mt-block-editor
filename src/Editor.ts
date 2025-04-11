@@ -77,6 +77,7 @@ export class Editor extends EventEmitter implements HasBlocks {
   >();
   private metadataMapSequence = 1;
   private keyboardShortcutCache: Record<string, Command> = {};
+  private initialized = false;
 
   public constructor(opts: EditorOptions) {
     super();
@@ -120,6 +121,7 @@ export class Editor extends EventEmitter implements HasBlocks {
       );
       this.blocks = blocks;
       this.emit("initializeBlocks", { editor: this, blocks });
+      this.initialized = true;
 
       this.render();
     }, 0);
@@ -261,6 +263,11 @@ export class Editor extends EventEmitter implements HasBlocks {
   }
 
   public async serialize(): Promise<void> {
+    if (!this.initialized) {
+      // should not update textarea value before initialization
+      return;
+    }
+
     const blocks = this.blocks.concat();
     this.emit("serialize", {
       editor: this,
