@@ -273,11 +273,13 @@ class Block {
       }
     });
 
-    ["label", "helpText", "className"].forEach((k) => {
-      if (src[k]) {
-        data[k] = src[k];
+    ["label", "helpText", "className", "removeIntermediateProduct"].forEach(
+      (k) => {
+        if (src[k]) {
+          data[k] = src[k];
+        }
       }
-    });
+    );
 
     return Object.keys(data).length !== 0 ? data : null;
   }
