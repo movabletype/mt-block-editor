@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       wait(1);
 
-      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","helpText":"a\\nb","className":"color"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" h='&lt;!-- mt-beb t="custom-wrap" --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;a&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;b&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div></div></div><!-- /mt-beb -->`;
+      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","helpText":"a\\nb","className":"color"},"2":{"removeIntermediateProduct":true}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" m='2' h='&lt;!-- mt-beb t="custom-wrap" --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;a&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;b&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div></div></div><!-- /mt-beb -->`;
 
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
@@ -827,13 +827,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       wait(1);
       cy.get(`.mt-be-block div[contenteditable]`).first().click();
 
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`)
+        .last()
+        .click();
+
       wait(1);
-      blur();
+      type("extra content");
 
       // No change.
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
-        await expect(value).to.equal(expectedResult);
+        await expect(value).to.equal(`${expectedResult}<!-- mt-beb --><p>extra content</p><!-- /mt-beb -->`);
       });
 
       await unload({ id: textareaId });
@@ -881,7 +885,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       blur();
       wait(1);
 
-      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"url":"https://www.youtube.com/watch?v=NsXejoHIjOU","width":200,"height":150,"providerName":"YouTube"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" h='&lt;!-- mt-beb t="sixapart-oembed" m=&#x27;1&#x27; h=&#x27;&#x27; --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="mt-custom-block-builder"></iframe></div><!-- /mt-beb -->`;
+      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"url":"https://www.youtube.com/watch?v=NsXejoHIjOU","width":200,"height":150,"providerName":"YouTube"},"2":{"removeIntermediateProduct":true}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" m='2' h='&lt;!-- mt-beb t="sixapart-oembed" m=&#x27;1&#x27; --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="mt-custom-block-builder"></iframe></div><!-- /mt-beb -->`;
 
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
@@ -889,78 +893,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       await unload({ id: textareaId });
-    });
-  });
-
-  context("custom-wrap_remove_intermediate", () => {
-    it("nested", async () => {
-      cy.get(`.mt-be-btn-add-bottom`)
-        .click()
-        .within(() => {
-          cy.get(`[data-mt-be-type="custom-wrap_remove_intermediate"]`).click();
-        });
-
-      wait(1);
-      cy.get(
-        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-wrap"]`
-      ).click();
-
-      wait(1);
-      cy.get(
-        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
-      ).click();
-
-      wait(1);
-      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
-        .first()
-        .click()
-        .within(() => {
-          cy.get(`[data-mt-be-type="core-text"]`).click();
-        });
-
-      wait(1);
-      type("a");
-
-      wait(1);
-      cy.get(
-        `.mt-be-block .mt-be-shortcut-block-list [data-mt-be-type="custom-bgcolor_contents"]`
-      ).click();
-
-      wait(1);
-      cy.get(`.mt-be-block .mt-be-btn-add-bottom`)
-        .eq(1)
-        .click()
-        .within(() => {
-          cy.get(`[data-mt-be-type="core-text"]`).click();
-        });
-
-      wait(1);
-      type("b");
-
-      blur();
-
-      wait(1);
-
-      const expectedResult = `<!-- mt-beb t="core-context" m='{"1":{"label":"背景色","helpText":"a\\nb","className":"color"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" h='&lt;!-- mt-beb t="custom-wrap" --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;a&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-bgcolor_contents" --&gt;&lt;!-- mt-beb m=&#x27;1&#x27; --&gt;&lt;p class="color"&gt;青（#00f）&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- mt-beb t="custom-contents" --&gt;&lt;!-- mt-beb --&gt;&lt;p&gt;b&lt;/p&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><div class="custom-wrap"><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>a</p></div></div><div class="bg-area" style="background-image: none; background-color: #00f;"><div class="inner-wrap"><p>b</p></div></div></div></div><!-- /mt-beb -->`;
-
-      serializedTextarea(textareaId).should(async ($input) => {
-        const value = $input.val();
-        await expect(value).to.equal(expectedResult);
-      })
-
-      await unload({ id: textareaId });
       await apply({ id: textareaId });
 
-      cy.get(`.mt-be-block`).click();
+      cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`)
+        .last()
+        .click();
 
       wait(1);
-      blur();
+      type("extra content");
 
-      // No change.
+      const expectedResult2 = `<!-- mt-beb t="core-context" m='{"1":{"removeIntermediateProduct":true},"2":{"url":"https://www.youtube.com/watch?v=NsXejoHIjOU","width":200,"height":150,"providerName":"YouTube"}}' --><!-- /mt-beb --><!-- mt-beb t="custom-wrap_remove_intermediate" m='1' h='&lt;!-- mt-beb t="sixapart-oembed" m=&#x27;2&#x27; --&gt;&lt;!-- /mt-beb --&gt;' --><div class="custom-wrap-remove-intermediate"><iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" title="mt-custom-block-builder"></iframe></div><!-- /mt-beb --><!-- mt-beb --><p>extra content</p><!-- /mt-beb -->`;
+
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
-        await expect(value).to.equal(expectedResult);
-      })
+        await expect(value).to.equal(`${expectedResult2}`);
+      });
+
+      await unload({ id: textareaId });
     });
   });
 
