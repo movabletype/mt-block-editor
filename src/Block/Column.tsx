@@ -251,6 +251,7 @@ class Column extends Block implements HasBlocks {
 
   public resetCompiledHtml(): void {
     this.compiledHtml = undefined;
+    this.removeIntermediateProduct = false;
 
     this.cancelOngoingCompilationHandlers.map((h) => {
       h();
