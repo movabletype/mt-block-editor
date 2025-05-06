@@ -6,7 +6,6 @@ import BlockFactory from "./BlockFactory";
 import { EditHistory } from "./EditManager";
 import {
   escapeSingleQuoteAttribute,
-  unescapeSingleQuoteAttribute,
 } from "./util/dom";
 import ParserContext from "./util/ParserContext";
 import icon from "./img/icon/default-block.svg";
@@ -55,29 +54,10 @@ export interface CompileOptions {
 
 export interface SerializeOptions extends CompileOptions {
   external: boolean;
+  removeChildIntermediateProduct?: boolean;
 }
 
 export const DEFAULT_KEYS_FOR_SETUP = ["label", "helpText", "className"];
-
-const contentRemovableBlockTypes = ["sixapart-oembed"];
-const removeIntermediateProduct = (html: string): string =>
-  html
-    .replace(
-      /(<!-- mt-beb[^>]*?) h='([^']+)' -->.*?<!-- \/mt-beb -->/g,
-      (_, p1, p2) =>
-        `${p1} -->${removeIntermediateProduct(
-          unescapeSingleQuoteAttribute(p2)
-        )}<!-- /mt-beb -->`
-    )
-    .replace(
-      new RegExp(
-        `(<!-- mt-beb t="(?:${contentRemovableBlockTypes.join(
-          "|"
-        )})"[^>]*?>).*?(?=<!-- \\/mt-beb -->)`,
-        "gs"
-      ),
-      "$1"
-    );
 
 class Block {
   public static typeId: string;
@@ -307,7 +287,9 @@ class Block {
   }
 
   public async serialize(opts: SerializeOptions): Promise<string> {
-    if (
+    if (opts.removeChildIntermediateProduct) {
+      this.compiledHtml = undefined;
+    } else if (
       (this.constructor as typeof Block).shouldBeCompiled &&
       this.compiledHtml === undefined
     ) {
@@ -325,15 +307,13 @@ class Block {
     return `<!-- mt-beb${typeId ? ` t="${typeId}"` : ""}${
       m ? ` m='${escapeSingleQuoteAttribute(m)}'` : ""
     }${
-      this.compiledHtml !== undefined
-        ? ` h='${escapeSingleQuoteAttribute(
-            this.removeIntermediateProduct
-              ? removeIntermediateProduct(html)
-              : html
-          )}'`
+      !opts.removeChildIntermediateProduct && this.compiledHtml !== undefined
+        ? ` h='${escapeSingleQuoteAttribute(html)}'`
         : ""
     } -->${
-      this.removeIntermediateProduct
+      opts.removeChildIntermediateProduct
+        ? html
+        : this.removeIntermediateProduct
         ? this.compiledHtml || html
         : this.compiledHtml ?? html
     }<!-- /mt-beb -->`;
