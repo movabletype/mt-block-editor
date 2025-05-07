@@ -837,7 +837,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       // No change.
       serializedTextarea(textareaId).should(async ($input) => {
         const value = $input.val();
-        await expect(value).to.equal(`${expectedResult}<!-- mt-beb --><p>extra content</p><!-- /mt-beb -->`);
+        await expect(value).to.equal(
+          `${expectedResult}<!-- mt-beb --><p>extra content</p><!-- /mt-beb -->`
+        );
       });
 
       await unload({ id: textareaId });
@@ -893,6 +895,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       await unload({ id: textareaId });
+
+      const expectedResolvedCount = await new Promise<number>((resolve) => {
+        cy.window().then((w) => {
+          resolve(w.MTBlockEditorOembedResolved.length);
+        });
+      });
+
       await apply({ id: textareaId });
 
       cy.get(`.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`)
@@ -910,6 +919,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       await unload({ id: textareaId });
+
+      const actualResolvedCount = await new Promise<number>((resolve) => {
+        cy.window().then((w) => {
+          resolve(w.MTBlockEditorOembedResolved.length);
+        });
+      });
+
+      expect(actualResolvedCount).to.equal(expectedResolvedCount);
     });
   });
 
