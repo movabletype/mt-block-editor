@@ -5,6 +5,7 @@ import type { EditorUtil } from "../../src/mt-block-editor";
 declare global {
   interface Window {
     MTBlockEditor: typeof EditorUtil;
+    MTBlockEditorOembedResolved: any[];
   }
 }
 
@@ -26,6 +27,8 @@ export function apply(opts): Promise<Editor> {
       w.document.body.appendChild(textarea);
     }
 
+    w.MTBlockEditorOembedResolved ||= [];
+
     w.MTBlockEditor.apply(
       Object.assign(
         {
@@ -40,7 +43,7 @@ export function apply(opts): Promise<Editor> {
             "sixapart-oembed": {
               resolver: async ({ url, maxwidth, maxheight }) => {
                 await new Promise((resolve) => setTimeout(resolve, 2000));
-                return {
+                const result = {
                   title: "mt-custom-block-builder",
                   author_name: "Taku Amano",
                   author_url: "https://www.youtube.com/@takuamano540",
@@ -56,6 +59,8 @@ export function apply(opts): Promise<Editor> {
                     "https://i.ytimg.com/vi/NsXejoHIjOU/hqdefault.jpg",
                   html: '<iframe width="200" height="150" src="https://www.youtube.com/embed/NsXejoHIjOU?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="mt-custom-block-builder"></iframe>',
                 };
+                w.MTBlockEditorOembedResolved.push(result);
+                return result;
               },
             },
           },

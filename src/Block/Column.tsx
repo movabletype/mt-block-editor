@@ -251,6 +251,7 @@ class Column extends Block implements HasBlocks {
 
   public resetCompiledHtml(): void {
     this.compiledHtml = undefined;
+    this.removeIntermediateProduct = false;
 
     this.cancelOngoingCompilationHandlers.map((h) => {
       h();
@@ -303,8 +304,15 @@ class Column extends Block implements HasBlocks {
   private async serializeChildBlocks(
     opts: SerializeOptions
   ): Promise<string[]> {
+    const serializeChildOpts: Readonly<SerializeOptions> = {
+      ...opts,
+      removeChildIntermediateProduct:
+        opts.removeChildIntermediateProduct || this.removeIntermediateProduct,
+    };
     if (this.blocks.length <= SERIALIZATION_PARALLELISM) {
-      return Promise.all(this.blocks.map((c) => c.serialize(opts)));
+      return Promise.all(
+        this.blocks.map((c) => c.serialize(serializeChildOpts))
+      );
     }
 
     const res: string[] = [];
@@ -312,7 +320,7 @@ class Column extends Block implements HasBlocks {
     await Promise.all(
       [...Array(SERIALIZATION_PARALLELISM)].map(async () => {
         for (let i = indexes.shift(); i !== undefined; i = indexes.shift()) {
-          res[i] = await this.blocks[i].serialize(opts);
+          res[i] = await this.blocks[i].serialize(serializeChildOpts);
         }
       })
     );
