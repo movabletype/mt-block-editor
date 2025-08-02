@@ -26,7 +26,7 @@ export const commonSettings: (
   ],
   pasteMenu: ["embedInline", "html", "link", "text", "markdown"],
   extensionOptions: {
-    history: {
+    undoRedo: {
       depth: 1,
       registerShortcuts: false,
     },
