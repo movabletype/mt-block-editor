@@ -108,7 +108,7 @@ export class EditorUtil {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static #emit(name: string, ...args: any[]): void {
+  private static emit(name: string, ...args: any[]): void {
     const handlers = this.#eventHandlers[name] || [];
     handlers.forEach((handler) => handler(...args));
   }
@@ -118,9 +118,9 @@ export class EditorUtil {
     await initI18n(optsI18n);
 
     const m = EditorManager.instance();
-    this.#emit("create", opts);
+    this.emit("create", opts);
     const e = new Editor(opts as EditorOptions);
-    this.#emit("init", e);
+    this.emit("init", e);
     m.add(e);
 
     return e;
