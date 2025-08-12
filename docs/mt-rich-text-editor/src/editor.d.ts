@@ -1,6 +1,11 @@
 import { Editor as TiptapEditor, Extension as TiptapExtension } from '@tiptap/core';
 import { PasteMenu } from './paste-menu';
 import { QuickAction } from './quick-action';
+interface HtmlOutputOptions {
+    format?: boolean;
+    indentSize?: number;
+    contentUnformatted?: string[];
+}
 export interface ExtensionOptions {
     [key: string]: unknown;
     embedObject?: {
@@ -72,6 +77,7 @@ export interface EditorOptions {
     quickAction?: string[];
     quickActionOptions?: ConstructorParameters<typeof QuickAction>[0]["options"];
     autoFocus?: boolean;
+    htmlOutputOptions?: HtmlOutputOptions;
 }
 export declare const EditorEl: unique symbol;
 export declare class Editor {
@@ -91,9 +97,10 @@ export declare class Editor {
     focus(): void;
     destroy(): void;
     insertContent(html: string): void;
-    notify({ level, message }: {
+    notify({ message }: {
         level: "error" | "warning";
         message: string;
     }): void;
     isPasting(): boolean;
 }
+export {};

@@ -26,4 +26,5 @@ export declare class EditorManager {
     }): Editor | undefined;
     static save(): Promise<void>;
     static import(name: "@tiptap/core"): Promise<typeof import("@tiptap/core")>;
+    static setLanguage(language: string): void;
 }
