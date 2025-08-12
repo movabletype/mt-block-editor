@@ -36,6 +36,9 @@ import * as icon from "./icon";
 import * as util from "./util";
 import * as decorator from "./decorator";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type EventHandler = (...args: any[]) => void;
+
 export interface BoilerplateBlockOptions {
   typeId: string;
   className: string;
@@ -90,12 +93,34 @@ export class EditorUtil {
   public static icon = icon;
   public static util = util;
 
+  static #eventHandlers: Record<string, EventHandler[]> = {};
+
+  public static on(
+    name: "create",
+    handler: (opts: EditorOptions) => void
+  ): void;
+  public static on(name: "init", handler: (editor: Editor) => void): void;
+  public static on(name: string, handler: EventHandler): void {
+    if (!this.#eventHandlers[name]) {
+      this.#eventHandlers[name] = [];
+    }
+    this.#eventHandlers[name].push(handler);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static #emit(name: string, ...args: any[]): void {
+    const handlers = this.#eventHandlers[name] || [];
+    handlers.forEach((handler) => handler(...args));
+  }
+
   public static async apply(opts: EditorOptions): Promise<Editor> {
     const optsI18n: InitOptionsI18n = opts.i18n || {};
     await initI18n(optsI18n);
 
     const m = EditorManager.instance();
+    this.#emit("create", opts);
     const e = new Editor(opts as EditorOptions);
+    this.#emit("init", e);
     m.add(e);
 
     return e;
