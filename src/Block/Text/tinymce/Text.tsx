@@ -1,5 +1,5 @@
 import { t } from "../../../i18n";
-import React, { useEffect, CSSProperties } from "react";
+import React, { useEffect, useMemo, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../../../Block";
 import type {
   Editor as TinyMCEEditor,
@@ -70,10 +70,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   const { addBlock, removeBlock, mergeBlock } = useBlocksContext();
 
   const selectorSet = getShadowDomSelectorSet(block.id);
-
-  useEffect(() => {
-    installTinyMCEPlugins();
-
+  const settings = useMemo(() => {
     const pluginsToolbarSettings: TinyMCESettings =
       getTinymceMajorVersion() >= 6
         ? {
@@ -91,7 +88,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
             ],
           };
 
-    const settings: TinyMCESettings = {
+    const _settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext, blocksContext),
       ...pluginsToolbarSettings,
       init_instance_callback: (ed: TinyMCEEditor) => {
@@ -310,8 +307,14 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
     editor.emit("buildTinyMCESettings", {
       editor,
       block,
-      settings,
+      settings: _settings,
     });
+
+    return _settings;
+  }, []);
+
+  useEffect(() => {
+    installTinyMCEPlugins();
     tinymce.init(settings);
 
     return () => {
@@ -345,7 +348,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
         ></div>
       </BlockLabel>
       <BlockToolbar
-        rows={2}
+        rows={Array.isArray(settings.toolbar) ? settings.toolbar.length : 2}
         hasBorder={false}
         className={`mt-be-block-toolbar--tinymce ${
           toolbarVisible ? "" : "invisible"
