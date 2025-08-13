@@ -1,5 +1,5 @@
 import { t } from "../../../i18n";
-import React, { useEffect, CSSProperties } from "react";
+import React, { useEffect, useMemo, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../../../Block";
 import {
   sanitize,
@@ -47,10 +47,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   const { addBlock } = useBlocksContext();
 
   const selectorSet = getShadowDomSelectorSet(block.id);
-
-  useEffect(() => {
-    installTinyMCEPlugins();
-
+  const settings = useMemo(() => {
     const pluginsSettings: TinyMCESettings =
       getTinymceMajorVersion() >= 6
         ? {
@@ -60,7 +57,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
             plugins: "table code paste media textcolor link MTBlockEditor",
           };
 
-    const settings: TinyMCESettings = {
+    const _settings: TinyMCESettings = {
       ...commonSettings(editor, block, editorContext, blocksContext),
       ...pluginsSettings,
       toolbar:
@@ -175,8 +172,14 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
     editor.emit("buildTinyMCESettings", {
       editor,
       block,
-      settings,
+      settings: _settings,
     });
+
+    return _settings;
+  }, []);
+
+  useEffect(() => {
+    installTinyMCEPlugins();
     tinymce.init(settings);
 
     return () => {
@@ -197,6 +200,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         ></div>
       </BlockLabel>
       <BlockToolbar
+        rows={Array.isArray(settings.toolbar) ? settings.toolbar.length : 1}
         fullWidth={true}
         hasBorder={false}
         className="mt-be-block-toolbar--tinymce"

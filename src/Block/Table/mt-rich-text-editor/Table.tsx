@@ -1,5 +1,5 @@
 import { t } from "../../../i18n";
-import React, { useEffect, useRef, CSSProperties } from "react";
+import React, { useEffect, useRef, useMemo, CSSProperties } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../../../Block";
 import type EditorManager from "@movabletype/mt-rich-text-editor";
 import type {
@@ -45,10 +45,9 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   const selectorSet = getShadowDomSelectorSet(block.id);
 
   const toolbar = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const settings: EditorCreateOptions = {
+  const settings: EditorCreateOptions = useMemo(() => {
+    const _settings: EditorCreateOptions = {
       ...commonSettings(editor, block),
-      toolbarContainer: toolbar.current,
       toolbar: [
         [
           [
@@ -74,9 +73,14 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
     editor.emit("buildMTRichTextEditorSettings", {
       editor,
       block,
-      settings,
+      settings: _settings,
     });
 
+    return _settings;
+  }, []);
+
+  useEffect(() => {
+    settings.toolbarContainer = toolbar.current;
     MTRichTextEditor.create(settings).then((ed) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
@@ -175,6 +179,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
         ></div>
       </BlockLabel>
       <BlockToolbar
+        rows={settings.toolbar?.length || 0}
         fullWidth={true}
         hasBorder={false}
         className="mt-be-block-toolbar--mt-rich-text-editor"
