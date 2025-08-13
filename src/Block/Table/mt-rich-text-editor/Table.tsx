@@ -48,16 +48,6 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
   useEffect(() => {
     const settings: EditorCreateOptions = {
       ...commonSettings(editor, block),
-    };
-
-    editor.emit("buildMTRichTextEditorSettings", {
-      editor,
-      block,
-      settings,
-    });
-
-    MTRichTextEditor.create({
-      ...settings,
       toolbarContainer: toolbar.current,
       toolbar: [
         [
@@ -78,7 +68,15 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
           ],
         ],
       ],
-    }).then((ed) => {
+    };
+
+    editor.emit("buildMTRichTextEditorSettings", {
+      editor,
+      block,
+      settings,
+    });
+
+    MTRichTextEditor.create(settings).then((ed) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
       mtRichTextEditorFocus(ed, selectorSet);
