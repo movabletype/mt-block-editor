@@ -304,6 +304,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
 
         adjustToolbar(ed, block, editor.editorElement);
       },
+      ...(editor.opts.block["core-text"]?.["tinyMCESettings"] || {}),
     };
 
     editor.emit("buildTinyMCESettings", {

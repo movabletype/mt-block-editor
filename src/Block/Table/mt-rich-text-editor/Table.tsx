@@ -68,6 +68,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
           ],
         ],
       ],
+      ...(editor.opts.block["core-table"]?.["mtRichTextEditorSettings"] || {}),
     };
 
     editor.emit("buildMTRichTextEditorSettings", {

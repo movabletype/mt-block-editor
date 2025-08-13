@@ -169,6 +169,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
 
         adjustToolbar(ed, block, editor.editorElement);
       },
+      ...(editor.opts.block["core-table"]?.["tinyMCESettings"] || {}),
     };
 
     editor.emit("buildTinyMCESettings", {

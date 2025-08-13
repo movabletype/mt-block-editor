@@ -96,6 +96,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
           ],
         ],
       ],
+      ...(editor.opts.block["core-text"]?.["mtRichTextEditorSettings"] || {}),
     };
 
     editor.emit("buildMTRichTextEditorSettings", {
