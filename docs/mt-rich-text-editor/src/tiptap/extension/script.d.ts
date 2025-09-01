@@ -1,2 +1,5 @@
 import { Node } from '@tiptap/core';
-export declare const Script: Node<any, any>;
+export interface ScriptOptions {
+    allowedOrigins?: string[];
+}
+export declare const Script: Node<ScriptOptions, any>;

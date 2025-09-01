@@ -1,4 +1,5 @@
 import { PasteMenuItemElement } from './element';
+export declare const INTERNAL_PASTE_CONTENT_TYPE = "x-mt-rich-text-editor";
 export declare class AsText extends PasteMenuItemElement {
     constructor();
     onEditorPaste(): void;

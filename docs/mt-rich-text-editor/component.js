@@ -1,4 +1,4 @@
-import { b5 as a, b6 as m, b3 as n, aV as s } from "./component-DKumGqt1.js";
+import { b6 as a, b7 as m, b4 as n, aV as s } from "./component-B9cS8gTI.js";
 export {
   a as PasteMenuItemElement,
   m as QuickActionItemElement,
