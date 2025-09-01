@@ -1,9 +1,0 @@
-{
-  "env": {
-    "ci": true,
-    "wait_unit_time": 500,
-    "default_type_delay": 100
-  },
-  "chromeWebSecurity": false,
-  "defaultCommandTimeout": 10000
-}
