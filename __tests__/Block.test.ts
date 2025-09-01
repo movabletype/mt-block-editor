@@ -70,6 +70,27 @@ describe("htmlString()", () => {
   });
 });
 
+describe("serialize()", () => {
+  test("simple", async () => {
+    const editor = newEditor();
+    const b = new TestBlock({ _html: "<p>test</p>" });
+    expect(await b.serialize({ editor, external: false })).toBe(
+      `<!-- mt-beb t="test-test" --><p>test</p><!-- /mt-beb -->`
+    );
+  });
+
+  test("has compiledHtml", async () => {
+    const editor = newEditor();
+    const b = new TestBlock({
+      compiledHtml: "Hello",
+      _html: `<!-- mt-beb t="sixapart-oembed" m="1" -->embed<!-- /mt-beb -->`,
+    });
+    expect(await b.serialize({ editor, external: false })).toBe(
+      `<!-- mt-beb t="test-test" h='&lt;!-- mt-beb t="sixapart-oembed" m="1" --&gt;embed&lt;!-- /mt-beb --&gt;' -->Hello<!-- /mt-beb -->`
+    );
+  });
+});
+
 describe("toClipboardItem()", () => {
   test("get item", async () => {
     const editor = newEditor();
