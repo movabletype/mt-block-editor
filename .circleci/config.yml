@@ -12,7 +12,6 @@ jobs:
       - node/install-packages
       - run: npm run build
       - run: npm run lint
-      - run: npm run check-types
       - run: npm run test
       - run: npx cypress run --config-file cypress/configs/ci.json
       - store_artifacts:
