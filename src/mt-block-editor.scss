@@ -711,12 +711,12 @@ $root-font-size: 16px;
     right: 20px;
     top: -4px;
     background: rgba(255, 255, 255, 1);
-    z-index: 1000;
+    z-index: 2000;
 
     color: #666;
     border: 1px solid #ddd;
 
-    transition: 0.1s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 
     &.mt-be-block-command-panel-enter,
     &.mt-be-block-command-panel-exit {
@@ -726,6 +726,11 @@ $root-font-size: 16px;
     &.mt-be-block-command-panel-enter-active,
     &.mt-be-block-command-panel-exit-done {
       opacity: 1;
+    }
+
+    &[data-mt-be-block-command-panel-placement="bottom"] {
+      right: unset;
+      top: 55px;
     }
 
     .mt-be-command-list {
