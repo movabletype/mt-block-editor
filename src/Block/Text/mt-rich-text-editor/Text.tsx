@@ -30,6 +30,7 @@ import {
   CARET_ATTR,
   mtRichTextEditorFocus,
   removeMTRichTextEditorFromBlock,
+  adjustToolbar,
 } from "./util";
 import { editHandlers } from "./edit";
 import { commonSettings } from "./common";
@@ -113,6 +114,7 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
       mtRichTextEditorFocus(ed, selectorSet);
+      adjustToolbar(block, editor.editorElement);
 
       // TBD: required?
       // ed.on("SaveContent", (ev) => {

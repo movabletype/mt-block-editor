@@ -1,6 +1,10 @@
 import type EditorManager from "@movabletype/mt-rich-text-editor";
 import type { Editor as MTRichTextEditorEditor } from "@movabletype/mt-rich-text-editor";
-import { SelectorSet, getElementByNthOfTypeIndexes } from "../../../util";
+import {
+  SelectorSet,
+  getElementByNthOfTypeIndexes,
+  mediaBreakPoint,
+} from "../../../util";
 
 declare const MTRichTextEditor: typeof EditorManager;
 
@@ -105,4 +109,55 @@ export function isEmptyContentNode(node: Element): boolean {
       `audio, canvas, embed, iframe, img, math, object, svg, video, button, details, embed, iframe, keygen, select, textarea, input:not([type="hidden"]), menu:not([type="toolbar"])`
     ) === null
   );
+}
+
+export async function adjustToolbar(
+  block: HasMTRichTextEditor,
+  editorElement: HTMLElement
+): Promise<void> {
+  const toolbar = await new Promise<HTMLDivElement>((resolve, reject) => {
+    const lookup = (count: number): void => {
+      const toolbar = document.querySelector<HTMLDivElement>(
+        `[data-mt-be-toolbar="${block.id}"]`
+      );
+      if (toolbar) {
+        resolve(toolbar);
+      } else if (count > 100) {
+        // timeout 10s passed
+        reject();
+      } else {
+        setTimeout(() => lookup(count + 1), 100);
+      }
+    };
+    lookup(0);
+  });
+
+  if (matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
+    // Set width property only when this block in inside .column
+    if (toolbar?.closest(".mt-be-column")) {
+      let blockEl = toolbar.parentElement?.closest(
+        ".mt-be-block"
+      ) as HTMLElement;
+      const firstBlockElRect = blockEl.getBoundingClientRect();
+      for (;;) {
+        const parentBlockEl = blockEl.parentElement?.closest(".mt-be-block");
+        if (parentBlockEl) {
+          blockEl = parentBlockEl as HTMLElement;
+        } else {
+          break;
+        }
+      }
+      const editorRect = editorElement.getBoundingClientRect();
+      const blockElRect = blockEl.children[0].getBoundingClientRect(); // include padding
+      const left = firstBlockElRect.left - blockElRect.left;
+      toolbar.style.left = `-${left}px`;
+      toolbar.style.setProperty(
+        "width",
+        `calc(${editorRect.width - blockElRect.left * 2}px)`,
+        "important"
+      );
+    }
+  }
+
+  toolbar.style.top = `-${toolbar.offsetHeight}px`;
 }

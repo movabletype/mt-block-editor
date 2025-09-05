@@ -28,6 +28,7 @@ import {
   HasMTRichTextEditor,
   mtRichTextEditorFocus,
   removeMTRichTextEditorFromBlock,
+  adjustToolbar,
 } from "../../Text/mt-rich-text-editor/util";
 
 declare const MTRichTextEditor: typeof EditorManager;
@@ -85,6 +86,7 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
       mtRichTextEditorFocus(ed, selectorSet);
+      adjustToolbar(block, editor.editorElement);
 
       let last = block.text;
       const onUndo = (html: string): void => {
