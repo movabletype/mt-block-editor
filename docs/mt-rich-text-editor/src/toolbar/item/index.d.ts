@@ -2,7 +2,7 @@ import { HorizontalRuleButton, InsertHtmlButton, SourceButton, FullScreenButton 
 declare const _default: {
     bold: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -351,7 +351,7 @@ declare const _default: {
     };
     italic: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -700,7 +700,7 @@ declare const _default: {
     };
     underline: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -1049,7 +1049,7 @@ declare const _default: {
     };
     strike: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -1398,7 +1398,7 @@ declare const _default: {
     };
     bulletList: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -1747,7 +1747,7 @@ declare const _default: {
     };
     orderedList: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -2097,7 +2097,7 @@ declare const _default: {
     horizontalRule: typeof HorizontalRuleButton;
     blockquote: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -2446,7 +2446,7 @@ declare const _default: {
     };
     unlink: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -2797,7 +2797,7 @@ declare const _default: {
     source: typeof SourceButton;
     undo: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -3146,7 +3146,7 @@ declare const _default: {
     };
     redo: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -3495,7 +3495,7 @@ declare const _default: {
     };
     removeFormat: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -3844,7 +3844,7 @@ declare const _default: {
     };
     alignLeft: {
         new (): {
-            "__#475492@#button": HTMLButtonElement;
+            "__#16@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -4193,7 +4193,7 @@ declare const _default: {
     };
     alignCenter: {
         new (): {
-            "__#475492@#button": HTMLButtonElement;
+            "__#16@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -4542,7 +4542,7 @@ declare const _default: {
     };
     alignRight: {
         new (): {
-            "__#475492@#button": HTMLButtonElement;
+            "__#16@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -4891,7 +4891,7 @@ declare const _default: {
     };
     indent: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
@@ -5240,7 +5240,7 @@ declare const _default: {
     };
     outdent: {
         new (): {
-            "__#475491@#button": HTMLButtonElement;
+            "__#15@#button": HTMLButtonElement;
             connectedCallback(): void;
             onEditorUpdate(): void;
             readonly shadowRoot: ShadowRoot;
