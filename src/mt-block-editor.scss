@@ -927,6 +927,13 @@ $root-font-size: 16px;
       background-size: 22px;
       background-position: center center;
     }
+    .mt-be-block-toolbar--mt-rich-text-editor {
+      .mt-be-btn-up,
+      .mt-be-btn-down {
+        width: 34px;
+        height: 40px;
+      }
+    }
 
     .mt-be-btn-add {
       height: 40px;
@@ -1015,6 +1022,11 @@ $root-font-size: 16px;
       right: 0;
       border: 1px solid #dddddd;
       background-color: #ffffff;
+    }
+    .mt-be-block-toolbar--mt-rich-text-editor
+      .mt-be-block-toolbar-default-items {
+      border-width: 0 1px 0;
+      height: 39px;
     }
 
     .mt-be-block-toolbar--tinymce {
