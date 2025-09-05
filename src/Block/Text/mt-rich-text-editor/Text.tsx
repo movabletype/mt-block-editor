@@ -109,7 +109,9 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
   }, []);
 
   useEffect(() => {
-    settings.toolbarContainer = toolbar.current;
+    const toolbarContainer = document.createElement("div");
+    toolbar.current?.appendChild(toolbarContainer);
+    settings.toolbarContainer = toolbarContainer;
     MTRichTextEditor.create(settings).then((ed) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
