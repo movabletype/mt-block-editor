@@ -31,6 +31,7 @@ import {
   mtRichTextEditorFocus,
   removeMTRichTextEditorFromBlock,
   adjustToolbar,
+  insertCommandPlaceholder,
 } from "./util";
 import { editHandlers } from "./edit";
 import { commonSettings } from "./common";
@@ -104,6 +105,8 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       block,
       settings: _settings,
     });
+
+    insertCommandPlaceholder(_settings);
 
     return _settings;
   }, []);

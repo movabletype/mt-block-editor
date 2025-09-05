@@ -1,5 +1,8 @@
 import type EditorManager from "@movabletype/mt-rich-text-editor";
-import type { Editor as MTRichTextEditorEditor } from "@movabletype/mt-rich-text-editor";
+import type {
+  Editor as MTRichTextEditorEditor,
+  EditorCreateOptions,
+} from "@movabletype/mt-rich-text-editor";
 import {
   SelectorSet,
   getElementByNthOfTypeIndexes,
@@ -160,4 +163,32 @@ export async function adjustToolbar(
   }
 
   toolbar.style.top = `-${toolbar.offsetHeight}px`;
+}
+
+const PLACEHOLDER_ITEM_NAME = "mt-be-command-placeholder";
+let isCommandPlaceholderDefined = false;
+export function insertCommandPlaceholder(settings: EditorCreateOptions): void {
+  if (!matchMedia(`(max-width:${mediaBreakPoint}px)`).matches) {
+    return;
+  }
+
+  if (!isCommandPlaceholderDefined) {
+    customElements.define(
+      `mt-rich-text-editor-toolbar-item-${PLACEHOLDER_ITEM_NAME}`,
+      class extends HTMLElement {
+        connectedCallback(): void {
+          this.style.display = "inline-block";
+          this.style.width = "100px";
+        }
+      }
+    );
+    isCommandPlaceholderDefined = true;
+  }
+
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
+  if (!settings.toolbar!.at(-1)![1]) {
+    settings.toolbar!.at(-1)![1] = [];
+  }
+  settings.toolbar!.at(-1)![1]!.unshift([PLACEHOLDER_ITEM_NAME]);
+  /* eslint-enable @typescript-eslint/no-non-null-assertion */
 }

@@ -29,6 +29,7 @@ import {
   mtRichTextEditorFocus,
   removeMTRichTextEditorFromBlock,
   adjustToolbar,
+  insertCommandPlaceholder,
 } from "../../Text/mt-rich-text-editor/util";
 
 declare const MTRichTextEditor: typeof EditorManager;
@@ -76,6 +77,8 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
       block,
       settings: _settings,
     });
+
+    insertCommandPlaceholder(_settings);
 
     return _settings;
   }, []);
