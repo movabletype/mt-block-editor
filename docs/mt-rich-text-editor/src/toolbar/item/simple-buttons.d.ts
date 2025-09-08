@@ -3,7 +3,7 @@ import { Editor } from '../../editor';
 import { ToolbarItemElement } from './element';
 export declare const BoldButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -352,7 +352,7 @@ export declare const BoldButton: {
 };
 export declare const ItalicButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -701,7 +701,7 @@ export declare const ItalicButton: {
 };
 export declare const UnderlineButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -1050,7 +1050,7 @@ export declare const UnderlineButton: {
 };
 export declare const StrikeButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -1399,7 +1399,7 @@ export declare const StrikeButton: {
 };
 export declare const UnlinkButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -1748,7 +1748,7 @@ export declare const UnlinkButton: {
 };
 export declare const BulletListButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -2097,7 +2097,7 @@ export declare const BulletListButton: {
 };
 export declare const OrderedListButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -2446,7 +2446,7 @@ export declare const OrderedListButton: {
 };
 export declare const BlockquoteButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -2795,7 +2795,7 @@ export declare const BlockquoteButton: {
 };
 export declare const UndoButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -3144,7 +3144,7 @@ export declare const UndoButton: {
 };
 export declare const RedoButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -3493,7 +3493,7 @@ export declare const RedoButton: {
 };
 export declare const RemoveFormatButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -3842,7 +3842,7 @@ export declare const RemoveFormatButton: {
 };
 export declare const AlignLeftButton: {
     new (): {
-        "__#475492@#button": HTMLButtonElement;
+        "__#16@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -4191,7 +4191,7 @@ export declare const AlignLeftButton: {
 };
 export declare const AlignCenterButton: {
     new (): {
-        "__#475492@#button": HTMLButtonElement;
+        "__#16@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -4540,7 +4540,7 @@ export declare const AlignCenterButton: {
 };
 export declare const AlignRightButton: {
     new (): {
-        "__#475492@#button": HTMLButtonElement;
+        "__#16@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -4889,7 +4889,7 @@ export declare const AlignRightButton: {
 };
 export declare const IndentButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;
@@ -5238,7 +5238,7 @@ export declare const IndentButton: {
 };
 export declare const OutdentButton: {
     new (): {
-        "__#475491@#button": HTMLButtonElement;
+        "__#15@#button": HTMLButtonElement;
         connectedCallback(): void;
         onEditorUpdate(): void;
         readonly shadowRoot: ShadowRoot;

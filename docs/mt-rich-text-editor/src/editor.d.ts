@@ -25,6 +25,7 @@ export interface EditorOptions {
     inline?: boolean;
     structure?: boolean;
     height?: number | string;
+    classNames?: string[];
     stylesheets?: string[];
     editorStylesheets?: string[];
     /**

@@ -28,6 +28,8 @@ import {
   HasMTRichTextEditor,
   mtRichTextEditorFocus,
   removeMTRichTextEditorFromBlock,
+  adjustToolbar,
+  insertCommandPlaceholder,
 } from "../../Text/mt-rich-text-editor/util";
 
 declare const MTRichTextEditor: typeof EditorManager;
@@ -76,15 +78,20 @@ const Editor: React.FC<EditorProps> = ({ block }: EditorProps) => {
       settings: _settings,
     });
 
+    insertCommandPlaceholder(_settings);
+
     return _settings;
   }, []);
 
   useEffect(() => {
-    settings.toolbarContainer = toolbar.current;
+    const toolbarContainer = document.createElement("div");
+    toolbar.current?.appendChild(toolbarContainer);
+    settings.toolbarContainer = toolbarContainer;
     MTRichTextEditor.create(settings).then((ed) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
       mtRichTextEditorFocus(ed, selectorSet);
+      adjustToolbar(block, editor.editorElement);
 
       let last = block.text;
       const onUndo = (html: string): void => {

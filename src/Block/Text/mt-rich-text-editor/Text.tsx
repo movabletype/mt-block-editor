@@ -30,6 +30,8 @@ import {
   CARET_ATTR,
   mtRichTextEditorFocus,
   removeMTRichTextEditorFromBlock,
+  adjustToolbar,
+  insertCommandPlaceholder,
 } from "./util";
 import { editHandlers } from "./edit";
 import { commonSettings } from "./common";
@@ -104,15 +106,20 @@ const Editor: React.FC<EditorProps> = ({ block, canRemove }: EditorProps) => {
       settings: _settings,
     });
 
+    insertCommandPlaceholder(_settings);
+
     return _settings;
   }, []);
 
   useEffect(() => {
-    settings.toolbarContainer = toolbar.current;
+    const toolbarContainer = document.createElement("div");
+    toolbar.current?.appendChild(toolbarContainer);
+    settings.toolbarContainer = toolbarContainer;
     MTRichTextEditor.create(settings).then((ed) => {
       block.mtRichTextEditor = ed;
       ed.setContent(block.text);
       mtRichTextEditorFocus(ed, selectorSet);
+      adjustToolbar(block, editor.editorElement);
 
       // TBD: required?
       // ed.on("SaveContent", (ev) => {
