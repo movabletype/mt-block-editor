@@ -27784,14 +27784,14 @@ const n3 = {
   }
   return i;
 };
-var r3 = Y("<div></div>"), s3 = Y('<div class="toolbar-side svelte-18hn9t3"></div>'), o3 = Y('<div class="toolbar-row svelte-18hn9t3"></div>'), a3 = Y("<div></div>");
+var r3 = Y("<div></div>"), s3 = Y('<div class="toolbar-side svelte-1rk98em"></div>'), o3 = Y('<div class="toolbar-row svelte-1rk98em"></div>'), a3 = Y("<div></div>");
 const l3 = {
-  hash: "svelte-18hn9t3",
-  code: `.toolbar.svelte-18hn9t3 {display:flex;flex-wrap:wrap;flex-direction:column;overflow:hidden;}.toolbar-row.svelte-18hn9t3 {display:flex;justify-content:space-between;border-bottom:1px solid #ccc;position:relative;}.toolbar-row.svelte-18hn9t3::before {content:"";position:absolute;left:0;top:0;width:100%;height:90%;background-image:url("data:image/svg+xml;utf8,<svg width='100%' height='39' xmlns='http://www.w3.org/2000/svg'><line x1='0' y1='39' x2='10000' y2='39' stroke='%23ccc' stroke-width='2'/></svg>");background-repeat:repeat-y;background-size:100% 39px;}.toolbar-row.svelte-18hn9t3:last-child {border-bottom:none;}.toolbar-side.svelte-18hn9t3 {display:flex;flex-wrap:wrap;}.toolbar-group.svelte-18hn9t3 {padding:0 4px;display:flex;}.toolbar-group.svelte-18hn9t3:not(:last-child) {border-right:1px solid #ccc;white-space:nowrap;}.toolbar-item.svelte-18hn9t3 {display:inline-flex;align-items:center;justify-content:center;margin:2px 0 3px;height:34px;}.toolbar-item.is-active.svelte-18hn9t3 {background:#dee0e2;}
+  hash: "svelte-1rk98em",
+  code: `.toolbar.svelte-1rk98em {display:flex;flex-wrap:wrap;flex-direction:column;}.toolbar-row.svelte-1rk98em {display:flex;justify-content:space-between;border-bottom:1px solid #ccc;position:relative;}.toolbar-row.svelte-1rk98em::before {content:"";position:absolute;left:0;top:0;width:100%;height:90%;background-image:url("data:image/svg+xml;utf8,<svg width='100%' height='39' xmlns='http://www.w3.org/2000/svg'><line x1='0' y1='39' x2='10000' y2='39' stroke='%23ccc' stroke-width='2'/></svg>");background-repeat:repeat-y;background-size:100% 39px;}.toolbar-row.svelte-1rk98em:last-child {border-bottom:none;}.toolbar-side.svelte-1rk98em {display:flex;flex-wrap:wrap;}.toolbar-group.svelte-1rk98em {padding:0 4px;display:flex;}.toolbar-group.svelte-1rk98em:not(:last-child) {border-right:1px solid #ccc;white-space:nowrap;}.toolbar-item.svelte-1rk98em {display:inline-flex;align-items:center;justify-content:center;margin:2px 0 3px;height:34px;}.toolbar-item.is-active.svelte-1rk98em {background:#dee0e2;}
 
   /**
    * Inline
-   */.toolbar--inline.svelte-18hn9t3 {position:absolute;display:none;z-index:1;border:1px solid #ccc;border-radius:4px;background:#fff;}.toolbar--inline.svelte-18hn9t3::before {content:"";position:absolute;z-index:-1;top:50%;left:-8px;width:14px;height:14px;background:#fff;transform:translateY(-50%) rotate(45deg);border-left:1px solid #ccc;border-bottom:1px solid #ccc;box-shadow:-1px 1px 2px rgba(0, 0, 0, 0.03);}.toolbar--inline.svelte-18hn9t3:not([data-is-new-line])::before {content:"";position:absolute;z-index:-1;top:-8px;left:20px;width:14px;height:14px;background:#fff;transform:translateX(-50%) rotate(45deg);border-left:1px solid #ccc;border-top:1px solid #ccc;border-bottom:none;box-shadow:-1px -1px 2px rgba(0, 0, 0, 0.03);}`
+   */.toolbar--inline.svelte-1rk98em {position:absolute;display:none;z-index:1;border:1px solid #ccc;border-radius:4px;background:#fff;}.toolbar--inline.svelte-1rk98em::before {content:"";position:absolute;z-index:-1;top:50%;left:-8px;width:14px;height:14px;background:#fff;transform:translateY(-50%) rotate(45deg);border-left:1px solid #ccc;border-bottom:1px solid #ccc;box-shadow:-1px 1px 2px rgba(0, 0, 0, 0.03);}.toolbar--inline.svelte-1rk98em:not([data-is-new-line])::before {content:"";position:absolute;z-index:-1;top:-8px;left:20px;width:14px;height:14px;background:#fff;transform:translateX(-50%) rotate(45deg);border-left:1px solid #ccc;border-top:1px solid #ccc;border-bottom:none;box-shadow:-1px -1px 2px rgba(0, 0, 0, 0.03);}`
 };
 function db(n, e) {
   ye(e, !0), Wt(n, l3);
@@ -27866,12 +27866,12 @@ function db(n, e) {
         pt(w, 21, () => A(x), En, (E, k) => {
           var S = ki(), y = Re(S);
           Xr(y, () => A(k).elementName, !1, (T, _) => {
-            rt(T, (C, M) => u == null ? void 0 : u(C, M), () => A(k).name), gt(T, 0, "toolbar-item svelte-18hn9t3");
+            rt(T, (C, M) => u == null ? void 0 : u(C, M), () => A(k).name), gt(T, 0, "toolbar-item svelte-1rk98em");
           }), V(E, S);
-        }), O(w), ie(() => gt(w, 1, `toolbar-group ${A(x).length === 1 ? `toolbar-group--${A(x)[0].name}` : ""}`, "svelte-18hn9t3")), V(v, w);
+        }), O(w), ie(() => gt(w, 1, `toolbar-group ${A(x).length === 1 ? `toolbar-group--${A(x)[0].name}` : ""}`, "svelte-1rk98em")), V(v, w);
       }), O(g), V(b, g);
     }), O(p), V(f, p);
-  }), O(d), Je(d, (f) => o = f, () => o), ie(() => gt(d, 1, `toolbar ${(s() ? "toolbar--inline" : "") ?? ""}`, "svelte-18hn9t3")), V(n, d), xe({
+  }), O(d), Je(d, (f) => o = f, () => o), ie(() => gt(d, 1, `toolbar ${(s() ? "toolbar--inline" : "") ?? ""}`, "svelte-1rk98em")), V(n, d), xe({
     get editor() {
       return t();
     },
