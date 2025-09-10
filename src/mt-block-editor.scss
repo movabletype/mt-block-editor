@@ -646,6 +646,12 @@ $root-font-size: 16px;
     &.mt-be-block-toolbar--default {
       display: none;
     }
+
+    &.mt-be-block-toolbar--tinymce {
+      .tox-pop {
+        width: max-content;
+      }
+    }
   }
 
   .mt-be-block-toolbar-default-items {
