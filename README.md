@@ -1,6 +1,6 @@
 # Movable Type Block Editor
 
-[![CircleCI](https://circleci.com/gh/movabletype/mt-block-editor.svg?style=svg)](https://circleci.com/gh/movabletype/mt-block-editor)
+[![Test](https://github.com/movabletype/mt-block-editor/actions/workflows/test.yml/badge.svg)](https://github.com/movabletype/mt-block-editor/actions/workflows/test.yml)
 
 [demo site](https://movabletype.github.io/mt-block-editor/)
 
