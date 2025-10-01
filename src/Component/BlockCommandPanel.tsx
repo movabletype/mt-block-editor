@@ -1,4 +1,4 @@
-import React, { memo, ReactNode, useEffect, useState } from "react";
+import React, { memo, ReactNode, useEffect, useState, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { useEditorContext } from "../Context";
 import type { Command } from "../CommandManager";
@@ -14,10 +14,12 @@ interface BlockCommandPanelProps {
 }
 
 const PANEL_CLASS_NAME = "mt-be-block-command-panel";
+const PANEL_PLACEMENT_DATA_NAME = `mtBeBlockCommandPanelPlacement`;
 
 const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
   function BlockCommandPanel(props: BlockCommandPanelProps) {
     const [commands, setCommands] = useState<Command[]>([]);
+    const panelRef = useRef<HTMLDivElement | null>(null);
     const editorContext = useEditorContext();
     const { editor } = editorContext;
 
@@ -38,6 +40,18 @@ const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
       };
     }, []);
 
+    useEffect(() => {
+      const panel = panelRef.current;
+      if (props.in && panel) {
+        panel.dataset[PANEL_PLACEMENT_DATA_NAME] = "left"; // initial state
+        const left = panel.getBoundingClientRect().left;
+        if (left < 0) {
+          // place the panel below if it extends beyond the left edge of the viewport.
+          panel.dataset[PANEL_PLACEMENT_DATA_NAME] = "bottom";
+        }
+      }
+    }, [props.in]);
+
     if (commands.length === 0) {
       return null;
     }
@@ -49,7 +63,7 @@ const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
         unmountOnExit
         classNames={PANEL_CLASS_NAME}
       >
-        <div id={props.id || ""} className={className}>
+        <div id={props.id || ""} className={className} ref={panelRef}>
           {props.children}
           {commands.map((command) => (
             <BlockCommand

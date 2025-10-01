@@ -135,7 +135,10 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
 
   useEffect(() => {
     const onWindowClick = (ev: Event): void => {
-      if (document.querySelector(".mt-be-overlay")) {
+      if (
+        document.querySelector(".mt-be-overlay") ||
+        document.body.classList.contains("modal-open")
+      ) {
         return;
       }
 
@@ -146,11 +149,11 @@ const App: React.FC<AppProps> = ({ editor }: AppProps) => {
       }
 
       let target = ev.target as HTMLElement;
+      if (target.closest(".mce-container, .modal")) {
+        return;
+      }
 
       while (target.parentNode && target.parentNode !== target) {
-        if (target.classList.contains("mce-container")) {
-          return;
-        }
         if (target === editorEl) {
           if (focusedIdsRef.current.length === 0) {
             setFocusedIds(["editor"]);
