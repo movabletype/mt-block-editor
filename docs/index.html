@@ -16,23 +16,25 @@
       crossorigin="anonymous"
     />
     <style type="text/css">
-      body > div {
+      .editor-container {
         margin: 10px 200px;
       }
       @media (max-width: 991.5px) {
-        body > div {
+        .editor-container {
           margin: 0;
         }
       }
     </style>
+    <link rel="stylesheet" href="./mt-rich-text-editor/style.css" />
     <script
-      src="./tinymce6/js/tinymce/tinymce.min.js"
+      src="./mt-rich-text-editor/mt-rich-text-editor.js"
+      type="module"
       referrerpolicy="origin"
     ></script>
   </head>
   <body>
-    <div>
-      <form style="margin-top: 80px;">
+    <div class="editor-container">
+      <form style="margin-top: 80px">
         <textarea id="body"></textarea>
         <input type="submit" id="submit" />
         <input type="reset" id="reset" />
@@ -72,6 +74,25 @@
           "custom-excel",
           "custom-text",
         ],
+        block: {
+          "core-text": {
+            embedObjectResolver: async ({ url, maxwidth, maxheight }) => {
+              try {
+                const res = await fetch(
+                  `https://noembed.com/embed?url=${url}&maxwidth=${
+                    maxwidth || "400"
+                  }&maxheight=${maxheight || "400"}`
+                );
+                return await res.json();
+              } catch (e) {
+                return {
+                  html: ``,
+                  inline: `<a href="http://example.com">dummy inline link</a>`,
+                };
+              }
+            },
+          },
+        },
       };
 
       window.document.getElementById("body").value =

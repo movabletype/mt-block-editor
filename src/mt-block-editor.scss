@@ -239,6 +239,7 @@ $root-font-size: 16px;
     width: 18px;
     height: 18px;
     &:before {
+      color: #000;
       content: "…";
     }
   }
@@ -646,6 +647,22 @@ $root-font-size: 16px;
     &.mt-be-block-toolbar--default {
       display: none;
     }
+
+    &.mt-be-block-toolbar--tinymce {
+      .tox-pop {
+        width: max-content;
+      }
+    }
+
+    &.mt-be-block-toolbar--mt-rich-text-editor {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      left: -1px;
+      top: -43px;
+      &.mt-be-block-toolbar--x2 {
+        top: -85px;
+      }
+    }
   }
 
   .mt-be-block-toolbar-default-items {
@@ -701,12 +718,12 @@ $root-font-size: 16px;
     right: 20px;
     top: -4px;
     background: rgba(255, 255, 255, 1);
-    z-index: 1000;
+    z-index: 2000;
 
     color: #666;
     border: 1px solid #ddd;
 
-    transition: 0.1s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 
     &.mt-be-block-command-panel-enter,
     &.mt-be-block-command-panel-exit {
@@ -716,6 +733,11 @@ $root-font-size: 16px;
     &.mt-be-block-command-panel-enter-active,
     &.mt-be-block-command-panel-exit-done {
       opacity: 1;
+    }
+
+    &[data-mt-be-block-command-panel-placement="bottom"] {
+      right: unset;
+      top: 55px;
     }
 
     .mt-be-command-list {
@@ -891,9 +913,9 @@ $root-font-size: 16px;
       &:before {
         font-size: 18px;
         position: relative;
-        display: block;
+        display: inline-flex;
+        justify-content: center;
         top: -5px;
-        left: -9px;
       }
     }
 
@@ -910,6 +932,13 @@ $root-font-size: 16px;
       padding: 12px 12px;
       background-size: 22px;
       background-position: center center;
+    }
+    .mt-be-block-toolbar--mt-rich-text-editor {
+      .mt-be-btn-up,
+      .mt-be-btn-down {
+        width: 34px;
+        height: 40px;
+      }
     }
 
     .mt-be-btn-add {
@@ -999,6 +1028,11 @@ $root-font-size: 16px;
       right: 0;
       border: 1px solid #dddddd;
       background-color: #ffffff;
+    }
+    .mt-be-block-toolbar--mt-rich-text-editor
+      .mt-be-block-toolbar-default-items {
+      border-width: 0 1px 0;
+      height: 39px;
     }
 
     .mt-be-block-toolbar--tinymce {

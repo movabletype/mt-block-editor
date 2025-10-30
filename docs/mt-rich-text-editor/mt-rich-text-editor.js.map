@@ -1,0 +1,1 @@
+{"version":3,"file":"mt-rich-text-editor.js","sources":["../src/mt-rich-text-editor.ts"],"sourcesContent":["import EditorManager from \".\";\n\ndeclare global {\n  interface Window {\n    MTRichTextEditor: typeof EditorManager;\n  }\n}\n\nwindow.MTRichTextEditor = EditorManager;\n"],"names":["EditorManager"],"mappings":";;AAQA,OAAO,mBAAmBA;"}

@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc -d src/*.ts --outDir dist && cpy \"./src/index.d.ts\" \"./dist/*\" ./",
+    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" \"./dist/*\" ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
