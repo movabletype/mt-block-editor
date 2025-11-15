@@ -11,7 +11,7 @@ const MAX_WIDTH = "100%";
 const MAX_HEIGHT = "5000px";
 const SHRINK_THRESHOLD = 50;
 
-type BlockIframePreviewScheme = "data" | "blob";
+type BlockIframePreviewScheme = "data" | "data-wrap" | "blob" | "srcdoc";
 interface EditorProps {
   block: Block;
   html?: string | Promise<string>;
@@ -448,27 +448,71 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       })
       .join(" ");
 
-    const blob = new Blob(
-      [
-        `
+    let srcdoc = `
         <html${htmlText.match(/<amp-/) ? " amp" : ""}>
         <head>${head}</head><body data-block-id="${block.id}"${
-          block.compiledHtml && ` data-has-compiled-html="1"`
-        } class="${
-          editor.opts.rootClassName || ""
-        }" ${rootAttributes}>${htmlText}</body></html>`,
-      ],
-      { type: "text/html" }
-    );
+      block.compiledHtml && ` data-has-compiled-html="1"`
+    } class="${
+      editor.opts.rootClassName || ""
+    }" ${rootAttributes}>${htmlText}</body></html>`;
 
     if (beforeRenderIframePreviewOpt.scheme === "blob") {
-      setSrc(URL.createObjectURL(blob));
+      setSrc(URL.createObjectURL(new Blob([srcdoc], { type: "text/html" })));
+    } else if (beforeRenderIframePreviewOpt.scheme === "srcdoc") {
+      setSrc(srcdoc);
     } else {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onload = () => {
-        setSrc(reader.result?.toString() || "");
-      };
+      // data or data-wrap
+      if (beforeRenderIframePreviewOpt.scheme === "data-wrap") {
+        const iframe = document.createElement("iframe");
+        iframe.setAttribute("frameborder", "0");
+        iframe.setAttribute("allowfullscreen", "true");
+        iframe.srcdoc = srcdoc;
+        srcdoc = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            html, body {
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+            }
+            iframe {
+              width: 100%;
+              display: block;
+            }
+            ::-webkit-scrollbar {
+              display: none;
+            }
+          </style>
+          <script type="module">
+          const iframe = document.querySelector('iframe');
+          window.addEventListener('message', (ev) => {
+            if (ev.source !== iframe.contentWindow) {
+              return;
+            }
+
+            const data = ev.data;
+            if (data.method === 'MTBlockEditorSetSize') {
+              iframe.style.height = data.arguments.height + 'px';
+              iframe.style.width = data.arguments.width + 'px';
+            }
+
+            parent.postMessage(ev.data, '*');
+          });
+          </script>
+        </head>
+        <body>
+          ${iframe.outerHTML}
+        </body>
+      </html>
+      `;
+      }
+
+      const data = new TextEncoder().encode(srcdoc);
+      const base64Srcdoc = btoa(String.fromCharCode(...data));
+      setSrc(`data:text/html;base64,${base64Srcdoc}`);
     }
   }, [block.compiledHtml, header, htmlText]);
 
@@ -562,7 +606,14 @@ const BlockIframePreview: React.FC<EditorProps> = ({
   return (
     <div ref={containerElRef}>
       <iframe
-        src={src || "about:blank"}
+        src={
+          beforeRenderIframePreviewOpt.scheme !== "srcdoc"
+            ? src || "about:blank"
+            : undefined
+        }
+        srcDoc={
+          (beforeRenderIframePreviewOpt.scheme === "srcdoc" && src) || undefined
+        }
         frameBorder="0"
         sandbox={sandbox}
         style={{
