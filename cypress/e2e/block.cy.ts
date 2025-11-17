@@ -75,7 +75,7 @@ if (!Cypress.env("ci")) {
         });
       }
 
-      it("scheme", () => {
+      it("scheme: blob", () => {
         cy.get(`.mt-be-btn-add-bottom`)
           .click()
           .within(() => {
@@ -110,6 +110,88 @@ if (!Cypress.env("ci")) {
           const iframe = root.querySelector("iframe");
 
           expect(iframe.src).match(/^blob/);
+        });
+      });
+
+      it("scheme: srcdoc", () => {
+        cy.get(`.mt-be-btn-add-bottom`)
+          .click()
+          .within(() => {
+            cy.get(`[data-mt-be-type="test-iframedata"]`).click();
+          });
+
+        wait(1);
+
+        cy.get(`input[data-property-name="text"]`).type("test");
+
+        blur();
+        wait(1);
+
+        cy.get(".mt-be-block div:last-child").then(($div) => {
+          const root = $div.get(0).shadowRoot;
+          const iframe = root.querySelector("iframe");
+
+          expect(iframe.src).match(/^data/);
+        });
+
+        cy.get(".mt-be-block").click();
+
+        wait(1);
+
+        cy.get(`select[data-property-name="scheme"]`).select("srcdoc");
+
+        blur();
+        wait(1);
+
+        cy.get(".mt-be-block div:last-child").then(($div) => {
+          const root = $div.get(0).shadowRoot;
+          const iframe = root.querySelector("iframe");
+
+          expect(iframe.src).equals('');
+          expect(iframe.srcdoc).contains("test");
+        });
+      });
+
+      it("scheme: data-wrap", () => {
+        cy.get(`.mt-be-btn-add-bottom`)
+          .click()
+          .within(() => {
+            cy.get(`[data-mt-be-type="test-iframedata"]`).click();
+          });
+
+        wait(1);
+
+        cy.get(`input[data-property-name="text"]`).type("test");
+
+        blur();
+        wait(1);
+
+        cy.get(".mt-be-block div:last-child").then(($div) => {
+          const root = $div.get(0).shadowRoot;
+          const iframe = root.querySelector("iframe");
+
+          expect(iframe.src).match(/^data/);
+        });
+
+        cy.get(".mt-be-block").click();
+
+        wait(1);
+
+        cy.get(`select[data-property-name="scheme"]`).select("data-wrap");
+
+        blur();
+        wait(1);
+
+        cy.get(".mt-be-block div:last-child").then(($div) => {
+          const root = $div.get(0).shadowRoot;
+          const iframe = root.querySelector("iframe");
+
+          const src = iframe.src;
+          expect(src).match(/^data/);
+          const decoded = atob(decodeURIComponent(src.split(",")[1]));
+          const innerDOM = new DOMParser().parseFromString(decoded, "text/html");
+          const innerIframe = innerDOM.body.querySelector("iframe");
+          expect(innerIframe.srcdoc).contains("test");
         });
       });
 
