@@ -31,7 +31,9 @@ const Editor: React.FC<EditorProps> = blockProperty(
         <div>{t("scheme")}</div>
         <select className="mt-be-input" data-property-name="scheme">
           <option value="data">data</option>
+          <option value="data-wrap">data-wrap</option>
           <option value="blob">blob</option>
+          <option value="srcdoc">srcdoc</option>
         </select>
       </label>
       <label className="mt-be-label-name">

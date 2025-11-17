@@ -22,6 +22,7 @@ import {
   remove as editHandlersRemove,
   swap as editHandlersSwap,
 } from "./Editor/edit";
+import { beforeRenderIframePreview } from "./event/default";
 
 import "./import-default-blocks";
 import "./import-default-commands";
@@ -111,6 +112,8 @@ export class Editor extends EventEmitter implements HasBlocks {
       this.inputElement
     );
 
+    this.initDefaultEventHandlers();
+
     setTimeout(async () => {
       this.keyboardShortcutCache = await this.buildKeyboardShortcutCache();
       this.stylesheets = await Promise.all(this.buildStylesheets());
@@ -125,6 +128,10 @@ export class Editor extends EventEmitter implements HasBlocks {
 
       this.render();
     }, 0);
+  }
+
+  private initDefaultEventHandlers(): void {
+    this.on("beforeRenderIframePreview", beforeRenderIframePreview);
   }
 
   public selectableTypes(typeIds: string[]): Array<typeof Block> {
