@@ -1,5 +1,6 @@
 import { t } from "../../../i18n";
 import React, { useEffect, useMemo, CSSProperties } from "react";
+import type { JSX } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../../../Block";
 import type {
   Editor as TinyMCEEditor,

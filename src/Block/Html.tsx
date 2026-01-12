@@ -1,5 +1,6 @@
 import { t } from "../i18n";
 import React from "react";
+import type { JSX } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { blockProperty } from "../decorator";
 import BlockIframePreview from "../Component/BlockIframePreview";

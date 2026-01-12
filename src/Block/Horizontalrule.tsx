@@ -1,5 +1,6 @@
 import { t } from "../i18n";
 import React from "react";
+import type { JSX } from "react";
 import Block from "../Block";
 import icon from "../img/icon/horizontalrule.svg";
 

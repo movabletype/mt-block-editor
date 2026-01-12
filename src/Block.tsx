@@ -1,5 +1,6 @@
 import { t } from "./i18n";
 import React, { RefObject } from "react";
+import type { JSX } from "react";
 import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
@@ -32,7 +33,7 @@ export interface EditorOptions {
   focusDescendant?: boolean;
   canRemove?: boolean;
   parentBlock?: Block;
-  clickBlockTargetRef?: RefObject<HTMLElement>;
+  clickBlockTargetRef?: RefObject<HTMLElement | null>;
 }
 
 export interface NewOptions {
@@ -66,7 +67,7 @@ class Block {
   public static shouldBeCompiled = false;
   public id: string;
   public isNewlyAdded = false;
-  public wrapperRef: RefObject<HTMLDivElement>;
+  public wrapperRef: RefObject<HTMLDivElement | null>;
   public compiledHtml: string | undefined = undefined;
   public removeIntermediateProduct = false;
   public label = "";
@@ -204,7 +205,7 @@ class Block {
       if (/^<[^>]+class="/.test(html)) {
         html = html.replace(
           /^(<[^>]+class=")([^"]+)/,
-          (m, prefix, classNames) => {
+          (m: string, prefix: string, classNames: string) => {
             return (
               prefix +
               this.className
@@ -222,7 +223,7 @@ class Block {
       } else {
         html = html.replace(
           /^<([^>]+)>/,
-          (m, tag) => `<${tag} class="${this.className}">`
+          (m: string, tag: string) => `<${tag} class="${this.className}">`
         );
       }
     }
