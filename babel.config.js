@@ -38,7 +38,7 @@ module.exports = function(api) {
           }
         },
       ],
-      "@babel/preset-react",
+      ["@babel/preset-react", { runtime: "automatic" }],
       "@babel/preset-typescript",
     ].filter(Boolean),
     plugins: [
