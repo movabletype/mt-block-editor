@@ -11,6 +11,7 @@ import Editor, { EditorOptions } from "./Editor";
 import EditorManager from "./EditorManager";
 
 import React from "react";
+import * as jsxRuntime from "react/jsx-runtime";
 import Block from "./Block";
 import Column from "./Block/Column";
 import BlockFactory from "./BlockFactory";
@@ -87,6 +88,7 @@ export class EditorUtil {
   };
   public static decorator = decorator;
   public static React = React;
+  public static jsxRuntime = jsxRuntime;
   public static Block = Block;
   public static Context = Context;
   public static Hook = Hook;

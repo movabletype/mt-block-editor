@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { i18n, InitOptions as InitOptionsI18n } from "i18next";
 
 interface Map {
@@ -129,6 +130,11 @@ export class EditorUtil {
   public static icon: Map;
   public static util: Map;
   public static React: Map;
+  public static jsxRuntime: {
+    jsx: (type: any, props: any, key?: string) => any;
+    jsxs: (type: any, props: any, key?: string) => any;
+    Fragment: symbol;
+  };
   public static Context: Map;
   public static Hook: Map;
   public static Block: typeof Block;

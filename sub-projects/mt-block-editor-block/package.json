@@ -4,8 +4,58 @@
   "description": "This package helps you define custom block types.",
   "main": "index.js",
   "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./Block": {
+      "types": "./Block.d.ts",
+      "default": "./Block.js"
+    },
+    "./Component": {
+      "types": "./Component.d.ts",
+      "default": "./Component.js"
+    },
+    "./Context": {
+      "types": "./Context.d.ts",
+      "default": "./Context.js"
+    },
+    "./decorator": {
+      "types": "./decorator.d.ts",
+      "default": "./decorator.js"
+    },
+    "./Hook": {
+      "types": "./Hook.d.ts",
+      "default": "./Hook.js"
+    },
+    "./i18n": {
+      "types": "./i18n.d.ts",
+      "default": "./i18n.js"
+    },
+    "./icon": {
+      "types": "./icon.d.ts",
+      "default": "./icon.js"
+    },
+    "./React": {
+      "types": "./React.d.ts",
+      "default": "./React.js"
+    },
+    "./util": {
+      "types": "./util.d.ts",
+      "default": "./util.js"
+    },
+    "./jsx-runtime": {
+      "types": "./jsx-runtime.d.ts",
+      "default": "./jsx-runtime.js"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./jsx-dev-runtime.d.ts",
+      "default": "./jsx-dev-runtime.js"
+    }
+  },
   "scripts": {
-    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" \"./dist/*\" ./",
+    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" \"./src/jsx-runtime.d.ts\" \"./src/jsx-dev-runtime.d.ts\" \"./dist/*\" ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -18,6 +68,6 @@
   },
   "dependencies": {
     "@types/i18next": "^13.0.0",
-    "@types/react": "^16.9.53"
+    "@types/react": "^19.2.8"
   }
 }
