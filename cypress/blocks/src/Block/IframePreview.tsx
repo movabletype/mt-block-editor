@@ -1,5 +1,5 @@
+/** @jsxRuntime automatic @jsxImportSource ../../../../sub-projects/mt-block-editor-block/src  */
 import { t } from "../i18n";
-import React from "../../../../sub-projects/mt-block-editor-block/React";
 import { blockProperty } from "../../../../sub-projects/mt-block-editor-block/decorator";
 import {
   BlockIframePreview,

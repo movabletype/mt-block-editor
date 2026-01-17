@@ -7,7 +7,7 @@
     "build": "webpack --mode=production && npm run build-register-boilerplate-blocks",
     "build-register-boilerplate-blocks": "tsc --project tsconfig.rbb.json && mkdirp docs/dist && terser -c -m --source-map 'content=\"./rbb-dist/src/register-boilerplate-blocks.js.map\"' --source-map 'url=\"register-boilerplate-blocks.js.map\"' ./rbb-dist/src/register-boilerplate-blocks.js -o ./docs/dist/register-boilerplate-blocks.js && rimraf ./rbb-dist",
     "build-mt-block-editor-block": "mv node_modules node_modules_tmp; ( cd sub-projects/mt-block-editor-block && npm run build ) ; mv node_modules_tmp node_modules",
-    "build-test-blocks": "webpack -c cypress/blocks/webpack.config.js --mode=production",
+    "build-test-blocks": "npx esbuild --bundle --loader:.svg=text ./cypress/blocks/src/index.ts --outfile=./cypress/blocks/dist/test-blocks.js --minify --sourcemap",
     "install": "rm -fr docs/mt-rich-text-editor && cp -R node_modules/@movabletype/mt-rich-text-editor/dist docs/mt-rich-text-editor",
     "start": "webpack serve",
     "test": "jest",
