@@ -198,7 +198,10 @@ class Block {
     let html = this.html();
 
     if (typeof html !== "string") {
-      html = ReactDOMServer.renderToStaticMarkup(html);
+      html = ReactDOMServer.renderToStaticMarkup(html).replace(
+        /<link[^>]*rel="preload"[^>]*>\s*/g,
+        ""
+      );
     }
 
     if (this.className) {
