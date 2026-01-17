@@ -465,7 +465,36 @@ context("Text", () => {
       );
     });
 
-    it("remove first list item", () => {
+    it("Change the first item from a list item to a paragraph", () => {
+      cy.get(
+        `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
+      ).click();
+
+      wait(1);
+      cy.get(
+        `button[aria-label="Source code"], button[aria-label="ソースコード"]`
+      ).click({ force: true });
+      cy.wait(50);
+      cy.get(".tox-dialog textarea").invoke(
+        "val",
+        "<ul><li>a</li><li>b</li></ul>"
+      );
+
+      Cypress.on("uncaught:exception", ignoreErrorHandler);
+      cy.get(
+        ".tox-dialog .tox-button:not(.tox-button--secondary, .tox-button--icon)"
+      ).click();
+
+      wait(1);
+      type("{backspace}");
+
+      serializedTextarea(textareaId).should(
+        "have.value",
+        "<!-- mt-beb --><p>a</p><!-- /mt-beb --><!-- mt-beb --><ul>\n<li>b</li>\n</ul><!-- /mt-beb -->"
+      );
+    });
+
+    it("remove first empty list item", () => {
       cy.get(
         `.mt-be-shortcut-block-list [data-mt-be-type="core-text"]`
       ).click();
@@ -490,7 +519,7 @@ context("Text", () => {
 
       serializedTextarea(textareaId).should(
         "have.value",
-        "<!-- mt-beb --><!-- /mt-beb --><!-- mt-beb --><ul>\n<li>a</li>\n<li>b</li>\n</ul><!-- /mt-beb -->"
+        "<!-- mt-beb --><ul>\n<li>a</li>\n<li>b</li>\n</ul><!-- /mt-beb -->"
       );
     });
   });
