@@ -25,7 +25,7 @@ test("constructor", () => {
 });
 
 describe("add/canUndo/canRedo", () => {
-  describe("simple case", () => {
+  test("simple case", () => {
     const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
@@ -73,7 +73,7 @@ describe("add/canUndo/canRedo", () => {
     expect(count).toBe(0);
   });
 
-  describe("merge", () => {
+  test("merge", () => {
     const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;
@@ -107,7 +107,7 @@ describe("add/canUndo/canRedo", () => {
     expect(count).toBe(8);
   });
 
-  describe("dedup (by merge)", () => {
+  test("dedup (by merge)", () => {
     const manager = new EditManager({ editor: mockEditor });
 
     let count = 0;

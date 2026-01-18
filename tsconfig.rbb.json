@@ -4,7 +4,10 @@
     "sourceMap": true,
     "inlineSources": true,
     "noEmit": false,
-    "outDir": "./rbb-dist"
+    "outDir": "./rbb-dist",
+    "isolatedModules": false,
+    "moduleResolution": "node",
+    "types": ["vite/client", "node"]
   },
   "include": ["src/@types", "src/register-boilerplate-blocks.ts"]
 }
