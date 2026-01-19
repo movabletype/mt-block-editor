@@ -510,9 +510,12 @@ const BlockIframePreview: React.FC<EditorProps> = ({
       `;
       }
 
-      const data = new TextEncoder().encode(srcdoc);
-      const base64Srcdoc = btoa(String.fromCharCode(...data));
-      setSrc(`data:text/html;base64,${base64Srcdoc}`);
+      const blob = new Blob([srcdoc], { type: "text/html" });
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = () => {
+        setSrc(reader.result?.toString() || "");
+      };
     }
   }, [block.compiledHtml, header, htmlText]);
 
