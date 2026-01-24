@@ -25,17 +25,11 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
       lib: {
         entry: resolve(__dirname, "src/mt-block-editor.ts"),
-        name: "MTBlockEditor",
-        formats: ["iife"],
+        formats: ["es"],
         fileName: () => "mt-block-editor.js",
       },
       rollupOptions: {
         external: ["tinymce"],
-        output: {
-          globals: {
-            tinymce: "tinymce",
-          },
-        },
       },
       minify: isProd,
     },
@@ -45,7 +39,7 @@ export default defineConfig(({ mode }) => {
     },
 
     css: {
-      postcss: "./postcss.config.js",
+      postcss: "./postcss.config.cjs",
       devSourcemap: true,
     },
 

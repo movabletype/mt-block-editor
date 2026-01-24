@@ -15,8 +15,7 @@ export default defineConfig({
     sourcemap: true,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "TestBlocks",
-      formats: ["iife"],
+      formats: ["es"],
       fileName: () => "test-blocks.js",
     },
     minify: true,
