@@ -3,7 +3,6 @@
     // Target latest version of ECMAScript.
     "target": "esnext",
     "module": "esnext",
-    "useDefineForClassFields": false,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     // Search under node_modules for non-relative imports.
     "moduleResolution": "node",

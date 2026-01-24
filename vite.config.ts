@@ -51,14 +51,6 @@ export default defineConfig(({ mode }) => {
 
     base: "./",
 
-    esbuild: {
-      tsconfigRaw: {
-        compilerOptions: {
-          useDefineForClassFields: false,
-        },
-      },
-    },
-
     test: {
       globals: true,
       environment: "jsdom",
