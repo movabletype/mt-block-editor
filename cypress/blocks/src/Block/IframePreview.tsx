@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { t } from "../i18n";
 import { blockProperty } from "../../../../sub-projects/mt-block-editor-block/dist/decorator";
 import {

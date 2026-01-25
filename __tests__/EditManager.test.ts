@@ -1,10 +1,10 @@
 import Editor from "../src/Editor";
 import Text from "../src/Block/Text";
-import EditManager from "../src/EditManager";
+import EditManager, { EditHistory } from "../src/EditManager";
 
-let events = [];
+let events: Array<{ name: string; args: unknown }> = [];
 const mockEditor = {
-  emit(name, args) {
+  emit(name: string, args: unknown) {
     events.push({ name, args });
   },
 } as Editor;
@@ -12,7 +12,7 @@ const mockEditor = {
 const editorContextProps = {
   editor: mockEditor,
   setFocusedIds: () => undefined,
-  getFocusedIds: () => null,
+  getFocusedIds: () => [] as string[],
 };
 
 beforeEach(() => {
@@ -81,14 +81,14 @@ describe("add/canUndo/canRedo", () => {
       block: new Text(),
       handlers: {
         id: Symbol("test"),
-        merge(a, b) {
+        merge(a: EditHistory, b: EditHistory) {
           a.data.c *= b.data.c;
           return a;
         },
-        undo(hist) {
+        undo(hist: EditHistory) {
           count += hist.data.c;
         },
-        redo(hist) {
+        redo(hist: EditHistory) {
           count += hist.data.c;
         },
       },
@@ -115,13 +115,13 @@ describe("add/canUndo/canRedo", () => {
       block: new Text(),
       handlers: {
         id: Symbol("test"),
-        merge(a, b) {
+        merge(a: EditHistory, b: EditHistory) {
           return a.data.c === b.data.c ? a : null;
         },
-        undo(hist) {
+        undo(hist: EditHistory) {
           count += hist.data.c;
         },
-        redo(hist) {
+        redo(hist: EditHistory) {
           count += hist.data.c;
         },
       },
@@ -281,9 +281,9 @@ test("generateGroup", () => {
 });
 
 describe("group", () => {
-  let manager;
-  let group;
-  let count;
+  let manager: EditManager;
+  let group: number;
+  let count: number;
 
   const history = {
     block: new Text(),

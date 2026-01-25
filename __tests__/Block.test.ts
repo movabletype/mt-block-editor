@@ -24,9 +24,10 @@ test("constructor", () => {
 
 test("id collision", () => {
   const count = 1024;
-  const ids = {};
+  const ids: Record<string, number> = {};
   for (let i = 0; i < count; i++) {
-    ids[new TestBlock().id]++;
+    const id = new TestBlock().id;
+    ids[id] = (ids[id] || 0) + 1;
   }
   expect(Object.keys(ids).length).toBe(count);
 });

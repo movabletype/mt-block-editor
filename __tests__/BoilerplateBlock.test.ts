@@ -20,7 +20,7 @@ const TestBlock = window.MTBlockEditor.createBoilerplateBlock({
 });
 window.MTBlockEditor.registerBlockType(TestBlock);
 
-function serializeMeta(block): string {
+function serializeMeta(block: Block): string | null {
   const meta = block.metadata();
   if (!meta) {
     return null;
@@ -51,7 +51,8 @@ describe("htmlString()", () => {
         .serializedString({
           editor: {
             serializeMeta,
-          } as Editor,
+          } as unknown as Editor,
+          external: false,
         })
         .then((str) => {
           expect(str).toBe(
