@@ -1,61 +1,61 @@
 {
   "name": "mt-block-editor-block",
-  "version": "1.3.0-alpha.2",
+  "version": "1.3.0-alpha.4",
   "description": "This package helps you define custom block types.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./Block": {
-      "types": "./Block.d.ts",
-      "default": "./Block.js"
+      "types": "./dist/Block.d.ts",
+      "default": "./dist/Block.js"
     },
     "./Component": {
-      "types": "./Component.d.ts",
-      "default": "./Component.js"
+      "types": "./dist/Component.d.ts",
+      "default": "./dist/Component.js"
     },
     "./Context": {
-      "types": "./Context.d.ts",
-      "default": "./Context.js"
+      "types": "./dist/Context.d.ts",
+      "default": "./dist/Context.js"
     },
     "./decorator": {
-      "types": "./decorator.d.ts",
-      "default": "./decorator.js"
+      "types": "./dist/decorator.d.ts",
+      "default": "./dist/decorator.js"
     },
     "./Hook": {
-      "types": "./Hook.d.ts",
-      "default": "./Hook.js"
+      "types": "./dist/Hook.d.ts",
+      "default": "./dist/Hook.js"
     },
     "./i18n": {
-      "types": "./i18n.d.ts",
-      "default": "./i18n.js"
+      "types": "./dist/i18n.d.ts",
+      "default": "./dist/i18n.js"
     },
     "./icon": {
-      "types": "./icon.d.ts",
-      "default": "./icon.js"
+      "types": "./dist/icon.d.ts",
+      "default": "./dist/icon.js"
     },
     "./React": {
-      "types": "./React.d.ts",
-      "default": "./React.js"
+      "types": "./dist/React.d.ts",
+      "default": "./dist/React.js"
     },
     "./util": {
-      "types": "./util.d.ts",
-      "default": "./util.js"
+      "types": "./dist/util.d.ts",
+      "default": "./dist/util.js"
     },
     "./jsx-runtime": {
-      "types": "./jsx-runtime.d.ts",
-      "default": "./jsx-runtime.js"
+      "types": "./dist/jsx-runtime.d.ts",
+      "default": "./dist/jsx-runtime.js"
     },
     "./jsx-dev-runtime": {
-      "types": "./jsx-dev-runtime.d.ts",
-      "default": "./jsx-dev-runtime.js"
+      "types": "./dist/jsx-dev-runtime.d.ts",
+      "default": "./dist/jsx-dev-runtime.js"
     }
   },
   "scripts": {
-    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" \"./src/jsx-runtime.d.ts\" \"./src/jsx-dev-runtime.d.ts\" \"./dist/*\" ./",
+    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" \"./src/jsx-runtime.d.ts\" \"./src/jsx-dev-runtime.d.ts\" ./dist/ --flat",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

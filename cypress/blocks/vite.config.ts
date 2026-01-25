@@ -27,7 +27,7 @@ export default defineConfig({
     },
   },
   esbuild: {
-    jsxImportSource: "../../sub-projects/mt-block-editor-block/src",
+    jsxImportSource: "../../../../sub-projects/mt-block-editor-block/src",
     jsx: "automatic",
   },
 });

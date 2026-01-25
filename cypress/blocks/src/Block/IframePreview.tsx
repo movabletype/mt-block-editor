@@ -1,17 +1,16 @@
-/** @jsxRuntime automatic @jsxImportSource ../../../../sub-projects/mt-block-editor-block/src  */
 import { t } from "../i18n";
-import { blockProperty } from "../../../../sub-projects/mt-block-editor-block/decorator";
+import { blockProperty } from "../../../../sub-projects/mt-block-editor-block/dist/decorator";
 import {
   BlockIframePreview,
   BlockSetupCommon,
   BlockSetup,
   BlockLabel,
-} from "../../../../sub-projects/mt-block-editor-block/Component";
+} from "../../../../sub-projects/mt-block-editor-block/dist/Component";
 import Block, {
   Metadata,
   NewFromHtmlOptions,
   EditorOptions,
-} from "../../../../sub-projects/mt-block-editor-block/Block";
+} from "../../../../sub-projects/mt-block-editor-block/dist/Block";
 
 import icon from "../img/icon/IframePreview.svg";
 

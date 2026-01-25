@@ -1,4 +1,4 @@
-import i18n from "../../../sub-projects/mt-block-editor-block/i18n";
+import i18n from "../../../sub-projects/mt-block-editor-block/dist/i18n";
 
 const translations = import.meta.glob<{ default: object }>(
   "./locales/*/translation.json",
