@@ -55,7 +55,7 @@
     }
   },
   "scripts": {
-    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" \"./src/jsx-runtime.d.ts\" \"./src/jsx-dev-runtime.d.ts\" ./dist/ --flat",
+    "build": "rimraf dist && tsc -d src/*.ts --outDir dist --lib esnext,dom && cpy \"./src/index.d.ts\" ./dist/ --flat",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
