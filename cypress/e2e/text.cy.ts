@@ -321,6 +321,7 @@ context("Text", () => {
       type("Rich Editor!");
 
       blur();
+      wait(1);
 
       cy.get(".mt-be-block div:last-child").then(($div) => {
         const el = $div[0].shadowRoot.querySelector("div[contenteditable]");
@@ -350,6 +351,7 @@ context("Text", () => {
       type("Rich Editor!");
 
       blur();
+      wait(1);
 
       // range: "|Rich| Editor"
       cy.get(".mt-be-block div:last-child").then(($div) => {
@@ -391,6 +393,7 @@ context("Text", () => {
       ).click();
 
       blur();
+      wait(1);
 
       // range: "aab|bccd|d"
       cy.get(".mt-be-block div:last-child").then(($div) => {
