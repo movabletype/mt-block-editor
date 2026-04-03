@@ -6,7 +6,7 @@
 import packageInfo from "../package.json";
 import i18n, { init as initI18n } from "./i18n";
 import { InitOptions as InitOptionsI18n } from "i18next";
-import "./mt-block-editor.scss";
+import "./mt-block-editor.css";
 import Editor, { EditorOptions } from "./Editor";
 import EditorManager from "./EditorManager";
 

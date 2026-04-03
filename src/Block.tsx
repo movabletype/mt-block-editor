@@ -5,9 +5,7 @@ import ReactDOMServer from "react-dom/server";
 import Editor from "./Editor";
 import BlockFactory from "./BlockFactory";
 import { EditHistory } from "./EditManager";
-import {
-  escapeSingleQuoteAttribute,
-} from "./util/dom";
+import { escapeSingleQuoteAttribute } from "./util/dom";
 import ParserContext from "./util/ParserContext";
 import icon from "./img/icon/default-block.svg";
 import {
@@ -75,13 +73,22 @@ class Block {
   public className = "";
   public iframePreviewSize: Size | null = null;
 
+  private static _icon: string | undefined;
+
   public static get icon(): string {
+    if (this._icon !== undefined) {
+      return this._icon;
+    }
     const str = this.iconString;
     if (str) {
       return icon.replace(/__str__/, str);
     } else {
       return icon;
     }
+  }
+
+  public static set icon(value: string) {
+    this._icon = value;
   }
   public static get iconString(): string {
     const m = this.typeId.match(/-(.)/);
