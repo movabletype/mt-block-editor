@@ -424,7 +424,7 @@ const BlockItem: React.FC<Props> = ({
             <span
               className="mt-be-btn-move"
               onClick={toggleCommandPanelShown}
-              ref={drag}
+              ref={drag as unknown as React.Ref<HTMLSpanElement>}
             ></span>
             <button
               type="button"

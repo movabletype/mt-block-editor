@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
 
@@ -17,6 +17,7 @@ const Overlay: React.FC<OverlayProps> = ({
   onClose = () => null,
   children,
 }: OverlayProps) => {
+  const nodeRef = useRef<HTMLDivElement>(null);
   const [portal] = useState<HTMLDivElement>(() =>
     document.createElement("div")
   );
@@ -45,6 +46,7 @@ const Overlay: React.FC<OverlayProps> = ({
 
   return createPortal(
     <CSSTransition
+      nodeRef={nodeRef}
       in={open}
       onEnter={() =>
         document.body.classList.add("mt-block-editor-overlay-open")
@@ -56,7 +58,9 @@ const Overlay: React.FC<OverlayProps> = ({
       unmountOnExit
       timeout={TRANSITION_TIMEOUT}
     >
-      <div className={OVERLAY_CLASS_NAME}>{children}</div>
+      <div ref={nodeRef} className={OVERLAY_CLASS_NAME}>
+        {children}
+      </div>
     </CSSTransition>,
     portal
   );

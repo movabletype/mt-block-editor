@@ -23,7 +23,7 @@ export function isTouchDevice(): boolean {
   return _isTouchDevice;
 }
 
-export function focusIfIos(ref: RefObject<HTMLElement>): void {
+export function focusIfIos(ref: RefObject<HTMLElement | null>): void {
   if (!isIos()) {
     return;
   }

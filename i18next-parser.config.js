@@ -1,3 +1,5 @@
-module.exports = {
-  locales: ['en', 'ja'],
-}
+export const locales = ['en', 'ja'];
+
+export default {
+  locales,
+};

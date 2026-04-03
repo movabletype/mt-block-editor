@@ -232,6 +232,7 @@ const AddButton: React.FC<AddButtonProps> = memo(
           )}
         </div>
         <CSSTransition
+          nodeRef={blockListElRef}
           timeout={100}
           in={showList === ListStatus.Visible}
           unmountOnExit

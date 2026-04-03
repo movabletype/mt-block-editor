@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { JSX } from "react";
 import Block from "../Block";
 import { useEditorContext } from "../Context";
 import { EditHistoryHandlers } from "../EditManager";

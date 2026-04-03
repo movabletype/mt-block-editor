@@ -11,13 +11,14 @@ import {
 
 import { newEditor } from "../helper";
 
-import Text from "../../src/Block/Text";
+import TextBlock from "../../src/Block/Text";
 import Column from "../../src/Block/Column";
+import Block from "../../src/Block";
 
 const mockEditor = {
   serializeMeta,
 } as unknown as Editor;
-function serializeMeta(block): string | null {
+function serializeMeta(block: Block): string | null {
   const meta = block.metadata();
   if (!meta) {
     return null;
@@ -515,9 +516,9 @@ describe("parseContent()", () => {
 
 describe("findDescendantBlocks", () => {
   const editor = newEditor();
-  const textBlocks: Text[] = [];
+  const textBlocks: InstanceType<typeof TextBlock>[] = [];
   for (let i = 0; i < 9; i++) {
-    textBlocks.push(new Text());
+    textBlocks.push(new TextBlock());
   }
   const column = new Column();
   column.blocks = [textBlocks[3], textBlocks[4], textBlocks[5]];
@@ -590,9 +591,9 @@ describe("findDescendantBlocks", () => {
 
 describe("getBlocksByRange", () => {
   const editor = newEditor();
-  const textBlocks: Text[] = [];
+  const textBlocks: InstanceType<typeof TextBlock>[] = [];
   for (let i = 0; i < 9; i++) {
-    textBlocks.push(new Text());
+    textBlocks.push(new TextBlock());
   }
   const column = new Column();
   column.blocks = [textBlocks[3], textBlocks[4], textBlocks[5]];

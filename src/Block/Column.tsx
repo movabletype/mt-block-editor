@@ -6,7 +6,8 @@ import React, {
   useMemo,
   CSSProperties,
 } from "react";
-import { render, unmountComponentAtNode } from "react-dom";
+import type { JSX } from "react";
+import { createRoot } from "react-dom/client";
 import {
   EditorContext,
   useEditorContext,
@@ -362,13 +363,15 @@ class Column extends Block implements HasBlocks {
       Object.assign(div.style, STYLE_HIDDEN);
       document.body.appendChild(div);
 
+      const root = createRoot(div);
+
       const onSetCompiledHtml = (error: Error | null): void => {
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
         }
 
-        unmountComponentAtNode(div);
+        root.unmount();
         div.remove();
         if (error) {
           reject(error);
@@ -383,7 +386,7 @@ class Column extends Block implements HasBlocks {
         getFocusedIds: () => [],
       };
 
-      render(
+      root.render(
         <EditorContext.Provider value={editorContext}>
           <BlockIframePreview
             key={this.id}
@@ -393,8 +396,7 @@ class Column extends Block implements HasBlocks {
             onBeforeSetCompiledHtml={onBeforeSetCompiledHtml}
             onSetCompiledHtml={onSetCompiledHtml}
           />
-        </EditorContext.Provider>,
-        div
+        </EditorContext.Provider>
       );
 
       const opts = editor.opts.block["core-column"] || {};

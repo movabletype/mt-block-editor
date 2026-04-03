@@ -1,17 +1,22 @@
 import i18n, { TFunction, InitOptions } from "i18next";
-import { locales } from "../i18next-parser.config";
 import Backend from "i18next-xhr-backend";
+
+const translations = import.meta.glob<{ default: object }>(
+  "./locales/*/translation.json",
+  { eager: true, import: "default" }
+);
 
 i18n
   // load translation using xhr -> see /public/locales
   // learn more: https://github.com/i18next/i18next-xhr-backend
   .use(Backend)
   .on("initialized", () => {
-    locales.forEach((lang) => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const l = require(`./locales/${lang}/translation.json`);
-      i18n.addResourceBundle(lang, "translation", l, true, false);
-    });
+    for (const [path, l] of Object.entries(translations)) {
+      const lang = path.match(/\.\/locales\/(.+)\/translation\.json/)?.[1];
+      if (lang) {
+        i18n.addResourceBundle(lang, "translation", l, true, false);
+      }
+    }
   });
 
 export default i18n;

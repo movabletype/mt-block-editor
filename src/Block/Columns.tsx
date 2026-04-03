@@ -1,5 +1,6 @@
 import { t } from "../i18n";
 import React, { useState, useCallback, MouseEvent } from "react";
+import type { JSX } from "react";
 import type { Editor as EditorType } from "../Editor";
 import Block, {
   NewFromHtmlOptions,

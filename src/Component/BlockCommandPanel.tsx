@@ -58,6 +58,7 @@ const BlockCommandPanel: React.FC<BlockCommandPanelProps> = memo(
 
     return (
       <CSSTransition
+        nodeRef={panelRef}
         timeout={100}
         in={props.in}
         unmountOnExit
