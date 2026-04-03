@@ -1,6 +1,6 @@
 {
   "name": "mt-block-editor-block",
-  "version": "1.3.0-alpha.4",
+  "version": "1.3.0",
   "description": "This package helps you define custom block types.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
