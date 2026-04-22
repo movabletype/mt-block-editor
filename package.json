@@ -75,7 +75,7 @@
     "vitest": "^4.1.2"
   },
   "dependencies": {
-    "dompurify": "^3.2.4",
+    "dompurify": "^3.4.1",
     "eventemitter3": "^4.0.7",
     "i18next": "^19.8.2",
     "i18next-xhr-backend": "^3.2.2",
