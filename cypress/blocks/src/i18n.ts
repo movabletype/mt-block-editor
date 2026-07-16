@@ -1,4 +1,7 @@
-import i18n from "../../../sub-projects/mt-block-editor-block/dist/i18n";
+import rawI18n from "../../../sub-projects/mt-block-editor-block/dist/i18n";
+import { interopDefault } from "./interop";
+
+const i18n = interopDefault(rawI18n);
 
 const translations = import.meta.glob<{ default: object }>(
   "./locales/*/translation.json",

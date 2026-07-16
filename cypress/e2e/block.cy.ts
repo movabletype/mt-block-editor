@@ -30,10 +30,11 @@ if (!Cypress.env("ci")) {
 
         blur();
 
-        cy.get(".mt-be-block div:last-child").then(($div) => {
+        cy.get(".mt-be-block div:last-child").should(($div) => {
           const root = $div.get(0).shadowRoot;
-          const iframe = root.querySelector("iframe")!;
-          const rect = iframe.getBoundingClientRect();
+          const iframe = root.querySelector("iframe");
+          expect(iframe).not.to.be.null;
+          const rect = iframe!.getBoundingClientRect();
           expect(rect.width).greaterThan(100);
         });
       });
@@ -66,10 +67,11 @@ if (!Cypress.env("ci")) {
           });
           cy.wait(500);
 
-          cy.get(".mt-be-block div:last-child").then(($div) => {
+          cy.get(".mt-be-block div:last-child").should(($div) => {
             const root = $div.get(0).shadowRoot;
-            const iframe = root.querySelector("iframe")!;
-            const rect = iframe.getBoundingClientRect();
+            const iframe = root.querySelector("iframe");
+            expect(iframe).not.to.be.null;
+            const rect = iframe!.getBoundingClientRect();
             expect(rect.width).greaterThan(100);
           });
         });
