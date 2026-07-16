@@ -7,13 +7,17 @@ import {
   BlockSetup,
   BlockLabel,
 } from "../../../../sub-projects/mt-block-editor-block/dist/Component";
-import Block, {
+import RawBlock from "../../../../sub-projects/mt-block-editor-block/dist/Block";
+import type {
   Metadata,
   NewFromHtmlOptions,
   EditorOptions,
 } from "../../../../sub-projects/mt-block-editor-block/dist/Block";
 
 import icon from "../img/icon/IframePreview.svg";
+import { interopDefault } from "../interop";
+
+const Block = interopDefault(RawBlock);
 
 interface EditorProps {
   block: IframePreview;
