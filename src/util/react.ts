@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 
 export const nl2br = (() => {
   const regex = /(\r\n|\r|\n)/g;

@@ -1,5 +1,6 @@
 import { t } from "../i18n";
 import React, { useState, useRef } from "react";
+import type { JSX } from "react";
 import Block, { NewFromHtmlOptions, EditorOptions } from "../Block";
 import { nl2br } from "../util";
 import { blockProperty } from "../decorator";

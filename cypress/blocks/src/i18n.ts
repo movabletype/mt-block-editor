@@ -1,12 +1,20 @@
-import i18n from "../../../sub-projects/mt-block-editor-block/i18n";
-import { locales } from "../i18next-parser.config";
+import rawI18n from "../../../sub-projects/mt-block-editor-block/dist/i18n";
+import { interopDefault } from "./interop";
+
+const i18n = interopDefault(rawI18n);
+
+const translations = import.meta.glob<{ default: object }>(
+  "./locales/*/translation.json",
+  { eager: true, import: "default" }
+);
 
 i18n.on("initialized", () => {
-  locales.forEach((lang) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const l = require(`./locales/${lang}/translation.json`);
-    i18n.addResources(lang, "translation", l);
-  });
+  for (const [path, l] of Object.entries(translations)) {
+    const lang = path.match(/\.\/locales\/(.+)\/translation\.json/)?.[1];
+    if (lang) {
+      i18n.addResources(lang, "translation", l);
+    }
+  }
 });
 
 export function t(args: string | string[]): string {

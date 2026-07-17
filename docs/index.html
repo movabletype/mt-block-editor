@@ -43,6 +43,11 @@
       </form>
     </div>
     <script type="module">
+      import "../src/mt-block-editor.ts";
+      import "../src/register-boilerplate-blocks.ts";
+      // import "./mt-block-editor-block-form-element.js";
+      // import "./blocks-officer.html";
+
       const applyOpts = {
         mode: sessionStorage.getItem("MTBlockEditorMode") || "composition",
         id: "body",
@@ -81,7 +86,7 @@
                 const res = await fetch(
                   `https://noembed.com/embed?url=${url}&maxwidth=${
                     maxwidth || "400"
-                  }&maxheight=${maxheight || "400"}`
+                  }&maxheight=${maxheight || "400"}`,
                 );
                 return await res.json();
               } catch (e) {
@@ -98,30 +103,6 @@
       window.document.getElementById("body").value =
         window.sessionStorage.getItem("MTBlockEditorBody") || "";
 
-      const ts = new Date().getTime();
-      const loader = [
-        "./dist/mt-block-editor.js",
-        "./register-block.js",
-        // "./dist/mt-block-editor-block-form-element.js",
-        // "./blocks-officer.html",
-      ].reduce(
-        (chain, m) =>
-          chain.then(() => {
-            if (m.match(/\.html/)) {
-              return fetch(m)
-                .then((res) => res.text())
-                .then((html) => {
-                  const t = document.createElement("template");
-                  t.innerHTML = html;
-                  document.body.appendChild(t.content);
-                });
-            } else {
-              return import(`${m}?ts=${ts}`);
-            }
-          }),
-        Promise.resolve()
-      );
-
       if (/^localhost(?::|$)/.test(location.host)) {
         // Probably in the development environment.
       } else {
@@ -133,10 +114,10 @@
         });
       }
 
-      loader
+      Promise.resolve()
         .then(async () => {
           const blocksElm = document.querySelector(
-            `[data-block-types][data-blocks]`
+            `[data-block-types][data-blocks]`,
           );
           const blockTypes = blocksElm && blocksElm.dataset.blockTypes;
           const blocks = blocksElm && blocksElm.dataset.blocks;
@@ -150,7 +131,7 @@
           registerBoilerplateBlocks(
             window.MTBlockEditor,
             JSON.parse(blockTypes),
-            JSON.parse(blocks)
+            JSON.parse(blocks),
           );
           Reflect.deleteProperty(applyOpts, "panelBlockTypes");
         })
@@ -184,7 +165,7 @@
                 console.log("serialized");
                 sessionStorage.setItem(
                   "MTBlockEditorBody",
-                  document.querySelector("#body").value
+                  document.querySelector("#body").value,
                 );
               });
             });

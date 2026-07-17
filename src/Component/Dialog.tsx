@@ -55,7 +55,7 @@ export const Dialog: React.FC<DialogProps> = (props: DialogProps) => {
   );
 };
 
-export const DialogHeader: React.FC = (props: { children?: ReactNode }) => {
+export const DialogHeader: React.FC<{ children?: ReactNode }> = (props) => {
   const { onClose = () => null } = useContext(DialogContext);
   return (
     <div className="mt-be-dialog-header">
@@ -72,11 +72,11 @@ export const DialogHeader: React.FC = (props: { children?: ReactNode }) => {
   );
 };
 
-export const DialogBody: React.FC = (props: { children?: ReactNode }) => (
+export const DialogBody: React.FC<{ children?: ReactNode }> = (props) => (
   <div className="mt-be-dialog-body">{props.children}</div>
 );
 
-export const DialogFooter: React.FC = (props: { children?: ReactNode }) => (
+export const DialogFooter: React.FC<{ children?: ReactNode }> = (props) => (
   <div className="mt-be-dialog-footer">{props.children}</div>
 );
 

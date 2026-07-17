@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot, Root } from "react-dom/client";
 import { InitOptions as InitOptionsI18n } from "i18next";
 
 import resetCss from "./reset.css?raw";
@@ -71,6 +71,7 @@ export class Editor extends EventEmitter implements HasBlocks {
   public stylesheets: Stylesheet[] = [];
   public editorElement: HTMLElement;
 
+  private root: Root | null = null;
   private inputElement: HTMLInputElement;
   private metadataMap: Map<string, MetadataMapData> = new Map<
     string,
@@ -370,6 +371,10 @@ export class Editor extends EventEmitter implements HasBlocks {
       editor: this,
     });
     this.editManager.unload();
+    if (this.root) {
+      this.root.unmount();
+      this.root = null;
+    }
     this.editorElement.remove();
     this.inputElement.style.display = "";
     this.emit("unload", {
@@ -378,7 +383,10 @@ export class Editor extends EventEmitter implements HasBlocks {
   }
 
   public render(): void {
-    render(React.createElement(App, { editor: this }), this.editorElement);
+    if (!this.root) {
+      this.root = createRoot(this.editorElement);
+    }
+    this.root.render(React.createElement(App, { editor: this }));
   }
 
   private buildStylesheets(): Array<Stylesheet | Promise<Stylesheet>> {

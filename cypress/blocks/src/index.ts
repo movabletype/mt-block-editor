@@ -1,3 +1,4 @@
 import IframePreview from "./Block/IframePreview";
 
-window.MTBlockEditor.registerBlockType(IframePreview);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+window.MTBlockEditor.registerBlockType(IframePreview as any);
